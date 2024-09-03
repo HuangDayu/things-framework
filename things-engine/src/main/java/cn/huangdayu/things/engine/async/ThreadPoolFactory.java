@@ -1,9 +1,7 @@
 package cn.huangdayu.things.engine.async;
 
-import ch.qos.logback.core.util.EnvUtil;
 import cn.hutool.core.thread.ExecutorBuilder;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,27 +20,22 @@ public class ThreadPoolFactory {
         if (corePoolSize > 0) {
             builder.setCorePoolSize(corePoolSize);
         }
-        builder.setThreadFactory(makeThreadFactory());
+        builder.setThreadFactory(tryGetVirtualThreadFactory());
         return builder.build();
     }
 
     /**
-     * A thread factory which may be a virtual thread factory the JDK supports it.
+     * 尝试用反射获取虚拟线程工程，如果失败则用默认线程工厂
      *
      * @return
-     * @author ch.qos.logback.core.util.ExecutorServiceUtil.makeThreadFactory()
      */
-    public static ThreadFactory makeThreadFactory() {
-        if (EnvUtil.isJDK21OrHigher()) {
-            try {
-                Method ofVirtualMethod = Thread.class.getMethod("ofVirtual");
-                Object threadBuilderOfVirtual = ofVirtualMethod.invoke(null);
-                Method factoryMethod = threadBuilderOfVirtual.getClass().getMethod("factory");
-                return (ThreadFactory) factoryMethod.invoke(threadBuilderOfVirtual);
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                return Executors.defaultThreadFactory();
-            }
-        } else {
+    public static ThreadFactory tryGetVirtualThreadFactory() {
+        try {
+            Method ofVirtualMethod = Thread.class.getMethod("ofVirtual");
+            Object threadBuilderOfVirtual = ofVirtualMethod.invoke(null);
+            Method factoryMethod = threadBuilderOfVirtual.getClass().getMethod("factory");
+            return (ThreadFactory) factoryMethod.invoke(threadBuilderOfVirtual);
+        } catch (Exception e) {
             return Executors.defaultThreadFactory();
         }
     }

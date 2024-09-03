@@ -1,7 +1,6 @@
 package cn.huangdayu.things.engine.configuration;
 
 import cn.huangdayu.things.engine.proxy.ThingsClientsRegistrar;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -14,8 +13,7 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Import({ThingsClientsRegistrar.class})
-@ImportAutoConfiguration(ThingsEngineAutoConfiguration.class)
-public @interface EnableThings {
+public @interface EnableThingsClients {
 
     /**
      * 包扫描路径

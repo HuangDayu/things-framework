@@ -3,7 +3,7 @@ package cn.huangdayu.things.engine.proxy;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.huangdayu.things.engine.annotation.ThingsClient;
-import cn.huangdayu.things.engine.configuration.EnableThings;
+import cn.huangdayu.things.engine.configuration.EnableThingsClients;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -30,7 +30,7 @@ public class ThingsClientsRegistrar implements ImportBeanDefinitionRegistrar {
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry beanDefinitionRegistry) {
-        Map<String, Object> attrs = annotationMetadata.getAnnotationAttributes(EnableThings.class.getName());
+        Map<String, Object> attrs = annotationMetadata.getAnnotationAttributes(EnableThingsClients.class.getName());
         if (CollUtil.isNotEmpty(attrs)) {
             Set<String> basePackages = getBasePackages(annotationMetadata);
             Set<Class<?>> annotatedClasses = getAnnotatedClasses(basePackages);
@@ -63,7 +63,7 @@ public class ThingsClientsRegistrar implements ImportBeanDefinitionRegistrar {
     }
 
     protected Set<String> getBasePackages(AnnotationMetadata importingClassMetadata) {
-        Map<String, Object> attributes = importingClassMetadata.getAnnotationAttributes(EnableThings.class.getCanonicalName());
+        Map<String, Object> attributes = importingClassMetadata.getAnnotationAttributes(EnableThingsClients.class.getCanonicalName());
 
         Set<String> basePackages = new ConcurrentHashSet<>();
         for (String pkg : (String[]) attributes.get("basePackages")) {

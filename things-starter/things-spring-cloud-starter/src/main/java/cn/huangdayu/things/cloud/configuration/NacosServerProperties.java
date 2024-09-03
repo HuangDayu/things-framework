@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.huangdayu.things.engine.instances;
+package cn.huangdayu.things.cloud.configuration;
 
 
 import lombok.Data;

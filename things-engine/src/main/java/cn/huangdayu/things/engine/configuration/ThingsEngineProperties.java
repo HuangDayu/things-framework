@@ -3,7 +3,6 @@ package cn.huangdayu.things.engine.configuration;
 import cn.huangdayu.things.engine.wrapper.ThingsInstance;
 import cn.hutool.core.collection.ConcurrentHashSet;
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.Set;
 
@@ -11,7 +10,6 @@ import java.util.Set;
  * @author huangdayu
  */
 @Data
-@ConfigurationProperties("wwgy-cloud.things-engine")
 public class ThingsEngineProperties {
 
     public ThingsEngineProperties() {

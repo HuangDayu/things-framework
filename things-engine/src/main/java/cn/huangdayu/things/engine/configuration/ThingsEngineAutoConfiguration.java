@@ -2,7 +2,7 @@ package cn.huangdayu.things.engine.configuration;
 
 import cn.huangdayu.things.engine.async.ThreadPoolFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +15,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
  */
 @Slf4j
 @Configuration
+@EnableCaching
 @EnableScheduling
-@ConfigurationPropertiesScan("cn.huangdayu.things.engine")
 @ComponentScan(value = "cn.huangdayu.things.engine")
 public class ThingsEngineAutoConfiguration {
 
@@ -25,7 +25,7 @@ public class ThingsEngineAutoConfiguration {
     public TaskScheduler thingsTaskScheduler() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
         scheduler.setPoolSize(2);
-        scheduler.setThreadFactory(ThreadPoolFactory.makeThreadFactory());
+        scheduler.setThreadFactory(ThreadPoolFactory.tryGetVirtualThreadFactory());
         scheduler.initialize();
         return scheduler;
     }
