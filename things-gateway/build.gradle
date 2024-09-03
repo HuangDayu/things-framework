@@ -1,0 +1,29 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-cache"
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
+    implementation "org.springframework.boot:spring-boot-configuration-processor"
+    api project(path: ':things-engine')
+
+    implementation "org.apache.camel.springboot:camel-spring-boot-starter"
+    implementation "org.apache.camel.springboot:camel-rest-starter"
+    implementation "org.apache.camel.springboot:camel-rocketmq-starter"
+    implementation "org.apache.camel.springboot:camel-bean-starter"
+    implementation "org.apache.camel.springboot:camel-servlet-starter"
+    implementation "org.apache.camel.springboot:camel-jackson-starter"
+    implementation 'org.apache.camel.springboot:camel-console-starter'
+    implementation 'org.apache.camel.springboot:camel-management-starter'
+    implementation 'org.apache.camel:camel-componentdsl'
+    implementation 'org.apache.camel:camel-kafka'
+    implementation 'org.apache.camel:camel-mybatis'
+    implementation 'org.apache.camel:camel-netty'
+    implementation 'org.apache.camel:camel-vertx-websocket'
+    implementation 'org.apache.camel:camel-paho-mqtt5'
+
+    implementation 'com.taosdata.jdbc:taos-jdbcdriver:3.2.7'
+}

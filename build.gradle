@@ -1,0 +1,105 @@
+plugins {
+    id 'base'
+    id 'idea'
+    id 'org.springframework.boot' version '3.2.7'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group 'cn.huangdayu.things'
+version '2024.1.0'
+
+
+ext {
+    thingsFrameworkVersion = '2024.1.0'
+    springAlibabaVersion = '2023.0.1.2'
+    springBootVersion = '3.2.7'
+    springCloudVersion = '2023.0.3'
+    kouplelessVersion = "2.1.4"
+    nacosVersion = '2.4.0'
+    hutoolVersion = '5.8.31'
+    camelVersion = '4.7.0'
+}
+
+subprojects { project ->
+
+
+    group "cn.huangdayu.things"
+    version "${thingsFrameworkVersion}"
+
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'maven-publish'
+    apply plugin: 'io.spring.dependency-management'
+
+    if (project.name.endsWith("-app")) {
+        apply plugin: 'org.springframework.boot'
+        bootJar.destinationDirectory = file("$rootDir/build/libs")
+        bootJar.enabled = true
+    }
+
+    tasks.withType(GradleBuild).configureEach {
+        build {
+            args = ['-x test']
+        }
+    }
+
+    dependencies {
+        implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+        implementation platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
+        implementation platform("com.alibaba.cloud:spring-cloud-alibaba-dependencies:${springAlibabaVersion}")
+        implementation platform("com.alibaba.nacos:nacos-all:${nacosVersion}")
+        implementation platform("cn.hutool:hutool-bom:${hutoolVersion}")
+        implementation platform("org.apache.camel.springboot:camel-spring-boot-dependencies:${camelVersion}")
+
+
+        implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
+        compileOnly 'org.projectlombok:lombok:1.18.34'
+        annotationProcessor 'org.projectlombok:lombok:1.18.34'
+        testCompileOnly 'org.projectlombok:lombok:1.18.34'
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+        testImplementation "org.springframework.boot:spring-boot-starter-test"
+        testImplementation 'junit:junit:4.13.2'
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.compilerArgs.add('-parameters')
+        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_21
+    }
+
+    configurations.configureEach {
+        resolutionStrategy.cacheChangingModulesFor 0, "minutes"
+    }
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://repo1.maven.org/maven2/' }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+
+    }
+
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifactId "${project.name}"
+            }
+        }
+    }
+
+    publishing {
+        repositories {
+            maven {
+                credentials {
+                    allowInsecureProtocol = true
+                    username project.hasProperty('username') ? project.getProperty('username') : 'admin'
+                    password project.hasProperty('password') ? project.getProperty('password') : 'admin'
+                }
+                url "http://localhost/repository/maven-${project.version.endsWith('-SNAPSHOT') ? 'snapshots' : 'releases'}/"
+            }
+        }
+    }
+}

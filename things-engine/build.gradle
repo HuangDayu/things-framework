@@ -1,0 +1,19 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    implementation "org.springframework:spring-web"
+    implementation "org.springframework:spring-webflux"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-cache"
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
+    implementation "org.springframework.boot:spring-boot-configuration-processor"
+    implementation 'com.alibaba.fastjson2:fastjson2:2.0.52'
+    implementation 'cn.hutool:hutool-core'
+    implementation 'cn.hutool:hutool-cache'
+    implementation "org.slf4j:slf4j-api:1.7.36"
+    implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
+    implementation 'org.reflections:reflections:0.9.12'
+    implementation 'com.alibaba.nacos:nacos-api'
+}
