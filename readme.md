@@ -29,6 +29,10 @@
 
 ![](document/images/things-engine.png)
 
+### 物模型网关核心逻辑图
+
+![](document/images/things-gateway.png)
+
 ### 快速集成
 
 #### 集成条件
