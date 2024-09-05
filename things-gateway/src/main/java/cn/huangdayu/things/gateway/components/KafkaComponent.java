@@ -1,5 +1,6 @@
 package cn.huangdayu.things.gateway.components;
 
+import cn.huangdayu.things.engine.message.JsonThingsMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.camel.CamelContext;
@@ -43,6 +44,11 @@ public class KafkaComponent extends AbstractComponent<ComponentProperty> {
         });
 
         camelContext.getComponent(property.getName()).start();
+
+    }
+
+    @Override
+    void output(JsonThingsMessage jsonThingsMessage) {
 
     }
 }

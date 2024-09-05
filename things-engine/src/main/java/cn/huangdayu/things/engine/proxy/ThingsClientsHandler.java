@@ -2,7 +2,7 @@ package cn.huangdayu.things.engine.proxy;
 
 import cn.huangdayu.things.engine.annotation.ThingsClient;
 import cn.huangdayu.things.engine.annotation.ThingsService;
-import cn.huangdayu.things.engine.configuration.ThingsApplicationContext;
+import cn.huangdayu.things.engine.context.ThingsContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,7 +27,7 @@ public class ThingsClientsHandler implements InvocationHandler {
 
     public static ThingsClientsProxyInvoke getThingsClientsProxyInvoke() {
         if (thingsClientsProxyInvoke == null) {
-            thingsClientsProxyInvoke = ThingsApplicationContext.getContext().getBean(ThingsClientsProxyInvoke.class);
+            thingsClientsProxyInvoke = ThingsContext.getBean(ThingsClientsProxyInvoke.class);
         }
         return thingsClientsProxyInvoke;
     }

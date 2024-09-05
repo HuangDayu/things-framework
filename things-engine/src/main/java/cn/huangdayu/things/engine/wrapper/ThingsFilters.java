@@ -1,7 +1,7 @@
 package cn.huangdayu.things.engine.wrapper;
 
-import cn.huangdayu.things.engine.annotation.ThingsFilter;
-import cn.huangdayu.things.engine.chaining.filters.Filter;
+import cn.huangdayu.things.engine.annotation.ThingsFiltering;
+import cn.huangdayu.things.engine.chaining.filters.ThingsFilter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class ThingsFilters {
 
+    private ThingsFiltering thingsFiltering;
     private ThingsFilter thingsFilter;
-    private Filter filter;
 
 }

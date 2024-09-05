@@ -2,7 +2,7 @@ package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.engine.annotation.*;
 import cn.huangdayu.things.engine.async.ThingsAsyncResponseEvent;
-import cn.huangdayu.things.engine.chaining.handler.Handler;
+import cn.huangdayu.things.engine.chaining.handler.ThingsHandler;
 import cn.huangdayu.things.engine.core.ThingsInvokerEngine;
 import cn.huangdayu.things.engine.core.ThingsObserverEngine;
 import cn.huangdayu.things.engine.core.ThingsPropertiesEngine;
@@ -41,7 +41,7 @@ import static cn.huangdayu.things.engine.common.ThingsUtils.*;
 @Slf4j
 @RequiredArgsConstructor
 @ThingsBean(order = 2)
-public class ThingsInvokerExecutor extends ThingsEngineBaseExecutor implements ThingsInvokerEngine, Handler {
+public class ThingsInvokerExecutor extends ThingsEngineBaseExecutor implements ThingsInvokerEngine, ThingsHandler {
 
     private final ThingsPropertiesEngine thingsPropertiesEngine;
     private final ThingsObserverEngine thingsObserverEngine;
@@ -172,17 +172,15 @@ public class ThingsInvokerExecutor extends ThingsEngineBaseExecutor implements T
 
     @SneakyThrows
     private JsonThingsMessage tryInvokeFunction(JsonThingsMessage request, ThingsFunction thingsFunction) {
-        JsonThingsMessage response = null;
-        Object[] args = args(request, thingsFunction);
-        Object result = thingsFunction.getMethod().invoke(thingsFunction.getBean(), args);
+        Object result = thingsFunction.getMethod().invoke(thingsFunction.getBean(), args(request, thingsFunction));
         if (result != null) {
             if (result instanceof JsonThingsMessage) {
-                response = (JsonThingsMessage) result;
+                return (JsonThingsMessage) result;
             } else {
-                response = request.success(result);
+                return request.success(result);
             }
         }
-        return response;
+        return null;
     }
 
     private Object[] args(JsonThingsMessage jsonThingsMessage, ThingsFunction thingsFunction) {

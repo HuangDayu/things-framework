@@ -1,0 +1,16 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    api project(path: ':things-engine')
+    api project(path: ':things-starter:things-spring-boot-starter')
+    implementation "org.springframework:spring-webmvc"
+    implementation "org.springframework:spring-webflux"
+    implementation 'com.alibaba.nacos:nacos-api'
+    implementation 'com.alibaba.fastjson2:fastjson2'
+    implementation 'cn.hutool:hutool-core'
+    implementation 'cn.hutool:hutool-cache'
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
+    implementation "org.springframework.boot:spring-boot-configuration-processor"
+}

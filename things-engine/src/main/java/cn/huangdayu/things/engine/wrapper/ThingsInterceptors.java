@@ -1,7 +1,7 @@
 package cn.huangdayu.things.engine.wrapper;
 
-import cn.huangdayu.things.engine.annotation.ThingsInterceptor;
-import cn.huangdayu.things.engine.chaining.interceptor.Interceptor;
+import cn.huangdayu.things.engine.annotation.ThingsIntercepting;
+import cn.huangdayu.things.engine.chaining.interceptor.ThingsInterceptor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class ThingsInterceptors {
 
+    private ThingsIntercepting thingsIntercepting;
     private ThingsInterceptor thingsInterceptor;
-    private Interceptor interceptor;
 
 }

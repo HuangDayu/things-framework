@@ -7,8 +7,8 @@ import cn.huangdayu.things.engine.annotation.ThingsProperty;
 import cn.huangdayu.things.engine.core.ThingsPropertiesEngine;
 import cn.huangdayu.things.engine.wrapper.ThingsProperties;
 
-import static cn.huangdayu.things.engine.core.executor.ThingsManageExecutor.DEVICE_PROPERTY_MAP;
-import static cn.huangdayu.things.engine.core.executor.ThingsManageExecutor.PRODUCT_PROPERTY_MAP;
+import static cn.huangdayu.things.engine.core.executor.ThingsContainerExecutor.DEVICE_PROPERTY_MAP;
+import static cn.huangdayu.things.engine.core.executor.ThingsContainerExecutor.PRODUCT_PROPERTY_MAP;
 
 /**
  * @author huangdayu
