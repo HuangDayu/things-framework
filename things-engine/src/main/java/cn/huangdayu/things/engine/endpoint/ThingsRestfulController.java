@@ -1,5 +1,6 @@
 package cn.huangdayu.things.engine.endpoint;
 
+import cn.huangdayu.things.engine.chaining.receiver.ThingsReceiver;
 import cn.huangdayu.things.engine.core.*;
 import cn.huangdayu.things.engine.message.JsonThingsMessage;
 import cn.huangdayu.things.engine.wrapper.ThingsInfo;
@@ -17,14 +18,14 @@ import java.util.Set;
 @RequestMapping
 public class ThingsRestfulController implements ThingsRestfulEndpoint {
 
-    private final ThingsChainingEngine thingsChainingEngine;
+    private final ThingsReceiver thingsReceiver;
     private final ThingsDocumentEngine thingsDocumentEngine;
     private final ThingsSessionEngine thingsSessionEngine;
     private final ThingsInstancesEngine thingsInstancesEngine;
 
     @Override
     public JsonThingsMessage handler(JsonThingsMessage message) {
-        return thingsChainingEngine.handler(message);
+        return thingsReceiver.doReceive(message);
     }
 
     public Set<ThingsInfo> getThings() {

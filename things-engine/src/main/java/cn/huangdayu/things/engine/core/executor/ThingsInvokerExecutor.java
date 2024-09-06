@@ -3,6 +3,7 @@ package cn.huangdayu.things.engine.core.executor;
 import cn.huangdayu.things.engine.annotation.*;
 import cn.huangdayu.things.engine.async.ThingsAsyncResponseEvent;
 import cn.huangdayu.things.engine.chaining.handler.ThingsHandler;
+import cn.huangdayu.things.engine.core.ThingsInstancesEngine;
 import cn.huangdayu.things.engine.core.ThingsInvokerEngine;
 import cn.huangdayu.things.engine.core.ThingsObserverEngine;
 import cn.huangdayu.things.engine.core.ThingsPropertiesEngine;
@@ -45,6 +46,7 @@ public class ThingsInvokerExecutor extends ThingsEngineBaseExecutor implements T
 
     private final ThingsPropertiesEngine thingsPropertiesEngine;
     private final ThingsObserverEngine thingsObserverEngine;
+    private final ThingsInstancesEngine thingsInstancesEngine;
 
     private final Map<String, Function<War, Object>> functionMap = Map.of(
             ThingsParam.class.getName(), this::argForThingsParam,
@@ -56,10 +58,12 @@ public class ThingsInvokerExecutor extends ThingsEngineBaseExecutor implements T
 
 
     @Override
-    public JsonThingsMessage doHandler(JsonThingsMessage jsonThingsMessage) {
-        if (jsonThingsMessage.isResponse()) {
-            throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Can't handler this message.", getUUID());
-        }
+    public boolean canHandle(JsonThingsMessage jsonThingsMessage) {
+        return !jsonThingsMessage.isResponse() && canHandleMessage(jsonThingsMessage);
+    }
+
+    @Override
+    public JsonThingsMessage doHandle(JsonThingsMessage jsonThingsMessage) {
         return execute(jsonThingsMessage);
     }
 
@@ -76,6 +80,12 @@ public class ThingsInvokerExecutor extends ThingsEngineBaseExecutor implements T
         } else {
             throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Can't handler this message.", getUUID());
         }
+    }
+
+    private boolean canHandleMessage(JsonThingsMessage jsonThingsMessage) {
+        BaseThingsMetadata baseMetadata = jsonThingsMessage.getBaseMetadata();
+        return thingsInstancesEngine.getThingsInstance().getProvides().contains(baseMetadata.getProductCode()) ||
+                thingsInstancesEngine.getThingsInstance().getConsumes().contains(baseMetadata.getProductCode());
     }
 
     private JsonThingsMessage invokeEventListener(JsonThingsMessage jsonThingsMessage) {

@@ -28,24 +28,24 @@ public class ThingsPublisherExecutor implements ThingsPublisherEngine {
     @PostConstruct
     public void init() {
         thingsObserverEngine.registerObserver(ThingsAsyncResponseEvent.class, engineEvent -> {
-            thingsChainingEngine.handler(engineEvent.getJsonThingsMessage());
+            thingsChainingEngine.send(engineEvent.getJsonThingsMessage());
         });
     }
 
     @Override
     public void publishEvent(ThingsEventMessage thingsEventMessage) {
-        THINGS_EXECUTOR.execute(() -> thingsChainingEngine.handler(thingsEventMessage));
+        THINGS_EXECUTOR.execute(() -> thingsChainingEngine.publish(thingsEventMessage));
     }
 
     @Override
     public JsonThingsMessage publishMessage(JsonThingsMessage jsonThingsMessage) {
-        return thingsChainingEngine.handler(jsonThingsMessage);
+        return thingsChainingEngine.send(jsonThingsMessage);
     }
 
     @Override
     public void publishAsyncMessage(AsyncThingsMessage asyncThingsMessage) {
         THINGS_EXECUTOR.execute(() -> {
-            thingsChainingEngine.handler(asyncThingsMessage);
+            thingsChainingEngine.send(asyncThingsMessage);
             ThingsAsyncManager.asyncRequest(asyncThingsMessage);
         });
     }

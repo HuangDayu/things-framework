@@ -30,7 +30,7 @@ public class ThingsRestfulClientFactory {
     private static final TimedCache<String, Object> CLIENT_CACHE = CacheUtil.newTimedCache(60 * 1000 * 5);
 
     public static <S> S createWebFluxClient(Class<S> serviceType, ThingsInstance thingsInstance) {
-        return createWebFluxClient(serviceType, thingsInstance.getServer());
+        return createWebFluxClient(serviceType, thingsInstance.getEndpointUri());
     }
 
     public static <S> S createWebFluxClient(Class<S> serviceType, String server) {
@@ -38,7 +38,7 @@ public class ThingsRestfulClientFactory {
     }
 
     public static <S> S createRestClient(Class<S> serviceType, ThingsInstance thingsInstance) {
-        return createRestClient(serviceType, thingsInstance.getServer());
+        return createRestClient(serviceType, thingsInstance.getEndpointUri());
     }
 
     public static <S> S createRestClient(Class<S> serviceType, String server) {

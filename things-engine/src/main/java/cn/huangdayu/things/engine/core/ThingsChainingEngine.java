@@ -8,10 +8,10 @@ import cn.huangdayu.things.engine.message.ThingsEventMessage;
  */
 public interface ThingsChainingEngine {
 
-    JsonThingsMessage handler(JsonThingsMessage jsonThingsMessage);
+    JsonThingsMessage send(JsonThingsMessage jsonThingsMessage);
 
 
-    void handler(ThingsEventMessage thingsEventMessage);
+    void publish(ThingsEventMessage thingsEventMessage);
 
 
 }

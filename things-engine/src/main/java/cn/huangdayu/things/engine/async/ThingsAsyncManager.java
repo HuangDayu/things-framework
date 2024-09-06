@@ -11,7 +11,7 @@ import cn.hutool.core.util.StrUtil;
  */
 public class ThingsAsyncManager {
 
-    public static final Cache<String, AsyncThingsMessage> THINGS_ASYNC_CACHE = CacheUtil.newTimedCache(20 * 1000);
+    private static final Cache<String, AsyncThingsMessage> THINGS_ASYNC_CACHE = CacheUtil.newTimedCache(20 * 1000);
 
 
     static {
@@ -40,5 +40,9 @@ public class ThingsAsyncManager {
             }
         }
         return false;
+    }
+
+    public static boolean hasAsync(JsonThingsMessage jsonThingsMessage) {
+        return THINGS_ASYNC_CACHE.get(jsonThingsMessage.getId()) != null;
     }
 }

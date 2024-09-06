@@ -18,12 +18,6 @@ public class ThingsEngineProperties {
     }
 
     /**
-     * 默认得消息上行协议
-     * 当消息没有接收者时，使用此协议进行上行发送
-     */
-    private String upstreamProtocol = "http";
-
-    /**
      * 其他服务列表
      */
     private Set<String> servers;

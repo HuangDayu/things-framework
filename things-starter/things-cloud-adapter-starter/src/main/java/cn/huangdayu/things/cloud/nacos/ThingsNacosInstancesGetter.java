@@ -4,6 +4,11 @@ import cn.huangdayu.things.cloud.configuration.NacosServerProperties;
 import cn.huangdayu.things.cloud.instances.ThingsInstancesGetter;
 import cn.huangdayu.things.cloud.instances.ThingsRestfulInstancesGetter;
 import cn.huangdayu.things.engine.annotation.ThingsBean;
+import cn.huangdayu.things.engine.async.ThingsInstancesChangeEvent;
+import cn.huangdayu.things.engine.core.ThingsInstancesEngine;
+import cn.huangdayu.things.engine.core.ThingsObserverEngine;
+import cn.huangdayu.things.engine.core.executor.ThingsInstancesExecutor;
+import cn.huangdayu.things.engine.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.hutool.core.util.ReflectUtil;
@@ -19,11 +24,6 @@ import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.alibaba.nacos.api.naming.pojo.ListView;
 import com.alibaba.nacos.api.naming.utils.NamingUtils;
-import cn.huangdayu.things.engine.async.ThingsInstancesChangeEvent;
-import cn.huangdayu.things.engine.core.ThingsInstancesEngine;
-import cn.huangdayu.things.engine.core.ThingsObserverEngine;
-import cn.huangdayu.things.engine.core.executor.ThingsInstancesExecutor;
-import cn.huangdayu.things.engine.wrapper.ThingsInstance;
 import lombok.SneakyThrows;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -67,7 +67,7 @@ public class ThingsNacosInstancesGetter extends ThingsRestfulInstancesGetter imp
         List<Instance> allInstances = namingService.selectInstances(nacosServerProperties.getService(), nacosServerProperties.getGroup(), true);
         for (Instance instance : allInstances) {
             ThingsInstance thingsInstance = thingsInstancesEngine.getThingsInstance();
-            if (thingsInstance.getServer().equals(instance.getIp() + ":" + instance.getPort())) {
+            if (thingsInstance.getEndpointUri().contains(instance.getIp() + ":" + instance.getPort())) {
                 instance.getMetadata().put(METADATA_INSTANCES, thingsInstance.getCode());
                 instance.getMetadata().put(METADATA_INSTANCES_SIZE, String.valueOf(ThingsInstancesExecutor.getInstancesSize()));
                 namingMaintainService.updateInstance(nacosServerProperties.getService(), nacosServerProperties.getGroup(), instance);

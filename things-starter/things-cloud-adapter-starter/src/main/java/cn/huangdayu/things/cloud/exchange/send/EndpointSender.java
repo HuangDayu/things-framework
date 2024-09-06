@@ -1,12 +1,11 @@
 package cn.huangdayu.things.cloud.exchange.send;
 
 import cn.huangdayu.things.engine.message.JsonThingsMessage;
-import cn.huangdayu.things.engine.wrapper.ThingsInstance;
 
 /**
  * @author huangdayu
  */
-public interface ThingsMessageSender {
+public interface EndpointSender {
 
     /**
      * 支持的服务类型
@@ -14,15 +13,15 @@ public interface ThingsMessageSender {
      * @return
      * @see cn.huangdayu.things.engine.common.ThingsConstants.Protocol
      */
-    String getProtocol();
+    String endpointProtocol();
 
     /**
      * 发送消息
      *
-     * @param thingsInstance
+     * @param endpointUri
      * @param message
      * @return
      */
-    JsonThingsMessage handler(ThingsInstance thingsInstance, JsonThingsMessage message);
+    JsonThingsMessage handler(String endpointUri, JsonThingsMessage message);
 
 }

@@ -7,7 +7,20 @@ import cn.huangdayu.things.engine.message.JsonThingsMessage;
  */
 public interface ThingsHandler {
 
+    /**
+     * 是否能处理这条消息
+     *
+     * @param jsonThingsMessage
+     * @return
+     */
+    boolean canHandle(JsonThingsMessage jsonThingsMessage);
 
-    JsonThingsMessage doHandler(JsonThingsMessage jsonThingsMessage);
+    /**
+     * 处理消息
+     *
+     * @param jsonThingsMessage
+     * @return
+     */
+    JsonThingsMessage doHandle(JsonThingsMessage jsonThingsMessage);
 
 }

@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static cn.huangdayu.things.engine.async.ThreadPoolFactory.THINGS_EXECUTOR;
 import static cn.huangdayu.things.engine.common.ThingsConstants.ErrorCodes.BAD_REQUEST;
 import static cn.huangdayu.things.engine.common.ThingsConstants.Methods.*;
 import static cn.huangdayu.things.engine.common.ThingsConstants.THINGS_WILDCARD;
@@ -46,21 +47,28 @@ public class ThingsChainingExecutor implements ThingsChainingEngine, ThingsRecei
     private final Map<String, ThingsSender> senderMap;
 
     @Override
-    public JsonThingsMessage doReceive(JsonThingsMessage message) {
-        return handler(message);
-    }
-
-    @Override
-    public JsonThingsMessage handler(JsonThingsMessage jsonThingsMessage) {
+    public JsonThingsMessage doReceive(JsonThingsMessage jsonThingsMessage) {
         requestInterceptor(jsonThingsMessage);
-        JsonThingsMessage response = messageHandler(jsonThingsMessage);
+        JsonThingsMessage response = messageHandler(false, jsonThingsMessage);
         responseInterceptor(response);
         filter(jsonThingsMessage, response);
         return response;
     }
 
     @Override
-    public void handler(ThingsEventMessage thingsEventMessage) {
+    public JsonThingsMessage send(JsonThingsMessage jsonThingsMessage) {
+        requestInterceptor(jsonThingsMessage);
+        JsonThingsMessage response = messageHandler(true, jsonThingsMessage);
+        if (response == null) {
+            response = messageSender(jsonThingsMessage);
+        }
+        responseInterceptor(response);
+        filter(jsonThingsMessage, response);
+        return response;
+    }
+
+    @Override
+    public void publish(ThingsEventMessage thingsEventMessage) {
         JsonThingsMessage jsonThingsMessage = covertEventMessage(thingsEventMessage);
         requestInterceptor(jsonThingsMessage);
         eventHandler(jsonThingsMessage);
@@ -69,42 +77,33 @@ public class ThingsChainingExecutor implements ThingsChainingEngine, ThingsRecei
         filter(jsonThingsMessage, response);
     }
 
-    private JsonThingsMessage messageHandler(JsonThingsMessage jsonThingsMessage) {
+    private JsonThingsMessage messageHandler(boolean send, JsonThingsMessage jsonThingsMessage) {
         for (ThingsHandler thingsHandler : handlerMap.values()) {
-            try {
-                return thingsHandler.doHandler(jsonThingsMessage);
-            } catch (Exception e) {
-                log.warn("Things handler [{}] message [{}] exception: {}",
-                        thingsHandler.getClass().getSimpleName(), jsonThingsMessage.getId(), e.getMessage());
+            if (thingsHandler.canHandle(jsonThingsMessage)) {
+                return thingsHandler.doHandle(jsonThingsMessage);
             }
         }
+        if (!send) {
+            throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Handler the message failed.", getUUID());
+        }
+        return messageSender(jsonThingsMessage);
+    }
+
+    private JsonThingsMessage messageSender(JsonThingsMessage jsonThingsMessage) {
         for (ThingsSender thingsSender : senderMap.values()) {
-            try {
+            if (thingsSender.canSend(jsonThingsMessage)) {
                 return thingsSender.doSend(jsonThingsMessage);
-            } catch (Exception e) {
-                log.warn("Things sender [{}] message [{}] exception: {}",
-                        thingsSender.getClass().getSimpleName(), jsonThingsMessage.getId(), e.getMessage());
             }
         }
-        throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Things can not handler message.", getUUID());
+        throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Send the message failed.", getUUID());
     }
 
     private void eventHandler(JsonThingsMessage jsonThingsMessage) {
         for (ThingsHandler thingsHandler : handlerMap.values()) {
-            try {
-                thingsHandler.doHandler(jsonThingsMessage);
-            } catch (Exception e) {
-                log.warn("Things handler [{}] event [{}] exception: {}",
-                        thingsHandler.getClass().getSimpleName(), jsonThingsMessage.getId(), e.getMessage());
-            }
+            THINGS_EXECUTOR.execute(() -> thingsHandler.doHandle(jsonThingsMessage));
         }
         for (ThingsSender thingsSender : senderMap.values()) {
-            try {
-                thingsSender.doSend(jsonThingsMessage);
-            } catch (Exception e) {
-                log.warn("Things sender [{}] event [{}] exception: {}",
-                        thingsSender.getClass().getSimpleName(), jsonThingsMessage.getId(), e.getMessage());
-            }
+            THINGS_EXECUTOR.execute(() -> thingsSender.doPublish(jsonThingsMessage));
         }
     }
 

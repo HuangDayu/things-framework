@@ -73,13 +73,16 @@ public class ThingsInstancesExecutor implements ThingsInstancesEngine {
     private ThingsInstance createThingsInstance() {
         ThingsInstance thingsInstance = new ThingsInstance();
         thingsInstance.setName(firstNonBlank(thingsEngineProperties.getInstance().getName(), environment.getProperty("spring.application.name")));
-        thingsInstance.setProtocol(firstNonBlank(thingsEngineProperties.getInstance().getProtocol(), ThingsConstants.Protocol.HTTP));
-        thingsInstance.setServer(firstNonBlank(thingsEngineProperties.getInstance().getServer(), getIp() + ":" + environment.getProperty("server.port")));
+        thingsInstance.setEndpointUri(firstNonBlank(thingsEngineProperties.getInstance().getEndpointUri(), getEndpointUri()));
         thingsInstance.setProvides(THINGS_SERVICES_TABLE.columnKeySet());
         thingsInstance.setConsumes(THINGS_EVENTS_LISTENER_TABLE.columnKeySet());
         thingsInstance.setSubscribes(THINGS_EVENTS_LISTENER_TABLE.cellSet()
                 .stream().map(cell -> cell.getColumnKey() + THINGS_SEPARATOR + cell.getRowKey()).collect(Collectors.toSet()));
         return thingsInstance;
+    }
+
+    private String getEndpointUri() {
+        return ThingsConstants.Protocol.REST + "://" + getIp() + ":" + environment.getProperty("server.port");
     }
 
     @Override

@@ -30,7 +30,7 @@ public abstract class ThingsRestfulInstancesGetter {
         ThingsInstance thingsInstance = thingsInstancesEngine.getThingsInstance();
         for (String server : servers) {
             try {
-                if (server.equals(thingsInstance.getServer())) {
+                if (server.equals(thingsInstance.getEndpointUri())) {
                     continue;
                 }
                 thingsInstances.add(createRestClient(ThingsRestfulEndpoint.class, server).exchangeInstance(thingsInstance));

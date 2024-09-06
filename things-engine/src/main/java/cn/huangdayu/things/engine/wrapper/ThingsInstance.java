@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -28,13 +29,6 @@ public class ThingsInstance {
      */
     private String name;
 
-    /**
-     * 协议
-     *
-     * @see cn.huangdayu.things.engine.common.ThingsConstants.Protocol
-     */
-    private String protocol;
-
 
     /**
      * 有会话的
@@ -42,32 +36,42 @@ public class ThingsInstance {
     private int sessions;
 
     /**
-     * 服务地址
+     * 是否使用代理
      */
-    private String server;
+    private boolean useBroker;
+
+    /**
+     * 上游服务端点信息，没有则为空
+     */
+    private String brokerUri;
+
+    /**
+     * 本实例端点信息
+     */
+    private String endpointUri;
 
 
     /**
      * 提供的物模型的productCode
      */
-    private Set<String> provides;
+    private Set<String> provides = new LinkedHashSet<>();
 
 
     /**
      * 消费的物模型的productCode
      * 消费的服务，订阅的事件
      */
-    private Set<String> consumes;
+    private Set<String> consumes = new LinkedHashSet<>();
 
 
     /**
      * 订阅列表
      */
-    private Set<String> subscribes;
+    private Set<String> subscribes = new LinkedHashSet<>();
 
 
     public String getCode() {
-        return name + THINGS_SEPARATOR + protocol + THINGS_SEPARATOR + server;
+        return name + THINGS_SEPARATOR + endpointUri;
     }
 
     @Override
@@ -93,8 +97,7 @@ public class ThingsInstance {
         if (StrUtil.isNotBlank(value)) {
             String[] split = value.split(THINGS_SEPARATOR);
             thingsInstance.name = split[0];
-            thingsInstance.protocol = split[1];
-            thingsInstance.server = split[2];
+            thingsInstance.endpointUri = split[1];
         }
         return thingsInstance;
     }
