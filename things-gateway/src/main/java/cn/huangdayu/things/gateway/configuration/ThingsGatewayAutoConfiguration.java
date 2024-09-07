@@ -1,4 +1,4 @@
-package cn.huangdayu.things.gateway.config;
+package cn.huangdayu.things.gateway.configuration;
 
 import org.springframework.context.annotation.ComponentScan;
 

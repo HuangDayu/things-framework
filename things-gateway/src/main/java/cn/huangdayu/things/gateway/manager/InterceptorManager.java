@@ -1,6 +1,7 @@
-package cn.huangdayu.things.gateway.filter;
+package cn.huangdayu.things.gateway.manager;
 
 import cn.huangdayu.things.engine.message.JsonThingsMessage;
+import cn.huangdayu.things.gateway.interceptor.ThingsMessageInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -11,13 +12,13 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Component
-public class ThingsMessageFilterFactory {
+public class InterceptorManager {
 
-    private final Map<String, ThingsMessageFilter> thingsMessageFilterMap;
+    private final Map<String, ThingsMessageInterceptor> thingsMessageFilterMap;
 
 
     boolean handler(JsonThingsMessage jsonThingsMessage) {
-        for (Map.Entry<String, ThingsMessageFilter> entry : thingsMessageFilterMap.entrySet()) {
+        for (Map.Entry<String, ThingsMessageInterceptor> entry : thingsMessageFilterMap.entrySet()) {
             if (!entry.getValue().handler(jsonThingsMessage)) {
                 return false;
             }

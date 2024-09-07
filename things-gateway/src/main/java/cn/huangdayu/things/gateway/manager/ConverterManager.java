@@ -1,5 +1,6 @@
-package cn.huangdayu.things.gateway.converter;
+package cn.huangdayu.things.gateway.manager;
 
+import cn.huangdayu.things.gateway.converter.AbstractTypeConverter;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.CamelContext;
@@ -12,7 +13,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Component
-public class TypeConverterFactory {
+public class ConverterManager {
 
     private final CamelContext camelContext;
     private final Map<String, AbstractTypeConverter> typeConverterMap;

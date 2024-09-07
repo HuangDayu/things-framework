@@ -1,13 +1,13 @@
-package cn.huangdayu.things.gateway.filter;
+package cn.huangdayu.things.gateway.interceptor;
 
+import cn.huangdayu.things.engine.annotation.ThingsBean;
 import cn.huangdayu.things.engine.message.JsonThingsMessage;
-import org.springframework.stereotype.Component;
 
 /**
  * @author huangdayu
  */
-@Component
-public class AuthThingsMessageFilter implements ThingsMessageFilter {
+@ThingsBean
+public class SessionThingsMessageInterceptor implements ThingsMessageInterceptor {
     @Override
     public boolean handler(JsonThingsMessage jsonThingsMessage) {
         return true;

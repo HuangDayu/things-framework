@@ -7,39 +7,33 @@ import lombok.SneakyThrows;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.component.ComponentsBuilderFactory;
+import org.apache.camel.component.amqp.AMQPComponent;
 
 /**
  * @author huangdayu
  */
 @ThingsBean
 @RequiredArgsConstructor
-public class MqttComponent extends AbstractComponent<ComponentProperties> {
-
+public class AmqpComponent extends AbstractComponent<ComponentProperties> {
     private final CamelContext camelContext;
     private Component component;
 
-    @SneakyThrows
+
     @Override
+    @SneakyThrows
     void start(ComponentProperties property) {
 
-        ComponentsBuilderFactory.pahoMqtt5()
-                .brokerUrl(property.getServer())
-                .userName(property.getUserName())
-                .password(property.getPassword())
-                .clientId(property.getClientId())
-                .automaticReconnect(true)
-                .qos(2)
-                .keepAliveInterval(60)
-                .register(camelContext, property.getName());
+        AMQPComponent amqpComponent = AMQPComponent.amqpComponent(property.getServer(), property.getUserName(), property.getPassword());
 
         camelContext.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() {
+            public void configure() throws Exception {
                 from(property.getName() + ":" + property.getTopic())
                         .to(TARGET_ROUTER);
             }
         });
+
+        camelContext.addComponent(property.getName(), amqpComponent);
 
         component = camelContext.getComponent(property.getName());
         component.start();
@@ -54,5 +48,4 @@ public class MqttComponent extends AbstractComponent<ComponentProperties> {
     void output(JsonThingsMessage jsonThingsMessage) {
 
     }
-
 }

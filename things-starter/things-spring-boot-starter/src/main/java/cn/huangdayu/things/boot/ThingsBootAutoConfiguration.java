@@ -1,4 +1,4 @@
-package cn.huangdayu.things.boot.configuration;
+package cn.huangdayu.things.boot;
 
 import cn.huangdayu.things.engine.async.ThreadPoolFactory;
 import cn.huangdayu.things.engine.configuration.ThingsEngineProperties;

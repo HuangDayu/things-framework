@@ -1,9 +1,9 @@
-package cn.huangdayu.things.engine.infrastructure;
+package cn.huangdayu.things.boot;
 
 import cn.huangdayu.things.engine.annotation.ThingsBean;
+import cn.huangdayu.things.engine.infrastructure.CacheService;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.stereotype.Component;
 
 /**
  * @author huangdayu

@@ -1,33 +1,33 @@
 package cn.huangdayu.things.gateway.components;
 
+import cn.huangdayu.things.engine.annotation.ThingsBean;
 import cn.huangdayu.things.engine.message.JsonThingsMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.component.ComponentsBuilderFactory;
-import org.springframework.stereotype.Component;
 
 /**
  * @author huangdayu
  */
 @RequiredArgsConstructor
-@Component
-public class KafkaComponent extends AbstractComponent<ComponentProperty> {
+@ThingsBean
+public class KafkaComponent extends AbstractComponent<ComponentProperties> {
 
     private final CamelContext camelContext;
+    private Component component;
 
 
     @Override
     @SneakyThrows
-    void start(ComponentProperty property) {
-        org.apache.camel.Component component = camelContext.hasComponent(property.getName());
-        if (component != null) {
-            return;
-        }
+    void start(ComponentProperties property) {
+
 
         ComponentsBuilderFactory.kafka()
                 .brokers(property.getServer())
+                .clientId(property.getClientId())
                 .groupId(property.getGroupId())
                 .autoCommitEnable(true)
                 .autoCommitIntervalMs(1000)
@@ -36,15 +36,18 @@ public class KafkaComponent extends AbstractComponent<ComponentProperty> {
         camelContext.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("kafka:things-gateway")
-                        .routeId("kafka-things-gateway-route")
-                        .log("Received message: ${body}")
-                        .to("direct:things-message-router");
+                from(property.getName() + ":" + property.getTopic())
+                        .to(TARGET_ROUTER);
             }
         });
 
-        camelContext.getComponent(property.getName()).start();
+        component = camelContext.getComponent(property.getName());
+        component.start();
+    }
 
+    @Override
+    void stop() {
+        component.stop();
     }
 
     @Override

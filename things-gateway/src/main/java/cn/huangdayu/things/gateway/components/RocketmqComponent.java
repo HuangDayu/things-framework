@@ -14,28 +14,27 @@ import org.apache.camel.builder.component.ComponentsBuilderFactory;
  */
 @ThingsBean
 @RequiredArgsConstructor
-public class MqttComponent extends AbstractComponent<ComponentProperties> {
+public class RocketmqComponent extends AbstractComponent<ComponentProperties> {
+
 
     private final CamelContext camelContext;
     private Component component;
 
-    @SneakyThrows
     @Override
+    @SneakyThrows
     void start(ComponentProperties property) {
 
-        ComponentsBuilderFactory.pahoMqtt5()
-                .brokerUrl(property.getServer())
-                .userName(property.getUserName())
-                .password(property.getPassword())
-                .clientId(property.getClientId())
-                .automaticReconnect(true)
-                .qos(2)
-                .keepAliveInterval(60)
+
+        ComponentsBuilderFactory.rocketmq()
+                .namesrvAddr(property.getServer())
+                .accessKey(property.getUserName())
+                .secretKey(property.getPassword())
+                .consumerGroup(property.getGroupId())
                 .register(camelContext, property.getName());
 
         camelContext.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() {
+            public void configure() throws Exception {
                 from(property.getName() + ":" + property.getTopic())
                         .to(TARGET_ROUTER);
             }
@@ -54,5 +53,4 @@ public class MqttComponent extends AbstractComponent<ComponentProperties> {
     void output(JsonThingsMessage jsonThingsMessage) {
 
     }
-
 }
