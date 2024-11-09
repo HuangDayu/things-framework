@@ -1,6 +1,5 @@
 package cn.huangdayu.things.engine.core;
 
-import cn.huangdayu.things.api.publisher.ThingsPublisher;
 import cn.huangdayu.things.common.message.AsyncThingsMessage;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.message.ThingsEventMessage;
@@ -8,7 +7,7 @@ import cn.huangdayu.things.common.message.ThingsEventMessage;
 /**
  * @author huangdayu
  */
-public interface ThingsPublisherEngine extends ThingsPublisher {
+public interface ThingsPublisherEngine {
 
     /**
      * 发布事件

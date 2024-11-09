@@ -6,6 +6,7 @@ dependencies {
     api project(path: ':things-api')
     api project(path: ':things-common')
     implementation 'cn.hutool:hutool-core'
+    implementation 'cn.hutool:hutool-cache'
 
     implementation "org.springframework:spring-web"
     implementation "org.springframework:spring-context"

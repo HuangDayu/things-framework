@@ -1,20 +1,23 @@
 package cn.huangdayu.things.client.proxy;
 
-import cn.huangdayu.things.api.publisher.ThingsPublisher;
+import cn.huangdayu.things.api.sender.ThingsSender;
 import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.constants.ThingsConstants;
+import cn.huangdayu.things.common.exception.ThingsException;
+import cn.huangdayu.things.common.message.AbstractThingsMessage;
+import cn.huangdayu.things.common.message.BaseThingsMessage;
+import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.utils.ThingsUtils;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import cn.huangdayu.things.common.message.AbstractThingsMessage;
-import cn.huangdayu.things.common.message.BaseThingsMessage;
-import cn.huangdayu.things.common.message.JsonThingsMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+
+import static cn.huangdayu.things.common.utils.ThingsUtils.getUUID;
 
 /**
  * @author huangdayu
@@ -24,7 +27,7 @@ import java.lang.reflect.Parameter;
 @Slf4j
 public class ThingsClientsProxyInvoke {
 
-    private final ThingsPublisher thingsPublisher;
+    private final ThingsSender thingsSender;
 
     public Object invokeService(ThingsClient thingsClient, ThingsService thingsService, Method method, Object[] args) {
         return invoke(method, buildThingsMessage(thingsClient, thingsService, method, args));
@@ -32,7 +35,10 @@ public class ThingsClientsProxyInvoke {
 
 
     private Object invoke(Method method, JsonThingsMessage request) {
-        JsonThingsMessage response = thingsPublisher.publishMessage(request);
+        if (!thingsSender.canSend(request)) {
+            throw new ThingsException(request, ThingsConstants.ErrorCodes.BAD_REQUEST, "Send the message failed.", getUUID());
+        }
+        JsonThingsMessage response = thingsSender.doSend(request);
         if (response == null) {
             return null;
         }
