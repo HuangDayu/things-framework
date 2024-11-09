@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import static cn.huangdayu.things.engine.common.ThingsConstants.THINGS_SEPARATOR;
+import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_SEPARATOR;
 
 /**
  * @author huangdayu

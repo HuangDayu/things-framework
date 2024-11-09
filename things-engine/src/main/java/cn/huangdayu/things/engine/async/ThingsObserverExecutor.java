@@ -1,8 +1,7 @@
 package cn.huangdayu.things.engine.async;
 
-import cn.huangdayu.things.engine.annotation.ThingsBean;
+import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.engine.core.ThingsObserverEngine;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;

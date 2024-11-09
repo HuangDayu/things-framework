@@ -1,10 +1,10 @@
 package cn.huangdayu.things.cloud.exchange;
 
-import cn.huangdayu.things.engine.annotation.ThingsBean;
-import cn.huangdayu.things.engine.common.ThingsConstants;
+import cn.huangdayu.things.common.annotation.ThingsBean;
+import cn.huangdayu.things.common.constants.ThingsConstants;
 import cn.huangdayu.things.engine.core.ThingsInstancesEngine;
-import cn.huangdayu.things.engine.message.BaseThingsMetadata;
-import cn.huangdayu.things.engine.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.BaseThingsMetadata;
+import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.engine.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;

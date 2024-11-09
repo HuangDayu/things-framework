@@ -1,14 +1,14 @@
 package cn.huangdayu.things.engine.core.executor;
 
-import cn.huangdayu.things.engine.annotation.ThingsBean;
+import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.engine.async.ThingsAsyncManager;
 import cn.huangdayu.things.engine.async.ThingsAsyncResponseEvent;
 import cn.huangdayu.things.engine.core.ThingsChainingEngine;
 import cn.huangdayu.things.engine.core.ThingsObserverEngine;
 import cn.huangdayu.things.engine.core.ThingsPublisherEngine;
-import cn.huangdayu.things.engine.message.AsyncThingsMessage;
-import cn.huangdayu.things.engine.message.JsonThingsMessage;
-import cn.huangdayu.things.engine.message.ThingsEventMessage;
+import cn.huangdayu.things.common.message.AsyncThingsMessage;
+import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.ThingsEventMessage;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

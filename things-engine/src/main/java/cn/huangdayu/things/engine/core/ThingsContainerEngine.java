@@ -1,6 +1,6 @@
 package cn.huangdayu.things.engine.core;
 
-import cn.huangdayu.things.engine.wrapper.ThingsContainer;
+import cn.huangdayu.things.engine.container.ThingsContainer;
 
 /**
  * 物模型注册引擎

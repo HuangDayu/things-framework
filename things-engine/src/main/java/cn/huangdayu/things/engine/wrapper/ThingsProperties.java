@@ -1,6 +1,7 @@
 package cn.huangdayu.things.engine.wrapper;
 
-import cn.huangdayu.things.engine.annotation.ThingsProperty;
+import cn.huangdayu.things.common.annotation.ThingsProperty;
+import cn.huangdayu.things.engine.container.ThingsContainer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

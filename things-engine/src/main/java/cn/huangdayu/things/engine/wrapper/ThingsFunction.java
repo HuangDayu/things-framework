@@ -1,5 +1,6 @@
 package cn.huangdayu.things.engine.wrapper;
 
+import cn.huangdayu.things.engine.container.ThingsContainer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

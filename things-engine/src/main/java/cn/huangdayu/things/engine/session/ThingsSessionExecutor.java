@@ -1,6 +1,6 @@
 package cn.huangdayu.things.engine.session;
 
-import cn.huangdayu.things.engine.annotation.ThingsBean;
+import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.engine.async.ThingsSessionStatusEvent;
 import cn.huangdayu.things.engine.core.ThingsObserverEngine;
 import cn.huangdayu.things.engine.core.ThingsSessionEngine;
@@ -9,7 +9,7 @@ import cn.huangdayu.things.engine.wrapper.ThingsSession;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
-import static cn.huangdayu.things.engine.common.ThingsConstants.THINGS_SEPARATOR;
+import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_SEPARATOR;
 
 /**
  * @author huangdayu

@@ -1,10 +1,10 @@
 package cn.huangdayu.things.engine.async;
 
-import cn.huangdayu.things.engine.annotation.ThingsBean;
+import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.engine.chaining.handler.ThingsHandler;
-import cn.huangdayu.things.engine.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.JsonThingsMessage;
 
-import static cn.huangdayu.things.engine.common.ThingsUtils.getUUID;
+import static cn.huangdayu.things.common.utils.ThingsUtils.getUUID;
 
 /**
  * @author huangdayu

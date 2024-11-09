@@ -1,7 +1,7 @@
 package cn.huangdayu.things.engine.wrapper;
 
-import cn.huangdayu.things.engine.annotation.ThingsIntercepting;
-import cn.huangdayu.things.engine.message.JsonThingsMessage;
+import cn.huangdayu.things.common.annotation.ThingsIntercepting;
+import cn.huangdayu.things.common.message.JsonThingsMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;

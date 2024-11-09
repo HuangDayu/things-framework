@@ -1,6 +1,6 @@
 package cn.huangdayu.things.engine.core.executor;
 
-import cn.huangdayu.things.engine.annotation.*;
+import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.engine.wrapper.*;
 import cn.hutool.cache.Cache;
 import cn.hutool.cache.CacheUtil;
@@ -14,7 +14,7 @@ import cn.huangdayu.things.engine.async.ThingsEngineEvent;
 import cn.huangdayu.things.engine.async.ThingsContainerUpdateEvent;
 import cn.huangdayu.things.engine.core.ThingsDocumentEngine;
 import cn.huangdayu.things.engine.core.ThingsObserverEngine;
-import cn.huangdayu.things.engine.message.BaseThingsMessage;
+import cn.huangdayu.things.common.message.BaseThingsMessage;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +25,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static cn.huangdayu.things.engine.common.ThingsUtils.copyAnnotationValues;
-import static cn.huangdayu.things.engine.common.ThingsUtils.getParameterType;
+import static cn.huangdayu.things.common.utils.ThingsUtils.copyAnnotationValues;
+import static cn.huangdayu.things.common.utils.ThingsUtils.getParameterType;
 
 /**
  * @author huangdayu

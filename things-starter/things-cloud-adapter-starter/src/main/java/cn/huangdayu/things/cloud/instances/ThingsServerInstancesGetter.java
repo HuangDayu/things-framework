@@ -1,6 +1,6 @@
 package cn.huangdayu.things.cloud.instances;
 
-import cn.huangdayu.things.engine.annotation.ThingsBean;
+import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.engine.configuration.ThingsEngineProperties;
 import cn.huangdayu.things.engine.core.ThingsInstancesEngine;
 import cn.huangdayu.things.engine.wrapper.ThingsInstance;

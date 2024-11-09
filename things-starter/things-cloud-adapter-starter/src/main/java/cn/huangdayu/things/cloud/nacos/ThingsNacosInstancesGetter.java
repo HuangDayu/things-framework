@@ -3,7 +3,7 @@ package cn.huangdayu.things.cloud.nacos;
 import cn.huangdayu.things.cloud.configuration.NacosServerProperties;
 import cn.huangdayu.things.cloud.instances.ThingsInstancesGetter;
 import cn.huangdayu.things.cloud.instances.ThingsRestfulInstancesGetter;
-import cn.huangdayu.things.engine.annotation.ThingsBean;
+import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.engine.async.ThingsInstancesChangeEvent;
 import cn.huangdayu.things.engine.core.ThingsInstancesEngine;
 import cn.huangdayu.things.engine.core.ThingsObserverEngine;

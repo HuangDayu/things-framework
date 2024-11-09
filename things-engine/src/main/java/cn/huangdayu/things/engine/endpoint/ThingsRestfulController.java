@@ -1,8 +1,8 @@
 package cn.huangdayu.things.engine.endpoint;
 
-import cn.huangdayu.things.engine.chaining.receiver.ThingsReceiver;
+import cn.huangdayu.things.api.receiver.ThingsReceiver;
 import cn.huangdayu.things.engine.core.*;
-import cn.huangdayu.things.engine.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.engine.wrapper.ThingsInfo;
 import cn.huangdayu.things.engine.wrapper.ThingsInstance;
 import cn.huangdayu.things.engine.wrapper.ThingsSession;

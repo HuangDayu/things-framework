@@ -1,9 +1,9 @@
 package cn.huangdayu.things.engine.core.executor;
 
-import cn.huangdayu.things.engine.annotation.ThingsBean;
+import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
-import cn.huangdayu.things.engine.annotation.ThingsProperty;
+import cn.huangdayu.things.common.annotation.ThingsProperty;
 import cn.huangdayu.things.engine.core.ThingsPropertiesEngine;
 import cn.huangdayu.things.engine.wrapper.ThingsProperties;
 

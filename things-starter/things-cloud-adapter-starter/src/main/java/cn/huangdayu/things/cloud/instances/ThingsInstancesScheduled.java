@@ -1,6 +1,6 @@
 package cn.huangdayu.things.cloud.instances;
 
-import cn.huangdayu.things.engine.annotation.ThingsBean;
+import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.huangdayu.things.engine.core.ThingsInstancesEngine;

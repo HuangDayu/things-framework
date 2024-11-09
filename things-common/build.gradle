@@ -1,0 +1,10 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    implementation "org.springframework:spring-context"
+    implementation 'cn.hutool:hutool-core'
+    implementation 'com.alibaba.fastjson2:fastjson2'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations'
+}

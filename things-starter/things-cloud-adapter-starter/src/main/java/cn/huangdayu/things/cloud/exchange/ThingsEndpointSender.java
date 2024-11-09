@@ -1,14 +1,14 @@
 package cn.huangdayu.things.cloud.exchange;
 
 import cn.huangdayu.things.cloud.exchange.send.EndpointSender;
-import cn.huangdayu.things.engine.annotation.ThingsBean;
+import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.engine.async.ThingsCacheMessageEvent;
-import cn.huangdayu.things.engine.chaining.sender.ThingsSender;
+import cn.huangdayu.things.api.sender.ThingsSender;
 import cn.huangdayu.things.engine.configuration.ThingsEngineProperties;
 import cn.huangdayu.things.engine.core.ThingsInstancesEngine;
 import cn.huangdayu.things.engine.core.ThingsObserverEngine;
-import cn.huangdayu.things.engine.exception.ThingsException;
-import cn.huangdayu.things.engine.message.JsonThingsMessage;
+import cn.huangdayu.things.common.exception.ThingsException;
+import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import jakarta.annotation.PostConstruct;
@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static cn.huangdayu.things.engine.common.ThingsConstants.ErrorCodes.BAD_REQUEST;
-import static cn.huangdayu.things.engine.common.ThingsUtils.getUUID;
+import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.BAD_REQUEST;
+import static cn.huangdayu.things.common.utils.ThingsUtils.getUUID;
 
 /**
  * @author huangdayu

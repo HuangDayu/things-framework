@@ -1,6 +1,6 @@
 //package cn.huangdayu.things.engine.test;
 //
-//import cn.huangdayu.things.engine.annotation.ThingsBean;
+//import cn.huangdayu.things.common.annotation.ThingsBean;
 //import cn.hutool.core.builder.Builder;
 //import cn.hutool.core.map.multi.RowKeyTable;
 //import cn.hutool.core.map.multi.Table;

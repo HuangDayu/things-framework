@@ -1,7 +1,7 @@
 package cn.huangdayu.things.engine.async;
 
-import cn.huangdayu.things.engine.message.AsyncThingsMessage;
-import cn.huangdayu.things.engine.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.AsyncThingsMessage;
+import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.hutool.cache.Cache;
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.core.util.StrUtil;

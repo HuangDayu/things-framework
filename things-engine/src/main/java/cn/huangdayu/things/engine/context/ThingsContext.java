@@ -1,8 +1,8 @@
 package cn.huangdayu.things.engine.context;
 
-import cn.huangdayu.things.engine.annotation.ThingsBean;
+import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.engine.core.ThingsContainerEngine;
-import cn.huangdayu.things.engine.wrapper.ThingsContainer;
+import cn.huangdayu.things.engine.container.ThingsContainer;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;

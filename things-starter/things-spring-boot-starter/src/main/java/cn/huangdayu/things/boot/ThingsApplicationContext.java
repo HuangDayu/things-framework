@@ -1,8 +1,8 @@
 package cn.huangdayu.things.boot;
 
-import cn.huangdayu.things.engine.annotation.ThingsBean;
+import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.engine.context.ThingsContext;
-import cn.huangdayu.things.engine.wrapper.ThingsContainer;
+import cn.huangdayu.things.engine.container.ThingsContainer;
 import cn.hutool.core.util.StrUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import org.springframework.context.ApplicationContextAware;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 
-import static cn.huangdayu.things.engine.common.ThingsUtils.getUUID;
+import static cn.huangdayu.things.common.utils.ThingsUtils.getUUID;
 
 /**
  * @author huangdayu

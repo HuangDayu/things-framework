@@ -1,6 +1,6 @@
 package cn.huangdayu.things.engine.chaining.handler;
 
-import cn.huangdayu.things.engine.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.JsonThingsMessage;
 
 /**
  * @author huangdayu

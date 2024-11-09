@@ -1,7 +1,7 @@
 package cn.huangdayu.things.boot;
 
-import cn.huangdayu.things.engine.exception.ThingsException;
-import cn.huangdayu.things.engine.message.JsonThingsMessage;
+import cn.huangdayu.things.common.exception.ThingsException;
+import cn.huangdayu.things.common.message.JsonThingsMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import static cn.huangdayu.things.engine.common.ThingsUtils.getUUID;
+import static cn.huangdayu.things.common.utils.ThingsUtils.getUUID;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Slf4j

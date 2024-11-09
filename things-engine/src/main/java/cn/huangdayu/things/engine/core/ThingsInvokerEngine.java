@@ -1,6 +1,6 @@
 package cn.huangdayu.things.engine.core;
 
-import cn.huangdayu.things.engine.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.JsonThingsMessage;
 
 /**
  * 物模型执行引擎

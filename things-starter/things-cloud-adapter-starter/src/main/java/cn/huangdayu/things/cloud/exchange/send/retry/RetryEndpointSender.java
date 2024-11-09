@@ -1,10 +1,10 @@
 package cn.huangdayu.things.cloud.exchange.send.retry;
 
 import cn.huangdayu.things.cloud.exchange.send.EndpointSender;
-import cn.huangdayu.things.engine.annotation.ThingsBean;
+import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.engine.async.ThingsCacheMessageEvent;
 import cn.huangdayu.things.engine.core.ThingsObserverEngine;
-import cn.huangdayu.things.engine.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.hutool.cache.Cache;
 import cn.hutool.cache.CacheUtil;
 import jakarta.annotation.PostConstruct;
