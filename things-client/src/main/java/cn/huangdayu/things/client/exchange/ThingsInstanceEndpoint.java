@@ -1,4 +1,4 @@
-package cn.huangdayu.things.client;
+package cn.huangdayu.things.client.exchange;
 
 
 import cn.huangdayu.things.common.message.JsonThingsMessage;

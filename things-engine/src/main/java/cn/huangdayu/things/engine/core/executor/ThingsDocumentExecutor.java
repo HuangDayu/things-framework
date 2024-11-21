@@ -1,6 +1,11 @@
 package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.common.annotation.*;
+import cn.huangdayu.things.common.event.ThingsContainerUpdateEvent;
+import cn.huangdayu.things.common.event.ThingsEngineEvent;
+import cn.huangdayu.things.common.event.ThingsEventObserver;
+import cn.huangdayu.things.common.message.BaseThingsMessage;
+import cn.huangdayu.things.engine.core.ThingsDocumentEngine;
 import cn.huangdayu.things.engine.wrapper.*;
 import cn.hutool.cache.Cache;
 import cn.hutool.cache.CacheUtil;
@@ -10,11 +15,6 @@ import cn.hutool.core.lang.Filter;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.TypeUtil;
 import com.alibaba.fastjson2.JSONObject;
-import cn.huangdayu.things.engine.async.ThingsEngineEvent;
-import cn.huangdayu.things.engine.async.ThingsContainerUpdateEvent;
-import cn.huangdayu.things.engine.core.ThingsDocumentEngine;
-import cn.huangdayu.things.engine.core.ThingsObserverEngine;
-import cn.huangdayu.things.common.message.BaseThingsMessage;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.getParameterType;
 public class ThingsDocumentExecutor extends ThingsEngineBaseExecutor implements ThingsDocumentEngine {
 
     private static final String CACHE_KEY = "things_document_cache";
-    private final ThingsObserverEngine thingsObserverEngine;
+    private final ThingsEventObserver thingsEventObserver;
     private final Cache<String, Set<ThingsInfo>> CACHE = CacheUtil.newTimedCache(TimeUnit.MINUTES.toMillis(10L));
 
     /**
@@ -97,7 +97,7 @@ public class ThingsDocumentExecutor extends ThingsEngineBaseExecutor implements 
 
     @PostConstruct
     public void init() {
-        thingsObserverEngine.registerObserver(ThingsEngineEvent.class, engineEvent -> {
+        thingsEventObserver.registerObserver(ThingsEngineEvent.class, engineEvent -> {
             if (engineEvent instanceof ThingsContainerUpdateEvent) {
                 CACHE.remove(CACHE_KEY);
             }

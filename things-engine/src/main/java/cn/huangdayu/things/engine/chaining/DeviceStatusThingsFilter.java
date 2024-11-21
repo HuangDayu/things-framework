@@ -1,11 +1,11 @@
 package cn.huangdayu.things.engine.chaining;
 
+import cn.huangdayu.things.common.event.ThingsEventObserver;
+import cn.huangdayu.things.common.message.BaseThingsMetadata;
+import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.engine.async.ThingsSessionStatusEvent;
 import cn.huangdayu.things.engine.chaining.filters.ThingsFilter;
 import cn.huangdayu.things.engine.chaining.filters.ThingsFilterChain;
-import cn.huangdayu.things.engine.core.ThingsObserverEngine;
-import cn.huangdayu.things.common.message.BaseThingsMetadata;
-import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.engine.wrapper.ThingsRequest;
 import cn.huangdayu.things.engine.wrapper.ThingsResponse;
 import cn.huangdayu.things.engine.wrapper.ThingsSession;
@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public abstract class DeviceStatusThingsFilter implements ThingsFilter {
 
-    private final ThingsObserverEngine thingsObserverEngine;
+    private final ThingsEventObserver thingsEventObserver;
 
     @Override
     public void doFilter(ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsFilterChain thingsFilterChain) {
@@ -31,7 +31,7 @@ public abstract class DeviceStatusThingsFilter implements ThingsFilter {
         thingsSession.setOnlineTime(System.currentTimeMillis());
         thingsSession.setProductCode(baseMetadata.getProductCode());
         thingsSession.setSessionCode(StrUtil.toString(ReflectUtil.getFieldValue(message.getPayload(), "sessionCode")));
-        thingsObserverEngine.notifyObservers(new ThingsSessionStatusEvent(this, thingsSession));
+        thingsEventObserver.notifyObservers(new ThingsSessionStatusEvent(this, thingsSession));
     }
 
     abstract boolean status();

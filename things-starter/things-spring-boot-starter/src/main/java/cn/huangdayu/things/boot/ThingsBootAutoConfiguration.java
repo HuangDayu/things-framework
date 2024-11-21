@@ -1,6 +1,6 @@
 package cn.huangdayu.things.boot;
 
-import cn.huangdayu.things.engine.async.ThreadPoolFactory;
+import cn.huangdayu.things.common.factory.ThreadPoolFactory;
 import cn.huangdayu.things.engine.configuration.ThingsEngineProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

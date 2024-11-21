@@ -1,12 +1,12 @@
-package cn.huangdayu.things.cloud.exchange;
+package cn.huangdayu.things.client.exchange;
 
-import cn.huangdayu.things.cloud.exchange.send.EndpointSender;
-import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.engine.async.ThingsCacheMessageEvent;
+import cn.huangdayu.things.api.endpoint.ThingsEndpointGetter;
+import cn.huangdayu.things.api.endpoint.ThingsEndpointSender;
+import cn.huangdayu.things.api.instances.ThingsInstancesGetter;
 import cn.huangdayu.things.api.sender.ThingsSender;
-import cn.huangdayu.things.engine.configuration.ThingsEngineProperties;
-import cn.huangdayu.things.engine.core.ThingsInstancesEngine;
-import cn.huangdayu.things.engine.core.ThingsObserverEngine;
+import cn.huangdayu.things.common.annotation.ThingsBean;
+import cn.huangdayu.things.common.event.ThingsCacheMessageEvent;
+import cn.huangdayu.things.common.event.ThingsEventObserver;
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.hutool.core.collection.CollUtil;
@@ -28,15 +28,14 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.getUUID;
 @Slf4j
 @ThingsBean(order = 1)
 @RequiredArgsConstructor
-public class ThingsEndpointSender implements ThingsSender {
+public class DefaultThingsSender implements ThingsSender {
 
-    private final static Map<String, EndpointSender> SENDER_MAP = new HashMap<>();
+    private final static Map<String, ThingsEndpointSender> SENDER_MAP = new HashMap<>();
     public static final String RETRY = "retry";
     public static final String SCHEMA = "://";
-    private final Map<String, EndpointSender> thingsMessageSender;
-    private final ThingsInstancesEngine thingsInstancesEngine;
-    private final ThingsEngineProperties thingsEngineProperties;
-    public final ThingsObserverEngine thingsObserverEngine;
+    private final Map<String, ThingsEndpointSender> thingsMessageSender;
+    private final ThingsInstancesGetter thingsInstancesGetter;
+    private final ThingsEventObserver thingsObserverEngine;
     private final ThingsEndpointGetter thingsEndpointGetter;
 
     @PostConstruct
@@ -51,8 +50,8 @@ public class ThingsEndpointSender implements ThingsSender {
         String targetEndpointUri = thingsEndpointGetter.getTargetEndpointUri(message);
         if (StrUtil.isNotBlank(targetEndpointUri)) {
             String[] split = targetEndpointUri.split(SCHEMA);
-            EndpointSender endpointSender = SENDER_MAP.get(split[0]);
-            return endpointSender != null;
+            ThingsEndpointSender thingsEndpointSender = SENDER_MAP.get(split[0]);
+            return thingsEndpointSender != null;
         }
         return false;
     }
@@ -62,10 +61,10 @@ public class ThingsEndpointSender implements ThingsSender {
         String targetEndpointUri = thingsEndpointGetter.getTargetEndpointUri(jsonThingsMessage);
         if (StrUtil.isNotBlank(targetEndpointUri)) {
             String[] split = targetEndpointUri.split(SCHEMA);
-            EndpointSender endpointSender = SENDER_MAP.get(split[0]);
-            if (endpointSender != null) {
+            ThingsEndpointSender thingsEndpointSender = SENDER_MAP.get(split[0]);
+            if (thingsEndpointSender != null) {
                 addInstanceId(jsonThingsMessage);
-                return endpointSender.handler(split[1], jsonThingsMessage);
+                return thingsEndpointSender.handler(split[1], jsonThingsMessage);
             }
         }
         throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Not found target things endpointUri.", getUUID());
@@ -77,10 +76,10 @@ public class ThingsEndpointSender implements ThingsSender {
         if (CollUtil.isNotEmpty(targetEndpointUris)) {
             for (String targetEndpointUri : targetEndpointUris) {
                 String[] split = targetEndpointUri.split(SCHEMA);
-                EndpointSender endpointSender = SENDER_MAP.get(split[0]);
-                if (endpointSender != null) {
+                ThingsEndpointSender thingsEndpointSender = SENDER_MAP.get(split[0]);
+                if (thingsEndpointSender != null) {
                     addInstanceId(jsonThingsMessage);
-                    endpointSender.handler(split[1], jsonThingsMessage);
+                    thingsEndpointSender.handler(split[1], jsonThingsMessage);
                 }
             }
         } else {
@@ -96,7 +95,7 @@ public class ThingsEndpointSender implements ThingsSender {
             if (StrUtil.isNotBlank(baseThingsMetadata.getSource()) && StrUtil.isBlank(baseThingsMetadata.getTarget())) {
                 baseThingsMetadata.setTarget(baseThingsMetadata.getSource());
             }
-            baseThingsMetadata.setSource(thingsInstancesEngine.getThingsInstance().toString());
+            baseThingsMetadata.setSource(thingsInstancesGetter.getInstanceId());
         });
     }
 }

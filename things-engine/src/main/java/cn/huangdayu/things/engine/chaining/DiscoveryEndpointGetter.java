@@ -1,10 +1,11 @@
-package cn.huangdayu.things.cloud.exchange;
+package cn.huangdayu.things.engine.chaining;
 
+import cn.huangdayu.things.api.endpoint.ThingsEndpointGetter;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.constants.ThingsConstants;
-import cn.huangdayu.things.engine.core.ThingsInstancesEngine;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.engine.core.ThingsInstancesEngine;
 import cn.huangdayu.things.engine.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
@@ -18,10 +19,11 @@ import java.util.stream.Collectors;
  */
 @ThingsBean
 @RequiredArgsConstructor
-public class ThingsEndpointGetter {
+public class DiscoveryEndpointGetter implements ThingsEndpointGetter {
 
     private final ThingsInstancesEngine thingsInstancesEngine;
 
+    @Override
     public Set<String> getTargetEndpointUris(JsonThingsMessage thingsMessage) {
         Set<String> set = new LinkedHashSet<>();
         BaseThingsMetadata baseMetadata = thingsMessage.getBaseMetadata();
@@ -38,6 +40,7 @@ public class ThingsEndpointGetter {
     }
 
 
+    @Override
     public String getTargetEndpointUri(JsonThingsMessage thingsMessage) {
         BaseThingsMetadata baseMetadata = thingsMessage.getBaseMetadata();
         if (thingsMessage.isResponse() && StrUtil.isNotBlank(baseMetadata.getSource())) {

@@ -1,6 +1,5 @@
-package cn.huangdayu.things.cloud.exchange;
+package cn.huangdayu.things.common.factory;
 
-import cn.huangdayu.things.engine.wrapper.ThingsInstance;
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
 import cn.hutool.core.lang.func.Func0;
@@ -9,8 +8,6 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.support.RestTemplateAdapter;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpExchangeAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -21,25 +18,13 @@ import java.util.function.Function;
 /**
  * @author huangdayu
  */
-public class ThingsRestfulClientFactory {
+public class RestfulClientFactory {
 
 
     /**
      * server vs class vs bean
      */
     private static final TimedCache<String, Object> CLIENT_CACHE = CacheUtil.newTimedCache(60 * 1000 * 5);
-
-    public static <S> S createWebFluxClient(Class<S> serviceType, ThingsInstance thingsInstance) {
-        return createWebFluxClient(serviceType, thingsInstance.getEndpointUri());
-    }
-
-    public static <S> S createWebFluxClient(Class<S> serviceType, String server) {
-        return clientCache(serviceType, server, baseUrl -> createClient(serviceType, WebClientAdapter.create(WebClient.builder().baseUrl(baseUrl).build())));
-    }
-
-    public static <S> S createRestClient(Class<S> serviceType, ThingsInstance thingsInstance) {
-        return createRestClient(serviceType, thingsInstance.getEndpointUri());
-    }
 
     public static <S> S createRestClient(Class<S> serviceType, String server) {
         return clientCache(serviceType, server, baseUrl -> {

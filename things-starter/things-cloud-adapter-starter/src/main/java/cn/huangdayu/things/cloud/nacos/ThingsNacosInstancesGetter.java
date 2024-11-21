@@ -4,9 +4,9 @@ import cn.huangdayu.things.cloud.configuration.NacosServerProperties;
 import cn.huangdayu.things.cloud.instances.ThingsInstancesGetter;
 import cn.huangdayu.things.cloud.instances.ThingsRestfulInstancesGetter;
 import cn.huangdayu.things.common.annotation.ThingsBean;
+import cn.huangdayu.things.common.event.ThingsEventObserver;
 import cn.huangdayu.things.engine.async.ThingsInstancesChangeEvent;
 import cn.huangdayu.things.engine.core.ThingsInstancesEngine;
-import cn.huangdayu.things.engine.core.ThingsObserverEngine;
 import cn.huangdayu.things.engine.core.executor.ThingsInstancesExecutor;
 import cn.huangdayu.things.engine.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
@@ -44,20 +44,20 @@ public class ThingsNacosInstancesGetter extends ThingsRestfulInstancesGetter imp
     private final NamingService namingService;
     private final NacosServerProperties nacosServerProperties;
     private final NamingMaintainService namingMaintainService;
-    private final ThingsObserverEngine thingsObserverEngine;
+    private final ThingsEventObserver thingsEventObserver;
     public static final String METADATA_INSTANCES = "things-engine-instances";
     public static final String METADATA_INSTANCES_SIZE = "things-engine-instances-size";
     public static final Set<String> SUBSCRIBED_SERVERS = new ConcurrentHashSet<>();
 
     @SneakyThrows
-    public ThingsNacosInstancesGetter(ThingsInstancesEngine thingsInstancesEngine, ThingsObserverEngine thingsObserverEngine, NacosServerProperties nacosServerProperties) {
+    public ThingsNacosInstancesGetter(ThingsInstancesEngine thingsInstancesEngine, ThingsEventObserver thingsEventObserver, NacosServerProperties nacosServerProperties) {
         super(thingsInstancesEngine);
         Properties properties = new Properties();
         properties.putAll((JSONObject) JSON.toJSON(nacosServerProperties));
         this.nacosServerProperties = nacosServerProperties;
         this.namingService = NacosFactory.createNamingService(properties);
         this.namingMaintainService = NacosFactory.createMaintainService(properties);
-        this.thingsObserverEngine = thingsObserverEngine;
+        this.thingsEventObserver = thingsEventObserver;
     }
 
 
@@ -115,12 +115,12 @@ public class ThingsNacosInstancesGetter extends ThingsRestfulInstancesGetter imp
                     Set<ThingsInstance> addedThingsInstances = getThingsInstances(addedInstances);
                     Set<String> removedInstanceCodes = getInstanceCodes(removedInstances);
                     if (CollUtil.isNotEmpty(addedThingsInstances) || CollUtil.isNotEmpty(removedInstanceCodes)) {
-                        thingsObserverEngine.notifyObservers(new ThingsInstancesChangeEvent(event, addedThingsInstances, removedInstanceCodes));
+                        thingsEventObserver.notifyObservers(new ThingsInstancesChangeEvent(event, addedThingsInstances, removedInstanceCodes));
                     }
                     return;
                 }
             }
-            thingsObserverEngine.notifyObservers(new ThingsInstancesChangeEvent(event, getThingsInstances(namingEvent.getInstances()), Collections.emptySet()));
+            thingsEventObserver.notifyObservers(new ThingsInstancesChangeEvent(event, getThingsInstances(namingEvent.getInstances()), Collections.emptySet()));
         }
     }
 

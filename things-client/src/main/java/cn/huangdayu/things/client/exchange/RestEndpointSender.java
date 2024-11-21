@@ -1,13 +1,11 @@
-package cn.huangdayu.things.cloud.exchange.send.rest;
+package cn.huangdayu.things.client.exchange;
 
-import cn.huangdayu.things.cloud.exchange.send.EndpointSender;
+import cn.huangdayu.things.api.endpoint.ThingsEndpointSender;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.constants.ThingsConstants;
+import cn.huangdayu.things.common.factory.RestfulClientFactory;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
-import cn.huangdayu.things.engine.endpoint.ThingsRestfulEndpoint;
 import lombok.extern.slf4j.Slf4j;
-
-import static cn.huangdayu.things.cloud.exchange.ThingsRestfulClientFactory.createRestClient;
 
 
 /**
@@ -15,7 +13,7 @@ import static cn.huangdayu.things.cloud.exchange.ThingsRestfulClientFactory.crea
  */
 @ThingsBean
 @Slf4j
-public class RestEndpointSender implements EndpointSender {
+public class RestEndpointSender implements ThingsEndpointSender {
 
     @Override
     public String endpointProtocol() {
@@ -24,7 +22,7 @@ public class RestEndpointSender implements EndpointSender {
 
     @Override
     public JsonThingsMessage handler(String endpointUri, JsonThingsMessage message) {
-        return createRestClient(ThingsRestfulEndpoint.class, endpointUri).handler(message);
+        return RestfulClientFactory.createRestClient(ThingsInstanceEndpoint.class, endpointUri).handler(message);
     }
 
 

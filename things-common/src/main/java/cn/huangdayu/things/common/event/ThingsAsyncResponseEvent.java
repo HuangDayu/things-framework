@@ -1,4 +1,4 @@
-package cn.huangdayu.things.engine.async;
+package cn.huangdayu.things.common.event;
 
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import lombok.AllArgsConstructor;

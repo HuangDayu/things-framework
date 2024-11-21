@@ -1,4 +1,4 @@
-package cn.huangdayu.things.cloud.exchange.send;
+package cn.huangdayu.things.api.endpoint;
 
 import cn.huangdayu.things.common.constants.ThingsConstants;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
@@ -6,7 +6,7 @@ import cn.huangdayu.things.common.message.JsonThingsMessage;
 /**
  * @author huangdayu
  */
-public interface EndpointSender {
+public interface ThingsEndpointSender {
 
     /**
      * 支持的服务类型

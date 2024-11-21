@@ -1,12 +1,12 @@
 package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.common.annotation.*;
-import cn.huangdayu.things.engine.async.ThingsContainerUpdateEvent;
+import cn.huangdayu.things.common.event.ThingsContainerUpdateEvent;
+import cn.huangdayu.things.common.event.ThingsEventObserver;
 import cn.huangdayu.things.engine.chaining.filters.ThingsFilter;
 import cn.huangdayu.things.engine.chaining.interceptor.ThingsInterceptor;
 import cn.huangdayu.things.engine.container.ThingsContainer;
 import cn.huangdayu.things.engine.core.ThingsContainerEngine;
-import cn.huangdayu.things.engine.core.ThingsObserverEngine;
 import cn.huangdayu.things.engine.wrapper.*;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
@@ -36,7 +36,7 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.*;
 @RequiredArgsConstructor
 public class ThingsContainerExecutor extends ThingsEngineBaseExecutor implements ThingsContainerEngine {
 
-    private final ThingsObserverEngine thingsObserverEngine;
+    private final ThingsEventObserver thingsEventObserver;
 
     @Override
     public void register(ThingsContainer thingsContainer) {
@@ -47,7 +47,7 @@ public class ThingsContainerExecutor extends ThingsEngineBaseExecutor implements
         findBeans(thingsContainer, ThingsListener.class, this::findThingsListener);
         findBeans(thingsContainer, ThingsFiltering.class, this::findThingsFilters);
         findBeans(thingsContainer, ThingsIntercepting.class, this::findThingsInterceptors);
-        thingsObserverEngine.notifyObservers(new ThingsContainerUpdateEvent(thingsContainer));
+        thingsEventObserver.notifyObservers(new ThingsContainerUpdateEvent(thingsContainer));
         log.info("Started ThingsEngine in {} milliseconds with context {}.", System.currentTimeMillis() - start, thingsContainer.name());
     }
 
@@ -58,7 +58,7 @@ public class ThingsContainerExecutor extends ThingsEngineBaseExecutor implements
         deleteTable(THINGS_EVENTS_TABLE, v -> v.getThingsContainer() == thingsContainer);
         cancelEventListener(thingsContainer);
         deleteMap(PRODUCT_PROPERTY_MAP, v -> v.getThingsContainer() == thingsContainer);
-        thingsObserverEngine.notifyObservers(new ThingsContainerUpdateEvent(thingsContainer));
+        thingsEventObserver.notifyObservers(new ThingsContainerUpdateEvent(thingsContainer));
     }
 
     private void cancelEventListener(ThingsContainer thingsContainer) {

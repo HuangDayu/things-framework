@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Set;
 
-import static cn.huangdayu.things.cloud.exchange.ThingsRestfulClientFactory.createRestClient;
+import static cn.huangdayu.things.common.factory.RestfulClientFactory.createRestClient;
 
 
 /**

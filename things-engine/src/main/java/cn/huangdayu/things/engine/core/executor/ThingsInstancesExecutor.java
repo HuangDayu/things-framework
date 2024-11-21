@@ -1,13 +1,13 @@
 package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.engine.async.ThingsContainerUpdateEvent;
-import cn.huangdayu.things.engine.async.ThingsEngineEvent;
-import cn.huangdayu.things.engine.async.ThingsInstancesChangeEvent;
 import cn.huangdayu.things.common.constants.ThingsConstants;
+import cn.huangdayu.things.common.event.ThingsContainerUpdateEvent;
+import cn.huangdayu.things.common.event.ThingsEngineEvent;
+import cn.huangdayu.things.common.event.ThingsEventObserver;
+import cn.huangdayu.things.engine.async.ThingsInstancesChangeEvent;
 import cn.huangdayu.things.engine.configuration.ThingsEngineProperties;
 import cn.huangdayu.things.engine.core.ThingsInstancesEngine;
-import cn.huangdayu.things.engine.core.ThingsObserverEngine;
 import cn.huangdayu.things.engine.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
@@ -39,7 +39,7 @@ import static cn.hutool.core.text.CharSequenceUtil.firstNonBlank;
 public class ThingsInstancesExecutor implements ThingsInstancesEngine {
 
     private final Environment environment;
-    private final ThingsObserverEngine thingsObserverEngine;
+    private final ThingsEventObserver thingsEventObserver;
     private final ThingsEngineProperties thingsEngineProperties;
     private static final Set<ThingsInstance> THINGS_INSTANCES = new ConcurrentHashSet<>();
     private static volatile ThingsInstance thingsInstance;
@@ -47,7 +47,7 @@ public class ThingsInstancesExecutor implements ThingsInstancesEngine {
     @PostConstruct
     public void init() {
         updateThingsInstance();
-        thingsObserverEngine.registerObserver(ThingsEngineEvent.class, engineEvent -> {
+        thingsEventObserver.registerObserver(ThingsEngineEvent.class, engineEvent -> {
             if (engineEvent instanceof ThingsContainerUpdateEvent) {
                 updateThingsInstance();
             }

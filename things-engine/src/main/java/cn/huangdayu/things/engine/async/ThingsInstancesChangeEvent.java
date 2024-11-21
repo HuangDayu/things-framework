@@ -1,5 +1,6 @@
 package cn.huangdayu.things.engine.async;
 
+import cn.huangdayu.things.common.event.ThingsEngineEvent;
 import cn.huangdayu.things.engine.wrapper.ThingsInstance;
 import lombok.AllArgsConstructor;
 import lombok.Data;

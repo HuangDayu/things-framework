@@ -1,8 +1,8 @@
 package cn.huangdayu.things.engine.session;
 
 import cn.huangdayu.things.common.annotation.ThingsBean;
+import cn.huangdayu.things.common.event.ThingsEventObserver;
 import cn.huangdayu.things.engine.async.ThingsSessionStatusEvent;
-import cn.huangdayu.things.engine.core.ThingsObserverEngine;
 import cn.huangdayu.things.engine.core.ThingsSessionEngine;
 import cn.huangdayu.things.engine.infrastructure.CacheService;
 import cn.huangdayu.things.engine.wrapper.ThingsSession;
@@ -19,12 +19,12 @@ import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_SEPARA
 public class ThingsSessionExecutor implements ThingsSessionEngine {
 
     private final CacheService cacheService;
-    private final ThingsObserverEngine thingsObserverEngine;
+    private final ThingsEventObserver thingsEventObserver;
 
 
     @PostConstruct
     public void init() {
-        thingsObserverEngine.registerObserver(ThingsSessionStatusEvent.class, event -> {
+        thingsEventObserver.registerObserver(ThingsSessionStatusEvent.class, event -> {
             ThingsSession session = event.getSession();
             if (session != null) {
                 if (session.isOnline()) {
