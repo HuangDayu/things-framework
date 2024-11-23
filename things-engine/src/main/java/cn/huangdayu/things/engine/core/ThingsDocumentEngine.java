@@ -1,6 +1,6 @@
 package cn.huangdayu.things.engine.core;
 
-import cn.huangdayu.things.engine.wrapper.ThingsInfo;
+import cn.huangdayu.things.common.dto.ThingsInfo;
 
 import java.util.Set;
 

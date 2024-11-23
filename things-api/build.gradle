@@ -4,5 +4,6 @@ plugins {
 
 dependencies {
     api project(path: ':things-common')
+    implementation "org.springframework:spring-web"
 
 }

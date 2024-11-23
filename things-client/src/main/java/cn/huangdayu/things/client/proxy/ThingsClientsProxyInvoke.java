@@ -62,8 +62,8 @@ public class ThingsClientsProxyInvoke {
         JsonThingsMessage jsonThingsMessage = buildThingsMessage(method, args);
         jsonThingsMessage.setBaseMetadata(baseThingsMetadata -> {
             baseThingsMetadata.setProductCode(productCode);
-            if (StrUtil.isNotBlank(thingsClient.target())) {
-                baseThingsMetadata.setTarget(thingsClient.target());
+            if (StrUtil.isNotBlank(thingsClient.uri())) {
+                baseThingsMetadata.setTarget(thingsClient.uri());
             }
         });
         jsonThingsMessage.setMethod(ThingsConstants.Methods.SERVICE_START_WITH.concat(identifier));

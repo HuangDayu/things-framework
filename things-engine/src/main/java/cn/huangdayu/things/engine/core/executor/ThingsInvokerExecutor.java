@@ -1,5 +1,6 @@
 package cn.huangdayu.things.engine.core.executor;
 
+import cn.huangdayu.things.api.instances.ThingsInstancesManager;
 import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.event.ThingsAsyncResponseEvent;
 import cn.huangdayu.things.common.event.ThingsEventObserver;
@@ -9,7 +10,6 @@ import cn.huangdayu.things.common.message.BaseThingsMessage;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.engine.chaining.handler.ThingsHandler;
-import cn.huangdayu.things.engine.core.ThingsInstancesEngine;
 import cn.huangdayu.things.engine.core.ThingsInvokerEngine;
 import cn.huangdayu.things.engine.core.ThingsPropertiesEngine;
 import cn.huangdayu.things.engine.wrapper.ThingsFunction;
@@ -46,7 +46,7 @@ public class ThingsInvokerExecutor extends ThingsEngineBaseExecutor implements T
 
     private final ThingsPropertiesEngine thingsPropertiesEngine;
     private final ThingsEventObserver thingsEventObserver;
-    private final ThingsInstancesEngine thingsInstancesEngine;
+    private final ThingsInstancesManager thingsInstancesManager;
 
     private final Map<String, Function<War, Object>> functionMap = Map.of(
             ThingsParam.class.getName(), this::argForThingsParam,
@@ -84,8 +84,8 @@ public class ThingsInvokerExecutor extends ThingsEngineBaseExecutor implements T
 
     private boolean canHandleMessage(JsonThingsMessage jsonThingsMessage) {
         BaseThingsMetadata baseMetadata = jsonThingsMessage.getBaseMetadata();
-        return thingsInstancesEngine.getThingsInstance().getProvides().contains(baseMetadata.getProductCode()) ||
-                thingsInstancesEngine.getThingsInstance().getConsumes().contains(baseMetadata.getProductCode());
+        return thingsInstancesManager.getThingsInstance().getProvides().contains(baseMetadata.getProductCode()) ||
+                thingsInstancesManager.getThingsInstance().getConsumes().contains(baseMetadata.getProductCode());
     }
 
     private JsonThingsMessage invokeEventListener(JsonThingsMessage jsonThingsMessage) {

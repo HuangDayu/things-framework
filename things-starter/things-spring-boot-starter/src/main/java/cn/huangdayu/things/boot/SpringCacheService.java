@@ -1,7 +1,7 @@
 package cn.huangdayu.things.boot;
 
+import cn.huangdayu.things.api.infrastructure.CacheService;
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.engine.infrastructure.CacheService;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 

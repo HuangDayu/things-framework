@@ -17,12 +17,12 @@ public class DefaultEndpointGetter implements ThingsEndpointGetter {
 
     private final ThingsClientProperties thingsClientProperties;
     @Override
-    public Set<String> getTargetEndpointUris(JsonThingsMessage thingsMessage) {
+    public Set<String> getUris(JsonThingsMessage thingsMessage) {
         return Set.of(thingsClientProperties.getGatewayUri());
     }
 
     @Override
-    public String getTargetEndpointUri(JsonThingsMessage thingsMessage) {
+    public String getUri(JsonThingsMessage thingsMessage) {
         return thingsClientProperties.getGatewayUri();
     }
 }

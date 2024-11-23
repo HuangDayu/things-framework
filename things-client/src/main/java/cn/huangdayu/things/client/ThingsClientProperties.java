@@ -8,6 +8,8 @@ import lombok.Data;
 @Data
 public class ThingsClientProperties {
 
+    private String instanceId;
+
     private String gatewayUri;
 
     private String gatewayToken;

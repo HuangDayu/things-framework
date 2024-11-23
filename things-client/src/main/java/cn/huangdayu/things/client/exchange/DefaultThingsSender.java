@@ -47,7 +47,7 @@ public class DefaultThingsSender implements ThingsSender {
 
     @Override
     public boolean canSend(JsonThingsMessage message) {
-        String targetEndpointUri = thingsEndpointGetter.getTargetEndpointUri(message);
+        String targetEndpointUri = thingsEndpointGetter.getUri(message);
         if (StrUtil.isNotBlank(targetEndpointUri)) {
             String[] split = targetEndpointUri.split(SCHEMA);
             ThingsEndpointSender thingsEndpointSender = SENDER_MAP.get(split[0]);
@@ -58,7 +58,7 @@ public class DefaultThingsSender implements ThingsSender {
 
     @Override
     public JsonThingsMessage doSend(JsonThingsMessage jsonThingsMessage) {
-        String targetEndpointUri = thingsEndpointGetter.getTargetEndpointUri(jsonThingsMessage);
+        String targetEndpointUri = thingsEndpointGetter.getUri(jsonThingsMessage);
         if (StrUtil.isNotBlank(targetEndpointUri)) {
             String[] split = targetEndpointUri.split(SCHEMA);
             ThingsEndpointSender thingsEndpointSender = SENDER_MAP.get(split[0]);
@@ -72,7 +72,7 @@ public class DefaultThingsSender implements ThingsSender {
 
     @Override
     public void doPublish(JsonThingsMessage jsonThingsMessage) {
-        Set<String> targetEndpointUris = thingsEndpointGetter.getTargetEndpointUris(jsonThingsMessage);
+        Set<String> targetEndpointUris = thingsEndpointGetter.getUris(jsonThingsMessage);
         if (CollUtil.isNotEmpty(targetEndpointUris)) {
             for (String targetEndpointUri : targetEndpointUris) {
                 String[] split = targetEndpointUri.split(SCHEMA);

@@ -10,7 +10,7 @@ import java.util.Set;
 public interface ThingsEndpointGetter {
 
 
-    Set<String> getTargetEndpointUris(JsonThingsMessage thingsMessage);
+    Set<String> getUris(JsonThingsMessage thingsMessage);
 
-    String getTargetEndpointUri(JsonThingsMessage thingsMessage);
+    String getUri(JsonThingsMessage thingsMessage);
 }
