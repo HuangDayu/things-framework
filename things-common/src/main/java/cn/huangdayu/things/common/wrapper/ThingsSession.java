@@ -18,4 +18,6 @@ public class ThingsSession {
 
     private String deviceCode;
 
+    private String endpointUri;
+
 }

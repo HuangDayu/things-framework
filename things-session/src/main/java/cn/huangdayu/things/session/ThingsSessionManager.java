@@ -5,7 +5,7 @@ import cn.huangdayu.things.common.wrapper.ThingsSession;
 /**
  * @author huangdayu
  */
-public interface ThingsSessionEngine {
+public interface ThingsSessionManager {
 
     ThingsSession getSession(String productCode, String deviceCode);
 

@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
  */
 @ThingsBean
 @RequiredArgsConstructor
-public class ThingsSessionExecutor implements ThingsSessionEngine {
+public class ThingsSessionExecutor implements ThingsSessionManager {
 
     private final CacheService cacheService;
     private final ThingsEventObserver thingsEventObserver;

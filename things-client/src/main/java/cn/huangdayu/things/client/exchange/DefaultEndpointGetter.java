@@ -3,6 +3,7 @@ package cn.huangdayu.things.client.exchange;
 import cn.huangdayu.things.api.endpoint.ThingsEndpointGetter;
 import cn.huangdayu.things.client.ThingsClientProperties;
 import cn.huangdayu.things.common.annotation.ThingsBean;
+import cn.huangdayu.things.common.enums.EndpointGetterType;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import lombok.RequiredArgsConstructor;
 
@@ -16,13 +17,19 @@ import java.util.Set;
 public class DefaultEndpointGetter implements ThingsEndpointGetter {
 
     private final ThingsClientProperties thingsClientProperties;
+
     @Override
-    public Set<String> getUris(JsonThingsMessage thingsMessage) {
+    public EndpointGetterType type() {
+        return EndpointGetterType.DEFAULT;
+    }
+
+    @Override
+    public Set<String> getPublishUris(JsonThingsMessage thingsMessage) {
         return Set.of(thingsClientProperties.getGatewayUri());
     }
 
     @Override
-    public String getUri(JsonThingsMessage thingsMessage) {
+    public String getInvokeUri(JsonThingsMessage thingsMessage) {
         return thingsClientProperties.getGatewayUri();
     }
 }

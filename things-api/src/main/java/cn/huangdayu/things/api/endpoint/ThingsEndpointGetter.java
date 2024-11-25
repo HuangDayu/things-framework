@@ -1,5 +1,6 @@
 package cn.huangdayu.things.api.endpoint;
 
+import cn.huangdayu.things.common.enums.EndpointGetterType;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 
 import java.util.Set;
@@ -9,8 +10,9 @@ import java.util.Set;
  */
 public interface ThingsEndpointGetter {
 
+    EndpointGetterType type();
 
-    Set<String> getUris(JsonThingsMessage thingsMessage);
+    Set<String> getPublishUris(JsonThingsMessage thingsMessage);
 
-    String getUri(JsonThingsMessage thingsMessage);
+    String getInvokeUri(JsonThingsMessage thingsMessage);
 }

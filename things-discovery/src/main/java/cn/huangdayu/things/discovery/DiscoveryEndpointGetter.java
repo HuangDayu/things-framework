@@ -4,6 +4,7 @@ import cn.huangdayu.things.api.endpoint.ThingsEndpointGetter;
 import cn.huangdayu.things.api.instances.ThingsInstancesManager;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.constants.ThingsConstants;
+import cn.huangdayu.things.common.enums.EndpointGetterType;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
@@ -24,7 +25,12 @@ public class DiscoveryEndpointGetter implements ThingsEndpointGetter {
     private final ThingsInstancesManager thingsInstancesManager;
 
     @Override
-    public Set<String> getUris(JsonThingsMessage thingsMessage) {
+    public EndpointGetterType type() {
+        return EndpointGetterType.DISCOVERY;
+    }
+
+    @Override
+    public Set<String> getPublishUris(JsonThingsMessage thingsMessage) {
         Set<String> set = new LinkedHashSet<>();
         BaseThingsMetadata baseMetadata = thingsMessage.getBaseMetadata();
         if (thingsMessage.getMethod().startsWith(ThingsConstants.Methods.EVENT_LISTENER_START_WITH)) {
@@ -41,7 +47,7 @@ public class DiscoveryEndpointGetter implements ThingsEndpointGetter {
 
 
     @Override
-    public String getUri(JsonThingsMessage thingsMessage) {
+    public String getInvokeUri(JsonThingsMessage thingsMessage) {
         BaseThingsMetadata baseMetadata = thingsMessage.getBaseMetadata();
         if (thingsMessage.isResponse() && StrUtil.isNotBlank(baseMetadata.getSource())) {
             return ThingsInstance.valueOf(baseMetadata.getSource()).getEndpointUri();
