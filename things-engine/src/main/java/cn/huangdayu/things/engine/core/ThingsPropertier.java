@@ -3,7 +3,7 @@ package cn.huangdayu.things.engine.core;
 /**
  * @author huangdayu
  */
-public interface ThingsPropertiesEngine {
+public interface ThingsPropertier {
 
 
     /**

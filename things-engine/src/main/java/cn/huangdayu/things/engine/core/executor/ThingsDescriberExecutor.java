@@ -6,7 +6,7 @@ import cn.huangdayu.things.common.event.ThingsContainerUpdateEvent;
 import cn.huangdayu.things.common.event.ThingsEngineEvent;
 import cn.huangdayu.things.common.event.ThingsEventObserver;
 import cn.huangdayu.things.common.message.BaseThingsMessage;
-import cn.huangdayu.things.engine.core.ThingsDocumentEngine;
+import cn.huangdayu.things.engine.core.ThingsDescriber;
 import cn.huangdayu.things.engine.wrapper.ThingsEvents;
 import cn.huangdayu.things.engine.wrapper.ThingsFunction;
 import cn.huangdayu.things.engine.wrapper.ThingsParameter;
@@ -38,7 +38,7 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.getParameterType;
 @Slf4j
 @RequiredArgsConstructor
 @ThingsBean
-public class ThingsDocumentExecutor extends ThingsEngineBaseExecutor implements ThingsDocumentEngine {
+public class ThingsDescriberExecutor extends ThingsBaseExecutor implements ThingsDescriber {
 
     private static final String CACHE_KEY = "things_document_cache";
     private final ThingsEventObserver thingsEventObserver;
@@ -109,7 +109,7 @@ public class ThingsDocumentExecutor extends ThingsEngineBaseExecutor implements 
     }
 
     @Override
-    public Set<ThingsInfo> getThings() {
+    public Set<ThingsInfo> getThingsDsl() {
         return CACHE.get(CACHE_KEY, () -> THINGS_SERVICES_TABLE.columnKeySet().parallelStream().map(this::getThingsInfo).collect(Collectors.toSet()));
     }
 

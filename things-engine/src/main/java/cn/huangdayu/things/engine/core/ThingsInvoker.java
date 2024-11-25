@@ -7,7 +7,7 @@ import cn.huangdayu.things.common.message.JsonThingsMessage;
  *
  * @author huangdayu
  */
-public interface ThingsInvokerEngine {
+public interface ThingsInvoker {
 
     /**
      * 执行物模型消息

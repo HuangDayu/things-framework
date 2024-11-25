@@ -6,7 +6,7 @@ import cn.huangdayu.things.common.message.ThingsEventMessage;
 /**
  * @author huangdayu
  */
-public interface ThingsChainingEngine {
+public interface ThingsChaining {
 
     JsonThingsMessage send(JsonThingsMessage jsonThingsMessage);
 

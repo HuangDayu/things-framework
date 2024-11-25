@@ -24,8 +24,8 @@ public interface ThingsRestfulEndpoint {
      *
      * @return
      */
-    @GetExchange("/things")
-    Set<ThingsInfo> getThings();
+    @GetExchange("/things/dsl")
+    Set<ThingsInfo> getThingsDsl();
 
     /**
      * 发送消息

@@ -7,7 +7,7 @@ import cn.huangdayu.things.common.message.ThingsEventMessage;
 /**
  * @author huangdayu
  */
-public interface ThingsPublisherEngine {
+public interface ThingsPublisher {
 
     /**
      * 发布事件

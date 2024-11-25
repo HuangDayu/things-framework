@@ -10,8 +10,8 @@ import cn.huangdayu.things.common.message.BaseThingsMessage;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.engine.chaining.handler.ThingsHandler;
-import cn.huangdayu.things.engine.core.ThingsInvokerEngine;
-import cn.huangdayu.things.engine.core.ThingsPropertiesEngine;
+import cn.huangdayu.things.engine.core.ThingsInvoker;
+import cn.huangdayu.things.engine.core.ThingsPropertier;
 import cn.huangdayu.things.engine.wrapper.ThingsFunction;
 import cn.huangdayu.things.engine.wrapper.ThingsParameter;
 import cn.hutool.core.collection.CollUtil;
@@ -42,9 +42,9 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.*;
 @Slf4j
 @RequiredArgsConstructor
 @ThingsBean(order = 2)
-public class ThingsInvokerExecutor extends ThingsEngineBaseExecutor implements ThingsInvokerEngine, ThingsHandler {
+public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsInvoker, ThingsHandler {
 
-    private final ThingsPropertiesEngine thingsPropertiesEngine;
+    private final ThingsPropertier thingsPropertier;
     private final ThingsEventObserver thingsEventObserver;
     private final ThingsInstancesManager thingsInstancesManager;
 
@@ -125,7 +125,7 @@ public class ThingsInvokerExecutor extends ThingsEngineBaseExecutor implements T
 
     public JsonThingsMessage updateProperty(JsonThingsMessage request) {
         BaseThingsMetadata baseThingsMetadata = request.getBaseMetadata();
-        Object propertyBean = thingsPropertiesEngine.getProperties(baseThingsMetadata.getProductCode(), baseThingsMetadata.getDeviceCode());
+        Object propertyBean = thingsPropertier.getProperties(baseThingsMetadata.getProductCode(), baseThingsMetadata.getDeviceCode());
         if (propertyBean != null) {
             return updateProperty(propertyBean, request, baseThingsMetadata);
         }
@@ -226,9 +226,9 @@ public class ThingsInvokerExecutor extends ThingsEngineBaseExecutor implements T
             String productCode = jsonThingsMessage.getBaseMetadata().getProductCode();
             if (annotation.productCode().equals(productCode)) {
                 if (annotation.productPublic()) {
-                    return thingsPropertiesEngine.getProperties(productCode);
+                    return thingsPropertier.getProperties(productCode);
                 } else {
-                    return thingsPropertiesEngine.getProperties(productCode, jsonThingsMessage.getBaseMetadata().getDeviceCode());
+                    return thingsPropertier.getProperties(productCode, jsonThingsMessage.getBaseMetadata().getDeviceCode());
                 }
             }
             log.error("物模型方法调用需要注入的配置对象与产品标识不一致（{}），方法：{}，参数：{}", productCode, thingsFunction.getMethod().getName(), thingsParameter.getName());

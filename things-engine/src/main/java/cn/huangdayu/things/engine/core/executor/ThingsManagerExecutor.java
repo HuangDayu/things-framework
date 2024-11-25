@@ -5,17 +5,17 @@ import cn.huangdayu.things.common.event.ThingsContainerUpdateEvent;
 import cn.huangdayu.things.common.event.ThingsEventObserver;
 import cn.huangdayu.things.engine.chaining.filters.ThingsFilter;
 import cn.huangdayu.things.engine.chaining.interceptor.ThingsInterceptor;
-import cn.huangdayu.things.engine.container.ThingsContainer;
-import cn.huangdayu.things.engine.core.ThingsContainerEngine;
+import cn.huangdayu.things.engine.core.ThingsContainer;
+import cn.huangdayu.things.engine.core.ThingsManager;
 import cn.huangdayu.things.engine.wrapper.*;
+import cn.hutool.core.annotation.AnnotationUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.hutool.core.map.multi.Table;
+import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.util.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -34,7 +34,7 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.*;
 @Slf4j
 @ThingsBean
 @RequiredArgsConstructor
-public class ThingsContainerExecutor extends ThingsEngineBaseExecutor implements ThingsContainerEngine {
+public class ThingsManagerExecutor extends ThingsBaseExecutor implements ThingsManager {
 
     private final ThingsEventObserver thingsEventObserver;
 
@@ -49,6 +49,7 @@ public class ThingsContainerExecutor extends ThingsEngineBaseExecutor implements
         findBeans(thingsContainer, ThingsIntercepting.class, this::findThingsInterceptors);
         thingsEventObserver.notifyObservers(new ThingsContainerUpdateEvent(thingsContainer));
         log.info("Started ThingsEngine in {} milliseconds with context {}.", System.currentTimeMillis() - start, thingsContainer.name());
+        THINGS_CONTAINERS.put(thingsContainer.name(), thingsContainer);
     }
 
     @Override
@@ -59,6 +60,7 @@ public class ThingsContainerExecutor extends ThingsEngineBaseExecutor implements
         cancelEventListener(thingsContainer);
         deleteMap(PRODUCT_PROPERTY_MAP, v -> v.getThingsContainer() == thingsContainer);
         thingsEventObserver.notifyObservers(new ThingsContainerUpdateEvent(thingsContainer));
+        THINGS_CONTAINERS.remove(thingsContainer.name());
     }
 
     private void cancelEventListener(ThingsContainer thingsContainer) {
@@ -128,7 +130,7 @@ public class ThingsContainerExecutor extends ThingsEngineBaseExecutor implements
         if (!things.enabled()) {
             return;
         }
-        Method[] methods = ReflectionUtils.getAllDeclaredMethods(bean.getClass());
+        Method[] methods = ReflectUtil.getMethods(bean.getClass());
         Arrays.asList(methods).parallelStream().forEach(method -> {
             try {
                 findFirst(() -> findThingsService(thingsContainer, things, bean, method),
@@ -142,7 +144,7 @@ public class ThingsContainerExecutor extends ThingsEngineBaseExecutor implements
 
 
     private boolean findThingsService(ThingsContainer thingsContainer, Things things, Object bean, Method method) {
-        ThingsService thingsService = AnnotationUtils.findAnnotation(method, ThingsService.class);
+        ThingsService thingsService = AnnotationUtil.getAnnotation(method, ThingsService.class);
         if (thingsService != null) {
             String identifier = StrUtil.isNotBlank(thingsService.identifier()) ? thingsService.identifier() : method.getName();
             method.trySetAccessible();
@@ -157,7 +159,7 @@ public class ThingsContainerExecutor extends ThingsEngineBaseExecutor implements
         if (!thingsListener.enabled()) {
             return;
         }
-        Method[] methods = ReflectionUtils.getAllDeclaredMethods(bean.getClass());
+        Method[] methods = ReflectUtil.getMethods(bean.getClass());
         Arrays.asList(methods).parallelStream().forEach(method -> {
             try {
                 findFirst(() -> findThingsEventListener(thingsContainer, thingsListener, bean, method),
@@ -170,7 +172,7 @@ public class ThingsContainerExecutor extends ThingsEngineBaseExecutor implements
 
 
     private boolean findThingsEventListener(ThingsContainer thingsContainer, Annotation beanAnnotation, Object bean, Method method) {
-        ThingsEventListener thingsEventListener = AnnotationUtils.findAnnotation(method, ThingsEventListener.class);
+        ThingsEventListener thingsEventListener = AnnotationUtil.getAnnotation(method, ThingsEventListener.class);
         if (thingsEventListener != null) {
             method.trySetAccessible();
             ThingsFunction thingsServices = new ThingsFunction(thingsContainer, beanAnnotation, bean, method, true, thingsEventListener, scanParameter(method));
@@ -186,7 +188,7 @@ public class ThingsContainerExecutor extends ThingsEngineBaseExecutor implements
     }
 
     private boolean findThingsPropertyListener(ThingsContainer thingsContainer, Annotation things, String productCode, Object bean, Method method) {
-        ThingsPropertyListener thingsPropertyListener = AnnotationUtils.findAnnotation(method, ThingsPropertyListener.class);
+        ThingsPropertyListener thingsPropertyListener = AnnotationUtil.getAnnotation(method, ThingsPropertyListener.class);
         if (thingsPropertyListener != null) {
             String identifier = thingsPropertyListener.identifier();
             productCode = StrUtil.isNotBlank(thingsPropertyListener.productCode()) ? thingsPropertyListener.productCode() : productCode;

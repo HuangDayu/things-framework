@@ -10,19 +10,15 @@ import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.message.ThingsEventMessage;
 import cn.huangdayu.things.engine.chaining.filters.ThingsFilterChain;
 import cn.huangdayu.things.engine.chaining.handler.ThingsHandler;
-import cn.huangdayu.things.engine.core.ThingsChainingEngine;
+import cn.huangdayu.things.engine.core.ThingsChaining;
 import cn.huangdayu.things.engine.wrapper.*;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.multi.Table;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONWriter;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.*;
 import java.util.function.Function;
@@ -33,7 +29,7 @@ import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.*;
 import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_WILDCARD;
 import static cn.huangdayu.things.common.factory.ThreadPoolFactory.THINGS_EXECUTOR;
 import static cn.huangdayu.things.common.utils.ThingsUtils.*;
-import static cn.huangdayu.things.engine.core.executor.ThingsEngineBaseExecutor.*;
+import static cn.huangdayu.things.engine.core.executor.ThingsBaseExecutor.*;
 
 /**
  * @author huangdayu
@@ -41,7 +37,7 @@ import static cn.huangdayu.things.engine.core.executor.ThingsEngineBaseExecutor.
 @Slf4j
 @ThingsBean
 @RequiredArgsConstructor
-public class ThingsChainingExecutor implements ThingsChainingEngine, ThingsReceiver {
+public class ThingsChainingExecutor implements ThingsChaining, ThingsReceiver {
 
     private final Map<String, ThingsHandler> handlerMap;
     private final Map<String, ThingsSender> senderMap;
@@ -126,7 +122,7 @@ public class ThingsChainingExecutor implements ThingsChainingEngine, ThingsRecei
     public void filter(JsonThingsMessage request, JsonThingsMessage response) {
         List<ThingsFilters> filters = getInterceptors(THINGS_FILTERS_TABLE, request, i -> i.getThingsFiltering().order());
         if (CollUtil.isNotEmpty(filters)) {
-            handleFilters(new ThingsRequest(request, getRequest()), new ThingsResponse(response, getResponse()), filters);
+            handleFilters(new ThingsRequest(request), new ThingsResponse(response), filters);
         }
     }
 
@@ -169,27 +165,11 @@ public class ThingsChainingExecutor implements ThingsChainingEngine, ThingsRecei
         return linkedHashSet.stream().sorted(Comparator.comparing(function)).collect(Collectors.toList());
     }
 
-    private HttpServletRequest getRequest() {
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (attributes == null) {
-            return null;
-        }
-        return attributes.getRequest();
-    }
-
-    private HttpServletResponse getResponse() {
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (attributes == null) {
-            return null;
-        }
-        return attributes.getResponse();
-    }
-
 
     private void handleInterceptor(JsonThingsMessage jsonThingsMessage, List<ThingsInterceptors> interceptors) {
         if (CollUtil.isNotEmpty(interceptors)) {
             for (ThingsInterceptors interceptor : interceptors) {
-                ThingsServlet thingsServlet = new ThingsServlet(interceptor.getThingsIntercepting(), jsonThingsMessage, getRequest(), getResponse());
+                ThingsServlet thingsServlet = new ThingsServlet(interceptor.getThingsIntercepting(), jsonThingsMessage);
                 if (!interceptor.getThingsInterceptor().doIntercept(thingsServlet)) {
                     throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Things interceptor no passing.", getUUID());
                 }
