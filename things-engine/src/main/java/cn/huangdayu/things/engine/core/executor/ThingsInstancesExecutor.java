@@ -1,12 +1,12 @@
 package cn.huangdayu.things.engine.core.executor;
 
-import cn.huangdayu.things.api.instances.ThingsInstancesManager;
+import cn.huangdayu.things.api.instances.ThingsInstances;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.constants.ThingsConstants;
 import cn.huangdayu.things.common.event.ThingsContainerUpdateEvent;
 import cn.huangdayu.things.common.event.ThingsEngineEvent;
 import cn.huangdayu.things.common.event.ThingsEventObserver;
-import cn.huangdayu.things.common.properties.ThingsEngineProperties;
+import cn.huangdayu.things.common.properties.ThingsProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.huangdayu.things.engine.async.ThingsInstancesChangeEvent;
 import cn.hutool.core.collection.CollUtil;
@@ -36,11 +36,11 @@ import static cn.hutool.core.text.CharSequenceUtil.firstNonBlank;
 @Slf4j
 @RequiredArgsConstructor
 @ThingsBean
-public class ThingsInstancesExecutor implements ThingsInstancesManager {
+public class ThingsInstancesExecutor implements ThingsInstances {
 
     private final Environment environment;
     private final ThingsEventObserver thingsEventObserver;
-    private final ThingsEngineProperties thingsEngineProperties;
+    private final ThingsProperties thingsProperties;
     private static final Set<ThingsInstance> THINGS_INSTANCES = new ConcurrentHashSet<>();
     private static volatile ThingsInstance thingsInstance;
 
@@ -72,8 +72,8 @@ public class ThingsInstancesExecutor implements ThingsInstancesManager {
 
     private ThingsInstance createThingsInstance() {
         ThingsInstance thingsInstance = new ThingsInstance();
-        thingsInstance.setName(firstNonBlank(thingsEngineProperties.getInstance().getName(), environment.getProperty("spring.application.name")));
-        thingsInstance.setEndpointUri(firstNonBlank(thingsEngineProperties.getInstance().getEndpointUri(), getEndpointUri()));
+        thingsInstance.setName(firstNonBlank(thingsProperties.getInstance().getName(), environment.getProperty("spring.application.name")));
+        thingsInstance.setEndpointUri(firstNonBlank(thingsProperties.getInstance().getEndpointUri(), getEndpointUri()));
         thingsInstance.setProvides(THINGS_SERVICES_TABLE.columnKeySet());
         thingsInstance.setConsumes(THINGS_EVENTS_LISTENER_TABLE.columnKeySet());
         thingsInstance.setSubscribes(THINGS_EVENTS_LISTENER_TABLE.cellSet()
@@ -153,6 +153,11 @@ public class ThingsInstancesExecutor implements ThingsInstancesManager {
     public ThingsInstance exchangeInstance(ThingsInstance instance) {
         THINGS_INSTANCES.add(instance);
         return thingsInstance;
+    }
+
+    @Override
+    public Set<ThingsInstance> getAllThingsInstances() {
+        return THINGS_INSTANCES;
     }
 
     public static int getInstancesSize() {

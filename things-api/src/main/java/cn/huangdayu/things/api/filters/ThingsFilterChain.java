@@ -1,7 +1,8 @@
-package cn.huangdayu.things.engine.chaining.filters;
+package cn.huangdayu.things.api.filters;
 
-import cn.huangdayu.things.engine.wrapper.ThingsRequest;
-import cn.huangdayu.things.engine.wrapper.ThingsResponse;
+
+import cn.huangdayu.things.common.wrapper.ThingsRequest;
+import cn.huangdayu.things.common.wrapper.ThingsResponse;
 
 import java.util.List;
 

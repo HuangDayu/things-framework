@@ -1,6 +1,5 @@
-package cn.huangdayu.things.engine.wrapper;
+package cn.huangdayu.things.common.wrapper;
 
-import cn.huangdayu.things.common.annotation.ThingsIntercepting;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,12 +8,11 @@ import lombok.NoArgsConstructor;
 /**
  * @author huangdayu
  */
-@Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class ThingsServlet {
+@AllArgsConstructor
+@Data
+public class ThingsRequest {
 
-    private ThingsIntercepting thingsIntercepting;
     private JsonThingsMessage message;
 
 }

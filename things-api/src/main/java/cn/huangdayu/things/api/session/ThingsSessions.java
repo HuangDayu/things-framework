@@ -1,11 +1,11 @@
-package cn.huangdayu.things.session;
+package cn.huangdayu.things.api.session;
 
 import cn.huangdayu.things.common.wrapper.ThingsSession;
 
 /**
  * @author huangdayu
  */
-public interface ThingsSessionManager {
+public interface ThingsSessions {
 
     ThingsSession getSession(String productCode, String deviceCode);
 

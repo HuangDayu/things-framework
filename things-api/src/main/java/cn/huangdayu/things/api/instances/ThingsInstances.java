@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * @author huangdayu
  */
-public interface ThingsInstancesManager {
+public interface ThingsInstances {
 
 
     /**
@@ -79,5 +79,12 @@ public interface ThingsInstancesManager {
      * @return 本实例的信息
      */
     ThingsInstance exchangeInstance(ThingsInstance thingsInstance);
+
+
+    /**
+     * 获取所有实例
+     * @return
+     */
+    Set<ThingsInstance> getAllThingsInstances();
 
 }

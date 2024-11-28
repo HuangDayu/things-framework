@@ -1,6 +1,7 @@
-package cn.huangdayu.things.engine.chaining.interceptor;
+package cn.huangdayu.things.api.interceptor;
 
-import cn.huangdayu.things.engine.wrapper.ThingsServlet;
+
+import cn.huangdayu.things.common.wrapper.ThingsServlet;
 
 /**
  * @author huangdayu

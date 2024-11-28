@@ -1,6 +1,6 @@
 package cn.huangdayu.things.discovery.instances;
 
-import cn.huangdayu.things.api.instances.ThingsInstancesManager;
+import cn.huangdayu.things.api.instances.ThingsInstances;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
@@ -23,7 +23,7 @@ public class ThingsInstancesScheduled {
 
 
     private final Map<String, ThingsInstancesGetter> thingsInstancesGetterMap;
-    private final ThingsInstancesManager thingsInstancesManager;
+    private final ThingsInstances thingsInstances;
 
 
     @PostConstruct
@@ -47,7 +47,7 @@ public class ThingsInstancesScheduled {
                 allInstances.addAll(allInstance);
             }
         }
-        thingsInstancesManager.syncAllInstances(allInstances);
+        thingsInstances.syncAllInstances(allInstances);
     }
 
 }

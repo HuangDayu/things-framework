@@ -1,8 +1,8 @@
 package cn.huangdayu.things.discovery.instances;
 
-import cn.huangdayu.things.api.instances.ThingsInstancesManager;
+import cn.huangdayu.things.api.instances.ThingsInstances;
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.common.properties.ThingsEngineProperties;
+import cn.huangdayu.things.common.properties.ThingsProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 
 import java.util.Set;
@@ -13,15 +13,15 @@ import java.util.Set;
 @ThingsBean
 public class ThingsServerInstancesGetter extends ThingsRestfulInstancesGetter implements ThingsInstancesGetter {
 
-    private final ThingsEngineProperties thingsEngineProperties;
+    private final ThingsProperties thingsProperties;
 
-    public ThingsServerInstancesGetter(ThingsInstancesManager thingsInstancesEngine, ThingsEngineProperties thingsEngineProperties) {
+    public ThingsServerInstancesGetter(ThingsInstances thingsInstancesEngine, ThingsProperties thingsProperties) {
         super(thingsInstancesEngine);
-        this.thingsEngineProperties = thingsEngineProperties;
+        this.thingsProperties = thingsProperties;
     }
 
     @Override
     public Set<ThingsInstance> getAllInstance() {
-        return getAllThingsInstance(thingsEngineProperties.getServers());
+        return getAllThingsInstance(thingsProperties.getServers());
     }
 }

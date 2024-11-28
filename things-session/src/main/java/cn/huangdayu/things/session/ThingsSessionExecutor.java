@@ -1,6 +1,7 @@
 package cn.huangdayu.things.session;
 
 import cn.huangdayu.things.api.infrastructure.CacheService;
+import cn.huangdayu.things.api.session.ThingsSessions;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.constants.ThingsConstants;
 import cn.huangdayu.things.common.event.ThingsEventObserver;
@@ -14,7 +15,7 @@ import lombok.RequiredArgsConstructor;
  */
 @ThingsBean
 @RequiredArgsConstructor
-public class ThingsSessionExecutor implements ThingsSessionManager {
+public class ThingsSessionExecutor implements ThingsSessions {
 
     private final CacheService cacheService;
     private final ThingsEventObserver thingsEventObserver;

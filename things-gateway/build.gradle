@@ -1,3 +1,9 @@
 plugins {
     id 'java-library'
 }
+
+dependencies {
+    api project(path: ':things-api')
+    implementation "org.springframework:spring-web"
+
+}

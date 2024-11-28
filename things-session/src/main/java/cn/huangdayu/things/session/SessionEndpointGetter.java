@@ -1,6 +1,7 @@
 package cn.huangdayu.things.session;
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpointGetter;
+import cn.huangdayu.things.api.session.ThingsSessions;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.enums.EndpointGetterType;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
@@ -17,7 +18,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class SessionEndpointGetter implements ThingsEndpointGetter {
 
-    private final ThingsSessionManager thingsSessionManager;
+    private final ThingsSessions thingsSessions;
 
     @Override
     public EndpointGetterType type() {
@@ -27,7 +28,7 @@ public class SessionEndpointGetter implements ThingsEndpointGetter {
     @Override
     public Set<String> getPublishUris(JsonThingsMessage thingsMessage) {
         BaseThingsMetadata baseMetadata = thingsMessage.getBaseMetadata();
-        ThingsSession session = thingsSessionManager.getSession(baseMetadata.getProductCode(), baseMetadata.getDeviceCode());
+        ThingsSession session = thingsSessions.getSession(baseMetadata.getProductCode(), baseMetadata.getDeviceCode());
         if (session != null) {
             return Set.of(session.getEndpointUri());
         }
@@ -37,7 +38,7 @@ public class SessionEndpointGetter implements ThingsEndpointGetter {
     @Override
     public String getInvokeUri(JsonThingsMessage thingsMessage) {
         BaseThingsMetadata baseMetadata = thingsMessage.getBaseMetadata();
-        ThingsSession session = thingsSessionManager.getSession(baseMetadata.getProductCode(), baseMetadata.getDeviceCode());
+        ThingsSession session = thingsSessions.getSession(baseMetadata.getProductCode(), baseMetadata.getDeviceCode());
         if (session != null) {
             return session.getEndpointUri();
         }

@@ -1,4 +1,4 @@
-package cn.huangdayu.things.engine.wrapper;
+package cn.huangdayu.things.common.wrapper;
 
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import lombok.AllArgsConstructor;

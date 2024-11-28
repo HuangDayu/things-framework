@@ -29,16 +29,16 @@ public class ThingsInstance {
      */
     private String name;
 
+    /**
+     * 类型：代理，直连，网关，设备，应用
+     */
+    private String type;
+
 
     /**
      * 有会话的
      */
     private int sessions;
-
-    /**
-     * 是否使用代理
-     */
-    private boolean useBroker;
 
     /**
      * 上游服务端点信息，没有则为空

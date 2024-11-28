@@ -1,5 +1,6 @@
 package cn.huangdayu.things.common.properties;
 
+import cn.huangdayu.things.common.wrapper.ThingsGateway;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.hutool.core.collection.ConcurrentHashSet;
 import lombok.Data;
@@ -10,9 +11,9 @@ import java.util.Set;
  * @author huangdayu
  */
 @Data
-public class ThingsEngineProperties {
+public class ThingsProperties {
 
-    public ThingsEngineProperties() {
+    public ThingsProperties() {
         this.servers = new ConcurrentHashSet<>();
         this.instance = new ThingsInstance();
     }
@@ -27,4 +28,10 @@ public class ThingsEngineProperties {
      * 本实例信息
      */
     private ThingsInstance instance;
+
+
+    /**
+     * 网关信息
+     */
+    private ThingsGateway gateway;
 }

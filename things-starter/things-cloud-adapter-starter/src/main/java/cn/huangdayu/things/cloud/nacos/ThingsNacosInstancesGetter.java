@@ -1,6 +1,6 @@
 package cn.huangdayu.things.cloud.nacos;
 
-import cn.huangdayu.things.api.instances.ThingsInstancesManager;
+import cn.huangdayu.things.api.instances.ThingsInstances;
 import cn.huangdayu.things.cloud.configuration.NacosServerProperties;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.event.ThingsEventObserver;
@@ -50,8 +50,8 @@ public class ThingsNacosInstancesGetter extends ThingsRestfulInstancesGetter imp
     public static final Set<String> SUBSCRIBED_SERVERS = new ConcurrentHashSet<>();
 
     @SneakyThrows
-    public ThingsNacosInstancesGetter(ThingsInstancesManager thingsInstancesManager, ThingsEventObserver thingsEventObserver, NacosServerProperties nacosServerProperties) {
-        super(thingsInstancesManager);
+    public ThingsNacosInstancesGetter(ThingsInstances thingsInstances, ThingsEventObserver thingsEventObserver, NacosServerProperties nacosServerProperties) {
+        super(thingsInstances);
         Properties properties = new Properties();
         properties.putAll((JSONObject) JSON.toJSON(nacosServerProperties));
         this.nacosServerProperties = nacosServerProperties;
@@ -66,7 +66,7 @@ public class ThingsNacosInstancesGetter extends ThingsRestfulInstancesGetter imp
     private void updateMetaData() {
         List<Instance> allInstances = namingService.selectInstances(nacosServerProperties.getService(), nacosServerProperties.getGroup(), true);
         for (Instance instance : allInstances) {
-            ThingsInstance thingsInstance = thingsInstancesManager.getThingsInstance();
+            ThingsInstance thingsInstance = thingsInstances.getThingsInstance();
             if (thingsInstance.getEndpointUri().contains(instance.getIp() + ":" + instance.getPort())) {
                 instance.getMetadata().put(METADATA_INSTANCES, thingsInstance.getCode());
                 instance.getMetadata().put(METADATA_INSTANCES_SIZE, String.valueOf(ThingsInstancesExecutor.getInstancesSize()));

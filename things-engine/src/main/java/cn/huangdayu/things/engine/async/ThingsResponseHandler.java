@@ -1,7 +1,7 @@
 package cn.huangdayu.things.engine.async;
 
+import cn.huangdayu.things.api.handler.ThingsHandler;
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.engine.chaining.handler.ThingsHandler;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 
 import static cn.huangdayu.things.common.utils.ThingsUtils.getUUID;

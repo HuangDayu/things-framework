@@ -17,7 +17,7 @@ import java.util.Set;
  * @author huangdayu
  */
 @HttpExchange
-public interface ThingsRestfulEndpoint {
+public interface ThingsEndpoint {
 
     /**
      * 获取物模型支持列表
