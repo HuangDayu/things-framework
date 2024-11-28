@@ -47,7 +47,7 @@ public class DiscoveryEndpointGetter implements ThingsEndpointGetter {
 
 
     @Override
-    public String getInvokeUri(JsonThingsMessage thingsMessage) {
+    public String getSendUri(JsonThingsMessage thingsMessage) {
         BaseThingsMetadata baseMetadata = thingsMessage.getBaseMetadata();
         if (thingsMessage.isResponse() && StrUtil.isNotBlank(baseMetadata.getSource())) {
             return ThingsInstance.valueOf(baseMetadata.getSource()).getEndpointUri();

@@ -36,7 +36,7 @@ public class ThingsClientsProxyInvoke {
 
     private Object invoke(Method method, JsonThingsMessage request) {
         if (!thingsSender.canSend(request)) {
-            throw new ThingsException(request, ThingsConstants.ErrorCodes.BAD_REQUEST, "Send the message failed.", getUUID());
+            throw new ThingsException(request, ThingsConstants.ErrorCodes.BAD_REQUEST, "Send the message failed.");
         }
         JsonThingsMessage response = thingsSender.doSend(request);
         if (response == null) {

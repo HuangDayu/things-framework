@@ -33,7 +33,7 @@ public abstract class ThingsRestfulInstancesGetter {
                 if (server.equals(thingsInstance.getEndpointUri())) {
                     continue;
                 }
-                thingsInstances.add(RestfulClientFactory.createRestClient(ThingsEndpoint.class, server).exchangeInstance(thingsInstance));
+                thingsInstances.add(RestfulClientFactory.createRestClient(ThingsEndpoint.class, server).exchange(thingsInstance));
             } catch (Exception e) {
                 log.error("Get Things instances to {} server exception : {}", server, e.getMessage());
             }

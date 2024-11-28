@@ -31,12 +31,17 @@ public class ThingsBrokerController implements ThingsEndpoint {
     }
 
     @Override
-    public JsonThingsMessage handler(JsonThingsMessage message) {
+    public JsonThingsMessage send(JsonThingsMessage message) {
         return null;
     }
 
     @Override
-    public ThingsInstance exchangeInstance(ThingsInstance thingsInstance) {
+    public void publish(JsonThingsMessage message) {
+
+    }
+
+    @Override
+    public ThingsInstance exchange(ThingsInstance thingsInstance) {
         return null;
     }
 }

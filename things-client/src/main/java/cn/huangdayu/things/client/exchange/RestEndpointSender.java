@@ -22,7 +22,7 @@ public class RestEndpointSender implements ThingsEndpointSender {
 
     @Override
     public JsonThingsMessage handler(String endpointUri, JsonThingsMessage message) {
-        return RestfulClientFactory.createRestClient(ThingsEndpoint.class, endpointUri).handler(message);
+        return RestfulClientFactory.createRestClient(ThingsEndpoint.class, endpointUri).send(message);
     }
 
 

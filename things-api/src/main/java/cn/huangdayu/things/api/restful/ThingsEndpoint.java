@@ -28,13 +28,20 @@ public interface ThingsEndpoint {
     Set<ThingsInfo> getThingsDsl();
 
     /**
-     * 发送消息
+     * 点对点发送消息
      *
      * @param message
      * @return
      */
-    @PostExchange("/things/message")
-    JsonThingsMessage handler(@RequestBody JsonThingsMessage message);
+    @PostExchange("/things/send")
+    JsonThingsMessage send(@RequestBody JsonThingsMessage message);
+
+    /**
+     * 发布消息
+     * @param message
+     */
+    @PostExchange("/things/publish")
+    void publish(@RequestBody JsonThingsMessage message);
 
     /**
      * 交换实例信息
@@ -42,8 +49,8 @@ public interface ThingsEndpoint {
      * @param thingsInstance 请求者的实例信息
      * @return 本实例的信息
      */
-    @PostExchange("/things/instance")
-    ThingsInstance exchangeInstance(@RequestBody ThingsInstance thingsInstance);
+    @PostExchange("/things/exchange")
+    ThingsInstance exchange(@RequestBody ThingsInstance thingsInstance);
 
 
 }

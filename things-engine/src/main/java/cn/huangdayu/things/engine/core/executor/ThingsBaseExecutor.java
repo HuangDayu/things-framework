@@ -81,7 +81,7 @@ public abstract class ThingsBaseExecutor {
             } catch (Exception ignored) {
             }
         }
-        throw new ThingsException(null, ERROR, "Not found Things Bean .", getUUID());
+        throw new ThingsException(null, ERROR, "Not found Things Bean .");
     }
 
 }

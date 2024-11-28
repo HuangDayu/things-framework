@@ -47,7 +47,7 @@ public class DefaultThingsSender implements ThingsSender {
 
     @Override
     public boolean canSend(JsonThingsMessage message) {
-        String targetEndpointUri = thingsEndpointGetter.getInvokeUri(message);
+        String targetEndpointUri = thingsEndpointGetter.getSendUri(message);
         if (StrUtil.isNotBlank(targetEndpointUri)) {
             String[] split = targetEndpointUri.split(SCHEMA);
             ThingsEndpointSender thingsEndpointSender = SENDER_MAP.get(split[0]);
@@ -58,7 +58,7 @@ public class DefaultThingsSender implements ThingsSender {
 
     @Override
     public JsonThingsMessage doSend(JsonThingsMessage jsonThingsMessage) {
-        String targetEndpointUri = thingsEndpointGetter.getInvokeUri(jsonThingsMessage);
+        String targetEndpointUri = thingsEndpointGetter.getSendUri(jsonThingsMessage);
         if (StrUtil.isNotBlank(targetEndpointUri)) {
             String[] split = targetEndpointUri.split(SCHEMA);
             ThingsEndpointSender thingsEndpointSender = SENDER_MAP.get(split[0]);
@@ -67,7 +67,7 @@ public class DefaultThingsSender implements ThingsSender {
                 return thingsEndpointSender.handler(split[1], jsonThingsMessage);
             }
         }
-        throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Not found target things endpointUri.", getUUID());
+        throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Not found target things endpointUri.");
     }
 
     @Override
@@ -84,7 +84,7 @@ public class DefaultThingsSender implements ThingsSender {
             }
         } else {
             if (jsonThingsMessage.getQos() == 0) {
-                throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Things event publish failed.", getUUID());
+                throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Things event publish failed.");
             }
             SENDER_MAP.get(RETRY).handler(null, jsonThingsMessage);
         }

@@ -56,6 +56,14 @@ public class ThingsChainingExecutor implements ThingsChaining, ThingsReceiver {
     }
 
     @Override
+    public void doSubscribe(JsonThingsMessage jsonThingsMessage) {
+        requestInterceptor(jsonThingsMessage);
+        JsonThingsMessage response = messageHandler(false, jsonThingsMessage);
+        responseInterceptor(response);
+        filter(jsonThingsMessage, response);
+    }
+
+    @Override
     public JsonThingsMessage send(JsonThingsMessage jsonThingsMessage) {
         requestInterceptor(jsonThingsMessage);
         JsonThingsMessage response = messageHandler(true, jsonThingsMessage);
@@ -84,7 +92,7 @@ public class ThingsChainingExecutor implements ThingsChaining, ThingsReceiver {
             }
         }
         if (!send) {
-            throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Handler the message failed.", getUUID());
+            throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Handler the message failed.");
         }
         return messageSender(jsonThingsMessage);
     }
@@ -95,7 +103,7 @@ public class ThingsChainingExecutor implements ThingsChaining, ThingsReceiver {
                 return thingsSender.doSend(jsonThingsMessage);
             }
         }
-        throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Send the message failed.", getUUID());
+        throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Send the message failed.");
     }
 
     private void eventHandler(JsonThingsMessage jsonThingsMessage) {
@@ -110,7 +118,7 @@ public class ThingsChainingExecutor implements ThingsChaining, ThingsReceiver {
     private JsonThingsMessage covertEventMessage(ThingsEventMessage message) {
         ThingsEvent thingsEvent = findBeanAnnotation(message, ThingsEvent.class);
         if (thingsEvent == null) {
-            throw new ThingsException(null, BAD_REQUEST, "Message object is not ThingsEvent entry.", getUUID());
+            throw new ThingsException(null, BAD_REQUEST, "Message object is not ThingsEvent entry.");
         }
         JsonThingsMessage jsonThingsMessage = new JsonThingsMessage();
         jsonThingsMessage.setBaseMetadata(baseThingsMetadata -> {
@@ -175,7 +183,7 @@ public class ThingsChainingExecutor implements ThingsChaining, ThingsReceiver {
             for (ThingsInterceptors interceptor : interceptors) {
                 ThingsServlet thingsServlet = new ThingsServlet(interceptor.getThingsIntercepting(), jsonThingsMessage);
                 if (!interceptor.getThingsInterceptor().doIntercept(thingsServlet)) {
-                    throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Things interceptor no passing.", getUUID());
+                    throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Things interceptor no passing.");
                 }
             }
         }

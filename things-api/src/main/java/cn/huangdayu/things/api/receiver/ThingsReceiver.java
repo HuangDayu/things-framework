@@ -10,4 +10,6 @@ public interface ThingsReceiver {
 
     JsonThingsMessage doReceive(JsonThingsMessage message);
 
+    void doSubscribe(JsonThingsMessage message);
+
 }

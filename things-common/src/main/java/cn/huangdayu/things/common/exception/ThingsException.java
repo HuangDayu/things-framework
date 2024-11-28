@@ -4,6 +4,8 @@ import cn.huangdayu.things.common.message.JsonThingsMessage;
 import lombok.Getter;
 import lombok.Setter;
 
+import static cn.huangdayu.things.common.utils.ThingsUtils.getUUID;
+
 /**
  * @author huangdayu
  */
@@ -22,6 +24,10 @@ public class ThingsException extends RuntimeException {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
         this.errorTraceCode = errorTraceCode;
+    }
+
+    public ThingsException(JsonThingsMessage thingsMessage, String errorCode, String errorMessage) {
+        this(thingsMessage, errorCode, errorMessage, getUUID());
     }
 
 }

@@ -24,5 +24,5 @@ public interface ThingsEndpointGetter {
      * @param thingsMessage
      * @return
      */
-    String getInvokeUri(JsonThingsMessage thingsMessage);
+    String getSendUri(JsonThingsMessage thingsMessage);
 }

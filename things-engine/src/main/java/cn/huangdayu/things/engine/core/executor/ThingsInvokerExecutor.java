@@ -78,7 +78,7 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
         } else if (method.startsWith(PROPERTY_METHOD_START_WITH)) {
             return updateProperty(jsonThingsMessage);
         } else {
-            throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Can't handler this message.", getUUID());
+            throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Can't handler this message.");
         }
     }
 
@@ -94,7 +94,7 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
         if (CollUtil.isNotEmpty(functions)) {
             return tryAsyncInvokeFunctions(jsonThingsMessage, functions);
         }
-        throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Things not found this event listener.", getUUID());
+        throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Things not found this event listener.");
     }
 
 
@@ -129,7 +129,7 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
         if (propertyBean != null) {
             return updateProperty(propertyBean, request, baseThingsMetadata);
         }
-        throw new ThingsException(request, BAD_REQUEST, "Things ont found Property entry.", getUUID());
+        throw new ThingsException(request, BAD_REQUEST, "Things ont found Property entry.");
     }
 
     private JsonThingsMessage updateProperty(Object propertyBean, JsonThingsMessage jsonThingsMessage, BaseThingsMetadata baseThingsMetadata) {
@@ -147,13 +147,13 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
             jsonThingsMessage.setMethod(PROPERTY_POST);
             return jsonThingsMessage;
         }
-        throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Things not support this service.", getUUID());
+        throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Things not support this service.");
     }
 
     public JsonThingsMessage invokeService(JsonThingsMessage jsonThingsMessage) {
         ThingsFunction thingsFunction = THINGS_SERVICES_TABLE.get(jsonThingsMessage.getMethod().replace(SERVICE_START_WITH, ""), jsonThingsMessage.getBaseMetadata().getProductCode());
         if (thingsFunction == null) {
-            throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Things not found this service.", getUUID());
+            throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Things not found this service.");
         }
         if (thingsFunction.isAsync()) {
             tryAsyncInvokeFunction(jsonThingsMessage, thingsFunction);

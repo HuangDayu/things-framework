@@ -36,7 +36,7 @@ public class SessionEndpointGetter implements ThingsEndpointGetter {
     }
 
     @Override
-    public String getInvokeUri(JsonThingsMessage thingsMessage) {
+    public String getSendUri(JsonThingsMessage thingsMessage) {
         BaseThingsMetadata baseMetadata = thingsMessage.getBaseMetadata();
         ThingsSession session = thingsSessions.getSession(baseMetadata.getProductCode(), baseMetadata.getDeviceCode());
         if (session != null) {

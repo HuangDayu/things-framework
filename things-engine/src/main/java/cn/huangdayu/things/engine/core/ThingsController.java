@@ -23,8 +23,13 @@ public class ThingsController implements ThingsEndpoint {
     private final ThingsInstances thingsInstances;
 
     @Override
-    public JsonThingsMessage handler(JsonThingsMessage message) {
+    public JsonThingsMessage send(JsonThingsMessage message) {
         return thingsReceiver.doReceive(message);
+    }
+
+    @Override
+    public void publish(JsonThingsMessage message) {
+        thingsReceiver.doSubscribe(message);
     }
 
     public Set<ThingsInfo> getThingsDsl() {
@@ -32,7 +37,7 @@ public class ThingsController implements ThingsEndpoint {
     }
 
     @Override
-    public ThingsInstance exchangeInstance(ThingsInstance thingsInstance) {
+    public ThingsInstance exchange(ThingsInstance thingsInstance) {
         return thingsInstances.exchangeInstance(thingsInstance);
     }
 

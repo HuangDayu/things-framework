@@ -29,7 +29,7 @@ public class DefaultEndpointGetter implements ThingsEndpointGetter {
     }
 
     @Override
-    public String getInvokeUri(JsonThingsMessage thingsMessage) {
+    public String getSendUri(JsonThingsMessage thingsMessage) {
         return thingsProperties.getGateway().getUri();
     }
 }

@@ -53,7 +53,7 @@ subprojects { project ->
         implementation platform("cn.hutool:hutool-bom:${hutoolVersion}")
         implementation platform("org.apache.camel.springboot:camel-spring-boot-dependencies:${camelVersion}")
 
-
+        implementation 'cn.hutool:hutool-core'
         implementation "org.slf4j:slf4j-api"
         implementation 'jakarta.annotation:jakarta.annotation-api'
         implementation "com.alibaba.fastjson2:fastjson2:${fastjson2Version}"
