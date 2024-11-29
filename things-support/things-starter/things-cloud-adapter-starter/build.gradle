@@ -5,7 +5,7 @@ plugins {
 dependencies {
     api project(path: ':things-engine')
     api project(path: ':things-discovery')
-    api project(path: ':things-starter:things-spring-boot-starter')
+    api project(path: ':things-support:things-starter:things-spring-boot-starter')
     implementation "org.springframework:spring-webmvc"
     implementation "org.springframework:spring-webflux"
     implementation 'com.alibaba.nacos:nacos-api'

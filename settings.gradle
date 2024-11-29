@@ -1,16 +1,9 @@
 rootProject.name = 'things-framework'
 
 
-String[] modules = ["things"]
-for (final def module in modules) {
-    file("${rootDir}").eachDirMatch(~/${module}-.*/) {
-        include "${it.name}"
-    }
-}
-
-String[] examples = ["things-example", "things-starter"]
-for (final def module in examples) {
-    file("${rootDir}/${module}").eachDirMatch(~/things-.*/) {
-        include "${module}:${it.name}"
+String[] modulesPath = ["/", "/things-support", "/things-support/things-starter"]
+for (final def module in modulesPath) {
+    file("${module}").eachDirMatch(~/things-.*/) {
+        include "${module}".replaceAll("/", ":") + ":${it.name}"
     }
 }
