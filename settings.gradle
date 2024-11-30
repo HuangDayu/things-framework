@@ -1,9 +1,39 @@
 rootProject.name = 'things-framework'
 
 
-String[] modulesPath = ["/", "/things-support", "/things-support/things-starter"]
-for (final def module in modulesPath) {
-    file("${module}").eachDirMatch(~/things-.*/) {
-        include "${module}".replaceAll("/", ":") + ":${it.name}"
+include(findThingsModules('things-', file("${rootDir}"), new ArrayList<String>(), findIgnoredPaths()))
+
+
+/**
+ * Finds all the things modules in the project.
+ * @param prefix
+ * @param dir
+ * @param result
+ * @param ignoredPaths
+ * @return
+ */
+def findThingsModules(String prefix, File dir, List<String> result, List<String> ignoredPaths) {
+    if (dir.isDirectory()) {
+        def subPath = dir.path.replace("${rootDir}" + File.separator, '')
+        if (!ignoredPaths.contains(subPath)) {
+            if (dir.name.startsWith(prefix) && subPath.startsWith(prefix)) {
+                result.add(subPath.replace(File.separator, ":"))
+            }
+            dir.listFiles().each { file ->
+                if (file.isDirectory()) {
+                    findThingsModules(prefix, file, result, ignoredPaths)
+                }
+            }
+        }
     }
+    return result
+}
+
+/**
+ * Finds all the paths to ignore from the .gitignore file.
+ * @return
+ */
+def findIgnoredPaths() {
+    def gitIgnoreFile = new File("${rootDir}", '.gitignore')
+    return gitIgnoreFile.exists() ? gitIgnoreFile.readLines().collect { it.trim() } : []
 }
