@@ -1,8 +1,7 @@
 package cn.huangdayu.things.boot;
 
-import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.engine.core.ThingsContainer;
-import cn.huangdayu.things.engine.core.ThingsManager;
+import cn.huangdayu.things.api.container.ThingsContainer;
+import cn.huangdayu.things.api.register.ThingsRegister;
 import cn.hutool.core.util.StrUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,18 +18,17 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.getUUID;
  * @author huangdayu
  */
 @RequiredArgsConstructor
-@ThingsBean
-public class ThingsApplicationContext implements ApplicationContextAware {
+public class ThingsContainerRegister implements ApplicationContextAware {
 
     @Getter
     private static ApplicationContext context;
     private static String contextName;
-    private final ThingsManager thingsManager;
+    private final ThingsRegister thingsRegister;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        ThingsApplicationContext.context = applicationContext;
-        thingsManager.register(new SpringThingsContainer(applicationContext));
+        ThingsContainerRegister.context = applicationContext;
+        thingsRegister.register(new SpringThingsContainer(applicationContext));
     }
 
 

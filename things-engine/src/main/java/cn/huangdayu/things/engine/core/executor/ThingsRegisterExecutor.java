@@ -5,8 +5,8 @@ import cn.huangdayu.things.api.interceptor.ThingsInterceptor;
 import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.event.ThingsContainerUpdateEvent;
 import cn.huangdayu.things.common.event.ThingsEventObserver;
-import cn.huangdayu.things.engine.core.ThingsContainer;
-import cn.huangdayu.things.engine.core.ThingsManager;
+import cn.huangdayu.things.api.container.ThingsContainer;
+import cn.huangdayu.things.api.register.ThingsRegister;
 import cn.huangdayu.things.engine.wrapper.*;
 import cn.hutool.core.annotation.AnnotationUtil;
 import cn.hutool.core.collection.CollUtil;
@@ -34,7 +34,7 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.*;
 @Slf4j
 @ThingsBean
 @RequiredArgsConstructor
-public class ThingsManagerExecutor extends ThingsBaseExecutor implements ThingsManager {
+public class ThingsRegisterExecutor extends ThingsBaseExecutor implements ThingsRegister {
 
     private final ThingsEventObserver thingsEventObserver;
 

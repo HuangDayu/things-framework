@@ -1,7 +1,7 @@
 package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.common.exception.ThingsException;
-import cn.huangdayu.things.engine.core.ThingsContainer;
+import cn.huangdayu.things.api.container.ThingsContainer;
 import cn.huangdayu.things.engine.wrapper.*;
 import cn.hutool.core.map.multi.RowKeyTable;
 import cn.hutool.core.map.multi.Table;
@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.ERROR;
-import static cn.huangdayu.things.common.utils.ThingsUtils.getUUID;
 
 /**
  * @author huangdayu

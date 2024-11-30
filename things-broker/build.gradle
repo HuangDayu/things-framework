@@ -3,12 +3,14 @@ plugins {
 }
 
 dependencies {
+    api project(path: ':things-api')
+    api project(path: ':things-common')
+
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-cache"
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation "org.springframework.boot:spring-boot-autoconfigure"
     implementation "org.springframework.boot:spring-boot-configuration-processor"
-    api project(path: ':things-engine')
 
     implementation "org.apache.camel.springboot:camel-spring-boot-starter"
     implementation "org.apache.camel.springboot:camel-rest-starter"

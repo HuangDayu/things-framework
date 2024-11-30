@@ -1,8 +1,10 @@
 package cn.huangdayu.things.boot;
 
+import cn.huangdayu.things.api.register.ThingsRegister;
 import cn.huangdayu.things.common.factory.ThreadPoolFactory;
 import cn.huangdayu.things.common.properties.ThingsProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cache.CacheManager;
@@ -25,7 +27,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 @ComponentScan(value = "cn.huangdayu.things")
 public class ThingsBootAutoConfiguration {
 
-
+    @ConditionalOnMissingBean
     @Bean("thingsTaskScheduler")
     public TaskScheduler thingsTaskScheduler() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
@@ -47,6 +49,12 @@ public class ThingsBootAutoConfiguration {
     @Bean
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager();
+    }
+
+    @ConditionalOnBean(ThingsRegister.class)
+    @Bean
+    public ThingsContainerRegister thingsContainerRegister(ThingsRegister thingsRegister) {
+        return new ThingsContainerRegister(thingsRegister);
     }
 
 

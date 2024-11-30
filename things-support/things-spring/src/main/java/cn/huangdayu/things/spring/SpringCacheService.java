@@ -1,4 +1,4 @@
-package cn.huangdayu.things.boot;
+package cn.huangdayu.things.spring;
 
 import cn.huangdayu.things.api.infrastructure.CacheService;
 import cn.huangdayu.things.common.annotation.ThingsBean;

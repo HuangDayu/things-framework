@@ -6,8 +6,8 @@ import cn.huangdayu.things.engine.core.ThingsPropertier;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
 
-import static cn.huangdayu.things.engine.core.executor.ThingsManagerExecutor.DEVICE_PROPERTY_MAP;
-import static cn.huangdayu.things.engine.core.executor.ThingsManagerExecutor.PRODUCT_PROPERTY_MAP;
+import static cn.huangdayu.things.engine.core.executor.ThingsRegisterExecutor.DEVICE_PROPERTY_MAP;
+import static cn.huangdayu.things.engine.core.executor.ThingsRegisterExecutor.PRODUCT_PROPERTY_MAP;
 
 /**
  * @author huangdayu

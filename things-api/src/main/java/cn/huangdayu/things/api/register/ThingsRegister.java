@@ -1,11 +1,13 @@
-package cn.huangdayu.things.engine.core;
+package cn.huangdayu.things.api.register;
+
+import cn.huangdayu.things.api.container.ThingsContainer;
 
 /**
  * 物模型注册引擎
  *
  * @author huangdayu
  */
-public interface ThingsManager {
+public interface ThingsRegister {
 
     /**
      * 注册

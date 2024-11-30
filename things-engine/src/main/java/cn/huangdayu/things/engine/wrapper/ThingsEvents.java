@@ -1,7 +1,7 @@
 package cn.huangdayu.things.engine.wrapper;
 
 import cn.huangdayu.things.common.annotation.ThingsEvent;
-import cn.huangdayu.things.engine.core.ThingsContainer;
+import cn.huangdayu.things.api.container.ThingsContainer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
