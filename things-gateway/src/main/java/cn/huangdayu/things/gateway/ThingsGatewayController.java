@@ -1,5 +1,6 @@
 package cn.huangdayu.things.gateway;
 
+import cn.huangdayu.things.api.endpoint.ThingsEndpointFactory;
 import cn.huangdayu.things.api.endpoint.ThingsEndpointGetter;
 import cn.huangdayu.things.api.instances.ThingsInstances;
 import cn.huangdayu.things.api.restful.ThingsEndpoint;
@@ -22,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.BAD_REQUEST;
-import static cn.huangdayu.things.common.factory.RestfulClientFactory.createRestClient;
 import static cn.huangdayu.things.common.utils.ThingsUtils.findFirst;
 
 /**
@@ -36,6 +36,7 @@ public class ThingsGatewayController implements ThingsEndpoint {
     private final ThingsSessions thingsSessions;
     private final ThingsProperties thingsProperties;
     private final ThingsInstances thingsInstances;
+    private final ThingsEndpointFactory thingsEndpointFactory;
     private final Map<String, ThingsEndpointGetter> thingsEndpointGetterMap;
     private Map<EndpointGetterType, ThingsEndpointGetter> typeThingsEndpointGetterMap;
 
@@ -49,7 +50,7 @@ public class ThingsGatewayController implements ThingsEndpoint {
     public Set<ThingsInfo> getThingsDsl() {
         Set<ThingsInfo> thingsDsl = new HashSet<>();
         for (ThingsInstance instance : thingsInstances.getAllThingsInstances()) {
-            thingsDsl.addAll(createRestClient(ThingsEndpoint.class, instance.getEndpointUri()).getThingsDsl());
+            thingsDsl.addAll(thingsEndpointFactory.create(ThingsEndpoint.class, instance.getEndpointUri()).getThingsDsl());
         }
         return thingsDsl;
     }
@@ -59,7 +60,7 @@ public class ThingsGatewayController implements ThingsEndpoint {
         String sendUri = findFirst(() -> typeThingsEndpointGetterMap.get(EndpointGetterType.SESSION).getSendUri(message),
                 () -> typeThingsEndpointGetterMap.get(EndpointGetterType.DISCOVERY).getSendUri(message));
         if (StrUtil.isNotBlank(sendUri)) {
-            return createRestClient(ThingsEndpoint.class, sendUri).send(message);
+            return thingsEndpointFactory.create(ThingsEndpoint.class, sendUri).send(message);
         }
         throw new ThingsException(message, BAD_REQUEST, "Things message error.");
     }
@@ -69,7 +70,7 @@ public class ThingsGatewayController implements ThingsEndpoint {
         Set<String> publishUris = typeThingsEndpointGetterMap.get(EndpointGetterType.DISCOVERY).getPublishUris(message);
         if (CollUtil.isNotEmpty(publishUris)) {
             for (String publishUri : publishUris) {
-                createRestClient(ThingsEndpoint.class, publishUri).publish(message);
+                thingsEndpointFactory.create(ThingsEndpoint.class, publishUri).publish(message);
             }
         }
     }

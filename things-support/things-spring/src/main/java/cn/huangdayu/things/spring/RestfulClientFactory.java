@@ -1,5 +1,7 @@
-package cn.huangdayu.things.common.factory;
+package cn.huangdayu.things.spring;
 
+import cn.huangdayu.things.api.endpoint.ThingsEndpointFactory;
+import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
 import cn.hutool.core.lang.func.Func0;
@@ -18,7 +20,8 @@ import java.util.function.Function;
 /**
  * @author huangdayu
  */
-public class RestfulClientFactory {
+@ThingsBean
+public class RestfulClientFactory implements ThingsEndpointFactory {
 
 
     /**
@@ -55,8 +58,13 @@ public class RestfulClientFactory {
                 (Func0<Object>) () -> function.apply(!server.startsWith("http") && !server.startsWith("https") ? "http://" + server : server));
     }
 
-    public static <S> S createClient(Class<S> serviceType, HttpExchangeAdapter httpExchangeAdapter) {
+    private static <S> S createClient(Class<S> serviceType, HttpExchangeAdapter httpExchangeAdapter) {
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builder().exchangeAdapter(httpExchangeAdapter).build();
         return factory.createClient(serviceType);
+    }
+
+    @Override
+    public <S> S create(Class<S> endpointType, String endpointUri) {
+        return createRestClient(endpointType, endpointUri);
     }
 }

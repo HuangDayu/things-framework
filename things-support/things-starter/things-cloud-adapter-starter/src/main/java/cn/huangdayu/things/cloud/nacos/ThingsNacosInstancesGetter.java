@@ -1,5 +1,6 @@
 package cn.huangdayu.things.cloud.nacos;
 
+import cn.huangdayu.things.api.endpoint.ThingsEndpointFactory;
 import cn.huangdayu.things.api.instances.ThingsInstances;
 import cn.huangdayu.things.cloud.configuration.NacosServerProperties;
 import cn.huangdayu.things.common.annotation.ThingsBean;
@@ -50,8 +51,9 @@ public class ThingsNacosInstancesGetter extends ThingsRestfulInstancesGetter imp
     public static final Set<String> SUBSCRIBED_SERVERS = new ConcurrentHashSet<>();
 
     @SneakyThrows
-    public ThingsNacosInstancesGetter(ThingsInstances thingsInstances, ThingsEventObserver thingsEventObserver, NacosServerProperties nacosServerProperties) {
-        super(thingsInstances);
+    public ThingsNacosInstancesGetter(ThingsInstances thingsInstances, ThingsEventObserver thingsEventObserver,
+                                      NacosServerProperties nacosServerProperties, ThingsEndpointFactory thingsEndpointFactory) {
+        super(thingsInstances, thingsEndpointFactory);
         Properties properties = new Properties();
         properties.putAll((JSONObject) JSON.toJSON(nacosServerProperties));
         this.nacosServerProperties = nacosServerProperties;

@@ -5,6 +5,6 @@ package cn.huangdayu.things.api.instances;
  */
 public interface ThingsInstancesGetter {
 
-    String getInstanceId();
+    String getInstanceCode();
 
 }

@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.BAD_REQUEST;
-import static cn.huangdayu.things.common.utils.ThingsUtils.getUUID;
 
 /**
  * @author huangdayu
@@ -95,7 +94,7 @@ public class DefaultThingsSender implements ThingsSender {
             if (StrUtil.isNotBlank(baseThingsMetadata.getSource()) && StrUtil.isBlank(baseThingsMetadata.getTarget())) {
                 baseThingsMetadata.setTarget(baseThingsMetadata.getSource());
             }
-            baseThingsMetadata.setSource(thingsInstancesGetter.getInstanceId());
+            baseThingsMetadata.setSource(thingsInstancesGetter.getInstanceCode());
         });
     }
 }

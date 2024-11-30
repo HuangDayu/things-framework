@@ -1,8 +1,8 @@
 package cn.huangdayu.things.discovery.instances;
 
+import cn.huangdayu.things.api.endpoint.ThingsEndpointFactory;
 import cn.huangdayu.things.api.instances.ThingsInstances;
 import cn.huangdayu.things.api.restful.ThingsEndpoint;
-import cn.huangdayu.things.common.factory.RestfulClientFactory;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
@@ -20,6 +20,8 @@ import java.util.Set;
 public abstract class ThingsRestfulInstancesGetter {
 
     protected final ThingsInstances thingsInstances;
+    protected final ThingsEndpointFactory thingsEndpointFactory;
+
 
 
     protected Set<ThingsInstance> getAllThingsInstance(Set<String> servers) {
@@ -33,7 +35,7 @@ public abstract class ThingsRestfulInstancesGetter {
                 if (server.equals(thingsInstance.getEndpointUri())) {
                     continue;
                 }
-                thingsInstances.add(RestfulClientFactory.createRestClient(ThingsEndpoint.class, server).exchange(thingsInstance));
+                thingsInstances.add(thingsEndpointFactory.create(ThingsEndpoint.class, server).exchange(thingsInstance));
             } catch (Exception e) {
                 log.error("Get Things instances to {} server exception : {}", server, e.getMessage());
             }

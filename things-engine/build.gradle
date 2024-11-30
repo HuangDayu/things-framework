@@ -5,8 +5,7 @@ plugins {
 dependencies {
     api project(path: ':things-api')
     api project(path: ':things-common')
-
-    implementation "org.springframework:spring-web"
+    compileOnly "org.springframework:spring-web"
     implementation 'com.alibaba.fastjson2:fastjson2'
     implementation 'cn.hutool:hutool-core'
     implementation 'cn.hutool:hutool-cache'

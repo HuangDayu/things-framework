@@ -7,8 +7,6 @@ dependencies {
     api project(path: ':things-common')
     implementation 'cn.hutool:hutool-core'
     implementation 'cn.hutool:hutool-cache'
-
-    implementation "org.springframework:spring-web"
-    implementation "org.springframework:spring-context"
+    compileOnlyApi "org.springframework:spring-context"
     implementation 'org.reflections:reflections:0.9.12'
 }

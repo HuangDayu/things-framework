@@ -1,5 +1,6 @@
 package cn.huangdayu.things.discovery.instances;
 
+import cn.huangdayu.things.api.endpoint.ThingsEndpointFactory;
 import cn.huangdayu.things.api.instances.ThingsInstances;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.properties.ThingsProperties;
@@ -15,8 +16,8 @@ public class ThingsServerInstancesGetter extends ThingsRestfulInstancesGetter im
 
     private final ThingsProperties thingsProperties;
 
-    public ThingsServerInstancesGetter(ThingsInstances thingsInstancesEngine, ThingsProperties thingsProperties) {
-        super(thingsInstancesEngine);
+    public ThingsServerInstancesGetter(ThingsInstances thingsInstancesEngine, ThingsProperties thingsProperties, ThingsEndpointFactory thingsEndpointFactory) {
+        super(thingsInstancesEngine, thingsEndpointFactory);
         this.thingsProperties = thingsProperties;
     }
 
