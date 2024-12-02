@@ -5,9 +5,12 @@ import cn.huangdayu.things.api.endpoint.ThingsEndpointSender;
 import cn.huangdayu.things.api.restful.ThingsEndpoint;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.constants.ThingsConstants;
+import cn.huangdayu.things.common.enums.EndpointProtocolType;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import static cn.huangdayu.things.common.enums.EndpointProtocolType.REST;
 
 /**
  * @author huangdayu
@@ -20,8 +23,8 @@ public class RestEndpointSender implements ThingsEndpointSender {
     private final ThingsEndpointFactory thingsEndpointFactory;
 
     @Override
-    public String endpointProtocol() {
-        return ThingsConstants.Protocol.REST;
+    public EndpointProtocolType endpointProtocol() {
+        return REST;
     }
 
     @Override

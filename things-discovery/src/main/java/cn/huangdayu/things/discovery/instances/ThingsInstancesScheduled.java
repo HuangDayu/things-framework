@@ -1,6 +1,7 @@
 package cn.huangdayu.things.discovery.instances;
 
-import cn.huangdayu.things.api.instances.ThingsInstances;
+import cn.huangdayu.things.api.instances.ThingsInstanceManager;
+import cn.huangdayu.things.api.instances.ThingsInstancesDiscoverer;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
@@ -22,8 +23,8 @@ import java.util.Set;
 public class ThingsInstancesScheduled {
 
 
-    private final Map<String, ThingsInstancesGetter> thingsInstancesGetterMap;
-    private final ThingsInstances thingsInstances;
+    private final Map<String, ThingsInstancesDiscoverer> thingsInstancesGetterMap;
+    private final ThingsInstanceManager thingsInstanceManager;
 
 
     @PostConstruct
@@ -41,13 +42,13 @@ public class ThingsInstancesScheduled {
 
     public void syncInstances() {
         Set<ThingsInstance> allInstances = new ConcurrentHashSet<>();
-        for (ThingsInstancesGetter thingsInstancesGetter : thingsInstancesGetterMap.values()) {
-            Set<ThingsInstance> allInstance = thingsInstancesGetter.getAllInstance();
+        for (ThingsInstancesDiscoverer thingsInstancesDiscoverer : thingsInstancesGetterMap.values()) {
+            Set<ThingsInstance> allInstance = thingsInstancesDiscoverer.getAllInstance();
             if (CollUtil.isNotEmpty(allInstance)) {
                 allInstances.addAll(allInstance);
             }
         }
-        thingsInstances.syncAllInstances(allInstances);
+        thingsInstanceManager.syncAllInstances(allInstances);
     }
 
 }

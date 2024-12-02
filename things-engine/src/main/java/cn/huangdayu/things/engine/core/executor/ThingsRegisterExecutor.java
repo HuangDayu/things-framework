@@ -112,7 +112,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
             return;
         }
         if (PRODUCT_PROPERTY_MAP.get(thingsProperty.productCode()) == null) {
-            PRODUCT_PROPERTY_MAP.put(thingsProperty.productCode(), new ThingsProperties(thingsContainer, thingsProperty, bean));
+            PRODUCT_PROPERTY_MAP.put(thingsProperty.productCode(), new ThingsPropertyWrapper(thingsContainer, thingsProperty, bean));
         } else {
             log.error("Duplicate registration ThingsProperty ({}), only effective once, effective ThingsProperty {} , invalid ThingsProperty : {}",
                     thingsProperty.productCode(), PRODUCT_PROPERTY_MAP.get(thingsProperty.productCode()).getBean().getClass(), bean.getClass());

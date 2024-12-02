@@ -22,4 +22,23 @@ public interface ThingsRegister {
      * @param thingsContainer
      */
     void cancel(ThingsContainer thingsContainer);
+
+
+    /**
+     * 注册单个物模型对象
+     *
+     * @param containerName
+     * @param bean
+     */
+    default void register(String containerName, Object bean) {
+    }
+
+    /**
+     * 注销单个物模型对象
+     *
+     * @param containerName
+     * @param bean
+     */
+    default void cancel(String containerName, Object bean) {
+    }
 }

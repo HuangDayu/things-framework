@@ -2,13 +2,14 @@ package cn.huangdayu.things.client.exchange;
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpointGetter;
 import cn.huangdayu.things.api.endpoint.ThingsEndpointSender;
-import cn.huangdayu.things.api.instances.ThingsInstancesGetter;
 import cn.huangdayu.things.api.sender.ThingsSender;
 import cn.huangdayu.things.common.annotation.ThingsBean;
+import cn.huangdayu.things.common.enums.EndpointProtocolType;
 import cn.huangdayu.things.common.event.ThingsCacheMessageEvent;
 import cn.huangdayu.things.common.event.ThingsEventObserver;
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import jakarta.annotation.PostConstruct;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.BAD_REQUEST;
+import static cn.huangdayu.things.common.enums.EndpointProtocolType.RETRY;
 
 /**
  * @author huangdayu
@@ -29,11 +31,10 @@ import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.BA
 @RequiredArgsConstructor
 public class DefaultThingsSender implements ThingsSender {
 
-    private final static Map<String, ThingsEndpointSender> SENDER_MAP = new HashMap<>();
-    public static final String RETRY = "retry";
+    private final static Map<EndpointProtocolType, ThingsEndpointSender> SENDER_MAP = new HashMap<>();
     public static final String SCHEMA = "://";
     private final Map<String, ThingsEndpointSender> thingsMessageSender;
-    private final ThingsInstancesGetter thingsInstancesGetter;
+    private final ThingsFrameworkProperties thingsFrameworkProperties;
     private final ThingsEventObserver thingsObserverEngine;
     private final ThingsEndpointGetter thingsEndpointGetter;
 
@@ -94,7 +95,7 @@ public class DefaultThingsSender implements ThingsSender {
             if (StrUtil.isNotBlank(baseThingsMetadata.getSource()) && StrUtil.isBlank(baseThingsMetadata.getTarget())) {
                 baseThingsMetadata.setTarget(baseThingsMetadata.getSource());
             }
-            baseThingsMetadata.setSource(thingsInstancesGetter.getInstanceCode());
+            baseThingsMetadata.setSource(thingsFrameworkProperties.getInstance().getCode());
         });
     }
 }

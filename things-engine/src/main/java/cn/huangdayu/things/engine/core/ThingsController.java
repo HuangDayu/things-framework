@@ -1,6 +1,6 @@
 package cn.huangdayu.things.engine.core;
 
-import cn.huangdayu.things.api.instances.ThingsInstances;
+import cn.huangdayu.things.api.instances.ThingsInstanceManager;
 import cn.huangdayu.things.api.receiver.ThingsReceiver;
 import cn.huangdayu.things.api.restful.ThingsEndpoint;
 import cn.huangdayu.things.common.dto.ThingsInfo;
@@ -20,7 +20,7 @@ public class ThingsController implements ThingsEndpoint {
 
     private final ThingsReceiver thingsReceiver;
     private final ThingsDescriber thingsDescriber;
-    private final ThingsInstances thingsInstances;
+    private final ThingsInstanceManager thingsInstanceManager;
 
     @Override
     public JsonThingsMessage send(JsonThingsMessage message) {
@@ -38,7 +38,7 @@ public class ThingsController implements ThingsEndpoint {
 
     @Override
     public ThingsInstance exchange(ThingsInstance thingsInstance) {
-        return thingsInstances.exchangeInstance(thingsInstance);
+        return thingsInstanceManager.exchangeInstance(thingsInstance);
     }
 
 

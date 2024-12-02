@@ -1,7 +1,7 @@
 package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.api.handler.ThingsHandler;
-import cn.huangdayu.things.api.instances.ThingsInstances;
+import cn.huangdayu.things.api.instances.ThingsInstanceManager;
 import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.event.ThingsAsyncResponseEvent;
 import cn.huangdayu.things.common.event.ThingsEventObserver;
@@ -11,7 +11,7 @@ import cn.huangdayu.things.common.message.BaseThingsMessage;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.engine.core.ThingsInvoker;
-import cn.huangdayu.things.engine.core.ThingsPropertier;
+import cn.huangdayu.things.engine.core.ThingsProperties;
 import cn.huangdayu.things.engine.wrapper.ThingsFunction;
 import cn.huangdayu.things.engine.wrapper.ThingsParameter;
 import cn.hutool.core.collection.CollUtil;
@@ -44,9 +44,9 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.*;
 @ThingsBean(order = 2)
 public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsInvoker, ThingsHandler {
 
-    private final ThingsPropertier thingsPropertier;
+    private final ThingsProperties thingsProperties;
     private final ThingsEventObserver thingsEventObserver;
-    private final ThingsInstances thingsInstances;
+    private final ThingsInstanceManager thingsInstanceManager;
 
     private final Map<String, Function<War, Object>> functionMap = Map.of(
             ThingsParam.class.getName(), this::argForThingsParam,
@@ -84,8 +84,8 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
 
     private boolean canHandleMessage(JsonThingsMessage jsonThingsMessage) {
         BaseThingsMetadata baseMetadata = jsonThingsMessage.getBaseMetadata();
-        return thingsInstances.getThingsInstance().getProvides().contains(baseMetadata.getProductCode()) ||
-                thingsInstances.getThingsInstance().getConsumes().contains(baseMetadata.getProductCode());
+        return thingsInstanceManager.getThingsInstance().getProvides().contains(baseMetadata.getProductCode()) ||
+                thingsInstanceManager.getThingsInstance().getConsumes().contains(baseMetadata.getProductCode());
     }
 
     private JsonThingsMessage invokeEventListener(JsonThingsMessage jsonThingsMessage) {
@@ -125,7 +125,7 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
 
     public JsonThingsMessage updateProperty(JsonThingsMessage request) {
         BaseThingsMetadata baseThingsMetadata = request.getBaseMetadata();
-        Object propertyBean = thingsPropertier.getProperties(baseThingsMetadata.getProductCode(), baseThingsMetadata.getDeviceCode());
+        Object propertyBean = thingsProperties.getProperties(baseThingsMetadata.getProductCode(), baseThingsMetadata.getDeviceCode());
         if (propertyBean != null) {
             return updateProperty(propertyBean, request, baseThingsMetadata);
         }
@@ -221,14 +221,14 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
         ThingsParameter thingsParameter = war.getThingsParameter();
         JsonThingsMessage jsonThingsMessage = war.getJsonThingsMessage();
         ThingsFunction thingsFunction = war.getThingsFunction();
-        ThingsProperty annotation = thingsParameter.getType().getAnnotation(ThingsProperty.class);
+        cn.huangdayu.things.common.annotation.ThingsProperty annotation = thingsParameter.getType().getAnnotation(cn.huangdayu.things.common.annotation.ThingsProperty.class);
         if (annotation != null) {
             String productCode = jsonThingsMessage.getBaseMetadata().getProductCode();
             if (annotation.productCode().equals(productCode)) {
                 if (annotation.productPublic()) {
-                    return thingsPropertier.getProperties(productCode);
+                    return thingsProperties.getProperties(productCode);
                 } else {
-                    return thingsPropertier.getProperties(productCode, jsonThingsMessage.getBaseMetadata().getDeviceCode());
+                    return thingsProperties.getProperties(productCode, jsonThingsMessage.getBaseMetadata().getDeviceCode());
                 }
             }
             log.error("物模型方法调用需要注入的配置对象与产品标识不一致（{}），方法：{}，参数：{}", productCode, thingsFunction.getMethod().getName(), thingsParameter.getName());

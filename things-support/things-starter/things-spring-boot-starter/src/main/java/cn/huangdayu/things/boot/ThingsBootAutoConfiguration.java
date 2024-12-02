@@ -2,11 +2,12 @@ package cn.huangdayu.things.boot;
 
 import cn.huangdayu.things.api.register.ThingsRegister;
 import cn.huangdayu.things.common.factory.ThreadPoolFactory;
-import cn.huangdayu.things.common.properties.ThingsProperties;
+import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -25,6 +26,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 @EnableCaching
 @EnableScheduling
 @ComponentScan(value = "cn.huangdayu.things")
+@ConfigurationPropertiesScan("cn.huangdayu.things")
 public class ThingsBootAutoConfiguration {
 
     @ConditionalOnMissingBean
@@ -41,8 +43,8 @@ public class ThingsBootAutoConfiguration {
     @ConditionalOnMissingBean
     @Bean
     @ConfigurationProperties("things-framework.things-engine")
-    public ThingsProperties thingsEngineProperties() {
-        return new ThingsProperties();
+    public ThingsFrameworkProperties thingsEngineProperties() {
+        return new ThingsFrameworkProperties();
     }
 
     @ConditionalOnMissingBean
@@ -52,6 +54,7 @@ public class ThingsBootAutoConfiguration {
     }
 
     @ConditionalOnBean(ThingsRegister.class)
+    @ConditionalOnMissingBean
     @Bean
     public ThingsContainerRegister thingsContainerRegister(ThingsRegister thingsRegister) {
         return new ThingsContainerRegister(thingsRegister);

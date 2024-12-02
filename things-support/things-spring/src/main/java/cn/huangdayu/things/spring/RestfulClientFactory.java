@@ -2,6 +2,7 @@ package cn.huangdayu.things.spring;
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpointFactory;
 import cn.huangdayu.things.common.annotation.ThingsBean;
+import cn.huangdayu.things.common.enums.EndpointProtocolType;
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
 import cn.hutool.core.lang.func.Func0;
@@ -16,6 +17,8 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import java.io.IOException;
 import java.util.function.Function;
+
+import static cn.huangdayu.things.common.enums.EndpointProtocolType.REST;
 
 /**
  * @author huangdayu
@@ -61,6 +64,11 @@ public class RestfulClientFactory implements ThingsEndpointFactory {
     private static <S> S createClient(Class<S> serviceType, HttpExchangeAdapter httpExchangeAdapter) {
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builder().exchangeAdapter(httpExchangeAdapter).build();
         return factory.createClient(serviceType);
+    }
+
+    @Override
+    public EndpointProtocolType endpointProtocol() {
+        return REST;
     }
 
     @Override

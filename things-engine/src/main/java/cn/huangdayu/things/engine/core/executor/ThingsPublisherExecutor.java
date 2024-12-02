@@ -8,7 +8,7 @@ import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.message.ThingsEventMessage;
 import cn.huangdayu.things.engine.async.ThingsAsyncManager;
 import cn.huangdayu.things.engine.core.ThingsChaining;
-import cn.huangdayu.things.engine.core.ThingsPublisher;
+import cn.huangdayu.things.api.publisher.ThingsPublisher;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

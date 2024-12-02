@@ -1,9 +1,12 @@
 package cn.huangdayu.things.api.endpoint;
 
 import cn.huangdayu.things.common.constants.ThingsConstants;
+import cn.huangdayu.things.common.enums.EndpointProtocolType;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 
 /**
+ * 端点发送器，解决怎么发送的问题
+ *
  * @author huangdayu
  */
 public interface ThingsEndpointSender {
@@ -14,7 +17,7 @@ public interface ThingsEndpointSender {
      * @return
      * @see ThingsConstants.Protocol
      */
-    String endpointProtocol();
+    EndpointProtocolType endpointProtocol();
 
     /**
      * 发送消息
