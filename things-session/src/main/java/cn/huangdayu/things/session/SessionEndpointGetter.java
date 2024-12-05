@@ -26,17 +26,7 @@ public class SessionEndpointGetter implements ThingsEndpointGetter {
     }
 
     @Override
-    public Set<String> getPublishUris(JsonThingsMessage thingsMessage) {
-        BaseThingsMetadata baseMetadata = thingsMessage.getBaseMetadata();
-        ThingsSession session = thingsSessions.getSession(baseMetadata.getProductCode(), baseMetadata.getDeviceCode());
-        if (session != null) {
-            return Set.of(session.getEndpointUri());
-        }
-        return Set.of();
-    }
-
-    @Override
-    public String getSendUri(JsonThingsMessage thingsMessage) {
+    public String getEndpointUri(JsonThingsMessage thingsMessage) {
         BaseThingsMetadata baseMetadata = thingsMessage.getBaseMetadata();
         ThingsSession session = thingsSessions.getSession(baseMetadata.getProductCode(), baseMetadata.getDeviceCode());
         if (session != null) {

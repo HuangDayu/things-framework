@@ -8,10 +8,14 @@ import cn.huangdayu.things.common.message.ThingsEventMessage;
  */
 public interface ThingsChaining {
 
-    JsonThingsMessage send(JsonThingsMessage jsonThingsMessage);
+    JsonThingsMessage doReceive(JsonThingsMessage jsonThingsMessage);
+
+    void doSubscribe(JsonThingsMessage jsonThingsMessage);
+
+    JsonThingsMessage doSend(JsonThingsMessage jsonThingsMessage);
 
 
-    void publish(ThingsEventMessage thingsEventMessage);
+    void doPublish(ThingsEventMessage thingsEventMessage);
 
 
 }

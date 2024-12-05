@@ -1,7 +1,6 @@
 package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.api.handler.ThingsHandler;
-import cn.huangdayu.things.api.instances.ThingsInstanceManager;
 import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.event.ThingsAsyncResponseEvent;
 import cn.huangdayu.things.common.event.ThingsEventObserver;
@@ -10,6 +9,7 @@ import cn.huangdayu.things.common.message.AbstractThingsMessage;
 import cn.huangdayu.things.common.message.BaseThingsMessage;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.engine.core.ThingsInvoker;
 import cn.huangdayu.things.engine.core.ThingsProperties;
 import cn.huangdayu.things.engine.wrapper.ThingsFunction;
@@ -46,7 +46,7 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
 
     private final ThingsProperties thingsProperties;
     private final ThingsEventObserver thingsEventObserver;
-    private final ThingsInstanceManager thingsInstanceManager;
+    private final ThingsFrameworkProperties thingsFrameworkProperties;
 
     private final Map<String, Function<War, Object>> functionMap = Map.of(
             ThingsParam.class.getName(), this::argForThingsParam,
@@ -84,8 +84,8 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
 
     private boolean canHandleMessage(JsonThingsMessage jsonThingsMessage) {
         BaseThingsMetadata baseMetadata = jsonThingsMessage.getBaseMetadata();
-        return thingsInstanceManager.getThingsInstance().getProvides().contains(baseMetadata.getProductCode()) ||
-                thingsInstanceManager.getThingsInstance().getConsumes().contains(baseMetadata.getProductCode());
+        return thingsFrameworkProperties.getInstance().getProvides().contains(baseMetadata.getProductCode()) ||
+                thingsFrameworkProperties.getInstance().getConsumes().contains(baseMetadata.getProductCode());
     }
 
     private JsonThingsMessage invokeEventListener(JsonThingsMessage jsonThingsMessage) {

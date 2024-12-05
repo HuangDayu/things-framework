@@ -1,7 +1,13 @@
 package cn.huangdayu.things.common.utils;
 
+import cn.huangdayu.things.common.annotation.ThingsEvent;
+import cn.huangdayu.things.common.exception.ThingsException;
+import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.ThingsEventMessage;
 import cn.hutool.core.map.multi.Table;
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.fastjson2.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.support.AopUtils;
@@ -20,6 +26,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.BAD_REQUEST;
 import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.*;
 
 /**
@@ -134,9 +141,13 @@ public class ThingsUtils {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
-
     @SafeVarargs
     public static <T> T findFirst(Supplier<T>... suppliers) {
+        return findFirst(false, suppliers);
+    }
+
+    @SafeVarargs
+    public static <T> T findFirst(boolean ignoreException, Supplier<T>... suppliers) {
         for (Supplier<T> supplier : suppliers) {
             try {
                 T t = supplier.get();
@@ -150,7 +161,9 @@ public class ThingsUtils {
                     return t;
                 }
             } catch (Exception e) {
-                log.error("Find the first supplier exception {}", e.getMessage());
+                if (!ignoreException) {
+                    log.error("Find the first supplier exception {}", e.getMessage());
+                }
             }
         }
         return null;
@@ -171,4 +184,20 @@ public class ThingsUtils {
         return method.substring(0, method.indexOf(".", 12)).replace(EVENT_LISTENER_START_WITH, "");
     }
 
+
+    public static JsonThingsMessage covertEventMessage(ThingsEventMessage message) {
+        ThingsEvent thingsEvent = findBeanAnnotation(message, ThingsEvent.class);
+        if (thingsEvent == null) {
+            throw new ThingsException(null, BAD_REQUEST, "Message object is not ThingsEvent entry.");
+        }
+        JsonThingsMessage jsonThingsMessage = new JsonThingsMessage();
+        jsonThingsMessage.setBaseMetadata(baseThingsMetadata -> {
+            baseThingsMetadata.setProductCode(thingsEvent.productCode());
+            baseThingsMetadata.setDeviceCode(message.getDeviceCode());
+        });
+        jsonThingsMessage.setQos(thingsEvent.qos());
+        jsonThingsMessage.setPayload((JSONObject) JSON.toJSON(message, JSONWriter.Feature.WriteNulls));
+        jsonThingsMessage.setMethod(EVENT_LISTENER_START_WITH.concat(thingsEvent.identifier()).concat(EVENT_TYPE_POST.replace(EVENT_TYPE, thingsEvent.type())));
+        return jsonThingsMessage;
+    }
 }

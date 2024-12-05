@@ -1448,7 +1448,7 @@ public final class ThingsConstants {
 
         public static final String MQTT = "mqtt";
 
-        public static final String REST = "rest";
+        public static final String RESTFUL = "restful";
 
         public static final String AMQP = "amqp";
 

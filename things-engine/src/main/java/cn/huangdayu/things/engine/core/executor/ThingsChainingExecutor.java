@@ -1,11 +1,9 @@
 package cn.huangdayu.things.engine.core.executor;
 
+import cn.huangdayu.things.api.endpoint.ThingsEndpointFactory;
 import cn.huangdayu.things.api.filters.ThingsFilterChain;
 import cn.huangdayu.things.api.handler.ThingsHandler;
-import cn.huangdayu.things.api.receiver.ThingsReceiver;
-import cn.huangdayu.things.api.sender.ThingsSender;
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.common.annotation.ThingsEvent;
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
@@ -18,9 +16,6 @@ import cn.huangdayu.things.engine.wrapper.ThingsFilters;
 import cn.huangdayu.things.engine.wrapper.ThingsInterceptors;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.multi.Table;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
-import com.alibaba.fastjson2.JSONWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,10 +24,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.BAD_REQUEST;
-import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.*;
 import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_WILDCARD;
 import static cn.huangdayu.things.common.factory.ThreadPoolFactory.THINGS_EXECUTOR;
-import static cn.huangdayu.things.common.utils.ThingsUtils.*;
+import static cn.huangdayu.things.common.utils.ThingsUtils.covertEventMessage;
+import static cn.huangdayu.things.common.utils.ThingsUtils.subIdentifies;
 import static cn.huangdayu.things.engine.core.executor.ThingsBaseExecutor.*;
 
 /**
@@ -41,15 +36,15 @@ import static cn.huangdayu.things.engine.core.executor.ThingsBaseExecutor.*;
 @Slf4j
 @ThingsBean
 @RequiredArgsConstructor
-public class ThingsChainingExecutor implements ThingsChaining, ThingsReceiver {
+public class ThingsChainingExecutor implements ThingsChaining {
 
     private final Map<String, ThingsHandler> handlerMap;
-    private final Map<String, ThingsSender> senderMap;
+    private final ThingsEndpointFactory thingsEndpointFactory;
 
     @Override
     public JsonThingsMessage doReceive(JsonThingsMessage jsonThingsMessage) {
         requestInterceptor(jsonThingsMessage);
-        JsonThingsMessage response = messageHandler(false, jsonThingsMessage);
+        JsonThingsMessage response = handleMessage(jsonThingsMessage);
         responseInterceptor(response);
         filter(jsonThingsMessage, response);
         return response;
@@ -58,80 +53,56 @@ public class ThingsChainingExecutor implements ThingsChaining, ThingsReceiver {
     @Override
     public void doSubscribe(JsonThingsMessage jsonThingsMessage) {
         requestInterceptor(jsonThingsMessage);
-        JsonThingsMessage response = messageHandler(false, jsonThingsMessage);
+        JsonThingsMessage response = handleMessage(jsonThingsMessage);
         responseInterceptor(response);
         filter(jsonThingsMessage, response);
     }
 
     @Override
-    public JsonThingsMessage send(JsonThingsMessage jsonThingsMessage) {
+    public JsonThingsMessage doSend(JsonThingsMessage jsonThingsMessage) {
         requestInterceptor(jsonThingsMessage);
-        JsonThingsMessage response = messageHandler(true, jsonThingsMessage);
-        if (response == null) {
-            response = messageSender(jsonThingsMessage);
-        }
+        JsonThingsMessage response = sendMessage(jsonThingsMessage);
         responseInterceptor(response);
         filter(jsonThingsMessage, response);
         return response;
     }
 
     @Override
-    public void publish(ThingsEventMessage thingsEventMessage) {
+    public void doPublish(ThingsEventMessage thingsEventMessage) {
         JsonThingsMessage jsonThingsMessage = covertEventMessage(thingsEventMessage);
         requestInterceptor(jsonThingsMessage);
-        eventHandler(jsonThingsMessage);
+        publishMessage(jsonThingsMessage);
         JsonThingsMessage response = jsonThingsMessage.success();
         responseInterceptor(response);
         filter(jsonThingsMessage, response);
     }
 
-    private JsonThingsMessage messageHandler(boolean send, JsonThingsMessage jsonThingsMessage) {
+    private JsonThingsMessage handleMessage(JsonThingsMessage jsonThingsMessage) {
         for (ThingsHandler thingsHandler : handlerMap.values()) {
             if (thingsHandler.canHandle(jsonThingsMessage)) {
                 return thingsHandler.doHandle(jsonThingsMessage);
             }
         }
-        if (!send) {
-            throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Handler the message failed.");
-        }
-        return messageSender(jsonThingsMessage);
+        throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Can't handler this message");
     }
 
-    private JsonThingsMessage messageSender(JsonThingsMessage jsonThingsMessage) {
-        for (ThingsSender thingsSender : senderMap.values()) {
-            if (thingsSender.canSend(jsonThingsMessage)) {
-                return thingsSender.doSend(jsonThingsMessage);
+    private JsonThingsMessage sendMessage(JsonThingsMessage jsonThingsMessage) {
+        for (ThingsHandler thingsHandler : handlerMap.values()) {
+            if (thingsHandler.canHandle(jsonThingsMessage)) {
+                return thingsHandler.doHandle(jsonThingsMessage);
             }
         }
-        throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Send the message failed.");
+        return thingsEndpointFactory.create(jsonThingsMessage).send(jsonThingsMessage);
     }
 
-    private void eventHandler(JsonThingsMessage jsonThingsMessage) {
+    private void publishMessage(JsonThingsMessage jsonThingsMessage) {
         for (ThingsHandler thingsHandler : handlerMap.values()) {
             THINGS_EXECUTOR.execute(() -> thingsHandler.doHandle(jsonThingsMessage));
         }
-        for (ThingsSender thingsSender : senderMap.values()) {
-            THINGS_EXECUTOR.execute(() -> thingsSender.doPublish(jsonThingsMessage));
-        }
+        THINGS_EXECUTOR.execute(() -> thingsEndpointFactory.create(jsonThingsMessage).publish(jsonThingsMessage));
     }
 
-    private JsonThingsMessage covertEventMessage(ThingsEventMessage message) {
-        ThingsEvent thingsEvent = findBeanAnnotation(message, ThingsEvent.class);
-        if (thingsEvent == null) {
-            throw new ThingsException(null, BAD_REQUEST, "Message object is not ThingsEvent entry.");
-        }
-        JsonThingsMessage jsonThingsMessage = new JsonThingsMessage();
-        jsonThingsMessage.setBaseMetadata(baseThingsMetadata -> {
-            baseThingsMetadata.setProductCode(thingsEvent.productCode());
-            baseThingsMetadata.setDeviceCode(message.getDeviceCode());
-        });
-        jsonThingsMessage.setQos(thingsEvent.qos());
-        jsonThingsMessage.setPayload((JSONObject) JSON.toJSON(message, JSONWriter.Feature.WriteNulls));
-        jsonThingsMessage.setMethod(EVENT_LISTENER_START_WITH.concat(thingsEvent.identifier()).concat(EVENT_TYPE_POST.replace(EVENT_TYPE, thingsEvent.type())));
-        return jsonThingsMessage;
-    }
-
-    public void filter(JsonThingsMessage request, JsonThingsMessage response) {
+    private void filter(JsonThingsMessage request, JsonThingsMessage response) {
         List<ThingsFilters> filters = getInterceptors(THINGS_FILTERS_TABLE, request, i -> i.getThingsFiltering().order());
         if (CollUtil.isNotEmpty(filters)) {
             handleFilters(new ThingsRequest(request), new ThingsResponse(response), filters);
@@ -139,14 +110,14 @@ public class ThingsChainingExecutor implements ThingsChaining, ThingsReceiver {
     }
 
 
-    public void requestInterceptor(JsonThingsMessage jsonThingsMessage) {
+    private void requestInterceptor(JsonThingsMessage jsonThingsMessage) {
         List<ThingsInterceptors> interceptors = getInterceptors(THINGS_REQUEST_INTERCEPTORS_TABLE, jsonThingsMessage, i -> i.getThingsIntercepting().order());
         if (CollUtil.isNotEmpty(interceptors)) {
             handleInterceptor(jsonThingsMessage, interceptors);
         }
     }
 
-    public void responseInterceptor(JsonThingsMessage jsonThingsMessage) {
+    private void responseInterceptor(JsonThingsMessage jsonThingsMessage) {
         List<ThingsInterceptors> interceptors = getInterceptors(THINGS_RESPONSE_INTERCEPTORS_TABLE, jsonThingsMessage, i -> i.getThingsIntercepting().order());
         if (CollUtil.isNotEmpty(interceptors)) {
             handleInterceptor(jsonThingsMessage, interceptors);

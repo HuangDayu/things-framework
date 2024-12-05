@@ -6,8 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -15,7 +15,7 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.getUUID;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 public class ThingsExceptionHandler extends ResponseEntityExceptionHandler {
 
 
@@ -31,7 +31,7 @@ public class ThingsExceptionHandler extends ResponseEntityExceptionHandler {
             httpStatus = HttpStatus.valueOf(Integer.parseInt(e.getErrorCode()));
         } catch (Exception ignored) {
         }
-        log.error("Things engine exception , traceId : {} , exception stack trace : ", errorTraceCode, e);
+        log.error("Things exception , traceId : {} , exception stack trace : ", errorTraceCode, e);
         return ResponseEntity.status(httpStatus).body(jsonThingsMessage.serverError(errorTraceCode, e.getErrorMessage()));
     }
 

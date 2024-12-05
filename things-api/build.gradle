@@ -4,6 +4,4 @@ plugins {
 
 dependencies {
     api project(path: ':things-common')
-    compileOnly "org.springframework:spring-web"
-
 }

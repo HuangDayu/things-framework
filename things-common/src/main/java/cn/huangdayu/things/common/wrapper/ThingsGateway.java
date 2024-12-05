@@ -8,7 +8,6 @@ import lombok.Data;
 @Data
 public class ThingsGateway {
 
-    private String uri;
     private String token;
 
 }

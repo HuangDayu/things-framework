@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     api project(path: ':things-discovery')
+    
     api project(path: ':things-support:things-starter:things-spring-boot-starter')
     implementation 'com.alibaba.fastjson2:fastjson2'
     implementation 'cn.hutool:hutool-core'

@@ -1,6 +1,5 @@
 package cn.huangdayu.things.common.properties;
 
-import cn.huangdayu.things.common.wrapper.ThingsGateway;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.hutool.core.collection.ConcurrentHashSet;
 import lombok.Data;
@@ -27,11 +26,5 @@ public class ThingsFrameworkProperties {
     /**
      * 本实例信息
      */
-    private ThingsInstance instance;
-
-
-    /**
-     * 网关信息
-     */
-    private ThingsGateway gateway;
+    private volatile ThingsInstance instance;
 }

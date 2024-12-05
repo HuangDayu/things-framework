@@ -1,5 +1,6 @@
 package cn.huangdayu.things.boot;
 
+import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
 import cn.huangdayu.things.api.register.ThingsRegister;
 import cn.huangdayu.things.common.factory.ThreadPoolFactory;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
@@ -60,5 +61,11 @@ public class ThingsBootAutoConfiguration {
         return new ThingsContainerRegister(thingsRegister);
     }
 
+    @ConditionalOnBean(ThingsEndpoint.class)
+    @ConditionalOnMissingBean
+    @Bean
+    public ThingsEndpointController thingsEndpointController(ThingsEndpoint thingsEndpoint) {
+        return new ThingsEndpointController(thingsEndpoint);
+    }
 
 }

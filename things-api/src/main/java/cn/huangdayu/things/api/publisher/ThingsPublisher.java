@@ -23,7 +23,7 @@ public interface ThingsPublisher {
      * @param jsonThingsMessage
      * @return
      */
-    JsonThingsMessage publishMessage(JsonThingsMessage jsonThingsMessage);
+    JsonThingsMessage sendMessage(JsonThingsMessage jsonThingsMessage);
 
 
     /**
@@ -31,6 +31,6 @@ public interface ThingsPublisher {
      *
      * @param asyncThingsMessage
      */
-    void publishAsyncMessage(AsyncThingsMessage asyncThingsMessage);
+    void sendAsyncMessage(AsyncThingsMessage asyncThingsMessage);
 
 }

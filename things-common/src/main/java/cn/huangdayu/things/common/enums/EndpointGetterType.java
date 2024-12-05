@@ -5,8 +5,6 @@ package cn.huangdayu.things.common.enums;
  */
 public enum EndpointGetterType {
 
-    DEFAULT,
-
     DISCOVERY,
 
     SESSION;

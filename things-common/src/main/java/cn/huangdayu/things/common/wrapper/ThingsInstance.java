@@ -1,10 +1,10 @@
 package cn.huangdayu.things.common.wrapper;
 
+import cn.huangdayu.things.common.enums.ThingsInstanceType;
 import cn.hutool.core.util.StrUtil;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -14,10 +14,15 @@ import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_SEPARA
 /**
  * @author huangdayu
  */
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
-public class ThingsInstance {
+public class ThingsInstance implements Serializable {
+
+    public ThingsInstance() {
+        this.type = new LinkedHashSet<>();
+        this.provides = new LinkedHashSet<>();
+        this.consumes = new LinkedHashSet<>();
+        this.subscribes = new LinkedHashSet<>();
+    }
 
     /**
      * 实例标识
@@ -30,9 +35,9 @@ public class ThingsInstance {
     private String name;
 
     /**
-     * 类型：代理，直连，网关，设备，应用
+     * 实例类型，一个实例可以是多种角色类型
      */
-    private String type;
+    private Set<ThingsInstanceType> type;
 
 
     /**
@@ -41,12 +46,12 @@ public class ThingsInstance {
     private int sessions;
 
     /**
-     * 上游服务端点信息，没有则为空
+     * 上游服务uri，可以是网关，也可以是边缘服务，也可以是代理服务
      */
-    private String brokerUri;
+    private String upstreamUri;
 
     /**
-     * 本实例端点信息
+     * 本实例端点uri
      */
     private String endpointUri;
 
@@ -54,20 +59,20 @@ public class ThingsInstance {
     /**
      * 提供的物模型的productCode
      */
-    private Set<String> provides = new LinkedHashSet<>();
+    private Set<String> provides;
 
 
     /**
      * 消费的物模型的productCode
      * 消费的服务，订阅的事件
      */
-    private Set<String> consumes = new LinkedHashSet<>();
+    private Set<String> consumes;
 
 
     /**
      * 订阅列表
      */
-    private Set<String> subscribes = new LinkedHashSet<>();
+    private Set<String> subscribes;
 
 
     public String getCode() {

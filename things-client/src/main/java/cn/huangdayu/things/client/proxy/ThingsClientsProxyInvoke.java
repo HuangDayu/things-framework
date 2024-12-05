@@ -1,9 +1,8 @@
 package cn.huangdayu.things.client.proxy;
 
-import cn.huangdayu.things.api.sender.ThingsSender;
+import cn.huangdayu.things.api.endpoint.ThingsEndpointFactory;
 import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.constants.ThingsConstants;
-import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.AbstractThingsMessage;
 import cn.huangdayu.things.common.message.BaseThingsMessage;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
@@ -17,8 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
-import static cn.huangdayu.things.common.utils.ThingsUtils.getUUID;
-
 /**
  * @author huangdayu
  */
@@ -27,7 +24,7 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.getUUID;
 @Slf4j
 public class ThingsClientsProxyInvoke {
 
-    private final ThingsSender thingsSender;
+    private final ThingsEndpointFactory thingsEndpointFactory;
 
     public Object invokeService(ThingsClient thingsClient, ThingsService thingsService, Method method, Object[] args) {
         return invoke(method, buildThingsMessage(thingsClient, thingsService, method, args));
@@ -35,10 +32,7 @@ public class ThingsClientsProxyInvoke {
 
 
     private Object invoke(Method method, JsonThingsMessage request) {
-        if (!thingsSender.canSend(request)) {
-            throw new ThingsException(request, ThingsConstants.ErrorCodes.BAD_REQUEST, "Send the message failed.");
-        }
-        JsonThingsMessage response = thingsSender.doSend(request);
+        JsonThingsMessage response = thingsEndpointFactory.create(request).send(request);
         if (response == null) {
             return null;
         }

@@ -11,6 +11,4 @@ dependencies {
     implementation 'com.alibaba.nacos:nacos-api'
     implementation 'com.alibaba.fastjson2:fastjson2'
     implementation 'cn.hutool:hutool-core'
-    implementation 'cn.hutool:hutool-cache'
-
 }

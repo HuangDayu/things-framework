@@ -3,5 +3,6 @@ plugins {
 }
 
 dependencies {
+    
     api project(path: ':things-support:things-starter:things-spring-boot-starter')
 }
