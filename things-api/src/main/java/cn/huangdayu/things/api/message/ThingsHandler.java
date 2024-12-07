@@ -2,6 +2,9 @@ package cn.huangdayu.things.api.message;
 
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
+
 /**
  * @author huangdayu
  */
@@ -16,11 +19,20 @@ public interface ThingsHandler {
     boolean canHandle(JsonThingsMessage jsonThingsMessage);
 
     /**
-     * 处理消息
+     * 同步处理消息
      *
      * @param jsonThingsMessage
      * @return
      */
-    JsonThingsMessage doHandle(JsonThingsMessage jsonThingsMessage);
+    JsonThingsMessage syncHandler(JsonThingsMessage jsonThingsMessage);
+
+
+    /**
+     * 异步处理消息
+     *
+     * @param jsonThingsMessage
+     * @return
+     */
+    CompletableFuture<JsonThingsMessage> asyncHandler(JsonThingsMessage jsonThingsMessage);
 
 }

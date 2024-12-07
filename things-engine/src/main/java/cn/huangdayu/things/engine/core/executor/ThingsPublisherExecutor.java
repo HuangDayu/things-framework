@@ -3,16 +3,13 @@ package cn.huangdayu.things.engine.core.executor;
 import cn.huangdayu.things.api.message.ThingsPublisher;
 import cn.huangdayu.things.api.message.ThingsSender;
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.common.async.ThingsAsyncManager;
-import cn.huangdayu.things.common.event.ThingsAsyncResponseEvent;
-import cn.huangdayu.things.common.event.ThingsEventObserver;
-import cn.huangdayu.things.common.message.AsyncThingsMessage;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.message.ThingsEventMessage;
 import cn.huangdayu.things.engine.core.ThingsChaining;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.concurrent.CompletableFuture;
 
 import static cn.huangdayu.things.common.factory.ThreadPoolFactory.THINGS_EXECUTOR;
 
@@ -23,15 +20,8 @@ import static cn.huangdayu.things.common.factory.ThreadPoolFactory.THINGS_EXECUT
 @ThingsBean
 @RequiredArgsConstructor
 public class ThingsPublisherExecutor implements ThingsPublisher, ThingsSender {
-    private final ThingsEventObserver thingsEventObserver;
     private final ThingsChaining thingsChaining;
 
-    @PostConstruct
-    public void init() {
-        thingsEventObserver.registerObserver(ThingsAsyncResponseEvent.class, engineEvent -> {
-            thingsChaining.doSend(engineEvent.getJsonThingsMessage());
-        });
-    }
 
     @Override
     public void publishEvent(ThingsEventMessage thingsEventMessage) {
@@ -49,11 +39,8 @@ public class ThingsPublisherExecutor implements ThingsPublisher, ThingsSender {
     }
 
     @Override
-    public void sendAsyncMessage(AsyncThingsMessage asyncThingsMessage) {
-        THINGS_EXECUTOR.execute(() -> {
-            thingsChaining.doSend(asyncThingsMessage);
-            ThingsAsyncManager.asyncRequest(asyncThingsMessage);
-        });
+    public CompletableFuture<JsonThingsMessage> sendAsyncMessage(JsonThingsMessage jsonThingsMessage) {
+        return thingsChaining.asyncMessage(jsonThingsMessage);
     }
 
 }

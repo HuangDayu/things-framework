@@ -1,7 +1,8 @@
 package cn.huangdayu.things.api.message;
 
-import cn.huangdayu.things.common.message.AsyncThingsMessage;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author huangdayu
@@ -20,8 +21,8 @@ public interface ThingsSender {
     /**
      * 发布异步消息
      *
-     * @param asyncThingsMessage
+     * @param jsonThingsMessage
      */
-    void sendAsyncMessage(AsyncThingsMessage asyncThingsMessage);
+    CompletableFuture<JsonThingsMessage> sendAsyncMessage(JsonThingsMessage jsonThingsMessage);
 
 }

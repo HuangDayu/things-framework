@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @ConditionalOnBean(ThingsEndpoint.class)
@@ -31,6 +32,18 @@ public class ThingsEndpointController {
     public void handleEvent(@RequestBody JsonThingsMessage message) {
         log.debug("ThingsEndpoint handleEvent: {}", message);
         thingsEndpoint.handleEvent(message);
+    }
+
+    /**
+     * 异步消息发送
+     *
+     * @param message
+     * @return
+     */
+    @PostMapping("/things/message/async")
+    public CompletableFuture<JsonThingsMessage> asyncMessage(@RequestBody JsonThingsMessage message) {
+        log.debug("ThingsEndpoint asyncMessage: {}", message);
+        return thingsEndpoint.asyncMessage(message);
     }
 
     @GetMapping("/things/dsl")

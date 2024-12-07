@@ -18,7 +18,7 @@ import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_SEPARA
 public class ThingsInstance implements Serializable {
 
     public ThingsInstance() {
-        this.type = new LinkedHashSet<>();
+        this.types = new LinkedHashSet<>();
         this.provides = new LinkedHashSet<>();
         this.consumes = new LinkedHashSet<>();
         this.subscribes = new LinkedHashSet<>();
@@ -37,7 +37,7 @@ public class ThingsInstance implements Serializable {
     /**
      * 实例类型，一个实例可以是多种角色类型
      */
-    private Set<ThingsInstanceType> type;
+    private Set<ThingsInstanceType> types;
 
 
     /**

@@ -100,17 +100,6 @@ public class JsonThingsMessage extends AbstractThingsMessage<JSONObject, JSONObj
         return response;
     }
 
-    @JsonIgnore
-    @JSONField(serialize = false, deserialize = false)
-    public JsonThingsMessage async() {
-        JsonThingsMessage response = cloneMessage();
-        response.setBaseMetadata(thingsMetadata -> {
-            thingsMetadata.setErrorCode(ACCEPTED);
-            thingsMetadata.setErrorMessage("Async");
-        });
-        return response;
-    }
-
 
     @JsonIgnore
     @JSONField(serialize = false, deserialize = false)

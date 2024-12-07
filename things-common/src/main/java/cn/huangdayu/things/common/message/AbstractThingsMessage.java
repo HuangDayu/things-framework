@@ -35,6 +35,12 @@ public abstract class AbstractThingsMessage<M extends Serializable, P extends Se
      */
     private int qos = 0;
 
+
+    /**
+     * 超时时间
+     */
+    private long timeout = 1000;
+
     /**
      * 消息元数据
      */

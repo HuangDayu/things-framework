@@ -2,6 +2,9 @@ package cn.huangdayu.things.engine.core;
 
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
+
 /**
  * 物模型执行引擎
  *
@@ -10,11 +13,20 @@ import cn.huangdayu.things.common.message.JsonThingsMessage;
 public interface ThingsInvoker {
 
     /**
-     * 执行物模型消息
+     * 同步调用
      *
      * @param message
      * @return
      */
-    JsonThingsMessage execute(JsonThingsMessage message);
+    JsonThingsMessage syncInvoker(JsonThingsMessage message);
+
+
+    /**
+     * 异步调用
+     *
+     * @param message
+     * @return
+     */
+    CompletableFuture<JsonThingsMessage> asyncInvoker(JsonThingsMessage message);
 
 }

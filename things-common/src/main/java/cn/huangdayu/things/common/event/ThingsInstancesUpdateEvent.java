@@ -1,9 +1,11 @@
 package cn.huangdayu.things.common.event;
 
-import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 /**
  * @author huangdayu
@@ -11,7 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ThingsAsyncResponseEvent implements ThingsEngineEvent {
+public class ThingsInstancesUpdateEvent implements ThingsEngineEvent {
+
     private Object source;
-    private JsonThingsMessage jsonThingsMessage;
+
 }

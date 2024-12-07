@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -81,10 +82,30 @@ public class ThingsChainingExecutor implements ThingsChaining {
         filter(jsonThingsMessage, response);
     }
 
+    @Override
+    public CompletableFuture<JsonThingsMessage> asyncMessage(JsonThingsMessage message) {
+        requestInterceptor(message);
+        CompletableFuture<JsonThingsMessage> response = handleAsyncMessage(message);
+        response.thenAcceptAsync(response1 -> {
+            responseInterceptor(response1);
+            filter(message, response1);
+        });
+        return response;
+    }
+
     private JsonThingsMessage handleMessage(JsonThingsMessage jsonThingsMessage) {
         for (ThingsHandler thingsHandler : handlerMap.values()) {
             if (thingsHandler.canHandle(jsonThingsMessage)) {
-                return thingsHandler.doHandle(jsonThingsMessage);
+                return thingsHandler.syncHandler(jsonThingsMessage);
+            }
+        }
+        throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Can't handler this message");
+    }
+
+    private CompletableFuture<JsonThingsMessage> handleAsyncMessage(JsonThingsMessage jsonThingsMessage) {
+        for (ThingsHandler thingsHandler : handlerMap.values()) {
+            if (thingsHandler.canHandle(jsonThingsMessage)) {
+                return thingsHandler.asyncHandler(jsonThingsMessage);
             }
         }
         throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Can't handler this message");
@@ -93,7 +114,7 @@ public class ThingsChainingExecutor implements ThingsChaining {
     private JsonThingsMessage sendMessage(JsonThingsMessage jsonThingsMessage) {
         for (ThingsHandler thingsHandler : handlerMap.values()) {
             if (thingsHandler.canHandle(jsonThingsMessage)) {
-                return thingsHandler.doHandle(jsonThingsMessage);
+                return thingsHandler.syncHandler(jsonThingsMessage);
             }
         }
         return thingsEndpointFactory.create(jsonThingsMessage).handleMessage(jsonThingsMessage);
@@ -103,7 +124,7 @@ public class ThingsChainingExecutor implements ThingsChaining {
         for (ThingsHandler thingsHandler : handlerMap.values()) {
             THINGS_EXECUTOR.execute(() -> {
                 if (thingsHandler.canHandle(jsonThingsMessage)) {
-                    thingsHandler.doHandle(jsonThingsMessage);
+                    thingsHandler.syncHandler(jsonThingsMessage);
                 }
             });
         }

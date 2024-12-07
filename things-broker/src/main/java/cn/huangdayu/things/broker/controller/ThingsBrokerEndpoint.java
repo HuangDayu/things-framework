@@ -5,12 +5,14 @@ import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
 import cn.huangdayu.things.api.session.ThingsSessions;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.dto.ThingsInfo;
+
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author huangdayu
@@ -30,6 +32,11 @@ public class ThingsBrokerEndpoint implements ThingsEndpoint {
 
     @Override
     public JsonThingsMessage handleMessage(JsonThingsMessage message) {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<JsonThingsMessage> asyncMessage(JsonThingsMessage message) {
         return null;
     }
 

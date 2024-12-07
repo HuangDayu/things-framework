@@ -43,7 +43,7 @@ public @interface ThingsService {
     String desc() default "";
 
     /**
-     * async（异步调用）或sync（同步调用）
+     * 是否支持异步调用
      *
      * @return
      */

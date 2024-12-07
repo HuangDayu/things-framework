@@ -1,7 +1,7 @@
 package cn.huangdayu.things.engine.core.executor;
 
-import cn.huangdayu.things.api.instances.ThingsInstancesManager;
 import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
+import cn.huangdayu.things.api.instances.ThingsInstancesManager;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.dto.ThingsInfo;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
@@ -11,6 +11,7 @@ import cn.huangdayu.things.engine.core.ThingsDescriber;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 
 @RequiredArgsConstructor
@@ -24,6 +25,11 @@ public class ThingsEngineEndpoint implements ThingsEndpoint {
     @Override
     public JsonThingsMessage handleMessage(JsonThingsMessage message) {
         return thingsChaining.doReceive(message);
+    }
+
+    @Override
+    public CompletableFuture<JsonThingsMessage> asyncMessage(JsonThingsMessage message) {
+        return thingsChaining.asyncMessage(message);
     }
 
     @Override

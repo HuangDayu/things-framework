@@ -11,10 +11,17 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.Type;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+import static cn.huangdayu.things.common.utils.ThingsUtils.getReturnType;
 
 /**
  * @author huangdayu
@@ -27,11 +34,27 @@ public class ThingsClientsProxyInvoke {
     private final ThingsEndpointFactory thingsEndpointFactory;
 
     public Object invokeService(ThingsClient thingsClient, ThingsService thingsService, Method method, Object[] args) {
-        return invoke(method, buildThingsMessage(thingsClient, thingsService, method, args));
+        JsonThingsMessage jsonThingsMessage = buildThingsMessage(thingsClient, thingsService, method, args);
+        if (method.getReturnType().isAssignableFrom(Future.class)) {
+            return asyncInvoke(method, jsonThingsMessage);
+        }
+        return syncInvoke(method, jsonThingsMessage);
     }
 
+    @SneakyThrows
+    private Object asyncInvoke(Method method, JsonThingsMessage request) {
+        CompletableFuture<JsonThingsMessage> response = thingsEndpointFactory.create(request).asyncMessage(request);
+        if (response == null) {
+            return null;
+        }
+        Type type = getReturnType(method)[0];
+        if (type.equals(JsonThingsMessage.class)) {
+            return response;
+        }
+        return CompletableFuture.completedFuture(response.get(request.getTimeout(), TimeUnit.MILLISECONDS).getPayload().toJavaObject(type));
+    }
 
-    private Object invoke(Method method, JsonThingsMessage request) {
+    private Object syncInvoke(Method method, JsonThingsMessage request) {
         JsonThingsMessage response = thingsEndpointFactory.create(request).handleMessage(request);
         if (response == null) {
             return null;

@@ -7,9 +7,8 @@ import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.constants.ThingsConstants;
 import cn.huangdayu.things.common.enums.ThingsInstanceType;
 import cn.huangdayu.things.common.event.ThingsContainerUpdateEvent;
-import cn.huangdayu.things.common.event.ThingsEngineEvent;
 import cn.huangdayu.things.common.event.ThingsEventObserver;
-import cn.huangdayu.things.common.event.ThingsInstancesChangeEvent;
+import cn.huangdayu.things.common.event.ThingsInstancesUpdateEvent;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
@@ -44,14 +43,8 @@ public class ThingsInstanceUpdater {
     @PostConstruct
     public void init() {
         updateThingsInstance();
-        thingsEventObserver.registerObserver(ThingsEngineEvent.class, engineEvent -> {
-            if (engineEvent instanceof ThingsContainerUpdateEvent) {
-                updateThingsInstance();
-            }
-            if (engineEvent instanceof ThingsInstancesChangeEvent thingsInstancesChangeEvent) {
-                updateThingsInstance();
-            }
-        });
+        thingsEventObserver.registerObserver(ThingsContainerUpdateEvent.class, engineEvent -> updateThingsInstance());
+        thingsEventObserver.registerObserver(ThingsInstancesUpdateEvent.class, engineEvent -> updateThingsInstance());
     }
 
     private void updateThingsInstance() {
@@ -69,7 +62,7 @@ public class ThingsInstanceUpdater {
             }
         }
         if (CollUtil.isNotEmpty(thingsInstanceType)) {
-            thingsInstance.setType(thingsInstanceType);
+            thingsInstance.setTypes(thingsInstanceType);
         }
         thingsFrameworkProperties.setInstance(thingsInstance);
     }
@@ -78,12 +71,12 @@ public class ThingsInstanceUpdater {
         if (thingsInstanceTypes.contains(GATEWAY)) {
             return null;
         }
-        return thingsInstancesManager.getAllThingsInstances().stream().filter(v -> v.getType().contains(GATEWAY))
-                .findFirst().map(ThingsInstance::getUpstreamUri).orElse(null);
+        return thingsInstancesManager.getAllThingsInstances().stream().filter(v -> v.getTypes().contains(GATEWAY))
+                .map(ThingsInstance::getEndpointUri).findFirst().orElseGet(() -> null);
     }
 
     private Set<ThingsInstanceType> findThingsInstanceType(ThingsInstance thingsInstance) {
-        Set<ThingsInstanceType> type = thingsInstance.getType();
+        Set<ThingsInstanceType> type = thingsInstance.getTypes();
         for (Map.Entry<String, ThingsInstancesTypeFinder> entry : thingsInstancesTypeFinderMap.entrySet()) {
             type.add(entry.getValue().type());
         }

@@ -1,5 +1,6 @@
 <blockquote class="blockquote-center">
-<p style="font-size: 30px;text-align: center;">物联网旨在增强人们掌控万物的能力。</p>  
+<p style="font-size: 30px;text-align: center;">物联网旨在增强人们掌控万物的能力。</p>
+<p style="font-size: 30px;text-align: center;">Things Framework 旨在让万物说同一种语言。</p> 
 </blockquote>
 
 ## 物联网物模型框架

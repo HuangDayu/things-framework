@@ -81,7 +81,7 @@ public class ThingsNacosInstancesDiscoverer implements EventListener, ThingsInst
             if (thingsInstance.getEndpointUri().contains(instance.getIp() + ":" + instance.getPort())) {
                 instance.getMetadata().put(METADATA_INSTANCES_CODE, thingsInstance.getCode());
                 instance.getMetadata().put(METADATA_INSTANCES_SIZE, String.valueOf(thingsInstancesManager.getInstancesSize()));
-                instance.getMetadata().put(METADATA_INSTANCES_TYPE, JSON.toJSONString(thingsInstance.getType()));
+                instance.getMetadata().put(METADATA_INSTANCES_TYPE, JSON.toJSONString(thingsInstance.getTypes()));
                 namingMaintainService.updateInstance(nacosServerProperties.getService(), nacosServerProperties.getGroup(), instance);
             }
         }

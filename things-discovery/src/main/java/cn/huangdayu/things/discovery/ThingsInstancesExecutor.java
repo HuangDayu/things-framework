@@ -2,9 +2,9 @@ package cn.huangdayu.things.discovery;
 
 import cn.huangdayu.things.api.instances.ThingsInstancesManager;
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.common.event.ThingsEngineEvent;
 import cn.huangdayu.things.common.event.ThingsEventObserver;
 import cn.huangdayu.things.common.event.ThingsInstancesChangeEvent;
+import cn.huangdayu.things.common.event.ThingsInstancesUpdateEvent;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
@@ -37,11 +37,10 @@ public class ThingsInstancesExecutor implements ThingsInstancesManager {
 
     @PostConstruct
     public void init() {
-        thingsEventObserver.registerObserver(ThingsEngineEvent.class, engineEvent -> {
-            if (engineEvent instanceof ThingsInstancesChangeEvent thingsInstancesChangeEvent) {
-                addInstances(thingsInstancesChangeEvent.getAddedInstances());
-                removeInstancesByCodes(thingsInstancesChangeEvent.getRemovedInstanceCodes());
-            }
+        thingsEventObserver.registerObserver(ThingsInstancesChangeEvent.class, engineEvent -> {
+            addInstances(engineEvent.getAddedInstances());
+            removeInstancesByCodes(engineEvent.getRemovedInstanceCodes());
+            thingsEventObserver.notifyObservers(new ThingsInstancesUpdateEvent(this));
         });
     }
 

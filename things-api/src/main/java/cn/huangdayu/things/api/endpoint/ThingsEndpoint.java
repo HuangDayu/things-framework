@@ -6,6 +6,7 @@ import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 消息点对点发布
@@ -28,6 +29,15 @@ public interface ThingsEndpoint {
      * @return
      */
     JsonThingsMessage handleMessage(JsonThingsMessage message);
+
+
+    /**
+     * 异步消息发送
+     *
+     * @param message
+     * @return
+     */
+    CompletableFuture<JsonThingsMessage> asyncMessage(JsonThingsMessage message);
 
     /**
      * 发布消息

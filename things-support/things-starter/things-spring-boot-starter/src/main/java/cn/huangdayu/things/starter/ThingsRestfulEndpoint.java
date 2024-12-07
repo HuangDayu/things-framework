@@ -3,6 +3,7 @@ package cn.huangdayu.things.starter;
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
 import cn.huangdayu.things.common.dto.ThingsInfo;
+
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 消息点对点发布
@@ -40,6 +42,16 @@ public interface ThingsRestfulEndpoint extends ThingsEndpoint {
      */
     @PostExchange("/things/message")
     JsonThingsMessage handleMessage(@RequestBody JsonThingsMessage message);
+
+
+    /**
+     * 异步消息发送
+     *
+     * @param message
+     * @return
+     */
+    @PostExchange("/things/message/async")
+    CompletableFuture<JsonThingsMessage> asyncMessage(@RequestBody JsonThingsMessage message);
 
     /**
      * 发布消息

@@ -6,6 +6,7 @@ import cn.huangdayu.things.api.instances.ThingsInstancesManager;
 import cn.huangdayu.things.api.message.ThingsPublisher;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.dto.ThingsInfo;
+
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import static cn.huangdayu.things.common.factory.ThreadPoolFactory.THINGS_EXECUTOR;
 
@@ -39,6 +41,11 @@ public class ThingsGatewayEndpoint implements ThingsEndpoint {
     @Override
     public JsonThingsMessage handleMessage(JsonThingsMessage message) {
         return thingsEndpointFactory.create(message).handleMessage(message);
+    }
+
+    @Override
+    public CompletableFuture<JsonThingsMessage> asyncMessage(JsonThingsMessage message) {
+        return null;
     }
 
     @Override
