@@ -32,7 +32,7 @@ public class ThingsClientsProxyInvoke {
 
 
     private Object invoke(Method method, JsonThingsMessage request) {
-        JsonThingsMessage response = thingsEndpointFactory.create(request).send(request);
+        JsonThingsMessage response = thingsEndpointFactory.create(request).handleMessage(request);
         if (response == null) {
             return null;
         }

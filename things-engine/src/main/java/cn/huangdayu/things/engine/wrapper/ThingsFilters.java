@@ -1,6 +1,6 @@
 package cn.huangdayu.things.engine.wrapper;
 
-import cn.huangdayu.things.api.filters.ThingsFilter;
+import cn.huangdayu.things.api.message.ThingsFilter;
 import cn.huangdayu.things.common.annotation.ThingsFiltering;
 import lombok.AllArgsConstructor;
 import lombok.Data;

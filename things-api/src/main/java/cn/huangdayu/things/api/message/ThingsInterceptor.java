@@ -1,4 +1,4 @@
-package cn.huangdayu.things.api.interceptor;
+package cn.huangdayu.things.api.message;
 
 
 import cn.huangdayu.things.common.wrapper.ThingsServlet;

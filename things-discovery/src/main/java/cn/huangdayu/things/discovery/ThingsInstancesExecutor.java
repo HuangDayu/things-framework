@@ -51,7 +51,7 @@ public class ThingsInstancesExecutor implements ThingsInstancesManager {
     }
 
     @Override
-    public Set<ThingsInstance> getConsumeInstances(String productCode, String deviceCode, String identifier) {
+    public Set<ThingsInstance> getSubscribeInstances(String productCode, String deviceCode, String identifier) {
         return THINGS_INSTANCES.parallelStream().filter(instance -> {
             if (instance.getConsumes().contains(productCode)) {
                 if (StrUtil.isNotBlank(identifier)) {

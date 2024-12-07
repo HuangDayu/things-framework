@@ -1,4 +1,4 @@
-package cn.huangdayu.things.discovery.nacos;
+package cn.huangdayu.things.starter.nacos;
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpointFactory;
 import cn.huangdayu.things.api.instances.ThingsInstancesDiscoverer;
@@ -8,7 +8,6 @@ import cn.huangdayu.things.common.event.ThingsEventObserver;
 import cn.huangdayu.things.common.event.ThingsInstancesChangeEvent;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
-import cn.huangdayu.things.discovery.configuration.NacosServerProperties;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.hutool.core.util.ReflectUtil;

@@ -1,7 +1,7 @@
 package cn.huangdayu.things.engine.chaining;
 
-import cn.huangdayu.things.api.filters.ThingsFilter;
-import cn.huangdayu.things.api.filters.ThingsFilterChain;
+import cn.huangdayu.things.api.message.ThingsFilter;
+import cn.huangdayu.things.api.message.ThingsFilterChain;
 import cn.huangdayu.things.common.event.ThingsEventObserver;
 import cn.huangdayu.things.common.event.ThingsSessionStatusEvent;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;

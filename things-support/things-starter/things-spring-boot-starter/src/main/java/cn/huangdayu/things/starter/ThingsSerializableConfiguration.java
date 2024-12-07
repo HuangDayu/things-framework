@@ -1,4 +1,4 @@
-package cn.huangdayu.things.boot;
+package cn.huangdayu.things.starter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

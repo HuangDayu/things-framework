@@ -7,6 +7,8 @@ import java.io.Serializable;
  */
 public interface ThingsEventMessage extends Serializable {
 
-    String getDeviceCode();
+    default String getDeviceCode() {
+        return null;
+    }
 
 }

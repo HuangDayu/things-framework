@@ -1,6 +1,6 @@
 package cn.huangdayu.things.engine.wrapper;
 
-import cn.huangdayu.things.api.interceptor.ThingsInterceptor;
+import cn.huangdayu.things.api.message.ThingsInterceptor;
 import cn.huangdayu.things.common.annotation.ThingsIntercepting;
 import lombok.AllArgsConstructor;
 import lombok.Data;

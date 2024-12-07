@@ -1,15 +1,18 @@
-package cn.huangdayu.things.boot;
+package cn.huangdayu.things.starter;
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
 import cn.huangdayu.things.common.dto.ThingsInfo;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
+import com.alibaba.fastjson2.JSON;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
+@Slf4j
 @ConditionalOnBean(ThingsEndpoint.class)
 @RequiredArgsConstructor
 @RestController
@@ -18,14 +21,16 @@ public class ThingsEndpointController {
 
     private final ThingsEndpoint thingsEndpoint;
 
-    @PostMapping("/things/send")
-    public JsonThingsMessage send(@RequestBody JsonThingsMessage message) {
-        return thingsEndpoint.send(message);
+    @PostMapping("/things/message")
+    public JsonThingsMessage handleMessage(@RequestBody JsonThingsMessage message) {
+        log.debug("ThingsEndpoint handleMessage: {}", message);
+        return thingsEndpoint.handleMessage(message);
     }
 
-    @PostMapping("/things/publish")
-    public void publish(@RequestBody JsonThingsMessage message) {
-        thingsEndpoint.publish(message);
+    @PostMapping("/things/event")
+    public void handleEvent(@RequestBody JsonThingsMessage message) {
+        log.debug("ThingsEndpoint handleEvent: {}", message);
+        thingsEndpoint.handleEvent(message);
     }
 
     @GetMapping("/things/dsl")
@@ -35,6 +40,7 @@ public class ThingsEndpointController {
 
     @PostMapping("/things/exchange")
     public ThingsInstance exchange(@RequestBody ThingsInstance thingsInstance) {
+        log.debug("ThingsEndpoint exchange: {}", JSON.toJSONString(thingsInstance));
         return thingsEndpoint.exchange(thingsInstance);
     }
 

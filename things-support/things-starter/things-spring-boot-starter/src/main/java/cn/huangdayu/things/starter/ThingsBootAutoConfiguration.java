@@ -1,6 +1,7 @@
-package cn.huangdayu.things.boot;
+package cn.huangdayu.things.starter;
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
+import cn.huangdayu.things.api.instances.ThingsInstancesProvider;
 import cn.huangdayu.things.api.register.ThingsRegister;
 import cn.huangdayu.things.common.factory.ThreadPoolFactory;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
@@ -43,7 +44,7 @@ public class ThingsBootAutoConfiguration {
 
     @ConditionalOnMissingBean
     @Bean
-    @ConfigurationProperties("things-framework.things-engine")
+    @ConfigurationProperties("things")
     public ThingsFrameworkProperties thingsEngineProperties() {
         return new ThingsFrameworkProperties();
     }
@@ -66,6 +67,13 @@ public class ThingsBootAutoConfiguration {
     @Bean
     public ThingsEndpointController thingsEndpointController(ThingsEndpoint thingsEndpoint) {
         return new ThingsEndpointController(thingsEndpoint);
+    }
+
+    @ConditionalOnMissingBean
+    @Bean
+    public ThingsInstancesProvider ThingsInstancesProvider() {
+        return new ThingsInstancesProvider() {
+        };
     }
 
 }

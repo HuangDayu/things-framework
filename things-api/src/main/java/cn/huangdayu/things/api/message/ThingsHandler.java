@@ -1,4 +1,4 @@
-package cn.huangdayu.things.api.handler;
+package cn.huangdayu.things.api.message;
 
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 

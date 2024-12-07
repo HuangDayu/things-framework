@@ -17,5 +17,5 @@ public interface ThingsChaining {
 
     void doPublish(ThingsEventMessage thingsEventMessage);
 
-
+    void doPublish(JsonThingsMessage jsonThingsMessage);
 }

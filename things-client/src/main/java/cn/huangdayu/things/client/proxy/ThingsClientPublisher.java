@@ -1,7 +1,8 @@
 package cn.huangdayu.things.client.proxy;
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpointFactory;
-import cn.huangdayu.things.api.publisher.ThingsPublisher;
+import cn.huangdayu.things.api.message.ThingsPublisher;
+import cn.huangdayu.things.api.message.ThingsSender;
 import cn.huangdayu.things.common.async.ThingsAsyncManager;
 import cn.huangdayu.things.common.event.ThingsAsyncResponseEvent;
 import cn.huangdayu.things.common.event.ThingsEventObserver;
@@ -18,7 +19,7 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.covertEventMessage;
  * @author huangdayu
  */
 @RequiredArgsConstructor
-public class ThingsClientPublisher implements ThingsPublisher {
+public class ThingsClientPublisher implements ThingsPublisher, ThingsSender {
 
     private final ThingsEventObserver thingsEventObserver;
     private final ThingsEndpointFactory thingsEndpointFactory;
@@ -26,25 +27,29 @@ public class ThingsClientPublisher implements ThingsPublisher {
     @PostConstruct
     public void init() {
         thingsEventObserver.registerObserver(ThingsAsyncResponseEvent.class, engineEvent -> {
-            thingsEndpointFactory.create(engineEvent.getJsonThingsMessage()).send(engineEvent.getJsonThingsMessage());
+            thingsEndpointFactory.create(engineEvent.getJsonThingsMessage()).handleMessage(engineEvent.getJsonThingsMessage());
         });
     }
 
     @Override
     public void publishEvent(ThingsEventMessage thingsEventMessage) {
-        JsonThingsMessage jsonThingsMessage = covertEventMessage(thingsEventMessage);
-        THINGS_EXECUTOR.execute(() -> thingsEndpointFactory.create(jsonThingsMessage).publish(jsonThingsMessage));
+        publishEvent(covertEventMessage(thingsEventMessage));
+    }
+
+    @Override
+    public void publishEvent(JsonThingsMessage jsonThingsMessage) {
+        THINGS_EXECUTOR.execute(() -> thingsEndpointFactory.create(jsonThingsMessage).handleEvent(jsonThingsMessage));
     }
 
     @Override
     public JsonThingsMessage sendMessage(JsonThingsMessage jsonThingsMessage) {
-        return thingsEndpointFactory.create(jsonThingsMessage).send(jsonThingsMessage);
+        return thingsEndpointFactory.create(jsonThingsMessage).handleMessage(jsonThingsMessage);
     }
 
     @Override
     public void sendAsyncMessage(AsyncThingsMessage asyncThingsMessage) {
         THINGS_EXECUTOR.execute(() -> {
-            thingsEndpointFactory.create(asyncThingsMessage).send(asyncThingsMessage);
+            thingsEndpointFactory.create(asyncThingsMessage).handleMessage(asyncThingsMessage);
             ThingsAsyncManager.asyncRequest(asyncThingsMessage);
         });
     }

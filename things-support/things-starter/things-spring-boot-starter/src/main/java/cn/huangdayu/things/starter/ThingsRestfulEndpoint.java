@@ -1,4 +1,4 @@
-package cn.huangdayu.things.boot;
+package cn.huangdayu.things.starter;
 
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
@@ -38,16 +38,16 @@ public interface ThingsRestfulEndpoint extends ThingsEndpoint {
      * @param message
      * @return
      */
-    @PostExchange("/things/send")
-    JsonThingsMessage send(@RequestBody JsonThingsMessage message);
+    @PostExchange("/things/message")
+    JsonThingsMessage handleMessage(@RequestBody JsonThingsMessage message);
 
     /**
      * 发布消息
      *
      * @param message
      */
-    @PostExchange("/things/publish")
-    void publish(@RequestBody JsonThingsMessage message);
+    @PostExchange("/things/event")
+    void handleEvent(@RequestBody JsonThingsMessage message);
 
     /**
      * 交换实例信息

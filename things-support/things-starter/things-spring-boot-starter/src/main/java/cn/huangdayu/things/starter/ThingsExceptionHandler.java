@@ -1,4 +1,4 @@
-package cn.huangdayu.things.boot;
+package cn.huangdayu.things.starter;
 
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.JsonThingsMessage;

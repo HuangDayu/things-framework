@@ -4,6 +4,5 @@ plugins {
 
 dependencies {
     api project(path: ':things-api')
-    compileOnly "org.springframework:spring-web"
 
 }

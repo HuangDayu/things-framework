@@ -1,4 +1,4 @@
-package cn.huangdayu.things.boot;
+package cn.huangdayu.things.starter;
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
 import cn.huangdayu.things.api.endpoint.ThingsEndpointCreator;

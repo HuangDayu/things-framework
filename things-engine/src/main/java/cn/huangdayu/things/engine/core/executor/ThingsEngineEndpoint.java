@@ -22,12 +22,12 @@ public class ThingsEngineEndpoint implements ThingsEndpoint {
     private final ThingsInstancesManager thingsInstancesManager;
 
     @Override
-    public JsonThingsMessage send(JsonThingsMessage message) {
+    public JsonThingsMessage handleMessage(JsonThingsMessage message) {
         return thingsChaining.doReceive(message);
     }
 
     @Override
-    public void publish(JsonThingsMessage message) {
+    public void handleEvent(JsonThingsMessage message) {
         thingsChaining.doSubscribe(message);
     }
 

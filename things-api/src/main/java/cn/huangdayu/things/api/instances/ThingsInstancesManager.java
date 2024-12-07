@@ -28,7 +28,7 @@ public interface ThingsInstancesManager {
      * @param identifier
      * @return
      */
-    Set<ThingsInstance> getConsumeInstances(String productCode, String deviceCode, String identifier);
+    Set<ThingsInstance> getSubscribeInstances(String productCode, String deviceCode, String identifier);
 
     /**
      * 更新实例

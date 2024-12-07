@@ -1,8 +1,8 @@
 package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpointFactory;
-import cn.huangdayu.things.api.filters.ThingsFilterChain;
-import cn.huangdayu.things.api.handler.ThingsHandler;
+import cn.huangdayu.things.api.message.ThingsFilterChain;
+import cn.huangdayu.things.api.message.ThingsHandler;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
@@ -69,7 +69,11 @@ public class ThingsChainingExecutor implements ThingsChaining {
 
     @Override
     public void doPublish(ThingsEventMessage thingsEventMessage) {
-        JsonThingsMessage jsonThingsMessage = covertEventMessage(thingsEventMessage);
+        doPublish(covertEventMessage(thingsEventMessage));
+    }
+
+    @Override
+    public void doPublish(JsonThingsMessage jsonThingsMessage) {
         requestInterceptor(jsonThingsMessage);
         publishMessage(jsonThingsMessage);
         JsonThingsMessage response = jsonThingsMessage.success();
@@ -92,14 +96,18 @@ public class ThingsChainingExecutor implements ThingsChaining {
                 return thingsHandler.doHandle(jsonThingsMessage);
             }
         }
-        return thingsEndpointFactory.create(jsonThingsMessage).send(jsonThingsMessage);
+        return thingsEndpointFactory.create(jsonThingsMessage).handleMessage(jsonThingsMessage);
     }
 
     private void publishMessage(JsonThingsMessage jsonThingsMessage) {
         for (ThingsHandler thingsHandler : handlerMap.values()) {
-            THINGS_EXECUTOR.execute(() -> thingsHandler.doHandle(jsonThingsMessage));
+            THINGS_EXECUTOR.execute(() -> {
+                if (thingsHandler.canHandle(jsonThingsMessage)) {
+                    thingsHandler.doHandle(jsonThingsMessage);
+                }
+            });
         }
-        THINGS_EXECUTOR.execute(() -> thingsEndpointFactory.create(jsonThingsMessage).publish(jsonThingsMessage));
+        THINGS_EXECUTOR.execute(() -> thingsEndpointFactory.create(jsonThingsMessage).handleEvent(jsonThingsMessage));
     }
 
     private void filter(JsonThingsMessage request, JsonThingsMessage response) {

@@ -1,6 +1,6 @@
 package cn.huangdayu.things.engine.core.executor;
 
-import cn.huangdayu.things.api.handler.ThingsHandler;
+import cn.huangdayu.things.api.message.ThingsHandler;
 import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.event.ThingsAsyncResponseEvent;
 import cn.huangdayu.things.common.event.ThingsEventObserver;
@@ -34,7 +34,8 @@ import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.BA
 import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.*;
 import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_WILDCARD;
 import static cn.huangdayu.things.common.factory.ThreadPoolFactory.THINGS_EXECUTOR;
-import static cn.huangdayu.things.common.utils.ThingsUtils.*;
+import static cn.huangdayu.things.common.utils.ThingsUtils.subIdentifies;
+import static cn.huangdayu.things.common.utils.ThingsUtils.typeConvert;
 
 /**
  * @author huangdayu
@@ -84,8 +85,10 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
 
     private boolean canHandleMessage(JsonThingsMessage jsonThingsMessage) {
         BaseThingsMetadata baseMetadata = jsonThingsMessage.getBaseMetadata();
-        return thingsFrameworkProperties.getInstance().getProvides().contains(baseMetadata.getProductCode()) ||
-                thingsFrameworkProperties.getInstance().getConsumes().contains(baseMetadata.getProductCode());
+        if (jsonThingsMessage.getMethod().startsWith(EVENT_LISTENER_START_WITH)) {
+            return thingsFrameworkProperties.getInstance().getConsumes().contains(baseMetadata.getProductCode());
+        }
+        return thingsFrameworkProperties.getInstance().getProvides().contains(baseMetadata.getProductCode());
     }
 
     private JsonThingsMessage invokeEventListener(JsonThingsMessage jsonThingsMessage) {

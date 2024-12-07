@@ -27,14 +27,14 @@ public interface ThingsEndpoint {
      * @param message
      * @return
      */
-    JsonThingsMessage send(JsonThingsMessage message);
+    JsonThingsMessage handleMessage(JsonThingsMessage message);
 
     /**
      * 发布消息
      *
      * @param message
      */
-    void publish(JsonThingsMessage message);
+    void handleEvent(JsonThingsMessage message);
 
     /**
      * 交换实例信息

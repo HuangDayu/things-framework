@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.huangdayu.things.discovery.configuration;
+package cn.huangdayu.things.starter.nacos;
 
 
 import lombok.Data;

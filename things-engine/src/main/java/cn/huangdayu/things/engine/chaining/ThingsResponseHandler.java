@@ -1,6 +1,6 @@
 package cn.huangdayu.things.engine.chaining;
 
-import cn.huangdayu.things.api.handler.ThingsHandler;
+import cn.huangdayu.things.api.message.ThingsHandler;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.async.ThingsAsyncManager;
