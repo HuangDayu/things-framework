@@ -12,6 +12,8 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.support.RestTemplateAdapter;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpExchangeAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -75,5 +77,17 @@ public class ThingsRestfulEndpointCreator implements ThingsEndpointCreator {
     @Override
     public ThingsEndpoint create(String endpointUri) {
         return createRestClient(ThingsRestfulEndpoint.class, endpointUri);
+    }
+
+    @Override
+    public ThingsEndpoint create(String endpointUri, boolean async) {
+        if (async) {
+            return createWebFluxClient(ThingsRestfulEndpoint.class, endpointUri);
+        }
+        return createRestClient(ThingsRestfulEndpoint.class, endpointUri);
+    }
+
+    public static <S> S createWebFluxClient(Class<S> serviceType, String endpointUri) {
+        return clientCache(serviceType, endpointUri, baseUrl -> createClient(serviceType, WebClientAdapter.create(WebClient.builder().baseUrl(baseUrl).build())));
     }
 }

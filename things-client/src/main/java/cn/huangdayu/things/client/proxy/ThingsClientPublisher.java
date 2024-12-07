@@ -37,7 +37,7 @@ public class ThingsClientPublisher implements ThingsPublisher, ThingsSender {
 
     @Override
     public CompletableFuture<JsonThingsMessage> sendAsyncMessage(JsonThingsMessage jsonThingsMessage) {
-        return thingsEndpointFactory.create(jsonThingsMessage).asyncMessage(jsonThingsMessage);
+        return thingsEndpointFactory.create(jsonThingsMessage, true).asyncMessage(jsonThingsMessage);
     }
 
 }
