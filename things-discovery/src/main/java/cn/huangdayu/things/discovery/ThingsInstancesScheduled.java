@@ -3,8 +3,9 @@ package cn.huangdayu.things.discovery;
 import cn.huangdayu.things.api.instances.ThingsInstancesDiscoverer;
 import cn.huangdayu.things.api.instances.ThingsInstancesManager;
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.common.event.ThingsEventObserver;
-import cn.huangdayu.things.common.event.ThingsInstancesUpdateEvent;
+import cn.huangdayu.things.common.observer.ThingsEventObserver;
+import cn.huangdayu.things.common.observer.event.ThingsInstancesSyncingEvent;
+import cn.huangdayu.things.common.observer.event.ThingsInstancesUpdatedEvent;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
@@ -36,6 +37,7 @@ public class ThingsInstancesScheduled {
         // 支持秒级别定时任务
         CronUtil.setMatchSecond(true);
         CronUtil.start();
+        thingsEventObserver.registerObserver(ThingsInstancesSyncingEvent.class, engineEvent -> syncInstances());
     }
 
     @PreDestroy
@@ -52,7 +54,7 @@ public class ThingsInstancesScheduled {
             }
         }
         thingsInstancesManager.syncAllInstances(allInstances);
-        thingsEventObserver.notifyObservers(new ThingsInstancesUpdateEvent(this));
+        thingsEventObserver.notifyObservers(new ThingsInstancesUpdatedEvent(this));
     }
 
 }

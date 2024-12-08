@@ -2,9 +2,9 @@ package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.dto.*;
-import cn.huangdayu.things.common.event.ThingsContainerUpdateEvent;
-import cn.huangdayu.things.common.event.ThingsEngineEvent;
-import cn.huangdayu.things.common.event.ThingsEventObserver;
+import cn.huangdayu.things.common.observer.event.ThingsContainerUpdatedEvent;
+import cn.huangdayu.things.common.observer.ThingsBaseEvent;
+import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.message.BaseThingsMessage;
 import cn.huangdayu.things.engine.core.ThingsDescriber;
 import cn.huangdayu.things.engine.wrapper.ThingsEvents;
@@ -101,8 +101,8 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
 
     @PostConstruct
     public void init() {
-        thingsEventObserver.registerObserver(ThingsEngineEvent.class, engineEvent -> {
-            if (engineEvent instanceof ThingsContainerUpdateEvent) {
+        thingsEventObserver.registerObserver(ThingsBaseEvent.class, engineEvent -> {
+            if (engineEvent instanceof ThingsContainerUpdatedEvent) {
                 CACHE.remove(CACHE_KEY);
             }
         });

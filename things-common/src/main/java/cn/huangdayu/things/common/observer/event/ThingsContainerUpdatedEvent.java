@@ -1,11 +1,9 @@
-package cn.huangdayu.things.common.event;
+package cn.huangdayu.things.common.observer.event;
 
-import cn.huangdayu.things.common.wrapper.ThingsInstance;
+import cn.huangdayu.things.common.observer.ThingsBaseEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Set;
 
 /**
  * @author huangdayu
@@ -13,7 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ThingsInstancesUpdateEvent implements ThingsEngineEvent {
+public class ThingsContainerUpdatedEvent implements ThingsBaseEvent {
 
     private Object source;
 

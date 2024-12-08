@@ -4,8 +4,8 @@ import cn.huangdayu.things.api.endpoint.ThingsEndpointFactory;
 import cn.huangdayu.things.api.instances.ThingsInstancesDiscoverer;
 import cn.huangdayu.things.api.instances.ThingsInstancesManager;
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.common.event.ThingsEventObserver;
-import cn.huangdayu.things.common.event.ThingsInstancesChangeEvent;
+import cn.huangdayu.things.common.observer.ThingsEventObserver;
+import cn.huangdayu.things.common.observer.event.ThingsInstancesChangedEvent;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
@@ -129,12 +129,12 @@ public class ThingsNacosInstancesDiscoverer implements EventListener, ThingsInst
                     Set<ThingsInstance> addedThingsInstances = getThingsInstances(addedInstances);
                     Set<String> removedInstanceCodes = getInstanceCodes(removedInstances);
                     if (CollUtil.isNotEmpty(addedThingsInstances) || CollUtil.isNotEmpty(removedInstanceCodes)) {
-                        thingsEventObserver.notifyObservers(new ThingsInstancesChangeEvent(event, addedThingsInstances, removedInstanceCodes));
+                        thingsEventObserver.notifyObservers(new ThingsInstancesChangedEvent(event, addedThingsInstances, removedInstanceCodes));
                     }
                     return;
                 }
             }
-            thingsEventObserver.notifyObservers(new ThingsInstancesChangeEvent(event, getThingsInstances(namingEvent.getInstances()), Collections.emptySet()));
+            thingsEventObserver.notifyObservers(new ThingsInstancesChangedEvent(event, getThingsInstances(namingEvent.getInstances()), Collections.emptySet()));
         }
     }
 

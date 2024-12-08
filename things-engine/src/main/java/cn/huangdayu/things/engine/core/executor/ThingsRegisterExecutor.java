@@ -3,8 +3,8 @@ package cn.huangdayu.things.engine.core.executor;
 import cn.huangdayu.things.api.message.ThingsFilter;
 import cn.huangdayu.things.api.message.ThingsInterceptor;
 import cn.huangdayu.things.common.annotation.*;
-import cn.huangdayu.things.common.event.ThingsContainerUpdateEvent;
-import cn.huangdayu.things.common.event.ThingsEventObserver;
+import cn.huangdayu.things.common.observer.event.ThingsContainerUpdatedEvent;
+import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.api.container.ThingsContainer;
 import cn.huangdayu.things.api.register.ThingsRegister;
 import cn.huangdayu.things.engine.wrapper.*;
@@ -47,7 +47,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         findBeans(thingsContainer, ThingsListener.class, this::findThingsListener);
         findBeans(thingsContainer, ThingsFiltering.class, this::findThingsFilters);
         findBeans(thingsContainer, ThingsIntercepting.class, this::findThingsInterceptors);
-        thingsEventObserver.notifyObservers(new ThingsContainerUpdateEvent(thingsContainer));
+        thingsEventObserver.notifyObservers(new ThingsContainerUpdatedEvent(thingsContainer));
         log.info("Started ThingsEngine in {} milliseconds with context {}.", System.currentTimeMillis() - start, thingsContainer.name());
         THINGS_CONTAINERS.put(thingsContainer.name(), thingsContainer);
     }
@@ -59,7 +59,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         deleteTable(THINGS_EVENTS_TABLE, v -> v.getThingsContainer() == thingsContainer);
         cancelEventListener(thingsContainer);
         deleteMap(PRODUCT_PROPERTY_MAP, v -> v.getThingsContainer() == thingsContainer);
-        thingsEventObserver.notifyObservers(new ThingsContainerUpdateEvent(thingsContainer));
+        thingsEventObserver.notifyObservers(new ThingsContainerUpdatedEvent(thingsContainer));
         THINGS_CONTAINERS.remove(thingsContainer.name());
     }
 

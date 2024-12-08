@@ -5,6 +5,8 @@ import cn.huangdayu.things.common.enums.EndpointCreatorType;
 import cn.huangdayu.things.common.enums.EndpointGetterType;
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.observer.ThingsEventObserver;
+import cn.huangdayu.things.common.observer.event.ThingsInstancesSyncingEvent;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.hutool.core.util.StrUtil;
 import jakarta.annotation.PostConstruct;
@@ -33,6 +35,7 @@ public class ThingsEndpointFactory {
     private final static Map<EndpointGetterType, ThingsEndpointGetter> GETTER_MAP = new ConcurrentHashMap<>();
     private final Map<String, ThingsEndpointCreator> thingsMessageSenderMap;
     private final Map<String, ThingsEndpointGetter> typeThingsEndpointGetterMap;
+    private final ThingsEventObserver thingsEventObserver;
 
     @PostConstruct
     private void init() {
@@ -51,6 +54,7 @@ public class ThingsEndpointFactory {
                 () -> GETTER_MAP.get(EndpointGetterType.DISCOVERY).getEndpointUri(jsonThingsMessage),
                 () -> thingsFrameworkProperties.getInstance().getUpstreamUri());
         if (StrUtil.isBlank(endpointUri)) {
+            thingsEventObserver.notifyObservers(new ThingsInstancesSyncingEvent(this));
             throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Not found the target endpointUri.");
         }
         return create(endpointUri, reactor);

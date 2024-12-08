@@ -1,4 +1,4 @@
-package cn.huangdayu.things.common.event;
+package cn.huangdayu.things.common.observer;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,7 @@ import lombok.Data;
  */
 @AllArgsConstructor
 @Data
-public class ThingsEventSubscriber<T extends ThingsEngineEvent> {
+public class ThingsEventSubscriber<T extends ThingsBaseEvent> {
 
     private Class<T> type;
     private ThingsEventConsumer<T> subscriber;

@@ -2,8 +2,8 @@ package cn.huangdayu.things.engine.chaining;
 
 import cn.huangdayu.things.api.message.ThingsFilter;
 import cn.huangdayu.things.api.message.ThingsFilterChain;
-import cn.huangdayu.things.common.event.ThingsEventObserver;
-import cn.huangdayu.things.common.event.ThingsSessionStatusEvent;
+import cn.huangdayu.things.common.observer.ThingsEventObserver;
+import cn.huangdayu.things.common.observer.event.ThingsSessionUpdatedEvent;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
@@ -31,7 +31,7 @@ public abstract class DeviceStatusThingsFilter implements ThingsFilter {
         thingsSession.setOnlineTime(System.currentTimeMillis());
         thingsSession.setProductCode(baseMetadata.getProductCode());
         thingsSession.setSessionCode(StrUtil.toString(ReflectUtil.getFieldValue(message.getPayload(), "sessionCode")));
-        thingsEventObserver.notifyObservers(new ThingsSessionStatusEvent(this, thingsSession));
+        thingsEventObserver.notifyObservers(new ThingsSessionUpdatedEvent(this, thingsSession));
     }
 
     abstract boolean status();

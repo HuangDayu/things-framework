@@ -4,8 +4,8 @@ import cn.huangdayu.things.api.infrastructure.CacheService;
 import cn.huangdayu.things.api.session.ThingsSessions;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.constants.ThingsConstants;
-import cn.huangdayu.things.common.event.ThingsEventObserver;
-import cn.huangdayu.things.common.event.ThingsSessionStatusEvent;
+import cn.huangdayu.things.common.observer.ThingsEventObserver;
+import cn.huangdayu.things.common.observer.event.ThingsSessionUpdatedEvent;
 import cn.huangdayu.things.common.wrapper.ThingsSession;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class ThingsSessionExecutor implements ThingsSessions {
 
     @PostConstruct
     public void init() {
-        thingsEventObserver.registerObserver(ThingsSessionStatusEvent.class, event -> {
+        thingsEventObserver.registerObserver(ThingsSessionUpdatedEvent.class, event -> {
             ThingsSession session = event.getSession();
             if (session != null) {
                 if (session.isOnline()) {

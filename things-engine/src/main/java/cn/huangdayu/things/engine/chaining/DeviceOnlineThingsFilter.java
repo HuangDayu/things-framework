@@ -3,7 +3,7 @@ package cn.huangdayu.things.engine.chaining;
 import cn.huangdayu.things.api.message.ThingsFilter;
 import cn.huangdayu.things.common.annotation.ThingsFiltering;
 import cn.huangdayu.things.common.constants.ThingsConstants;
-import cn.huangdayu.things.common.event.ThingsEventObserver;
+import cn.huangdayu.things.common.observer.ThingsEventObserver;
 
 /**
  * @author huangdayu

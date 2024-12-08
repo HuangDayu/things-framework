@@ -1,5 +1,6 @@
-package cn.huangdayu.things.common.event;
+package cn.huangdayu.things.common.observer.event;
 
+import cn.huangdayu.things.common.observer.ThingsBaseEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ThingsContainerUpdateEvent implements ThingsEngineEvent {
+public class ThingsInstancesUpdatedEvent implements ThingsBaseEvent {
 
     private Object source;
 

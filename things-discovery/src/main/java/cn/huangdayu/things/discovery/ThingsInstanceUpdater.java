@@ -6,9 +6,9 @@ import cn.huangdayu.things.api.instances.ThingsInstancesTypeFinder;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.constants.ThingsConstants;
 import cn.huangdayu.things.common.enums.ThingsInstanceType;
-import cn.huangdayu.things.common.event.ThingsContainerUpdateEvent;
-import cn.huangdayu.things.common.event.ThingsEventObserver;
-import cn.huangdayu.things.common.event.ThingsInstancesUpdateEvent;
+import cn.huangdayu.things.common.observer.event.ThingsContainerUpdatedEvent;
+import cn.huangdayu.things.common.observer.ThingsEventObserver;
+import cn.huangdayu.things.common.observer.event.ThingsInstancesUpdatedEvent;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
@@ -43,8 +43,8 @@ public class ThingsInstanceUpdater {
     @PostConstruct
     public void init() {
         updateThingsInstance();
-        thingsEventObserver.registerObserver(ThingsContainerUpdateEvent.class, engineEvent -> updateThingsInstance());
-        thingsEventObserver.registerObserver(ThingsInstancesUpdateEvent.class, engineEvent -> updateThingsInstance());
+        thingsEventObserver.registerObserver(ThingsContainerUpdatedEvent.class, engineEvent -> updateThingsInstance());
+        thingsEventObserver.registerObserver(ThingsInstancesUpdatedEvent.class, engineEvent -> updateThingsInstance());
     }
 
     private void updateThingsInstance() {
