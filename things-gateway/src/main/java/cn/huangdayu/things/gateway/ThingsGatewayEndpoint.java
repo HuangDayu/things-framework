@@ -45,7 +45,7 @@ public class ThingsGatewayEndpoint implements ThingsEndpoint {
     }
 
     @Override
-    public Mono<JsonThingsMessage> asyncMessage(JsonThingsMessage message) {
+    public Mono<JsonThingsMessage> reactorMessage(JsonThingsMessage message) {
         return null;
     }
 

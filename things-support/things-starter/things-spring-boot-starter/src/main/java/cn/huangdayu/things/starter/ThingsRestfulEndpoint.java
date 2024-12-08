@@ -49,8 +49,8 @@ public interface ThingsRestfulEndpoint extends ThingsEndpoint {
      * @param message
      * @return
      */
-    @PostExchange("/things/message/async")
-    Mono<JsonThingsMessage> asyncMessage(@RequestBody JsonThingsMessage message);
+    @PostExchange("/things/message/reactor")
+    Mono<JsonThingsMessage> reactorMessage(@RequestBody JsonThingsMessage message);
 
     /**
      * 发布消息

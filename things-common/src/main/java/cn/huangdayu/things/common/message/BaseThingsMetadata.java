@@ -30,12 +30,12 @@ public class BaseThingsMetadata implements Serializable {
     /**
      * 来源服务信息
      */
-    private String source;
+    private String sourceCode;
 
     /**
      * 目标服务信息
      */
-    private String target;
+    private String targetCode;
 
 
     /**

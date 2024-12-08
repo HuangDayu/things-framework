@@ -30,8 +30,8 @@ public interface ThingsRegister {
      * @param containerName
      * @param bean
      */
-    default void register(String containerName, Object bean) {
-    }
+    void register(String containerName, Object bean);
+
 
     /**
      * 注销单个物模型对象
@@ -39,6 +39,5 @@ public interface ThingsRegister {
      * @param containerName
      * @param bean
      */
-    default void cancel(String containerName, Object bean) {
-    }
+    void cancel(String containerName, Object bean);
 }

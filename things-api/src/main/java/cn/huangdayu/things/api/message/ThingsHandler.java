@@ -3,9 +3,6 @@ package cn.huangdayu.things.api.message;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import reactor.core.publisher.Mono;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
-
 /**
  * @author huangdayu
  */
@@ -34,6 +31,6 @@ public interface ThingsHandler {
      * @param jsonThingsMessage
      * @return
      */
-    Mono<JsonThingsMessage> asyncHandler(JsonThingsMessage jsonThingsMessage);
+    Mono<JsonThingsMessage> reactorHandler(JsonThingsMessage jsonThingsMessage);
 
 }

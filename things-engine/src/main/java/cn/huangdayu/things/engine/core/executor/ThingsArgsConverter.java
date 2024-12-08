@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static cn.huangdayu.things.common.utils.ThingsUtils.typeConvert;
+import static cn.huangdayu.things.engine.core.executor.ThingsBaseExecutor.getThingsBean;
 
 /**
  * @author huangdayu
@@ -69,7 +70,7 @@ public class ThingsArgsConverter implements ThingsConverter {
         ThingsParameter thingsParameter = war.getThingsParameter();
         JsonThingsMessage jsonThingsMessage = war.getJsonThingsMessage();
         ThingsFunction thingsFunction = war.getThingsFunction();
-        cn.huangdayu.things.common.annotation.ThingsProperty annotation = thingsParameter.getType().getAnnotation(cn.huangdayu.things.common.annotation.ThingsProperty.class);
+        ThingsProperty annotation = thingsParameter.getType().getAnnotation(ThingsProperty.class);
         if (annotation != null) {
             String productCode = jsonThingsMessage.getBaseMetadata().getProductCode();
             if (annotation.productCode().equals(productCode)) {
@@ -82,7 +83,7 @@ public class ThingsArgsConverter implements ThingsConverter {
             log.error("物模型方法调用需要注入的配置对象与产品标识不一致（{}），方法：{}，参数：{}", productCode, thingsFunction.getMethod().getName(), thingsParameter.getName());
             return null;
         }
-        return thingsFunction.getThingsContainer().getBean(thingsParameter.getType());
+        return getThingsBean(thingsParameter.getType());
     }
 
     private Object argForThingsMessage(War war) {

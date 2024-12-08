@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
-import java.util.concurrent.CompletableFuture;
-
 import static cn.huangdayu.things.common.factory.ThreadPoolFactory.THINGS_EXECUTOR;
 
 /**
@@ -40,8 +38,8 @@ public class ThingsPublisherExecutor implements ThingsPublisher, ThingsSender {
     }
 
     @Override
-    public Mono<JsonThingsMessage> sendAsyncMessage(JsonThingsMessage jsonThingsMessage) {
-        return thingsChaining.asyncMessage(jsonThingsMessage);
+    public Mono<JsonThingsMessage> sendReactorMessage(JsonThingsMessage jsonThingsMessage) {
+        return thingsChaining.doReactorSend(jsonThingsMessage);
     }
 
 }

@@ -1,12 +1,13 @@
 package cn.huangdayu.things.engine.core.executor;
 
+import cn.huangdayu.things.api.container.ThingsContainer;
 import cn.huangdayu.things.api.message.ThingsFilter;
 import cn.huangdayu.things.api.message.ThingsInterceptor;
-import cn.huangdayu.things.common.annotation.*;
-import cn.huangdayu.things.common.observer.event.ThingsContainerUpdatedEvent;
-import cn.huangdayu.things.common.observer.ThingsEventObserver;
-import cn.huangdayu.things.api.container.ThingsContainer;
 import cn.huangdayu.things.api.register.ThingsRegister;
+import cn.huangdayu.things.common.annotation.*;
+import cn.huangdayu.things.common.exception.ThingsException;
+import cn.huangdayu.things.common.observer.ThingsEventObserver;
+import cn.huangdayu.things.common.observer.event.ThingsContainerUpdatedEvent;
 import cn.huangdayu.things.engine.wrapper.*;
 import cn.hutool.core.annotation.AnnotationUtil;
 import cn.hutool.core.collection.CollUtil;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.ERROR;
 import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_WILDCARD;
 import static cn.huangdayu.things.common.utils.ThingsUtils.*;
 
@@ -40,6 +42,9 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
 
     @Override
     public void register(ThingsContainer thingsContainer) {
+        if (THINGS_CONTAINERS.get(thingsContainer.name()) != null) {
+            throw new ThingsException(ERROR, "Container name already exists.");
+        }
         long start = System.currentTimeMillis();
         findBeans(thingsContainer, Things.class, this::findThingsFunctions);
         findBeans(thingsContainer, ThingsProperty.class, this::findThingsProperties);
@@ -61,6 +66,16 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         deleteMap(PRODUCT_PROPERTY_MAP, v -> v.getThingsContainer() == thingsContainer);
         thingsEventObserver.notifyObservers(new ThingsContainerUpdatedEvent(thingsContainer));
         THINGS_CONTAINERS.remove(thingsContainer.name());
+    }
+
+    @Override
+    public void register(String containerName, Object bean) {
+        register(new ThingsFunctionContainer(containerName, bean));
+    }
+
+    @Override
+    public void cancel(String containerName, Object bean) {
+        cancel(new ThingsFunctionContainer(containerName, bean));
     }
 
     private void cancelEventListener(ThingsContainer thingsContainer) {

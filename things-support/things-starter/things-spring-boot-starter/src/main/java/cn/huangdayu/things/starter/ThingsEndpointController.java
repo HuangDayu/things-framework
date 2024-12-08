@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @ConditionalOnBean(ThingsEndpoint.class)
@@ -41,10 +40,10 @@ public class ThingsEndpointController {
      * @param message
      * @return
      */
-    @PostMapping("/things/message/async")
-    public Mono<JsonThingsMessage> asyncMessage(@RequestBody JsonThingsMessage message) {
-        log.debug("ThingsEndpoint asyncMessage: {}", message);
-        return thingsEndpoint.asyncMessage(message);
+    @PostMapping("/things/message/reactor")
+    public Mono<JsonThingsMessage> reactorMessage(@RequestBody JsonThingsMessage message) {
+        log.debug("ThingsEndpoint reactorMessage: {}", message);
+        return thingsEndpoint.reactorMessage(message);
     }
 
     @GetMapping("/things/dsl")

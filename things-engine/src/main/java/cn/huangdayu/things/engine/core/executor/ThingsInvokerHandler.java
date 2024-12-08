@@ -9,9 +9,6 @@ import cn.huangdayu.things.engine.core.ThingsInvoker;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
-
 import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.EVENT_LISTENER_START_WITH;
 
 /**
@@ -26,7 +23,11 @@ public class ThingsInvokerHandler implements ThingsHandler {
 
     @Override
     public boolean canHandle(JsonThingsMessage jsonThingsMessage) {
-        return !jsonThingsMessage.isResponse() && canHandleMessage(jsonThingsMessage);
+        BaseThingsMetadata baseMetadata = jsonThingsMessage.getBaseMetadata();
+        if (jsonThingsMessage.getMethod().startsWith(EVENT_LISTENER_START_WITH)) {
+            return thingsFrameworkProperties.getInstance().getConsumes().contains(baseMetadata.getProductCode());
+        }
+        return thingsFrameworkProperties.getInstance().getProvides().contains(baseMetadata.getProductCode());
     }
 
     @Override
@@ -35,15 +36,7 @@ public class ThingsInvokerHandler implements ThingsHandler {
     }
 
     @Override
-    public Mono<JsonThingsMessage> asyncHandler(JsonThingsMessage jsonThingsMessage) {
-        return thingsInvoker.asyncInvoker(jsonThingsMessage);
-    }
-
-    private boolean canHandleMessage(JsonThingsMessage jsonThingsMessage) {
-        BaseThingsMetadata baseMetadata = jsonThingsMessage.getBaseMetadata();
-        if (jsonThingsMessage.getMethod().startsWith(EVENT_LISTENER_START_WITH)) {
-            return thingsFrameworkProperties.getInstance().getConsumes().contains(baseMetadata.getProductCode());
-        }
-        return thingsFrameworkProperties.getInstance().getProvides().contains(baseMetadata.getProductCode());
+    public Mono<JsonThingsMessage> reactorHandler(JsonThingsMessage jsonThingsMessage) {
+        return thingsInvoker.reactorInvoker(jsonThingsMessage);
     }
 }

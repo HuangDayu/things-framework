@@ -12,12 +12,14 @@ import cn.hutool.core.util.StrUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.BAD_REQUEST;
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.ERROR;
-import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.EVENT_LISTENER_START_WITH;
 import static cn.huangdayu.things.common.utils.ThingsUtils.findFirst;
 
 /**
@@ -48,16 +50,33 @@ public class ThingsEndpointFactory {
     }
 
     public ThingsEndpoint create(JsonThingsMessage jsonThingsMessage, boolean reactor) {
-        String endpointUri = findFirst(true,
-                () -> jsonThingsMessage.getMethod().startsWith(EVENT_LISTENER_START_WITH) ? thingsFrameworkProperties.getInstance().getUpstreamUri() : null,
-                () -> GETTER_MAP.get(EndpointGetterType.SESSION).getEndpointUri(jsonThingsMessage),
-                () -> GETTER_MAP.get(EndpointGetterType.DISCOVERY).getEndpointUri(jsonThingsMessage),
-                () -> thingsFrameworkProperties.getInstance().getUpstreamUri());
-        if (StrUtil.isBlank(endpointUri)) {
+        String endpointUri = findEndpointUri(jsonThingsMessage);
+        if (StrUtil.isBlank(endpointUri) || thingsFrameworkProperties.getInstance().getEndpointUri().equals(endpointUri)) {
             thingsEventObserver.notifyObservers(new ThingsInstancesSyncingEvent(this));
             throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Not found the target endpointUri.");
         }
         return create(endpointUri, reactor);
+    }
+
+    /**
+     * 查找目标端点
+     * @param jsonThingsMessage
+     * @return
+     */
+    private String findEndpointUri(JsonThingsMessage jsonThingsMessage) {
+        return findFirst(true,
+                // 如果endpointUri非空且不是自己的端点
+                v -> StrUtil.isNotBlank(v) && !thingsFrameworkProperties.getInstance().getEndpointUri().equals(v),
+                // 如果是指定目标，则直接发送到目标服务
+                () -> GETTER_MAP.get(EndpointGetterType.TARGET).getEndpointUri(jsonThingsMessage),
+                // 如果是监听事件，则直接发送到上游服务
+                () -> GETTER_MAP.get(EndpointGetterType.EVENT_UPSTREAM).getEndpointUri(jsonThingsMessage),
+                // 如果有会话，则发送到相应会话服务
+                () -> GETTER_MAP.get(EndpointGetterType.SESSION).getEndpointUri(jsonThingsMessage),
+                // 如果存在服务发现的消费或者提供信息中，则发送到相应服务
+                () -> GETTER_MAP.get(EndpointGetterType.SERVICE_PROVIDE).getEndpointUri(jsonThingsMessage),
+                // 否则发送到上游服务
+                () -> GETTER_MAP.get(EndpointGetterType.UPSTREAM).getEndpointUri(jsonThingsMessage));
     }
 
     public ThingsEndpoint create(String endpointUri) {
@@ -66,12 +85,12 @@ public class ThingsEndpointFactory {
 
     public ThingsEndpoint create(String endpointUri, boolean reactor) {
         if (StrUtil.isBlank(endpointUri)) {
-            throw new ThingsException(null, BAD_REQUEST, "Things endpoint uri is null.");
+            throw new ThingsException(BAD_REQUEST, "Things endpoint uri is null.");
         }
         String[] split = endpointUri.split(SCHEMA);
         ThingsEndpointCreator thingsEndpointCreator = SENDER_MAP.get(EndpointCreatorType.valueOf(split[0].toUpperCase()));
         if (null == thingsEndpointCreator) {
-            throw new ThingsException(null, ERROR, "Things endpoint creator is null.");
+            throw new ThingsException(ERROR, "Things endpoint creator is null.");
         }
         return thingsEndpointCreator.create(split[1], reactor);
     }

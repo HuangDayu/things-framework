@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 
 @RequiredArgsConstructor
@@ -29,8 +28,8 @@ public class ThingsEngineEndpoint implements ThingsEndpoint {
     }
 
     @Override
-    public Mono<JsonThingsMessage> asyncMessage(JsonThingsMessage message) {
-        return thingsChaining.asyncMessage(message);
+    public Mono<JsonThingsMessage> reactorMessage(JsonThingsMessage message) {
+        return thingsChaining.doReactorReceive(message);
     }
 
     @Override

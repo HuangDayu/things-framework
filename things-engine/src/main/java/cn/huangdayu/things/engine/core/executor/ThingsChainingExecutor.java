@@ -83,12 +83,24 @@ public class ThingsChainingExecutor implements ThingsChaining {
     }
 
     @Override
-    public Mono<JsonThingsMessage> asyncMessage(JsonThingsMessage message) {
+    public Mono<JsonThingsMessage> doReactorReceive(JsonThingsMessage message) {
         requestInterceptor(message);
-        Mono<JsonThingsMessage> response = handleAsyncMessage(message);
-        return response.doOnSuccess(response1 -> {
+        Mono<JsonThingsMessage> response = handleReactorMessage(message);
+        return response.filter(response1 -> {
             responseInterceptor(response1);
             filter(message, response1);
+            return true;
+        });
+    }
+
+    @Override
+    public Mono<JsonThingsMessage> doReactorSend(JsonThingsMessage message) {
+        requestInterceptor(message);
+        Mono<JsonThingsMessage> response = sendReactorMessage(message);
+        return response.filter(response1 -> {
+            responseInterceptor(response1);
+            filter(message, response1);
+            return true;
         });
     }
 
@@ -101,10 +113,10 @@ public class ThingsChainingExecutor implements ThingsChaining {
         throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Can't handler this message");
     }
 
-    private Mono<JsonThingsMessage> handleAsyncMessage(JsonThingsMessage jsonThingsMessage) {
+    private Mono<JsonThingsMessage> handleReactorMessage(JsonThingsMessage jsonThingsMessage) {
         for (ThingsHandler thingsHandler : handlerMap.values()) {
             if (thingsHandler.canHandle(jsonThingsMessage)) {
-                return thingsHandler.asyncHandler(jsonThingsMessage);
+                return thingsHandler.reactorHandler(jsonThingsMessage);
             }
         }
         throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Can't handler this message");
@@ -117,6 +129,15 @@ public class ThingsChainingExecutor implements ThingsChaining {
             }
         }
         return thingsEndpointFactory.create(jsonThingsMessage).handleMessage(jsonThingsMessage);
+    }
+
+    private Mono<JsonThingsMessage> sendReactorMessage(JsonThingsMessage jsonThingsMessage) {
+        for (ThingsHandler thingsHandler : handlerMap.values()) {
+            if (thingsHandler.canHandle(jsonThingsMessage)) {
+                return thingsHandler.reactorHandler(jsonThingsMessage);
+            }
+        }
+        return thingsEndpointFactory.create(jsonThingsMessage, true).reactorMessage(jsonThingsMessage);
     }
 
     private void publishMessage(JsonThingsMessage jsonThingsMessage) {

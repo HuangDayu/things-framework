@@ -35,8 +35,8 @@ public class ThingsClientPublisher implements ThingsPublisher, ThingsSender {
     }
 
     @Override
-    public Mono<JsonThingsMessage> sendAsyncMessage(JsonThingsMessage jsonThingsMessage) {
-        return thingsEndpointFactory.create(jsonThingsMessage, true).asyncMessage(jsonThingsMessage);
+    public Mono<JsonThingsMessage> sendReactorMessage(JsonThingsMessage jsonThingsMessage) {
+        return thingsEndpointFactory.create(jsonThingsMessage, true).reactorMessage(jsonThingsMessage);
     }
 
 }

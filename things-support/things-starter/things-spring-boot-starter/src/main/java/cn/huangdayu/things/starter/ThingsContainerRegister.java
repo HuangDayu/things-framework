@@ -33,7 +33,7 @@ public class ThingsContainerRegister implements ApplicationContextAware {
 
 
     @RequiredArgsConstructor
-    public static class SpringThingsContainer extends ThingsContainer {
+    public static class SpringThingsContainer implements ThingsContainer {
 
         private final ApplicationContext context;
 

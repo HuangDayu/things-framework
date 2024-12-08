@@ -58,7 +58,7 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
     }
 
     @Override
-    public Mono<JsonThingsMessage> asyncInvoker(JsonThingsMessage message) {
+    public Mono<JsonThingsMessage> reactorInvoker(JsonThingsMessage message) {
         return Mono.just(syncInvoker(message));
     }
 

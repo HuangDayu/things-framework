@@ -36,14 +36,14 @@ public class ThingsClientsProxyInvoke {
     public Object invokeService(ThingsClient thingsClient, ThingsService thingsService, Method method, Object[] args) {
         JsonThingsMessage jsonThingsMessage = buildThingsMessage(thingsClient, thingsService, method, args);
         if (method.getReturnType().isAssignableFrom(Publisher.class)) {
-            return asyncInvoke(method, jsonThingsMessage);
+            return reactorInvoke(method, jsonThingsMessage);
         }
         return syncInvoke(method, jsonThingsMessage);
     }
 
     @SneakyThrows
-    private Object asyncInvoke(Method method, JsonThingsMessage request) {
-        Mono<JsonThingsMessage> response = thingsEndpointFactory.create(request,true).asyncMessage(request);
+    private Object reactorInvoke(Method method, JsonThingsMessage request) {
+        Mono<JsonThingsMessage> response = thingsEndpointFactory.create(request,true).reactorMessage(request);
         if (response == null) {
             return null;
         }
@@ -90,7 +90,7 @@ public class ThingsClientsProxyInvoke {
         jsonThingsMessage.setBaseMetadata(baseThingsMetadata -> {
             baseThingsMetadata.setProductCode(productCode);
             if (StrUtil.isNotBlank(thingsClient.uri())) {
-                baseThingsMetadata.setTarget(thingsClient.uri());
+                baseThingsMetadata.setTargetCode(thingsClient.uri());
             }
         });
         jsonThingsMessage.setMethod(ThingsConstants.Methods.SERVICE_START_WITH.concat(identifier));

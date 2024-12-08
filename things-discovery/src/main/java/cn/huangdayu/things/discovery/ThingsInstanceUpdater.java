@@ -6,8 +6,8 @@ import cn.huangdayu.things.api.instances.ThingsInstancesTypeFinder;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.constants.ThingsConstants;
 import cn.huangdayu.things.common.enums.ThingsInstanceType;
-import cn.huangdayu.things.common.observer.event.ThingsContainerUpdatedEvent;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
+import cn.huangdayu.things.common.observer.event.ThingsContainerUpdatedEvent;
 import cn.huangdayu.things.common.observer.event.ThingsInstancesUpdatedEvent;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
@@ -55,8 +55,8 @@ public class ThingsInstanceUpdater {
         thingsInstance.setConsumes(thingsInstancesProvider.getConsumes());
         thingsInstance.setSubscribes(thingsInstancesProvider.getSubscribes());
         Set<ThingsInstanceType> thingsInstanceType = findThingsInstanceType(thingsInstance);
-        if (StrUtil.isBlank(thingsInstance.getUpstreamUri())) {
-            String upstreamUri = upstreamUri(thingsInstanceType);
+        if (!thingsInstanceType.contains(GATEWAY) && StrUtil.isBlank(thingsInstance.getUpstreamUri())) {
+            String upstreamUri = findUpstreamUri();
             if (StrUtil.isNotBlank(upstreamUri)) {
                 thingsInstance.setUpstreamUri(upstreamUri);
             }
@@ -67,10 +67,7 @@ public class ThingsInstanceUpdater {
         thingsFrameworkProperties.setInstance(thingsInstance);
     }
 
-    private String upstreamUri(Set<ThingsInstanceType> thingsInstanceTypes) {
-        if (thingsInstanceTypes.contains(GATEWAY)) {
-            return null;
-        }
+    private String findUpstreamUri() {
         return thingsInstancesManager.getAllThingsInstances().stream().filter(v -> v.getTypes().contains(GATEWAY))
                 .map(ThingsInstance::getEndpointUri).findFirst().orElseGet(() -> null);
     }

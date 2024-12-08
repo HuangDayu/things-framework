@@ -30,4 +30,8 @@ public class ThingsException extends RuntimeException {
         this(thingsMessage, errorCode, errorMessage, getUUID());
     }
 
+    public ThingsException(String errorCode, String errorMessage) {
+        this(null, errorCode, errorMessage, getUUID());
+    }
+
 }

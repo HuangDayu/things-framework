@@ -1,7 +1,7 @@
 package cn.huangdayu.things.engine.core.executor;
 
-import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.api.container.ThingsContainer;
+import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.engine.wrapper.*;
 import cn.hutool.core.map.multi.RowKeyTable;
 import cn.hutool.core.map.multi.Table;
@@ -76,11 +76,14 @@ public abstract class ThingsBaseExecutor {
     public static <T> T getThingsBean(Class<T> requiredType) {
         for (Map.Entry<String, ThingsContainer> entry : THINGS_CONTAINERS.entrySet()) {
             try {
-                return entry.getValue().getBean(requiredType);
+                T bean = entry.getValue().getBean(requiredType);
+                if (bean != null) {
+                    return bean;
+                }
             } catch (Exception ignored) {
             }
         }
-        throw new ThingsException(null, ERROR, "Not found Things Bean .");
+        throw new ThingsException(ERROR, "Not found Things Bean .");
     }
 
 }

@@ -6,11 +6,11 @@ import java.util.Map;
 /**
  * @author huangdayu
  */
-public abstract class ThingsContainer {
+public interface ThingsContainer {
 
-    public abstract String name();
+    String name();
 
-    public abstract Map<String, Object> getBeans(Class<? extends Annotation> annotationType);
+    Map<String, Object> getBeans(Class<? extends Annotation> annotationType);
 
-    public abstract <T> T getBean(Class<T> requiredType);
+    <T> T getBean(Class<T> requiredType);
 }

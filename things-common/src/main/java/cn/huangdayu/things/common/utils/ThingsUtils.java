@@ -147,17 +147,11 @@ public class ThingsUtils {
     }
 
     @SafeVarargs
-    public static <T> T findFirst(boolean ignoreException, Supplier<T>... suppliers) {
+    public static <T> T findFirst(boolean ignoreException, Function<T, Boolean> function, Supplier<T>... suppliers) {
         for (Supplier<T> supplier : suppliers) {
             try {
                 T t = supplier.get();
-                if (t instanceof Boolean) {
-                    if ((Boolean) t) {
-                        return t;
-                    }
-                    continue;
-                }
-                if (t != null) {
+                if (function.apply(t)) {
                     return t;
                 }
             } catch (Exception e) {
@@ -167,6 +161,16 @@ public class ThingsUtils {
             }
         }
         return null;
+    }
+
+    @SafeVarargs
+    public static <T> T findFirst(boolean ignoreException, Supplier<T>... suppliers) {
+        return findFirst(ignoreException, t -> {
+            if (t instanceof Boolean) {
+                return (Boolean) t;
+            }
+            return t != null;
+        }, suppliers);
     }
 
     public static String getUUID() {
@@ -188,7 +192,7 @@ public class ThingsUtils {
     public static JsonThingsMessage covertEventMessage(ThingsEventMessage message) {
         ThingsEvent thingsEvent = findBeanAnnotation(message, ThingsEvent.class);
         if (thingsEvent == null) {
-            throw new ThingsException(null, BAD_REQUEST, "Message object is not ThingsEvent entry.");
+            throw new ThingsException(BAD_REQUEST, "Message object is not ThingsEvent entry.");
         }
         JsonThingsMessage jsonThingsMessage = new JsonThingsMessage();
         jsonThingsMessage.setBaseMetadata(baseThingsMetadata -> {

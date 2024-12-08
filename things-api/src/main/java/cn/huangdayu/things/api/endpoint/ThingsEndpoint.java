@@ -7,7 +7,6 @@ import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import reactor.core.publisher.Mono;
 
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * 消息点对点发布
@@ -38,7 +37,7 @@ public interface ThingsEndpoint {
      * @param message
      * @return
      */
-    Mono<JsonThingsMessage> asyncMessage(JsonThingsMessage message);
+    Mono<JsonThingsMessage> reactorMessage(JsonThingsMessage message);
 
     /**
      * 发布消息
