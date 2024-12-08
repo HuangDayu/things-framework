@@ -10,6 +10,7 @@ import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Mono;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -36,7 +37,7 @@ public class ThingsBrokerEndpoint implements ThingsEndpoint {
     }
 
     @Override
-    public CompletableFuture<JsonThingsMessage> asyncMessage(JsonThingsMessage message) {
+    public Mono<JsonThingsMessage> asyncMessage(JsonThingsMessage message) {
         return null;
     }
 

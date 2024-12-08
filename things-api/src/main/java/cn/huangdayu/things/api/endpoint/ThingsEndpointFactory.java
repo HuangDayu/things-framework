@@ -44,7 +44,7 @@ public class ThingsEndpointFactory {
         return create(jsonThingsMessage, false);
     }
 
-    public ThingsEndpoint create(JsonThingsMessage jsonThingsMessage, boolean async) {
+    public ThingsEndpoint create(JsonThingsMessage jsonThingsMessage, boolean reactor) {
         String endpointUri = findFirst(true,
                 () -> jsonThingsMessage.getMethod().startsWith(EVENT_LISTENER_START_WITH) ? thingsFrameworkProperties.getInstance().getUpstreamUri() : null,
                 () -> GETTER_MAP.get(EndpointGetterType.SESSION).getEndpointUri(jsonThingsMessage),
@@ -53,14 +53,14 @@ public class ThingsEndpointFactory {
         if (StrUtil.isBlank(endpointUri)) {
             throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Not found the target endpointUri.");
         }
-        return create(endpointUri, async);
+        return create(endpointUri, reactor);
     }
 
     public ThingsEndpoint create(String endpointUri) {
         return create(endpointUri, false);
     }
 
-    public ThingsEndpoint create(String endpointUri, boolean async) {
+    public ThingsEndpoint create(String endpointUri, boolean reactor) {
         if (StrUtil.isBlank(endpointUri)) {
             throw new ThingsException(null, BAD_REQUEST, "Things endpoint uri is null.");
         }
@@ -69,10 +69,7 @@ public class ThingsEndpointFactory {
         if (null == thingsEndpointCreator) {
             throw new ThingsException(null, ERROR, "Things endpoint creator is null.");
         }
-        if (async) {
-            thingsEndpointCreator.create(split[1], true);
-        }
-        return thingsEndpointCreator.create(split[1]);
+        return thingsEndpointCreator.create(split[1], reactor);
     }
 
 }

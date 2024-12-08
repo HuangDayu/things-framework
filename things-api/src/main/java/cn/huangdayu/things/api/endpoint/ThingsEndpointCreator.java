@@ -13,5 +13,5 @@ public interface ThingsEndpointCreator {
 
     ThingsEndpoint create(String endpointUri);
 
-    ThingsEndpoint create(String endpointUri, boolean async);
+    ThingsEndpoint create(String endpointUri, boolean reactor);
 }

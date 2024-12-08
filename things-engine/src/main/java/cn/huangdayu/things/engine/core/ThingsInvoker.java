@@ -1,6 +1,7 @@
 package cn.huangdayu.things.engine.core;
 
 import cn.huangdayu.things.common.message.JsonThingsMessage;
+import reactor.core.publisher.Mono;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
@@ -27,6 +28,6 @@ public interface ThingsInvoker {
      * @param message
      * @return
      */
-    CompletableFuture<JsonThingsMessage> asyncInvoker(JsonThingsMessage message);
+    Mono<JsonThingsMessage> asyncInvoker(JsonThingsMessage message);
 
 }

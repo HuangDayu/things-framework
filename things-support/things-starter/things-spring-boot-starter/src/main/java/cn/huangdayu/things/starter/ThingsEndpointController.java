@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -41,7 +42,7 @@ public class ThingsEndpointController {
      * @return
      */
     @PostMapping("/things/message/async")
-    public CompletableFuture<JsonThingsMessage> asyncMessage(@RequestBody JsonThingsMessage message) {
+    public Mono<JsonThingsMessage> asyncMessage(@RequestBody JsonThingsMessage message) {
         log.debug("ThingsEndpoint asyncMessage: {}", message);
         return thingsEndpoint.asyncMessage(message);
     }

@@ -6,8 +6,7 @@ import cn.huangdayu.things.api.message.ThingsSender;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.message.ThingsEventMessage;
 import lombok.RequiredArgsConstructor;
-
-import java.util.concurrent.CompletableFuture;
+import reactor.core.publisher.Mono;
 
 import static cn.huangdayu.things.common.factory.ThreadPoolFactory.THINGS_EXECUTOR;
 import static cn.huangdayu.things.common.utils.ThingsUtils.covertEventMessage;
@@ -36,7 +35,7 @@ public class ThingsClientPublisher implements ThingsPublisher, ThingsSender {
     }
 
     @Override
-    public CompletableFuture<JsonThingsMessage> sendAsyncMessage(JsonThingsMessage jsonThingsMessage) {
+    public Mono<JsonThingsMessage> sendAsyncMessage(JsonThingsMessage jsonThingsMessage) {
         return thingsEndpointFactory.create(jsonThingsMessage, true).asyncMessage(jsonThingsMessage);
     }
 

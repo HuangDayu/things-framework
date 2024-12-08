@@ -16,6 +16,7 @@ import com.alibaba.fastjson2.JSONObject;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 import java.util.Set;
@@ -57,8 +58,8 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
     }
 
     @Override
-    public CompletableFuture<JsonThingsMessage> asyncInvoker(JsonThingsMessage message) {
-        return CompletableFuture.supplyAsync(() -> syncInvoker(message));
+    public Mono<JsonThingsMessage> asyncInvoker(JsonThingsMessage message) {
+        return Mono.just(syncInvoker(message));
     }
 
     private JsonThingsMessage invokeEventListener(JsonThingsMessage jsonThingsMessage) {

@@ -9,6 +9,7 @@ import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.huangdayu.things.engine.core.ThingsChaining;
 import cn.huangdayu.things.engine.core.ThingsDescriber;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Mono;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -28,7 +29,7 @@ public class ThingsEngineEndpoint implements ThingsEndpoint {
     }
 
     @Override
-    public CompletableFuture<JsonThingsMessage> asyncMessage(JsonThingsMessage message) {
+    public Mono<JsonThingsMessage> asyncMessage(JsonThingsMessage message) {
         return thingsChaining.asyncMessage(message);
     }
 

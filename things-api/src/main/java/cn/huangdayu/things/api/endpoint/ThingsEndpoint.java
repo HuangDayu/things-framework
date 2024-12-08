@@ -4,6 +4,7 @@ package cn.huangdayu.things.api.endpoint;
 import cn.huangdayu.things.common.dto.ThingsInfo;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
+import reactor.core.publisher.Mono;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -37,7 +38,7 @@ public interface ThingsEndpoint {
      * @param message
      * @return
      */
-    CompletableFuture<JsonThingsMessage> asyncMessage(JsonThingsMessage message);
+    Mono<JsonThingsMessage> asyncMessage(JsonThingsMessage message);
 
     /**
      * 发布消息

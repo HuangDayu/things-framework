@@ -6,7 +6,6 @@ import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.enums.EndpointCreatorType;
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
-import cn.hutool.core.lang.func.Func0;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -19,7 +18,6 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import java.io.IOException;
-import java.util.function.Function;
 
 import static cn.huangdayu.things.common.enums.EndpointCreatorType.RESTFUL;
 
@@ -35,39 +33,11 @@ public class ThingsRestfulEndpointCreator implements ThingsEndpointCreator {
      */
     private static final TimedCache<String, Object> CLIENT_CACHE = CacheUtil.newTimedCache(60 * 1000 * 5);
 
-    private static <S> S createRestClient(Class<S> serviceType, String server) {
-        return clientCache(serviceType, server, baseUrl -> {
-            RestTemplate restTemplate = new RestTemplate();
-            restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory(baseUrl));
-            SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
-            simpleClientHttpRequestFactory.setConnectTimeout(2000);
-            simpleClientHttpRequestFactory.setReadTimeout(5000);
-            restTemplate.setRequestFactory(simpleClientHttpRequestFactory);
-            restTemplate.setErrorHandler(new ResponseErrorHandler() {
-                @Override
-                public boolean hasError(ClientHttpResponse response) throws IOException {
-                    return true;
-                }
+    private static final String RESTFUL_PREFIX = "restful://";
+    private static final String REST_PREFIX = "rest://";
+    private static final String HTTPS_PREFIX = "https://";
+    private static final String HTTP_PREFIX = "http://";
 
-                @Override
-                public void handleError(ClientHttpResponse response) throws IOException {
-
-                }
-            });
-            RestTemplateAdapter restTemplateAdapter = RestTemplateAdapter.create(restTemplate);
-            return createClient(serviceType, restTemplateAdapter);
-        });
-    }
-
-    private static <S> S clientCache(Class<S> serviceType, String server, Function<String, S> function) {
-        return (S) CLIENT_CACHE.get(server.concat(serviceType.getName()),
-                (Func0<Object>) () -> function.apply(!server.startsWith("http") && !server.startsWith("https") ? "http://" + server : server));
-    }
-
-    private static <S> S createClient(Class<S> serviceType, HttpExchangeAdapter httpExchangeAdapter) {
-        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builder().exchangeAdapter(httpExchangeAdapter).build();
-        return factory.createClient(serviceType);
-    }
 
     @Override
     public EndpointCreatorType type() {
@@ -76,18 +46,61 @@ public class ThingsRestfulEndpointCreator implements ThingsEndpointCreator {
 
     @Override
     public ThingsEndpoint create(String endpointUri) {
-        return createRestClient(ThingsRestfulEndpoint.class, endpointUri);
+        return createClient(ThingsRestfulEndpoint.class, endpointUri, false);
     }
 
     @Override
-    public ThingsEndpoint create(String endpointUri, boolean async) {
-        if (async) {
-            return createWebFluxClient(ThingsRestfulEndpoint.class, endpointUri);
-        }
-        return createRestClient(ThingsRestfulEndpoint.class, endpointUri);
+    public ThingsEndpoint create(String endpointUri, boolean reactor) {
+        return createClient(ThingsRestfulEndpoint.class, endpointUri, reactor);
     }
 
-    public static <S> S createWebFluxClient(Class<S> serviceType, String endpointUri) {
-        return clientCache(serviceType, endpointUri, baseUrl -> createClient(serviceType, WebClientAdapter.create(WebClient.builder().baseUrl(baseUrl).build())));
+    private static <S> S createClient(Class<S> serviceType, String server, boolean reactor) {
+        String baseUrl = getBaseUrl(server);
+        String clientName = baseUrl.concat("_").concat(serviceType.getName()).concat("_").concat(String.valueOf(reactor));
+        return (S) CLIENT_CACHE.get(clientName, () -> reactor ? createWebFluxClient(serviceType, baseUrl) : createRestClient(serviceType, baseUrl));
+    }
+
+    private static <S> S createRestClient(Class<S> serviceType, String server) {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory(server));
+        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+        simpleClientHttpRequestFactory.setConnectTimeout(2000);
+        simpleClientHttpRequestFactory.setReadTimeout(5000);
+        restTemplate.setRequestFactory(simpleClientHttpRequestFactory);
+        restTemplate.setErrorHandler(new ResponseErrorHandler() {
+            @Override
+            public boolean hasError(ClientHttpResponse response) throws IOException {
+                return true;
+            }
+
+            @Override
+            public void handleError(ClientHttpResponse response) throws IOException {
+            }
+        });
+        RestTemplateAdapter restTemplateAdapter = RestTemplateAdapter.create(restTemplate);
+        return createProxyClient(serviceType, restTemplateAdapter);
+    }
+
+    private static <S> S createWebFluxClient(Class<S> serviceType, String server) {
+        WebClient webClient = WebClient.builder().baseUrl(server).build();
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
+        return createProxyClient(serviceType, webClientAdapter);
+    }
+
+    private static <S> S createProxyClient(Class<S> serviceType, HttpExchangeAdapter httpExchangeAdapter) {
+        return HttpServiceProxyFactory.builder().exchangeAdapter(httpExchangeAdapter).build().createClient(serviceType);
+    }
+
+    private static String getBaseUrl(String server) {
+        if (server.startsWith(RESTFUL_PREFIX)) {
+            return server.replace(RESTFUL_PREFIX, HTTP_PREFIX);
+        }
+        if (server.startsWith(REST_PREFIX)) {
+            return server.replace(REST_PREFIX, HTTP_PREFIX);
+        }
+        if (server.startsWith(HTTPS_PREFIX) || server.startsWith(HTTP_PREFIX)) {
+            return server;
+        }
+        return HTTP_PREFIX + server;
     }
 }

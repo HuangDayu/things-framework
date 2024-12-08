@@ -10,6 +10,7 @@ import cn.huangdayu.things.common.dto.ThingsInfo;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Mono;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class ThingsGatewayEndpoint implements ThingsEndpoint {
     }
 
     @Override
-    public CompletableFuture<JsonThingsMessage> asyncMessage(JsonThingsMessage message) {
+    public Mono<JsonThingsMessage> asyncMessage(JsonThingsMessage message) {
         return null;
     }
 

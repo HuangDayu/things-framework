@@ -18,9 +18,9 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.multi.Table;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -83,14 +83,13 @@ public class ThingsChainingExecutor implements ThingsChaining {
     }
 
     @Override
-    public CompletableFuture<JsonThingsMessage> asyncMessage(JsonThingsMessage message) {
+    public Mono<JsonThingsMessage> asyncMessage(JsonThingsMessage message) {
         requestInterceptor(message);
-        CompletableFuture<JsonThingsMessage> response = handleAsyncMessage(message);
-        response.thenAcceptAsync(response1 -> {
+        Mono<JsonThingsMessage> response = handleAsyncMessage(message);
+        return response.doOnSuccess(response1 -> {
             responseInterceptor(response1);
             filter(message, response1);
         });
-        return response;
     }
 
     private JsonThingsMessage handleMessage(JsonThingsMessage jsonThingsMessage) {
@@ -102,7 +101,7 @@ public class ThingsChainingExecutor implements ThingsChaining {
         throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Can't handler this message");
     }
 
-    private CompletableFuture<JsonThingsMessage> handleAsyncMessage(JsonThingsMessage jsonThingsMessage) {
+    private Mono<JsonThingsMessage> handleAsyncMessage(JsonThingsMessage jsonThingsMessage) {
         for (ThingsHandler thingsHandler : handlerMap.values()) {
             if (thingsHandler.canHandle(jsonThingsMessage)) {
                 return thingsHandler.asyncHandler(jsonThingsMessage);

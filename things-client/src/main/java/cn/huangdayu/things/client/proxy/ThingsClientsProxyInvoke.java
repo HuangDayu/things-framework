@@ -13,13 +13,13 @@ import com.alibaba.fastjson2.JSONObject;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import static cn.huangdayu.things.common.utils.ThingsUtils.getReturnType;
 
@@ -35,7 +35,7 @@ public class ThingsClientsProxyInvoke {
 
     public Object invokeService(ThingsClient thingsClient, ThingsService thingsService, Method method, Object[] args) {
         JsonThingsMessage jsonThingsMessage = buildThingsMessage(thingsClient, thingsService, method, args);
-        if (method.getReturnType().isAssignableFrom(Future.class)) {
+        if (method.getReturnType().isAssignableFrom(Publisher.class)) {
             return asyncInvoke(method, jsonThingsMessage);
         }
         return syncInvoke(method, jsonThingsMessage);
@@ -43,15 +43,25 @@ public class ThingsClientsProxyInvoke {
 
     @SneakyThrows
     private Object asyncInvoke(Method method, JsonThingsMessage request) {
-        CompletableFuture<JsonThingsMessage> response = thingsEndpointFactory.create(request).asyncMessage(request);
+        Mono<JsonThingsMessage> response = thingsEndpointFactory.create(request,true).asyncMessage(request);
         if (response == null) {
             return null;
         }
         Type type = getReturnType(method)[0];
-        if (type.equals(JsonThingsMessage.class)) {
-            return response;
+        if (method.getReturnType().isAssignableFrom(Mono.class)) {
+            if (type.equals(JsonThingsMessage.class)) {
+                return response;
+            }
+            return Mono.just(response.block().getPayload().toJavaObject(type));
         }
-        return CompletableFuture.completedFuture(response.get(request.getTimeout(), TimeUnit.MILLISECONDS).getPayload().toJavaObject(type));
+
+        if (method.getReturnType().isAssignableFrom(Flux.class)) {
+            if (type.equals(JsonThingsMessage.class)) {
+                return response.flux();
+            }
+            return Flux.just(response.block().getPayload().toJavaObject(type));
+        }
+        return response;
     }
 
     private Object syncInvoke(Method method, JsonThingsMessage request) {

@@ -2,6 +2,7 @@ package cn.huangdayu.things.engine.core;
 
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.message.ThingsEventMessage;
+import reactor.core.publisher.Mono;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
@@ -22,5 +23,5 @@ public interface ThingsChaining {
 
     void doPublish(JsonThingsMessage jsonThingsMessage);
 
-    CompletableFuture<JsonThingsMessage> asyncMessage(JsonThingsMessage message);
+    Mono<JsonThingsMessage> asyncMessage(JsonThingsMessage message);
 }

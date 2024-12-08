@@ -8,6 +8,7 @@ import cn.huangdayu.things.common.message.ThingsEventMessage;
 import cn.huangdayu.things.engine.core.ThingsChaining;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -39,7 +40,7 @@ public class ThingsPublisherExecutor implements ThingsPublisher, ThingsSender {
     }
 
     @Override
-    public CompletableFuture<JsonThingsMessage> sendAsyncMessage(JsonThingsMessage jsonThingsMessage) {
+    public Mono<JsonThingsMessage> sendAsyncMessage(JsonThingsMessage jsonThingsMessage) {
         return thingsChaining.asyncMessage(jsonThingsMessage);
     }
 

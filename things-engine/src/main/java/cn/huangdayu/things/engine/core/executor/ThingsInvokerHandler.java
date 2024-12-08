@@ -7,6 +7,7 @@ import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.engine.core.ThingsInvoker;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Mono;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
@@ -34,7 +35,7 @@ public class ThingsInvokerHandler implements ThingsHandler {
     }
 
     @Override
-    public CompletableFuture<JsonThingsMessage> asyncHandler(JsonThingsMessage jsonThingsMessage) {
+    public Mono<JsonThingsMessage> asyncHandler(JsonThingsMessage jsonThingsMessage) {
         return thingsInvoker.asyncInvoker(jsonThingsMessage);
     }
 

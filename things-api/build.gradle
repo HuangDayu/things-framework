@@ -4,4 +4,5 @@ plugins {
 
 dependencies {
     api project(path: ':things-common')
+    api 'io.projectreactor:reactor-core'
 }

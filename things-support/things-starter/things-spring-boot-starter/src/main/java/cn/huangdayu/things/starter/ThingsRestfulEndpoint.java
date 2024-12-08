@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
+import reactor.core.publisher.Mono;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -21,8 +22,6 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author huangdayu
  */
-@RestController
-@RequestMapping
 @HttpExchange
 public interface ThingsRestfulEndpoint extends ThingsEndpoint {
 
@@ -51,7 +50,7 @@ public interface ThingsRestfulEndpoint extends ThingsEndpoint {
      * @return
      */
     @PostExchange("/things/message/async")
-    CompletableFuture<JsonThingsMessage> asyncMessage(@RequestBody JsonThingsMessage message);
+    Mono<JsonThingsMessage> asyncMessage(@RequestBody JsonThingsMessage message);
 
     /**
      * 发布消息
