@@ -3,15 +3,13 @@ package cn.huangdayu.things.engine.core.executor;
 import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
 import cn.huangdayu.things.api.instances.ThingsInstancesManager;
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.common.dto.ThingsInfo;
+import cn.huangdayu.things.common.dsl.DslInfo;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.huangdayu.things.engine.core.ThingsChaining;
 import cn.huangdayu.things.engine.core.ThingsDescriber;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
-
-import java.util.Set;
 
 
 @RequiredArgsConstructor
@@ -37,12 +35,12 @@ public class ThingsEngineEndpoint implements ThingsEndpoint {
         thingsChaining.doSubscribe(message);
     }
 
-    public Set<ThingsInfo> getThingsDsl() {
-        return thingsDescriber.getThingsDsl();
+    public DslInfo getDsl() {
+        return thingsDescriber.getDsl();
     }
 
     @Override
-    public ThingsInstance exchange(ThingsInstance thingsInstance) {
+    public ThingsInstance exchangeInstance(ThingsInstance thingsInstance) {
         return thingsInstancesManager.exchangeInstance(thingsInstance);
     }
 

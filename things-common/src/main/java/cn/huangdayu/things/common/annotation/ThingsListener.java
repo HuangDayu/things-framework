@@ -24,4 +24,11 @@ public @interface ThingsListener {
     @AliasFor(annotation = ThingsBean.class, attribute = "value")
     String value() default "";
 
+    /**
+     * 产品标识
+     *
+     * @return
+     */
+    String productCode() default "";
+
 }

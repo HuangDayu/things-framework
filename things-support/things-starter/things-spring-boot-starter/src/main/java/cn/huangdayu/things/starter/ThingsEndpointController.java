@@ -1,7 +1,8 @@
 package cn.huangdayu.things.starter;
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
-import cn.huangdayu.things.common.dto.ThingsInfo;
+import cn.huangdayu.things.common.dsl.DslInfo;
+import cn.huangdayu.things.common.dsl.ThingsInfo;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import com.alibaba.fastjson2.JSON;
@@ -47,14 +48,14 @@ public class ThingsEndpointController {
     }
 
     @GetMapping("/things/dsl")
-    public Set<ThingsInfo> getThingsDsl() {
-        return thingsEndpoint.getThingsDsl();
+    public DslInfo getDsl() {
+        return thingsEndpoint.getDsl();
     }
 
     @PostMapping("/things/exchange")
-    public ThingsInstance exchange(@RequestBody ThingsInstance thingsInstance) {
+    public ThingsInstance exchangeInstance(@RequestBody ThingsInstance thingsInstance) {
         log.debug("ThingsEndpoint exchange: {}", JSON.toJSONString(thingsInstance));
-        return thingsEndpoint.exchange(thingsInstance);
+        return thingsEndpoint.exchangeInstance(thingsInstance);
     }
 
 

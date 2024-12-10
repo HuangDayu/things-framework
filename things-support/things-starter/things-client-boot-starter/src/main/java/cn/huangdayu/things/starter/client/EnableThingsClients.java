@@ -1,6 +1,6 @@
-package cn.huangdayu.things.client;
+package cn.huangdayu.things.starter.client;
 
-import cn.huangdayu.things.client.proxy.ThingsClientsRegistrar;
+
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;

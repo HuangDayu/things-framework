@@ -2,20 +2,14 @@ package cn.huangdayu.things.starter;
 
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
-import cn.huangdayu.things.common.dto.ThingsInfo;
-
+import cn.huangdayu.things.common.dsl.DslInfo;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 import reactor.core.publisher.Mono;
-
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * 消息点对点发布
@@ -31,7 +25,7 @@ public interface ThingsRestfulEndpoint extends ThingsEndpoint {
      * @return
      */
     @GetExchange("/things/dsl")
-    Set<ThingsInfo> getThingsDsl();
+    DslInfo getDsl();
 
     /**
      * 点对点发送消息
@@ -67,7 +61,7 @@ public interface ThingsRestfulEndpoint extends ThingsEndpoint {
      * @return 本实例的信息
      */
     @PostExchange("/things/exchange")
-    ThingsInstance exchange(@RequestBody ThingsInstance thingsInstance);
+    ThingsInstance exchangeInstance(@RequestBody ThingsInstance thingsInstance);
 
 
 }

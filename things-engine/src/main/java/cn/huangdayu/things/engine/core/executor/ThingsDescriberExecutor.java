@@ -1,11 +1,11 @@
 package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.common.annotation.*;
-import cn.huangdayu.things.common.dto.*;
-import cn.huangdayu.things.common.observer.event.ThingsContainerUpdatedEvent;
+import cn.huangdayu.things.common.dsl.*;
+import cn.huangdayu.things.common.message.BaseThingsMessage;
 import cn.huangdayu.things.common.observer.ThingsBaseEvent;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
-import cn.huangdayu.things.common.message.BaseThingsMessage;
+import cn.huangdayu.things.common.observer.event.ThingsContainerUpdatedEvent;
 import cn.huangdayu.things.engine.core.ThingsDescriber;
 import cn.huangdayu.things.engine.wrapper.ThingsEvents;
 import cn.huangdayu.things.engine.wrapper.ThingsFunction;
@@ -109,8 +109,22 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
     }
 
     @Override
-    public Set<ThingsInfo> getThingsDsl() {
-        return CACHE.get(CACHE_KEY, () -> THINGS_SERVICES_TABLE.columnKeySet().parallelStream().map(this::getThingsInfo).collect(Collectors.toSet()));
+    public DslInfo getDsl() {
+        Set<ThingsInfo> thingsDsl = CACHE.get(CACHE_KEY, () -> THINGS_SERVICES_TABLE.columnKeySet().parallelStream().map(this::getThingsInfo).collect(Collectors.toSet()));
+        Set<DomainInfo> domainDsl = new HashSet<>();
+        DomainInfo domainInfo = new DomainInfo();
+        domainInfo.setSubscribes(getSubscribes());
+        domainDsl.add(domainInfo);
+        return new DslInfo(domainDsl, thingsDsl);
+    }
+
+    private Set<String> getConsumes() {
+        return ThingsBaseExecutor.THINGS_EVENTS_LISTENER_TABLE.columnKeySet();
+    }
+
+    private Set<DomainSubscribeInfo> getSubscribes() {
+        return ThingsBaseExecutor.THINGS_EVENTS_LISTENER_TABLE.cellSet()
+                .stream().map(cell -> new DomainSubscribeInfo(cell.getRowKey(), cell.getColumnKey(), null)).collect(Collectors.toSet());
     }
 
     private ThingsInfo getThingsInfo(String productCode) {
@@ -131,10 +145,12 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
         thingsInfo.setProperties(new ConcurrentHashSet<>());
         ThingsProfile profile = new ThingsProfile();
         Things things = (Things) thingsFunction.getBeanAnnotation();
-        profile.setProductCode(productCode);
-        profile.setName(things.name());
+        ThingsProfileInfo productInfo = new ThingsProfileInfo();
+        productInfo.setCode(productCode);
+        productInfo.setName(things.name());
+        profile.setProduct(productInfo);
+        profile.setSchema(things.schema());
         thingsInfo.setProfile(profile);
-        thingsInfo.setSchema(things.schema());
         return thingsInfo;
     }
 

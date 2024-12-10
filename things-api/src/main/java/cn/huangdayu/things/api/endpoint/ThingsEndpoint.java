@@ -1,7 +1,9 @@
 package cn.huangdayu.things.api.endpoint;
 
 
-import cn.huangdayu.things.common.dto.ThingsInfo;
+import cn.huangdayu.things.common.annotation.ThingsExchange;
+import cn.huangdayu.things.common.dsl.DslInfo;
+import cn.huangdayu.things.common.dsl.ThingsInfo;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import reactor.core.publisher.Mono;
@@ -20,7 +22,8 @@ public interface ThingsEndpoint {
      *
      * @return
      */
-    Set<ThingsInfo> getThingsDsl();
+    @ThingsExchange(identifier = "get-dsl")
+    DslInfo getDsl();
 
     /**
      * 点对点发送消息
@@ -28,6 +31,7 @@ public interface ThingsEndpoint {
      * @param message
      * @return
      */
+    @ThingsExchange(identifier = "handle-message")
     JsonThingsMessage handleMessage(JsonThingsMessage message);
 
 
@@ -37,6 +41,7 @@ public interface ThingsEndpoint {
      * @param message
      * @return
      */
+    @ThingsExchange(identifier = "reactor-message")
     Mono<JsonThingsMessage> reactorMessage(JsonThingsMessage message);
 
     /**
@@ -44,6 +49,7 @@ public interface ThingsEndpoint {
      *
      * @param message
      */
+    @ThingsExchange(identifier = "handle-event")
     void handleEvent(JsonThingsMessage message);
 
     /**
@@ -52,7 +58,8 @@ public interface ThingsEndpoint {
      * @param thingsInstance 请求者的实例信息
      * @return 本实例的信息
      */
-    ThingsInstance exchange(ThingsInstance thingsInstance);
+    @ThingsExchange(identifier = "exchange-instance")
+    ThingsInstance exchangeInstance(ThingsInstance thingsInstance);
 
 
 }

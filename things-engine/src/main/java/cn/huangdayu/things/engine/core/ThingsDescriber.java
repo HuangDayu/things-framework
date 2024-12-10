@@ -1,6 +1,7 @@
 package cn.huangdayu.things.engine.core;
 
-import cn.huangdayu.things.common.dto.ThingsInfo;
+import cn.huangdayu.things.common.dsl.DslInfo;
+import cn.huangdayu.things.common.dsl.ThingsInfo;
 
 import java.util.Set;
 
@@ -16,6 +17,6 @@ public interface ThingsDescriber {
      *
      * @return
      */
-    Set<ThingsInfo> getThingsDsl();
+    DslInfo getDsl();
 
 }

@@ -1,4 +1,4 @@
-package cn.huangdayu.things.common.dto;
+package cn.huangdayu.things.common.dsl;
 
 import lombok.Data;
 

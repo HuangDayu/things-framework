@@ -15,7 +15,7 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.covertEventMessage;
  * @author huangdayu
  */
 @RequiredArgsConstructor
-public class ThingsClientPublisher implements ThingsPublisher, ThingsSender {
+public class ThingsClientsPublisher implements ThingsPublisher, ThingsSender {
 
     private final ThingsEndpointFactory thingsEndpointFactory;
 

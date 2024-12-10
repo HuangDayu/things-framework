@@ -29,7 +29,7 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.getReturnType;
 @ThingsBean
 @RequiredArgsConstructor
 @Slf4j
-public class ThingsClientsProxyInvoke {
+public class ThingsClientsProxy {
 
     private final ThingsEndpointFactory thingsEndpointFactory;
 

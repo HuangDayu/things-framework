@@ -39,7 +39,7 @@ public class ThingsServerInstancesDiscoverer implements ThingsInstancesDiscovere
                 if (server.equals(thingsInstance.getEndpointUri())) {
                     continue;
                 }
-                thingsInstances.add(thingsEndpointFactory.create(server).exchange(thingsInstance));
+                thingsInstances.add(thingsEndpointFactory.create(server).exchangeInstance(thingsInstance));
             } catch (Exception e) {
                 log.error("Get Things instances to {} server exception : {}", server, e.getMessage());
             }

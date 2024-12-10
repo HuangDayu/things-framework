@@ -4,7 +4,8 @@ import cn.huangdayu.things.api.instances.ThingsInstancesManager;
 import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
 import cn.huangdayu.things.api.session.ThingsSessions;
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.common.dto.ThingsInfo;
+import cn.huangdayu.things.common.dsl.DslInfo;
+import cn.huangdayu.things.common.dsl.ThingsInfo;
 
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
@@ -13,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author huangdayu
@@ -27,7 +27,7 @@ public class ThingsBrokerEndpoint implements ThingsEndpoint {
     private final ThingsInstancesManager thingsInstancesManager;
 
     @Override
-    public Set<ThingsInfo> getThingsDsl() {
+    public DslInfo getDsl() {
         return null;
     }
 
@@ -47,7 +47,7 @@ public class ThingsBrokerEndpoint implements ThingsEndpoint {
     }
 
     @Override
-    public ThingsInstance exchange(ThingsInstance thingsInstance) {
+    public ThingsInstance exchangeInstance(ThingsInstance thingsInstance) {
         return null;
     }
 }

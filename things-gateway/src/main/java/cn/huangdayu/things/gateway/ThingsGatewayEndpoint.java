@@ -5,17 +5,18 @@ import cn.huangdayu.things.api.endpoint.ThingsEndpointFactory;
 import cn.huangdayu.things.api.instances.ThingsInstancesManager;
 import cn.huangdayu.things.api.message.ThingsPublisher;
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.common.dto.ThingsInfo;
-
+import cn.huangdayu.things.common.dsl.DomainInfo;
+import cn.huangdayu.things.common.dsl.DslInfo;
+import cn.huangdayu.things.common.dsl.ThingsInfo;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
+import cn.hutool.core.collection.CollUtil;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 import static cn.huangdayu.things.common.factory.ThreadPoolFactory.THINGS_EXECUTOR;
 
@@ -31,12 +32,19 @@ public class ThingsGatewayEndpoint implements ThingsEndpoint {
     private final Map<String, ThingsPublisher> thingsPublisherMap;
 
     @Override
-    public Set<ThingsInfo> getThingsDsl() {
+    public DslInfo getDsl() {
         Set<ThingsInfo> thingsDsl = new HashSet<>();
+        Set<DomainInfo> domainDsl = new HashSet<>();
         for (ThingsInstance instance : thingsInstancesManager.getAllThingsInstances()) {
-            thingsDsl.addAll(thingsEndpointFactory.create(instance.getEndpointUri()).getThingsDsl());
+            DslInfo dsl = thingsEndpointFactory.create(instance.getEndpointUri()).getDsl();
+            if (CollUtil.isNotEmpty(dsl.getThingsDsl())) {
+                thingsDsl.addAll(dsl.getThingsDsl());
+            }
+            if (CollUtil.isNotEmpty(dsl.getDomainDsl())) {
+                domainDsl.addAll(dsl.getDomainDsl());
+            }
         }
-        return thingsDsl;
+        return new DslInfo(domainDsl, thingsDsl);
     }
 
     @Override
@@ -46,7 +54,7 @@ public class ThingsGatewayEndpoint implements ThingsEndpoint {
 
     @Override
     public Mono<JsonThingsMessage> reactorMessage(JsonThingsMessage message) {
-        return null;
+        return thingsEndpointFactory.create(message, true).reactorMessage(message);
     }
 
     @Override
@@ -58,7 +66,7 @@ public class ThingsGatewayEndpoint implements ThingsEndpoint {
 
 
     @Override
-    public ThingsInstance exchange(ThingsInstance thingsInstance) {
+    public ThingsInstance exchangeInstance(ThingsInstance thingsInstance) {
         return thingsInstancesManager.exchangeInstance(thingsInstance);
     }
 }
