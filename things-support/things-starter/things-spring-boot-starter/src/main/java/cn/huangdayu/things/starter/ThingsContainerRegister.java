@@ -1,7 +1,7 @@
 package cn.huangdayu.things.starter;
 
 import cn.huangdayu.things.api.container.ThingsContainer;
-import cn.huangdayu.things.api.register.ThingsRegister;
+import cn.huangdayu.things.api.container.ThingsRegister;
 import cn.hutool.core.util.StrUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

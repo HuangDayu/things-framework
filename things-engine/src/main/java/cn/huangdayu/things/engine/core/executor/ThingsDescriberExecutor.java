@@ -6,6 +6,7 @@ import cn.huangdayu.things.common.message.BaseThingsMessage;
 import cn.huangdayu.things.common.observer.ThingsBaseEvent;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.observer.event.ThingsContainerUpdatedEvent;
+import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.engine.core.ThingsDescriber;
 import cn.huangdayu.things.engine.wrapper.ThingsEvents;
 import cn.huangdayu.things.engine.wrapper.ThingsFunction;
@@ -29,8 +30,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static cn.huangdayu.things.common.utils.ThingsUtils.copyAnnotationValues;
-import static cn.huangdayu.things.common.utils.ThingsUtils.getParameterType;
+import static cn.huangdayu.things.common.utils.ThingsUtils.*;
 
 /**
  * @author huangdayu
@@ -40,64 +40,10 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.getParameterType;
 @ThingsBean
 public class ThingsDescriberExecutor extends ThingsBaseExecutor implements ThingsDescriber {
 
-    private static final String CACHE_KEY = "things_document_cache";
+    private static final String CACHE_KEY = "things_dsl_cache";
     private final ThingsEventObserver thingsEventObserver;
-    private final Cache<String, Set<ThingsInfo>> CACHE = CacheUtil.newTimedCache(TimeUnit.MINUTES.toMillis(10L));
-
-    /**
-     * 根据给定的 Class 对象返回对应的数据类型别名。
-     *
-     * @param clazz 给定的 Class 对象。
-     * @return 对应的数据类型别名。
-     */
-    public static String convertDataTypeName(Class<?> clazz) {
-        switch (clazz.getName()) {
-            case "int", "java.lang.Integer":
-                return "int";
-            case "java.lang.String":
-                return "text";
-            case "boolean", "java.lang.Boolean":
-                return "bool";
-            case "java.util.Date":
-                return "date";
-            case "float", "java.lang.Float":
-                return "float";
-            case "double", "java.lang.Double":
-                return "double";
-            case "long", "java.lang.Long":
-                return "long";
-            default:
-                if (clazz.isEnum()) {
-                    return "enum";
-                } else if (clazz.isArray()) {
-                    return "array";
-                } else {
-                    return "struct";
-                }
-        }
-    }
-
-    /**
-     * 将字符串类型的名称转换为对应的 Class 对象。
-     *
-     * @param typeName 类型名称的字符串表示形式。
-     * @return 对应的 Class 对象。
-     */
-    public static Class<?> convertToClass(String typeName) {
-        return switch (typeName) {
-            case "int" -> Integer.class;
-            case "text" -> String.class;
-            case "bool" -> Boolean.class;
-            case "date" -> Date.class;
-            case "float" -> Float.class;
-            case "double" -> Double.class;
-            case "long" -> Long.class;
-            case "enum" -> Enum.class;
-            case "array" -> Object[].class;
-            case "struct" -> Object.class;
-            default -> throw new IllegalArgumentException("Unsupported type name: " + typeName);
-        };
-    }
+    private final ThingsFrameworkProperties thingsFrameworkProperties;
+    private final Cache<String, DslInfo> CACHE = CacheUtil.newTimedCache(TimeUnit.MINUTES.toMillis(10L));
 
     @PostConstruct
     public void init() {
@@ -110,21 +56,45 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
 
     @Override
     public DslInfo getDsl() {
-        Set<ThingsInfo> thingsDsl = CACHE.get(CACHE_KEY, () -> THINGS_SERVICES_TABLE.columnKeySet().parallelStream().map(this::getThingsInfo).collect(Collectors.toSet()));
+        return CACHE.get(CACHE_KEY, this::getDslInfo);
+    }
+
+    private DslInfo getDslInfo() {
+        return new DslInfo(getDomainInfo(), getThingsInfo());
+    }
+
+    private Set<DomainInfo> getDomainInfo() {
         Set<DomainInfo> domainDsl = new HashSet<>();
         DomainInfo domainInfo = new DomainInfo();
         domainInfo.setSubscribes(getSubscribes());
+        domainInfo.setConsumes(getConsumes());
+        domainInfo.setProfile(getDomainProfile());
         domainDsl.add(domainInfo);
-        return new DslInfo(domainDsl, thingsDsl);
+        return domainDsl;
     }
 
-    private Set<String> getConsumes() {
-        return ThingsBaseExecutor.THINGS_EVENTS_LISTENER_TABLE.columnKeySet();
+    private DomainProfile getDomainProfile() {
+        DomainProfileInfo domainProfileInfo = new DomainProfileInfo();
+        domainProfileInfo.setCode(getUUID());
+        domainProfileInfo.setName("ThingsDomain");
+        DomainProfile profile = new DomainProfile();
+        profile.setSchema("1.0");
+        profile.setInstance(thingsFrameworkProperties.getInstance());
+        return profile;
+    }
+
+    private Set<DomainConsumeInfo> getConsumes() {
+        return ThingsBaseExecutor.THINGS_EVENTS_LISTENER_TABLE.cellSet()
+                .stream().map(cell -> new DomainConsumeInfo(cell.getColumnKey(), cell.getRowKey())).collect(Collectors.toSet());
     }
 
     private Set<DomainSubscribeInfo> getSubscribes() {
         return ThingsBaseExecutor.THINGS_EVENTS_LISTENER_TABLE.cellSet()
-                .stream().map(cell -> new DomainSubscribeInfo(cell.getRowKey(), cell.getColumnKey(), null)).collect(Collectors.toSet());
+                .stream().map(cell -> new DomainSubscribeInfo(cell.getColumnKey(), cell.getRowKey())).collect(Collectors.toSet());
+    }
+
+    private Set<ThingsInfo> getThingsInfo() {
+        return THINGS_ENTITY_TABLE.rowKeySet().parallelStream().map(this::getThingsInfo).collect(Collectors.toSet());
     }
 
     private ThingsInfo getThingsInfo(String productCode) {
@@ -136,22 +106,28 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
     }
 
     private ThingsInfo initThingsInfo(String productCode) {
-        Set<String> identifiers = THINGS_SERVICES_TABLE.getColumn(productCode).keySet();
-        Optional<String> first = identifiers.stream().findFirst();
-        ThingsFunction thingsFunction = THINGS_SERVICES_TABLE.get(first.get(), productCode);
         ThingsInfo thingsInfo = new ThingsInfo();
         thingsInfo.setEvents(new ConcurrentHashSet<>());
         thingsInfo.setServices(new ConcurrentHashSet<>());
         thingsInfo.setProperties(new ConcurrentHashSet<>());
-        ThingsProfile profile = new ThingsProfile();
-        Things things = (Things) thingsFunction.getBeanAnnotation();
+        thingsInfo.setProfile(getThingsProfile(productCode));
+        return thingsInfo;
+    }
+
+    private Things getThings(String productCode) {
+        return THINGS_ENTITY_TABLE.getRow(productCode).values().stream().findFirst().orElseThrow().getThings();
+    }
+
+    private ThingsProfile getThingsProfile(String productCode) {
+        Things things = getThings(productCode);
         ThingsProfileInfo productInfo = new ThingsProfileInfo();
         productInfo.setCode(productCode);
         productInfo.setName(things.name());
+        ThingsProfile profile = new ThingsProfile();
         profile.setProduct(productInfo);
         profile.setSchema(things.schema());
-        thingsInfo.setProfile(profile);
-        return thingsInfo;
+        profile.setInstance(thingsFrameworkProperties.getInstance());
+        return profile;
     }
 
     private Set<ThingsParamInfo> getProperties(String productCode) {

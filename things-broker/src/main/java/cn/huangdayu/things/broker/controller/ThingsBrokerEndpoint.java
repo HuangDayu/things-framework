@@ -2,18 +2,15 @@ package cn.huangdayu.things.broker.controller;
 
 import cn.huangdayu.things.api.instances.ThingsInstancesManager;
 import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
-import cn.huangdayu.things.api.session.ThingsSessions;
+import cn.huangdayu.things.api.infrastructure.SessionService;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.dsl.DslInfo;
-import cn.huangdayu.things.common.dsl.ThingsInfo;
 
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
-
-import java.util.Set;
 
 /**
  * @author huangdayu
@@ -22,7 +19,7 @@ import java.util.Set;
 @ThingsBean
 public class ThingsBrokerEndpoint implements ThingsEndpoint {
 
-    private final ThingsSessions thingsSessions;
+    private final SessionService sessionService;
     private final ThingsFrameworkProperties thingsFrameworkProperties;
     private final ThingsInstancesManager thingsInstancesManager;
 

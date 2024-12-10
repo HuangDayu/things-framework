@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface ThingsDslManager {
 
-    void addDsl(String dsl);
+    void addDsl(DslInfo dslInfo);
 
     DslInfo getDsl();
 

@@ -19,6 +19,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -203,5 +204,60 @@ public class ThingsUtils {
         jtm.setPayload((JSONObject) JSON.toJSON(tem, JSONWriter.Feature.WriteNulls));
         jtm.setMethod(EVENT_LISTENER_START_WITH.concat(thingsEvent.identifier()).concat(EVENT_TYPE_POST.replace(EVENT_TYPE, thingsEvent.type())));
         return jtm;
+    }
+
+    /**
+     * 根据给定的 Class 对象返回对应的数据类型别名。
+     *
+     * @param clazz 给定的 Class 对象。
+     * @return 对应的数据类型别名。
+     */
+    public static String convertDataTypeName(Class<?> clazz) {
+        switch (clazz.getName()) {
+            case "int", "java.lang.Integer":
+                return "int";
+            case "java.lang.String":
+                return "text";
+            case "boolean", "java.lang.Boolean":
+                return "bool";
+            case "java.util.Date":
+                return "date";
+            case "float", "java.lang.Float":
+                return "float";
+            case "double", "java.lang.Double":
+                return "double";
+            case "long", "java.lang.Long":
+                return "long";
+            default:
+                if (clazz.isEnum()) {
+                    return "enum";
+                } else if (clazz.isArray()) {
+                    return "array";
+                } else {
+                    return "struct";
+                }
+        }
+    }
+
+    /**
+     * 将字符串类型的名称转换为对应的 Class 对象。
+     *
+     * @param typeName 类型名称的字符串表示形式。
+     * @return 对应的 Class 对象。
+     */
+    public static Class<?> convertToClass(String typeName) {
+        return switch (typeName) {
+            case "int" -> Integer.class;
+            case "text" -> String.class;
+            case "bool" -> Boolean.class;
+            case "date" -> Date.class;
+            case "float" -> Float.class;
+            case "double" -> Double.class;
+            case "long" -> Long.class;
+            case "enum" -> Enum.class;
+            case "array" -> Object[].class;
+            case "struct" -> Object.class;
+            default -> throw new IllegalArgumentException("Unsupported type name: " + typeName);
+        };
     }
 }

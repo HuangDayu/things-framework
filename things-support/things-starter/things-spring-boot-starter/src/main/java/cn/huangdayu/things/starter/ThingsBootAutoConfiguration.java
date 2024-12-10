@@ -1,7 +1,7 @@
 package cn.huangdayu.things.starter;
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
-import cn.huangdayu.things.api.register.ThingsRegister;
+import cn.huangdayu.things.api.container.ThingsRegister;
 import cn.huangdayu.things.common.factory.ThreadPoolFactory;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import lombok.extern.slf4j.Slf4j;

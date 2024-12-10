@@ -25,6 +25,12 @@ public abstract class ThingsBaseExecutor {
 
 
     /**
+     * productCode vs ThingsBeanClass vs ThingsEntity
+     */
+    protected final static Table<String, Class<?>, ThingsEntity> THINGS_ENTITY_TABLE = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
+
+
+    /**
      * identifier vs productCode vs ThingsFunction
      */
     protected static final Table<String, String, ThingsFunction> THINGS_SERVICES_TABLE = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);

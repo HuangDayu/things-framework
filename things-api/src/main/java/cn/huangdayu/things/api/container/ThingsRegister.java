@@ -1,6 +1,4 @@
-package cn.huangdayu.things.api.register;
-
-import cn.huangdayu.things.api.container.ThingsContainer;
+package cn.huangdayu.things.api.container;
 
 /**
  * 物模型注册引擎

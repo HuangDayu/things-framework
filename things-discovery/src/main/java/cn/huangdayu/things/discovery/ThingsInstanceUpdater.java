@@ -1,6 +1,7 @@
 package cn.huangdayu.things.discovery;
 
 import cn.huangdayu.things.api.instances.ThingsInstancesManager;
+import cn.huangdayu.things.api.instances.ThingsInstancesServer;
 import cn.huangdayu.things.api.instances.ThingsInstancesTypeFinder;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.constants.ThingsConstants;
@@ -11,14 +12,10 @@ import cn.huangdayu.things.common.observer.event.ThingsInstancesUpdatedEvent;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.net.Ipv4Util;
-import cn.hutool.core.net.NetUtil;
 import cn.hutool.core.util.StrUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.env.Environment;
 
-import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,7 +28,7 @@ import static cn.hutool.core.text.CharSequenceUtil.firstNonBlank;
 @ThingsBean
 @RequiredArgsConstructor
 public class ThingsInstanceUpdater {
-    private final Environment environment;
+    private final ThingsInstancesServer thingsInstancesServer;
     private final ThingsFrameworkProperties thingsFrameworkProperties;
     private final ThingsEventObserver thingsEventObserver;
     private final ThingsInstancesManager thingsInstancesManager;
@@ -47,7 +44,7 @@ public class ThingsInstanceUpdater {
 
     private void updateThingsInstance() {
         ThingsInstance thingsInstance = thingsFrameworkProperties.getInstance() == null ? new ThingsInstance() : thingsFrameworkProperties.getInstance();
-        thingsInstance.setName(firstNonBlank(thingsFrameworkProperties.getInstance().getName(), environment.getProperty("spring.application.name")));
+        thingsInstance.setName(firstNonBlank(thingsFrameworkProperties.getInstance().getName(), thingsInstancesServer.getServerName()));
         thingsInstance.setEndpointUri(firstNonBlank(thingsFrameworkProperties.getInstance().getEndpointUri(), getEndpointUri()));
         Set<ThingsInstanceType> thingsInstanceType = findThingsInstanceType(thingsInstance);
         if (!thingsInstanceType.contains(GATEWAY) && StrUtil.isBlank(thingsInstance.getUpstreamUri())) {
@@ -77,15 +74,7 @@ public class ThingsInstanceUpdater {
 
 
     private String getEndpointUri() {
-        return ThingsConstants.Protocol.RESTFUL + "://" + getIp() + ":" + environment.getProperty("server.port");
-    }
-
-    private String getIp() {
-        try {
-            return InetAddress.getLocalHost().getHostAddress();
-        } catch (Exception e) {
-            return NetUtil.getIpByHost(Ipv4Util.LOCAL_IP);
-        }
+        return ThingsConstants.Protocol.RESTFUL + "://" + thingsInstancesServer.getServerHost();
     }
 
 }

@@ -3,7 +3,7 @@ package cn.huangdayu.things.engine.core.executor;
 import cn.huangdayu.things.api.container.ThingsContainer;
 import cn.huangdayu.things.api.message.ThingsFilter;
 import cn.huangdayu.things.api.message.ThingsInterceptor;
-import cn.huangdayu.things.api.register.ThingsRegister;
+import cn.huangdayu.things.api.container.ThingsRegister;
 import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
@@ -155,6 +155,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
                 log.error("Things engine scan service {}.{} exception : {}", bean.getClass().getSimpleName(), method.getName(), e.getMessage());
             }
         });
+        THINGS_ENTITY_TABLE.put(things.productCode(), bean.getClass(), new ThingsEntity(things.productCode(), bean, things));
     }
 
 
