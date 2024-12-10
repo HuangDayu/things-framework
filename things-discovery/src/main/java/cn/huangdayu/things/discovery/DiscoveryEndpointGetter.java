@@ -1,10 +1,9 @@
 package cn.huangdayu.things.discovery;
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpointGetter;
-import cn.huangdayu.things.api.instances.ThingsInstancesManager;
+import cn.huangdayu.things.api.instances.ThingsInstancesProvider;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.enums.EndpointGetterType;
-import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
@@ -22,7 +21,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class DiscoveryEndpointGetter implements ThingsEndpointGetter {
 
-    private final ThingsInstancesManager thingsInstancesManager;
+    private final ThingsInstancesProvider thingsInstancesProvider;
 
     @Override
     public EndpointGetterType type() {
@@ -31,9 +30,8 @@ public class DiscoveryEndpointGetter implements ThingsEndpointGetter {
 
 
     @Override
-    public String getEndpointUri(JsonThingsMessage thingsMessage) {
-        BaseThingsMetadata baseMetadata = thingsMessage.getBaseMetadata();
-        Set<ThingsInstance> instances = thingsInstancesManager.getProvideInstances(baseMetadata.getProductCode(), baseMetadata.getDeviceCode(), thingsMessage.getMethod());
+    public String getEndpointUri(JsonThingsMessage jtm) {
+        Set<ThingsInstance> instances = thingsInstancesProvider.getProvides(jtm);
         if (CollUtil.isNotEmpty(instances)) {
             if (instances.size() > 1) {
                 return getRandomElement(instances).getEndpointUri();

@@ -51,7 +51,7 @@ public class WebSocketComponent extends AbstractComponent<ComponentProperties> {
     }
 
     @Override
-    void output(JsonThingsMessage jsonThingsMessage) {
+    void output(JsonThingsMessage jtm) {
 
     }
 }

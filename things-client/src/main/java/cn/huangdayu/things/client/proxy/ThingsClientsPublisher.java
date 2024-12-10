@@ -20,23 +20,23 @@ public class ThingsClientsPublisher implements ThingsPublisher, ThingsSender {
     private final ThingsEndpointFactory thingsEndpointFactory;
 
     @Override
-    public void publishEvent(ThingsEventMessage thingsEventMessage) {
-        publishEvent(covertEventMessage(thingsEventMessage));
+    public void publishEvent(ThingsEventMessage tem) {
+        publishEvent(covertEventMessage(tem));
     }
 
     @Override
-    public void publishEvent(JsonThingsMessage jsonThingsMessage) {
-        THINGS_EXECUTOR.execute(() -> thingsEndpointFactory.create(jsonThingsMessage).handleEvent(jsonThingsMessage));
+    public void publishEvent(JsonThingsMessage jtm) {
+        THINGS_EXECUTOR.execute(() -> thingsEndpointFactory.create(jtm).handleEvent(jtm));
     }
 
     @Override
-    public JsonThingsMessage sendMessage(JsonThingsMessage jsonThingsMessage) {
-        return thingsEndpointFactory.create(jsonThingsMessage).handleMessage(jsonThingsMessage);
+    public JsonThingsMessage sendMessage(JsonThingsMessage jtm) {
+        return thingsEndpointFactory.create(jtm).handleMessage(jtm);
     }
 
     @Override
-    public Mono<JsonThingsMessage> sendReactorMessage(JsonThingsMessage jsonThingsMessage) {
-        return thingsEndpointFactory.create(jsonThingsMessage, true).reactorMessage(jsonThingsMessage);
+    public Mono<JsonThingsMessage> sendReactorMessage(JsonThingsMessage jtm) {
+        return thingsEndpointFactory.create(jtm, true).reactorMessage(jtm);
     }
 
 }

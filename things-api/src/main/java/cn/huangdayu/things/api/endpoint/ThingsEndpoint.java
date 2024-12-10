@@ -28,29 +28,29 @@ public interface ThingsEndpoint {
     /**
      * 点对点发送消息
      *
-     * @param message
+     * @param jtm
      * @return
      */
     @ThingsExchange(identifier = "handle-message")
-    JsonThingsMessage handleMessage(JsonThingsMessage message);
+    JsonThingsMessage handleMessage(JsonThingsMessage jtm);
 
 
     /**
      * 异步消息发送
      *
-     * @param message
+     * @param jtm
      * @return
      */
     @ThingsExchange(identifier = "reactor-message")
-    Mono<JsonThingsMessage> reactorMessage(JsonThingsMessage message);
+    Mono<JsonThingsMessage> reactorMessage(JsonThingsMessage jtm);
 
     /**
      * 发布消息
      *
-     * @param message
+     * @param jtm
      */
     @ThingsExchange(identifier = "handle-event")
-    void handleEvent(JsonThingsMessage message);
+    void handleEvent(JsonThingsMessage jtm);
 
     /**
      * 交换实例信息

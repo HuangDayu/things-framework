@@ -7,7 +7,7 @@ import cn.huangdayu.things.common.message.JsonThingsMessage;
  */
 public class PublisherThingsMessageHandler implements ThingsMessageHandler {
     @Override
-    public void handler(JsonThingsMessage jsonThingsMessage) {
+    public void handler(JsonThingsMessage jtm) {
 
     }
 }

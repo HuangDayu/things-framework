@@ -21,8 +21,8 @@ public class TargetEndpointGetter implements ThingsEndpointGetter {
     }
 
     @Override
-    public String getEndpointUri(JsonThingsMessage thingsMessage) {
-        BaseThingsMetadata baseMetadata = thingsMessage.getBaseMetadata();
+    public String getEndpointUri(JsonThingsMessage jtm) {
+        BaseThingsMetadata baseMetadata = jtm.getBaseMetadata();
         if (StrUtil.isNotBlank(baseMetadata.getTargetCode())) {
             return ThingsInstance.valueOf(baseMetadata.getTargetCode()).getEndpointUri();
         }

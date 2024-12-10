@@ -16,18 +16,18 @@ public class ThingsException extends RuntimeException {
     private final String errorCode;
     private final String errorTraceCode;
     private final String errorMessage;
-    private final JsonThingsMessage thingsMessage;
+    private final JsonThingsMessage jtm;
 
-    public ThingsException(JsonThingsMessage thingsMessage, String errorCode, String errorMessage, String errorTraceCode) {
+    public ThingsException(JsonThingsMessage jtm, String errorCode, String errorMessage, String errorTraceCode) {
         super(errorMessage);
-        this.thingsMessage = thingsMessage;
+        this.jtm = jtm;
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
         this.errorTraceCode = errorTraceCode;
     }
 
-    public ThingsException(JsonThingsMessage thingsMessage, String errorCode, String errorMessage) {
-        this(thingsMessage, errorCode, errorMessage, getUUID());
+    public ThingsException(JsonThingsMessage jtm, String errorCode, String errorMessage) {
+        this(jtm, errorCode, errorMessage, getUUID());
     }
 
     public ThingsException(String errorCode, String errorMessage) {

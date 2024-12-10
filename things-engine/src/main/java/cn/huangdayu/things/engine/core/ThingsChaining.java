@@ -9,19 +9,19 @@ import reactor.core.publisher.Mono;
  */
 public interface ThingsChaining {
 
-    JsonThingsMessage doReceive(JsonThingsMessage jsonThingsMessage);
+    JsonThingsMessage doReceive(JsonThingsMessage jtm);
 
-    JsonThingsMessage doSend(JsonThingsMessage jsonThingsMessage);
+    JsonThingsMessage doSend(JsonThingsMessage jtm);
 
-    void doSubscribe(JsonThingsMessage jsonThingsMessage);
+    void doSubscribe(JsonThingsMessage jtm);
 
-    void doPublish(ThingsEventMessage thingsEventMessage);
+    void doPublish(ThingsEventMessage tem);
 
-    void doPublish(JsonThingsMessage jsonThingsMessage);
+    void doPublish(JsonThingsMessage jtm);
 
-    Mono<JsonThingsMessage> doReactorReceive(JsonThingsMessage message);
+    Mono<JsonThingsMessage> doReactorReceive(JsonThingsMessage jtm);
 
 
-    Mono<JsonThingsMessage> doReactorSend(JsonThingsMessage message);
+    Mono<JsonThingsMessage> doReactorSend(JsonThingsMessage jtm);
 
 }

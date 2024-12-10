@@ -10,27 +10,6 @@ import java.util.Set;
 public interface ThingsInstancesManager {
 
     /**
-     * 获取提供者物模型实例
-     *
-     * @param productCode 产品标识
-     * @param deviceCode  设备标识
-     * @param identifier  功能标识
-     * @return
-     */
-    Set<ThingsInstance> getProvideInstances(String productCode, String deviceCode, String identifier);
-
-
-    /**
-     * 获取消费者物模型实例
-     *
-     * @param productCode
-     * @param deviceCode
-     * @param identifier
-     * @return
-     */
-    Set<ThingsInstance> getSubscribeInstances(String productCode, String deviceCode, String identifier);
-
-    /**
      * 更新实例
      *
      * @param thingsInstances
@@ -45,7 +24,7 @@ public interface ThingsInstancesManager {
      * @param thingsInstances
      * @return
      */
-    Set<ThingsInstance> syncAllInstances(Set<ThingsInstance> thingsInstances);
+    Set<ThingsInstance> addAllInstances(Set<ThingsInstance> thingsInstances);
 
     /**
      * 移除实例

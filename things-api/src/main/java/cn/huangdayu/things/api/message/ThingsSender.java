@@ -11,17 +11,17 @@ public interface ThingsSender {
     /**
      * 发布同步消息
      *
-     * @param jsonThingsMessage
+     * @param jtm
      * @return
      */
-    JsonThingsMessage sendMessage(JsonThingsMessage jsonThingsMessage);
+    JsonThingsMessage sendMessage(JsonThingsMessage jtm);
 
 
     /**
      * 发布异步消息
      *
-     * @param jsonThingsMessage
+     * @param jtm
      */
-    Mono<JsonThingsMessage> sendReactorMessage(JsonThingsMessage jsonThingsMessage);
+    Mono<JsonThingsMessage> sendReactorMessage(JsonThingsMessage jtm);
 
 }

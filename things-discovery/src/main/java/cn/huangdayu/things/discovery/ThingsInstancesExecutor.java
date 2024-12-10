@@ -9,17 +9,11 @@ import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
-import cn.hutool.core.util.StrUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Set;
-import java.util.stream.Collectors;
-
-import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_SEPARATOR;
-import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_WILDCARD;
-import static cn.huangdayu.things.common.utils.ThingsUtils.subIdentifies;
 
 /**
  * @author huangdayu
@@ -44,25 +38,6 @@ public class ThingsInstancesExecutor implements ThingsInstancesManager {
         });
     }
 
-    @Override
-    public Set<ThingsInstance> getProvideInstances(String productCode, String deviceCode, String identifier) {
-        return THINGS_INSTANCES.parallelStream().filter(instance -> instance.getProvides().contains(productCode)).collect(Collectors.toSet());
-    }
-
-    @Override
-    public Set<ThingsInstance> getSubscribeInstances(String productCode, String deviceCode, String identifier) {
-        return THINGS_INSTANCES.parallelStream().filter(instance -> {
-            if (instance.getConsumes().contains(productCode)) {
-                if (StrUtil.isNotBlank(identifier)) {
-                    String identifier1 = subIdentifies(identifier);
-                    return instance.getSubscribes().contains(THINGS_WILDCARD + THINGS_SEPARATOR + identifier1) || instance.getSubscribes().contains(productCode + THINGS_SEPARATOR + identifier1);
-                }
-                return instance.getSubscribes().contains(productCode + THINGS_SEPARATOR + THINGS_WILDCARD);
-            }
-            return false;
-        }).collect(Collectors.toSet());
-    }
-
 
     @Override
     public Set<ThingsInstance> addInstances(Set<ThingsInstance> thingsInstances) {
@@ -73,7 +48,7 @@ public class ThingsInstancesExecutor implements ThingsInstancesManager {
     }
 
     @Override
-    public Set<ThingsInstance> syncAllInstances(Set<ThingsInstance> thingsInstances) {
+    public Set<ThingsInstance> addAllInstances(Set<ThingsInstance> thingsInstances) {
         THINGS_INSTANCES.clear();
         if (CollUtil.isNotEmpty(thingsInstances)) {
             THINGS_INSTANCES.addAll(thingsInstances);

@@ -1,7 +1,6 @@
 package cn.huangdayu.things.discovery;
 
 import cn.huangdayu.things.api.instances.ThingsInstancesManager;
-import cn.huangdayu.things.api.instances.ThingsInstancesProvider;
 import cn.huangdayu.things.api.instances.ThingsInstancesTypeFinder;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.constants.ThingsConstants;
@@ -35,7 +34,6 @@ public class ThingsInstanceUpdater {
     private final Environment environment;
     private final ThingsFrameworkProperties thingsFrameworkProperties;
     private final ThingsEventObserver thingsEventObserver;
-    private final ThingsInstancesProvider thingsInstancesProvider;
     private final ThingsInstancesManager thingsInstancesManager;
     private final Map<String, ThingsInstancesTypeFinder> thingsInstancesTypeFinderMap;
 
@@ -51,9 +49,6 @@ public class ThingsInstanceUpdater {
         ThingsInstance thingsInstance = thingsFrameworkProperties.getInstance() == null ? new ThingsInstance() : thingsFrameworkProperties.getInstance();
         thingsInstance.setName(firstNonBlank(thingsFrameworkProperties.getInstance().getName(), environment.getProperty("spring.application.name")));
         thingsInstance.setEndpointUri(firstNonBlank(thingsFrameworkProperties.getInstance().getEndpointUri(), getEndpointUri()));
-        thingsInstance.setProvides(thingsInstancesProvider.getProvides());
-        thingsInstance.setConsumes(thingsInstancesProvider.getConsumes());
-        thingsInstance.setSubscribes(thingsInstancesProvider.getSubscribes());
         Set<ThingsInstanceType> thingsInstanceType = findThingsInstanceType(thingsInstance);
         if (!thingsInstanceType.contains(GATEWAY) && StrUtil.isBlank(thingsInstance.getUpstreamUri())) {
             String upstreamUri = findUpstreamUri();

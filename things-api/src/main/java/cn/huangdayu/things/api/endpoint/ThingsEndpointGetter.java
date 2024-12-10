@@ -20,8 +20,8 @@ public interface ThingsEndpointGetter {
     /**
      * 点对点发送消息的端点
      *
-     * @param thingsMessage
+     * @param jtm
      * @return
      */
-    String getEndpointUri(JsonThingsMessage thingsMessage);
+    String getEndpointUri(JsonThingsMessage jtm);
 }

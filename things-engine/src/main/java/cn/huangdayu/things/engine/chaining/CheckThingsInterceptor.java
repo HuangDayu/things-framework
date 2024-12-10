@@ -15,7 +15,7 @@ public class CheckThingsInterceptor implements ThingsInterceptor {
 
     @Override
     public boolean doIntercept(ThingsServlet thingsServlet) {
-        return StrUtil.isAllNotBlank(thingsServlet.getMessage().getBaseMetadata().getProductCode());
+        return StrUtil.isAllNotBlank(thingsServlet.getJtm().getBaseMetadata().getProductCode());
     }
 
 }

@@ -32,17 +32,17 @@ public class ThingsBrokerEndpoint implements ThingsEndpoint {
     }
 
     @Override
-    public JsonThingsMessage handleMessage(JsonThingsMessage message) {
+    public JsonThingsMessage handleMessage(JsonThingsMessage jtm) {
         return null;
     }
 
     @Override
-    public Mono<JsonThingsMessage> reactorMessage(JsonThingsMessage message) {
+    public Mono<JsonThingsMessage> reactorMessage(JsonThingsMessage jtm) {
         return null;
     }
 
     @Override
-    public void handleEvent(JsonThingsMessage message) {
+    public void handleEvent(JsonThingsMessage jtm) {
 
     }
 

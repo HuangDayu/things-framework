@@ -11,15 +11,15 @@ public interface ThingsPublisher {
     /**
      * 发布事件
      *
-     * @param thingsEventMessage
+     * @param tem
      */
-    void publishEvent(ThingsEventMessage thingsEventMessage);
+    void publishEvent(ThingsEventMessage tem);
 
 
     /**
      * 发布事件
      *
-     * @param jsonThingsMessage
+     * @param jtm
      */
-    void publishEvent(JsonThingsMessage jsonThingsMessage);
+    void publishEvent(JsonThingsMessage jtm);
 }

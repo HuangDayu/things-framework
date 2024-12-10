@@ -15,6 +15,6 @@ import lombok.NoArgsConstructor;
 public class ThingsServlet {
 
     private ThingsIntercepting thingsIntercepting;
-    private JsonThingsMessage message;
+    private JsonThingsMessage jtm;
 
 }

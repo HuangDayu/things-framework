@@ -24,27 +24,27 @@ public class ThingsEndpointController {
     private final ThingsEndpoint thingsEndpoint;
 
     @PostMapping("/things/message")
-    public JsonThingsMessage handleMessage(@RequestBody JsonThingsMessage message) {
-        log.debug("ThingsEndpoint handleMessage: {}", message);
-        return thingsEndpoint.handleMessage(message);
+    public JsonThingsMessage handleMessage(@RequestBody JsonThingsMessage jtm) {
+        log.debug("ThingsEndpoint handleMessage: {}", jtm);
+        return thingsEndpoint.handleMessage(jtm);
     }
 
     @PostMapping("/things/event")
-    public void handleEvent(@RequestBody JsonThingsMessage message) {
-        log.debug("ThingsEndpoint handleEvent: {}", message);
-        thingsEndpoint.handleEvent(message);
+    public void handleEvent(@RequestBody JsonThingsMessage jtm) {
+        log.debug("ThingsEndpoint handleEvent: {}", jtm);
+        thingsEndpoint.handleEvent(jtm);
     }
 
     /**
      * 异步消息发送
      *
-     * @param message
+     * @param jtm
      * @return
      */
     @PostMapping("/things/message/reactor")
-    public Mono<JsonThingsMessage> reactorMessage(@RequestBody JsonThingsMessage message) {
-        log.debug("ThingsEndpoint reactorMessage: {}", message);
-        return thingsEndpoint.reactorMessage(message);
+    public Mono<JsonThingsMessage> reactorMessage(@RequestBody JsonThingsMessage jtm) {
+        log.debug("ThingsEndpoint reactorMessage: {}", jtm);
+        return thingsEndpoint.reactorMessage(jtm);
     }
 
     @GetMapping("/things/dsl")

@@ -21,18 +21,18 @@ public class ThingsEngineEndpoint implements ThingsEndpoint {
     private final ThingsInstancesManager thingsInstancesManager;
 
     @Override
-    public JsonThingsMessage handleMessage(JsonThingsMessage message) {
-        return thingsChaining.doReceive(message);
+    public JsonThingsMessage handleMessage(JsonThingsMessage jtm) {
+        return thingsChaining.doReceive(jtm);
     }
 
     @Override
-    public Mono<JsonThingsMessage> reactorMessage(JsonThingsMessage message) {
-        return thingsChaining.doReactorReceive(message);
+    public Mono<JsonThingsMessage> reactorMessage(JsonThingsMessage jtm) {
+        return thingsChaining.doReactorReceive(jtm);
     }
 
     @Override
-    public void handleEvent(JsonThingsMessage message) {
-        thingsChaining.doSubscribe(message);
+    public void handleEvent(JsonThingsMessage jtm) {
+        thingsChaining.doSubscribe(jtm);
     }
 
     public DslInfo getDsl() {

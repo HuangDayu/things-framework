@@ -9,7 +9,7 @@ import cn.huangdayu.things.common.message.JsonThingsMessage;
 @ThingsBean
 public class RuleEngineThingsMessageHandler implements ThingsMessageHandler{
     @Override
-    public void handler(JsonThingsMessage jsonThingsMessage) {
+    public void handler(JsonThingsMessage jtm) {
 
     }
 }

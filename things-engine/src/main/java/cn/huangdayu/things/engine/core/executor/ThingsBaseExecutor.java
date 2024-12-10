@@ -25,7 +25,7 @@ public abstract class ThingsBaseExecutor {
 
 
     /**
-     * identifier vs productCode vs ThingsHandleWrapper
+     * identifier vs productCode vs ThingsFunction
      */
     protected static final Table<String, String, ThingsFunction> THINGS_SERVICES_TABLE = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
 

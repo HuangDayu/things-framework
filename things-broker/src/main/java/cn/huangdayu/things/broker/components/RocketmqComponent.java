@@ -50,7 +50,7 @@ public class RocketmqComponent extends AbstractComponent<ComponentProperties> {
     }
 
     @Override
-    void output(JsonThingsMessage jsonThingsMessage) {
+    void output(JsonThingsMessage jtm) {
 
     }
 }

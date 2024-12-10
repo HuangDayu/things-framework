@@ -30,29 +30,29 @@ public interface ThingsRestfulEndpoint extends ThingsEndpoint {
     /**
      * 点对点发送消息
      *
-     * @param message
+     * @param jtm
      * @return
      */
     @PostExchange("/things/message")
-    JsonThingsMessage handleMessage(@RequestBody JsonThingsMessage message);
+    JsonThingsMessage handleMessage(@RequestBody JsonThingsMessage jtm);
 
 
     /**
      * 异步消息发送
      *
-     * @param message
+     * @param jtm
      * @return
      */
     @PostExchange("/things/message/reactor")
-    Mono<JsonThingsMessage> reactorMessage(@RequestBody JsonThingsMessage message);
+    Mono<JsonThingsMessage> reactorMessage(@RequestBody JsonThingsMessage jtm);
 
     /**
      * 发布消息
      *
-     * @param message
+     * @param jtm
      */
     @PostExchange("/things/event")
-    void handleEvent(@RequestBody JsonThingsMessage message);
+    void handleEvent(@RequestBody JsonThingsMessage jtm);
 
     /**
      * 交换实例信息

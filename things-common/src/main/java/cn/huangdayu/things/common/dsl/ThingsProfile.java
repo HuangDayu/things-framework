@@ -1,5 +1,6 @@
 package cn.huangdayu.things.common.dsl;
 
+import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ public class ThingsProfile implements Serializable {
     private ThingsProfileInfo tenant;
     private ThingsProfileInfo application;
     private ThingsProfileInfo product;
+    private ThingsInstance instance;
 
 
     @Override

@@ -45,38 +45,38 @@ public class ThingsEndpointFactory {
         typeThingsEndpointGetterMap.forEach((key, getter) -> GETTER_MAP.put(getter.type(), getter));
     }
 
-    public ThingsEndpoint create(JsonThingsMessage jsonThingsMessage) {
-        return create(jsonThingsMessage, false);
+    public ThingsEndpoint create(JsonThingsMessage jtm) {
+        return create(jtm, false);
     }
 
-    public ThingsEndpoint create(JsonThingsMessage jsonThingsMessage, boolean reactor) {
-        String endpointUri = findEndpointUri(jsonThingsMessage);
+    public ThingsEndpoint create(JsonThingsMessage jtm, boolean reactor) {
+        String endpointUri = findEndpointUri(jtm);
         if (StrUtil.isBlank(endpointUri) || thingsFrameworkProperties.getInstance().getEndpointUri().equals(endpointUri)) {
             thingsEventObserver.notifyObservers(new ThingsInstancesSyncingEvent(this));
-            throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Not found the target endpointUri.");
+            throw new ThingsException(jtm, BAD_REQUEST, "Not found the target endpointUri.");
         }
         return create(endpointUri, reactor);
     }
 
     /**
      * 查找目标端点
-     * @param jsonThingsMessage
+     * @param jtm
      * @return
      */
-    private String findEndpointUri(JsonThingsMessage jsonThingsMessage) {
+    private String findEndpointUri(JsonThingsMessage jtm) {
         return findFirst(true,
                 // 如果endpointUri非空且不是自己的端点
                 v -> StrUtil.isNotBlank(v) && !thingsFrameworkProperties.getInstance().getEndpointUri().equals(v),
                 // 如果是指定目标，则直接发送到目标服务
-                () -> GETTER_MAP.get(EndpointGetterType.TARGET).getEndpointUri(jsonThingsMessage),
+                () -> GETTER_MAP.get(EndpointGetterType.TARGET).getEndpointUri(jtm),
                 // 如果是监听事件，则直接发送到上游服务
-                () -> GETTER_MAP.get(EndpointGetterType.EVENT_UPSTREAM).getEndpointUri(jsonThingsMessage),
+                () -> GETTER_MAP.get(EndpointGetterType.EVENT_UPSTREAM).getEndpointUri(jtm),
                 // 如果有会话，则发送到相应会话服务
-                () -> GETTER_MAP.get(EndpointGetterType.SESSION).getEndpointUri(jsonThingsMessage),
+                () -> GETTER_MAP.get(EndpointGetterType.SESSION).getEndpointUri(jtm),
                 // 如果存在服务发现的消费或者提供信息中，则发送到相应服务
-                () -> GETTER_MAP.get(EndpointGetterType.SERVICE_PROVIDE).getEndpointUri(jsonThingsMessage),
+                () -> GETTER_MAP.get(EndpointGetterType.SERVICE_PROVIDE).getEndpointUri(jtm),
                 // 否则发送到上游服务
-                () -> GETTER_MAP.get(EndpointGetterType.UPSTREAM).getEndpointUri(jsonThingsMessage));
+                () -> GETTER_MAP.get(EndpointGetterType.UPSTREAM).getEndpointUri(jtm));
     }
 
     public ThingsEndpoint create(String endpointUri) {

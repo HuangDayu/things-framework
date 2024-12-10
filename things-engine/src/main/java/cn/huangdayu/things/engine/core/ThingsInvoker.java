@@ -13,18 +13,18 @@ public interface ThingsInvoker {
     /**
      * 同步调用
      *
-     * @param message
+     * @param jtm
      * @return
      */
-    JsonThingsMessage syncInvoker(JsonThingsMessage message);
+    JsonThingsMessage syncInvoker(JsonThingsMessage jtm);
 
 
     /**
      * 异步调用
      *
-     * @param message
+     * @param jtm
      * @return
      */
-    Mono<JsonThingsMessage> reactorInvoker(JsonThingsMessage message);
+    Mono<JsonThingsMessage> reactorInvoker(JsonThingsMessage jtm);
 
 }

@@ -8,8 +8,8 @@ import java.util.Set;
 /**
  * @author huangdayu
  */
-public interface ThingsInstancesProvider {
+public interface ThingsInstancesSubscriber {
 
-    Set<ThingsInstance> getProvides(JsonThingsMessage jtm);
+    Set<ThingsInstance> getSubscribes(JsonThingsMessage jtm);
 
 }

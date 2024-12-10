@@ -7,6 +7,6 @@ import cn.huangdayu.things.common.message.JsonThingsMessage;
  */
 public interface ThingsMessageInterceptor {
 
-    boolean handler(JsonThingsMessage jsonThingsMessage);
+    boolean handler(JsonThingsMessage jtm);
 
 }

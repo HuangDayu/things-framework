@@ -15,12 +15,12 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.covertEventMessage;
 @ThingsBean
 public class ThingsOpenSubscribes implements ThingsPublisher {
     @Override
-    public void publishEvent(ThingsEventMessage thingsEventMessage) {
-        publishEvent(covertEventMessage(thingsEventMessage));
+    public void publishEvent(ThingsEventMessage tem) {
+        publishEvent(covertEventMessage(tem));
     }
 
     @Override
-    public void publishEvent(JsonThingsMessage jsonThingsMessage) {
-        log.debug("Things send message to open subscribes : {}", jsonThingsMessage);
+    public void publishEvent(JsonThingsMessage jtm) {
+        log.debug("Things send message to open subscribes : {}", jtm);
     }
 }

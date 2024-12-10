@@ -43,112 +43,112 @@ public class ThingsChainingExecutor implements ThingsChaining {
     private final ThingsEndpointFactory thingsEndpointFactory;
 
     @Override
-    public JsonThingsMessage doReceive(JsonThingsMessage jsonThingsMessage) {
-        requestInterceptor(jsonThingsMessage);
-        JsonThingsMessage response = handleMessage(jsonThingsMessage);
+    public JsonThingsMessage doReceive(JsonThingsMessage jtm) {
+        requestInterceptor(jtm);
+        JsonThingsMessage response = handleMessage(jtm);
         responseInterceptor(response);
-        filter(jsonThingsMessage, response);
+        filter(jtm, response);
         return response;
     }
 
     @Override
-    public void doSubscribe(JsonThingsMessage jsonThingsMessage) {
-        requestInterceptor(jsonThingsMessage);
-        JsonThingsMessage response = handleMessage(jsonThingsMessage);
+    public void doSubscribe(JsonThingsMessage jtm) {
+        requestInterceptor(jtm);
+        JsonThingsMessage response = handleMessage(jtm);
         responseInterceptor(response);
-        filter(jsonThingsMessage, response);
+        filter(jtm, response);
     }
 
     @Override
-    public JsonThingsMessage doSend(JsonThingsMessage jsonThingsMessage) {
-        requestInterceptor(jsonThingsMessage);
-        JsonThingsMessage response = sendMessage(jsonThingsMessage);
+    public JsonThingsMessage doSend(JsonThingsMessage jtm) {
+        requestInterceptor(jtm);
+        JsonThingsMessage response = sendMessage(jtm);
         responseInterceptor(response);
-        filter(jsonThingsMessage, response);
+        filter(jtm, response);
         return response;
     }
 
     @Override
-    public void doPublish(ThingsEventMessage thingsEventMessage) {
-        doPublish(covertEventMessage(thingsEventMessage));
+    public void doPublish(ThingsEventMessage tem) {
+        doPublish(covertEventMessage(tem));
     }
 
     @Override
-    public void doPublish(JsonThingsMessage jsonThingsMessage) {
-        requestInterceptor(jsonThingsMessage);
-        publishMessage(jsonThingsMessage);
-        JsonThingsMessage response = jsonThingsMessage.success();
+    public void doPublish(JsonThingsMessage jtm) {
+        requestInterceptor(jtm);
+        publishMessage(jtm);
+        JsonThingsMessage response = jtm.success();
         responseInterceptor(response);
-        filter(jsonThingsMessage, response);
+        filter(jtm, response);
     }
 
     @Override
-    public Mono<JsonThingsMessage> doReactorReceive(JsonThingsMessage message) {
-        requestInterceptor(message);
-        Mono<JsonThingsMessage> response = handleReactorMessage(message);
+    public Mono<JsonThingsMessage> doReactorReceive(JsonThingsMessage jtm) {
+        requestInterceptor(jtm);
+        Mono<JsonThingsMessage> response = handleReactorMessage(jtm);
         return response.filter(response1 -> {
             responseInterceptor(response1);
-            filter(message, response1);
+            filter(jtm, response1);
             return true;
         });
     }
 
     @Override
-    public Mono<JsonThingsMessage> doReactorSend(JsonThingsMessage message) {
-        requestInterceptor(message);
-        Mono<JsonThingsMessage> response = sendReactorMessage(message);
+    public Mono<JsonThingsMessage> doReactorSend(JsonThingsMessage jtm) {
+        requestInterceptor(jtm);
+        Mono<JsonThingsMessage> response = sendReactorMessage(jtm);
         return response.filter(response1 -> {
             responseInterceptor(response1);
-            filter(message, response1);
+            filter(jtm, response1);
             return true;
         });
     }
 
-    private JsonThingsMessage handleMessage(JsonThingsMessage jsonThingsMessage) {
+    private JsonThingsMessage handleMessage(JsonThingsMessage jtm) {
         for (ThingsHandler thingsHandler : handlerMap.values()) {
-            if (thingsHandler.canHandle(jsonThingsMessage)) {
-                return thingsHandler.syncHandler(jsonThingsMessage);
+            if (thingsHandler.canHandle(jtm)) {
+                return thingsHandler.syncHandler(jtm);
             }
         }
-        throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Can't handler this message");
+        throw new ThingsException(jtm, BAD_REQUEST, "Can't handler this message");
     }
 
-    private Mono<JsonThingsMessage> handleReactorMessage(JsonThingsMessage jsonThingsMessage) {
+    private Mono<JsonThingsMessage> handleReactorMessage(JsonThingsMessage jtm) {
         for (ThingsHandler thingsHandler : handlerMap.values()) {
-            if (thingsHandler.canHandle(jsonThingsMessage)) {
-                return thingsHandler.reactorHandler(jsonThingsMessage);
+            if (thingsHandler.canHandle(jtm)) {
+                return thingsHandler.reactorHandler(jtm);
             }
         }
-        throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Can't handler this message");
+        throw new ThingsException(jtm, BAD_REQUEST, "Can't handler this message");
     }
 
-    private JsonThingsMessage sendMessage(JsonThingsMessage jsonThingsMessage) {
+    private JsonThingsMessage sendMessage(JsonThingsMessage jtm) {
         for (ThingsHandler thingsHandler : handlerMap.values()) {
-            if (thingsHandler.canHandle(jsonThingsMessage)) {
-                return thingsHandler.syncHandler(jsonThingsMessage);
+            if (thingsHandler.canHandle(jtm)) {
+                return thingsHandler.syncHandler(jtm);
             }
         }
-        return thingsEndpointFactory.create(jsonThingsMessage).handleMessage(jsonThingsMessage);
+        return thingsEndpointFactory.create(jtm).handleMessage(jtm);
     }
 
-    private Mono<JsonThingsMessage> sendReactorMessage(JsonThingsMessage jsonThingsMessage) {
+    private Mono<JsonThingsMessage> sendReactorMessage(JsonThingsMessage jtm) {
         for (ThingsHandler thingsHandler : handlerMap.values()) {
-            if (thingsHandler.canHandle(jsonThingsMessage)) {
-                return thingsHandler.reactorHandler(jsonThingsMessage);
+            if (thingsHandler.canHandle(jtm)) {
+                return thingsHandler.reactorHandler(jtm);
             }
         }
-        return thingsEndpointFactory.create(jsonThingsMessage, true).reactorMessage(jsonThingsMessage);
+        return thingsEndpointFactory.create(jtm, true).reactorMessage(jtm);
     }
 
-    private void publishMessage(JsonThingsMessage jsonThingsMessage) {
+    private void publishMessage(JsonThingsMessage jtm) {
         for (ThingsHandler thingsHandler : handlerMap.values()) {
             THINGS_EXECUTOR.execute(() -> {
-                if (thingsHandler.canHandle(jsonThingsMessage)) {
-                    thingsHandler.syncHandler(jsonThingsMessage);
+                if (thingsHandler.canHandle(jtm)) {
+                    thingsHandler.syncHandler(jtm);
                 }
             });
         }
-        THINGS_EXECUTOR.execute(() -> thingsEndpointFactory.create(jsonThingsMessage).handleEvent(jsonThingsMessage));
+        THINGS_EXECUTOR.execute(() -> thingsEndpointFactory.create(jtm).handleEvent(jtm));
     }
 
     private void filter(JsonThingsMessage request, JsonThingsMessage response) {
@@ -159,24 +159,24 @@ public class ThingsChainingExecutor implements ThingsChaining {
     }
 
 
-    private void requestInterceptor(JsonThingsMessage jsonThingsMessage) {
-        List<ThingsInterceptors> interceptors = getInterceptors(THINGS_REQUEST_INTERCEPTORS_TABLE, jsonThingsMessage, i -> i.getThingsIntercepting().order());
+    private void requestInterceptor(JsonThingsMessage jtm) {
+        List<ThingsInterceptors> interceptors = getInterceptors(THINGS_REQUEST_INTERCEPTORS_TABLE, jtm, i -> i.getThingsIntercepting().order());
         if (CollUtil.isNotEmpty(interceptors)) {
-            handleInterceptor(jsonThingsMessage, interceptors);
+            handleInterceptor(jtm, interceptors);
         }
     }
 
-    private void responseInterceptor(JsonThingsMessage jsonThingsMessage) {
-        List<ThingsInterceptors> interceptors = getInterceptors(THINGS_RESPONSE_INTERCEPTORS_TABLE, jsonThingsMessage, i -> i.getThingsIntercepting().order());
+    private void responseInterceptor(JsonThingsMessage jtm) {
+        List<ThingsInterceptors> interceptors = getInterceptors(THINGS_RESPONSE_INTERCEPTORS_TABLE, jtm, i -> i.getThingsIntercepting().order());
         if (CollUtil.isNotEmpty(interceptors)) {
-            handleInterceptor(jsonThingsMessage, interceptors);
+            handleInterceptor(jtm, interceptors);
         }
     }
 
 
-    private <T> List<T> getInterceptors(Table<String, String, Set<T>> table, JsonThingsMessage jsonThingsMessage, Function<T, Integer> function) {
-        BaseThingsMetadata baseMetadata = jsonThingsMessage.getBaseMetadata();
-        String identifies = subIdentifies(jsonThingsMessage.getMethod());
+    private <T> List<T> getInterceptors(Table<String, String, Set<T>> table, JsonThingsMessage jtm, Function<T, Integer> function) {
+        BaseThingsMetadata baseMetadata = jtm.getBaseMetadata();
+        String identifies = subIdentifies(jtm.getMethod());
         Set<T> linkedHashSet = new LinkedHashSet<>();
         Set<T> set1 = table.get(identifies, THINGS_WILDCARD);
         if (CollUtil.isNotEmpty(set1)) {
@@ -198,12 +198,12 @@ public class ThingsChainingExecutor implements ThingsChaining {
     }
 
 
-    private void handleInterceptor(JsonThingsMessage jsonThingsMessage, List<ThingsInterceptors> interceptors) {
+    private void handleInterceptor(JsonThingsMessage jtm, List<ThingsInterceptors> interceptors) {
         if (CollUtil.isNotEmpty(interceptors)) {
             for (ThingsInterceptors interceptor : interceptors) {
-                ThingsServlet thingsServlet = new ThingsServlet(interceptor.getThingsIntercepting(), jsonThingsMessage);
+                ThingsServlet thingsServlet = new ThingsServlet(interceptor.getThingsIntercepting(), jtm);
                 if (!interceptor.getThingsInterceptor().doIntercept(thingsServlet)) {
-                    throw new ThingsException(jsonThingsMessage, BAD_REQUEST, "Things interceptor no passing.");
+                    throw new ThingsException(jtm, BAD_REQUEST, "Things interceptor no passing.");
                 }
             }
         }

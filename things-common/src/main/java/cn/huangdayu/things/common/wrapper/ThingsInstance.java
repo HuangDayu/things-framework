@@ -19,9 +19,6 @@ public class ThingsInstance implements Serializable {
 
     public ThingsInstance() {
         this.types = new LinkedHashSet<>();
-        this.provides = new LinkedHashSet<>();
-        this.consumes = new LinkedHashSet<>();
-        this.subscribes = new LinkedHashSet<>();
     }
 
     /**
@@ -54,25 +51,6 @@ public class ThingsInstance implements Serializable {
      * 本实例端点uri
      */
     private String endpointUri;
-
-
-    /**
-     * 提供的物模型的productCode
-     */
-    private Set<String> provides;
-
-
-    /**
-     * 消费的物模型的productCode
-     * 消费的服务，订阅的事件
-     */
-    private Set<String> consumes;
-
-
-    /**
-     * 订阅列表
-     */
-    private Set<String> subscribes;
 
 
     public String getCode() {

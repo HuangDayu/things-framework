@@ -13,6 +13,6 @@ public abstract class AbstractComponent<T extends ComponentProperties> {
 
     abstract void stop();
 
-    abstract void output(JsonThingsMessage jsonThingsMessage);
+    abstract void output(JsonThingsMessage jtm);
 
 }

@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class ThingsRequest {
 
-    private JsonThingsMessage message;
+    private JsonThingsMessage jtm;
 
 }

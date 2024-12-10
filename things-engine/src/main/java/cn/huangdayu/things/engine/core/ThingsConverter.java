@@ -12,9 +12,9 @@ public interface ThingsConverter {
     /**
      * 参数转换器
      *
-     * @param jsonThingsMessage
+     * @param jtm
      * @param thingsFunction
      * @return
      */
-    Object[] args(JsonThingsMessage jsonThingsMessage, ThingsFunction thingsFunction);
+    Object[] args(JsonThingsMessage jtm, ThingsFunction thingsFunction);
 }

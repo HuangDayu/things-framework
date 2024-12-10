@@ -53,7 +53,7 @@ public class ThingsInstancesScheduled {
                 allInstances.addAll(allInstance);
             }
         }
-        thingsInstancesManager.syncAllInstances(allInstances);
+        thingsInstancesManager.addAllInstances(allInstances);
         thingsEventObserver.notifyObservers(new ThingsInstancesUpdatedEvent(this));
     }
 

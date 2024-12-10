@@ -9,7 +9,7 @@ import cn.huangdayu.things.common.message.JsonThingsMessage;
 @ThingsBean
 public class LoadbalancerThingsMessageInterceptor implements ThingsMessageInterceptor {
     @Override
-    public boolean handler(JsonThingsMessage jsonThingsMessage) {
+    public boolean handler(JsonThingsMessage jtm) {
         return false;
     }
 }

@@ -48,7 +48,7 @@ public class RestfulComponent extends AbstractComponent<ComponentProperties> {
     }
 
     @Override
-    void output(JsonThingsMessage jsonThingsMessage) {
+    void output(JsonThingsMessage jtm) {
 
     }
 }

@@ -17,9 +17,9 @@ public class HandlerManager {
     private final Map<String, ThingsMessageHandler> thingsMessageFilterMap;
 
 
-    void handler(JsonThingsMessage jsonThingsMessage) {
+    void handler(JsonThingsMessage jtm) {
         for (Map.Entry<String, ThingsMessageHandler> entry : thingsMessageFilterMap.entrySet()) {
-            entry.getValue().handler(jsonThingsMessage);
+            entry.getValue().handler(jtm);
         }
     }
 

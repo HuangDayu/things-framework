@@ -7,6 +7,6 @@ import cn.huangdayu.things.common.message.JsonThingsMessage;
  */
 public interface ThingsMessageHandler {
 
-    void handler(JsonThingsMessage jsonThingsMessage);
+    void handler(JsonThingsMessage jtm);
 
 }

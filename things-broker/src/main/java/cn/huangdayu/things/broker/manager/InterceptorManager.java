@@ -17,9 +17,9 @@ public class InterceptorManager {
     private final Map<String, ThingsMessageInterceptor> thingsMessageFilterMap;
 
 
-    boolean handler(JsonThingsMessage jsonThingsMessage) {
+    boolean handler(JsonThingsMessage jtm) {
         for (Map.Entry<String, ThingsMessageInterceptor> entry : thingsMessageFilterMap.entrySet()) {
-            if (!entry.getValue().handler(jsonThingsMessage)) {
+            if (!entry.getValue().handler(jtm)) {
                 return false;
             }
         }

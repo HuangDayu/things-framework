@@ -48,19 +48,19 @@ public class ThingsGatewayEndpoint implements ThingsEndpoint {
     }
 
     @Override
-    public JsonThingsMessage handleMessage(JsonThingsMessage message) {
-        return thingsEndpointFactory.create(message).handleMessage(message);
+    public JsonThingsMessage handleMessage(JsonThingsMessage jtm) {
+        return thingsEndpointFactory.create(jtm).handleMessage(jtm);
     }
 
     @Override
-    public Mono<JsonThingsMessage> reactorMessage(JsonThingsMessage message) {
-        return thingsEndpointFactory.create(message, true).reactorMessage(message);
+    public Mono<JsonThingsMessage> reactorMessage(JsonThingsMessage jtm) {
+        return thingsEndpointFactory.create(jtm, true).reactorMessage(jtm);
     }
 
     @Override
-    public void handleEvent(JsonThingsMessage message) {
+    public void handleEvent(JsonThingsMessage jtm) {
         for (ThingsPublisher thingsPublisher : thingsPublisherMap.values()) {
-            THINGS_EXECUTOR.execute(() -> thingsPublisher.publishEvent(message));
+            THINGS_EXECUTOR.execute(() -> thingsPublisher.publishEvent(jtm));
         }
     }
 

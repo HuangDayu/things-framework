@@ -21,9 +21,9 @@ public class ThingsExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ThingsException.class)
     public ResponseEntity<Object> handleException(ThingsException e, HttpServletRequest request, WebRequest webRequest) {
-        JsonThingsMessage jsonThingsMessage = e.getThingsMessage();
-        if (jsonThingsMessage == null) {
-            jsonThingsMessage = new JsonThingsMessage();
+        JsonThingsMessage jtm = e.getJtm();
+        if (jtm == null) {
+            jtm = new JsonThingsMessage();
         }
         String errorTraceCode = getUUID();
         HttpStatus httpStatus = INTERNAL_SERVER_ERROR;
@@ -32,7 +32,7 @@ public class ThingsExceptionHandler extends ResponseEntityExceptionHandler {
         } catch (Exception ignored) {
         }
         log.error("Things exception , traceId : {} , exception stack trace : ", errorTraceCode, e);
-        return ResponseEntity.status(httpStatus).body(jsonThingsMessage.serverError(errorTraceCode, e.getErrorMessage()));
+        return ResponseEntity.status(httpStatus).body(jtm.serverError(errorTraceCode, e.getErrorMessage()));
     }
 
 

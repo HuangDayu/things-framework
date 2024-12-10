@@ -26,7 +26,7 @@ public class UpstreamEndpointGetter implements ThingsEndpointGetter {
     }
 
     @Override
-    public String getEndpointUri(JsonThingsMessage thingsMessage) {
+    public String getEndpointUri(JsonThingsMessage jtm) {
         return thingsFrameworkProperties.getInstance().getUpstreamUri();
     }
 }

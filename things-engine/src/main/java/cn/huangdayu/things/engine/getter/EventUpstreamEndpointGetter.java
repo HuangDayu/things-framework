@@ -26,7 +26,7 @@ public class EventUpstreamEndpointGetter implements ThingsEndpointGetter {
     }
 
     @Override
-    public String getEndpointUri(JsonThingsMessage thingsMessage) {
-        return thingsMessage.getMethod().startsWith(EVENT_LISTENER_START_WITH) ? thingsFrameworkProperties.getInstance().getUpstreamUri() : null;
+    public String getEndpointUri(JsonThingsMessage jtm) {
+        return jtm.getMethod().startsWith(EVENT_LISTENER_START_WITH) ? thingsFrameworkProperties.getInstance().getUpstreamUri() : null;
     }
 }

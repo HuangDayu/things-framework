@@ -23,23 +23,23 @@ public class ThingsPublisherExecutor implements ThingsPublisher, ThingsSender {
 
 
     @Override
-    public void publishEvent(ThingsEventMessage thingsEventMessage) {
-        THINGS_EXECUTOR.execute(() -> thingsChaining.doPublish(thingsEventMessage));
+    public void publishEvent(ThingsEventMessage tem) {
+        THINGS_EXECUTOR.execute(() -> thingsChaining.doPublish(tem));
     }
 
     @Override
-    public void publishEvent(JsonThingsMessage jsonThingsMessage) {
-        THINGS_EXECUTOR.execute(() -> thingsChaining.doPublish(jsonThingsMessage));
+    public void publishEvent(JsonThingsMessage jtm) {
+        THINGS_EXECUTOR.execute(() -> thingsChaining.doPublish(jtm));
     }
 
     @Override
-    public JsonThingsMessage sendMessage(JsonThingsMessage jsonThingsMessage) {
-        return thingsChaining.doSend(jsonThingsMessage);
+    public JsonThingsMessage sendMessage(JsonThingsMessage jtm) {
+        return thingsChaining.doSend(jtm);
     }
 
     @Override
-    public Mono<JsonThingsMessage> sendReactorMessage(JsonThingsMessage jsonThingsMessage) {
-        return thingsChaining.doReactorSend(jsonThingsMessage);
+    public Mono<JsonThingsMessage> sendReactorMessage(JsonThingsMessage jtm) {
+        return thingsChaining.doReactorSend(jtm);
     }
 
 }

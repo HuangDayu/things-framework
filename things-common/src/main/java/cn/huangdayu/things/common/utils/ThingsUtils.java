@@ -189,19 +189,19 @@ public class ThingsUtils {
     }
 
 
-    public static JsonThingsMessage covertEventMessage(ThingsEventMessage message) {
-        ThingsEvent thingsEvent = findBeanAnnotation(message, ThingsEvent.class);
+    public static JsonThingsMessage covertEventMessage(ThingsEventMessage tem) {
+        ThingsEvent thingsEvent = findBeanAnnotation(tem, ThingsEvent.class);
         if (thingsEvent == null) {
             throw new ThingsException(BAD_REQUEST, "Message object is not ThingsEvent entry.");
         }
-        JsonThingsMessage jsonThingsMessage = new JsonThingsMessage();
-        jsonThingsMessage.setBaseMetadata(baseThingsMetadata -> {
+        JsonThingsMessage jtm = new JsonThingsMessage();
+        jtm.setBaseMetadata(baseThingsMetadata -> {
             baseThingsMetadata.setProductCode(thingsEvent.productCode());
-            baseThingsMetadata.setDeviceCode(message.getDeviceCode());
+            baseThingsMetadata.setDeviceCode(tem.getDeviceCode());
         });
-        jsonThingsMessage.setQos(thingsEvent.qos());
-        jsonThingsMessage.setPayload((JSONObject) JSON.toJSON(message, JSONWriter.Feature.WriteNulls));
-        jsonThingsMessage.setMethod(EVENT_LISTENER_START_WITH.concat(thingsEvent.identifier()).concat(EVENT_TYPE_POST.replace(EVENT_TYPE, thingsEvent.type())));
-        return jsonThingsMessage;
+        jtm.setQos(thingsEvent.qos());
+        jtm.setPayload((JSONObject) JSON.toJSON(tem, JSONWriter.Feature.WriteNulls));
+        jtm.setMethod(EVENT_LISTENER_START_WITH.concat(thingsEvent.identifier()).concat(EVENT_TYPE_POST.replace(EVENT_TYPE, thingsEvent.type())));
+        return jtm;
     }
 }
