@@ -43,21 +43,13 @@ public interface ThingsInstancesManager {
      */
     Set<ThingsInstance> removeInstancesByCodes(Set<String> thingsInstanceCodes);
 
-    /**
-     * 交换实例信息
-     *
-     * @param thingsInstance 请求者的实例信息
-     * @return 本实例的信息
-     */
-    ThingsInstance exchangeInstance(ThingsInstance thingsInstance);
-
 
     /**
      * 获取所有实例
      *
      * @return
      */
-    Set<ThingsInstance> getAllThingsInstances();
+    Set<ThingsInstance> getAllInstances();
 
     /**
      * 获取实例数量

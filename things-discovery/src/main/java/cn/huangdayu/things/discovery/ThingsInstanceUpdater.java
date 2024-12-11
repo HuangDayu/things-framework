@@ -37,7 +37,6 @@ public class ThingsInstanceUpdater {
     @PostConstruct
     public void init() {
         updateThingsInstance();
-        thingsEventObserver.registerObserver(ThingsContainerUpdatedEvent.class, engineEvent -> updateThingsInstance());
         thingsEventObserver.registerObserver(ThingsInstancesUpdatedEvent.class, engineEvent -> updateThingsInstance());
     }
 

@@ -4,6 +4,8 @@ import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.dsl.DslInfo;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.observer.ThingsEventObserver;
+import cn.huangdayu.things.common.observer.event.ThingsInstancesUpdatedEvent;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsConfiguration;
 import cn.huangdayu.things.engine.core.ThingsChaining;
@@ -19,6 +21,7 @@ public class ThingsEngineEndpoint implements ThingsEndpoint {
     private final ThingsChaining thingsChaining;
     private final ThingsDescriber thingsDescriber;
     private final ThingsFrameworkProperties thingsFrameworkProperties;
+    private final ThingsEventObserver thingsEventObserver;
 
     @Override
     public JsonThingsMessage handleMessage(JsonThingsMessage jtm) {
@@ -38,6 +41,7 @@ public class ThingsEngineEndpoint implements ThingsEndpoint {
     @Override
     public void configuration(ThingsConfiguration thingsConfiguration) {
         thingsFrameworkProperties.getInstance().setUpstreamUri(thingsConfiguration.getUpstreamUri());
+        thingsEventObserver.notifyObservers(new ThingsInstancesUpdatedEvent(this));
     }
 
     public DslInfo getDsl() {

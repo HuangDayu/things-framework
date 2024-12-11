@@ -4,6 +4,7 @@ import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
 import cn.huangdayu.things.common.dsl.DslInfo;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsConfiguration;
+import com.alibaba.fastjson2.JSON;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -53,6 +54,7 @@ public class ThingsEndpointController {
      */
     @PostMapping("/things/configuration")
     public void configuration(@RequestBody ThingsConfiguration thingsConfiguration) {
+        log.debug("ThingsEndpoint configuration: {}", JSON.toJSONString(thingsConfiguration));
         thingsEndpoint.configuration(thingsConfiguration);
     }
 }

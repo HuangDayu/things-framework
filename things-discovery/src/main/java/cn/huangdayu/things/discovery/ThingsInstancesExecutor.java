@@ -5,7 +5,6 @@ import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.observer.event.ThingsInstancesChangedEvent;
 import cn.huangdayu.things.common.observer.event.ThingsInstancesUpdatedEvent;
-import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
@@ -14,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Set;
-
-import static cn.huangdayu.things.common.enums.ThingsInstanceType.GATEWAY;
 
 /**
  * @author huangdayu
@@ -26,7 +23,6 @@ import static cn.huangdayu.things.common.enums.ThingsInstanceType.GATEWAY;
 public class ThingsInstancesExecutor implements ThingsInstancesManager {
 
     private final ThingsEventObserver thingsEventObserver;
-    private final ThingsFrameworkProperties thingsFrameworkProperties;
 
     private static final Set<ThingsInstance> THINGS_INSTANCES = new ConcurrentHashSet<>();
 
@@ -55,7 +51,7 @@ public class ThingsInstancesExecutor implements ThingsInstancesManager {
         if (CollUtil.isNotEmpty(thingsInstances)) {
             THINGS_INSTANCES.addAll(thingsInstances);
         }
-        THINGS_INSTANCES.add(thingsFrameworkProperties.getInstance());
+        thingsEventObserver.notifyObservers(new ThingsInstancesUpdatedEvent(this));
         return THINGS_INSTANCES;
     }
 
@@ -77,13 +73,7 @@ public class ThingsInstancesExecutor implements ThingsInstancesManager {
     }
 
     @Override
-    public ThingsInstance exchangeInstance(ThingsInstance instance) {
-        THINGS_INSTANCES.add(instance);
-        return thingsFrameworkProperties.getInstance();
-    }
-
-    @Override
-    public Set<ThingsInstance> getAllThingsInstances() {
+    public Set<ThingsInstance> getAllInstances() {
         return THINGS_INSTANCES;
     }
 

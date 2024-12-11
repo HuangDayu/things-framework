@@ -1,6 +1,7 @@
-package cn.huangdayu.things.gateway;
+package cn.huangdayu.things.discovery;
 
 import cn.huangdayu.things.api.instances.ThingsInstancesDslManager;
+import cn.huangdayu.things.api.instances.ThingsInstancesProvider;
 import cn.huangdayu.things.api.instances.ThingsInstancesSubscriber;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.dsl.DomainInfo;
@@ -26,7 +27,7 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.subIdentifies;
  */
 @ThingsBean
 @RequiredArgsConstructor
-public class ThingsInstancesDslExecutor implements ThingsInstancesDslManager, ThingsInstancesSubscriber {
+public class ThingsInstancesDslExecutor implements ThingsInstancesDslManager, ThingsInstancesSubscriber, ThingsInstancesProvider {
 
     public static final Set<DslInfo> DSL_INFO_SET = new ConcurrentHashSet<>();
     public static final Set<ThingsInfo> THINGS_INFO_SET = new ConcurrentHashSet<>();
@@ -68,6 +69,21 @@ public class ThingsInstancesDslExecutor implements ThingsInstancesDslManager, Th
                 return subscribes.contains(new DomainSubscribeInfo(THINGS_WILDCARD, identifier)) || subscribes.contains(new DomainSubscribeInfo(productCode, identifier));
             }
             return subscribes.contains(new DomainSubscribeInfo(productCode, THINGS_WILDCARD));
+        });
+    }
+
+    @Override
+    public Set<ThingsInstance> getProvides(JsonThingsMessage jtm) {
+        if (CollUtil.isNotEmpty(DSL_INFO_SET)) {
+            return DSL_INFO_SET.parallelStream().filter(dslInfo -> isProvided(dslInfo.getThingsDsl(), jtm)).map(DslInfo::getInstance).collect(Collectors.toSet());
+        }
+        return Set.of();
+    }
+
+    private boolean isProvided(Set<ThingsInfo> thingsDsl, JsonThingsMessage jtm) {
+        return thingsDsl.parallelStream().anyMatch(thingsInfo -> {
+            String code = thingsInfo.getProfile().getProduct().getCode();
+            return jtm.getBaseMetadata().getProductCode().equals(code);
         });
     }
 }

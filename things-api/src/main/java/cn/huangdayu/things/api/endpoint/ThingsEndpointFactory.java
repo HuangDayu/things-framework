@@ -5,18 +5,13 @@ import cn.huangdayu.things.common.enums.EndpointCreatorType;
 import cn.huangdayu.things.common.enums.EndpointGetterType;
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
-import cn.huangdayu.things.common.observer.ThingsEventObserver;
-import cn.huangdayu.things.common.observer.event.ThingsInstancesSyncingEvent;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.hutool.core.util.StrUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.BAD_REQUEST;
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.ERROR;
@@ -37,7 +32,6 @@ public class ThingsEndpointFactory {
     private final static Map<EndpointGetterType, ThingsEndpointGetter> GETTER_MAP = new ConcurrentHashMap<>();
     private final Map<String, ThingsEndpointCreator> thingsMessageSenderMap;
     private final Map<String, ThingsEndpointGetter> typeThingsEndpointGetterMap;
-    private final ThingsEventObserver thingsEventObserver;
 
     @PostConstruct
     private void init() {
@@ -52,7 +46,6 @@ public class ThingsEndpointFactory {
     public ThingsEndpoint create(JsonThingsMessage jtm, boolean reactor) {
         String endpointUri = findEndpointUri(jtm);
         if (StrUtil.isBlank(endpointUri) || thingsFrameworkProperties.getInstance().getEndpointUri().equals(endpointUri)) {
-            thingsEventObserver.notifyObservers(new ThingsInstancesSyncingEvent(this));
             throw new ThingsException(jtm, BAD_REQUEST, "Not found the target endpointUri.");
         }
         return create(endpointUri, reactor);

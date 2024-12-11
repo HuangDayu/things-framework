@@ -1,7 +1,8 @@
 package cn.huangdayu.things.starter;
 
-import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
 import cn.huangdayu.things.api.container.ThingsRegister;
+import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
+import cn.huangdayu.things.api.instances.ThingsInstancesProvider;
 import cn.huangdayu.things.common.factory.ThreadPoolFactory;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+
+import java.util.Set;
 
 /**
  * @author huangdayu
@@ -66,5 +69,11 @@ public class ThingsBootAutoConfiguration {
     @Bean
     public ThingsEndpointController thingsEndpointController(ThingsEndpoint thingsEndpoint) {
         return new ThingsEndpointController(thingsEndpoint);
+    }
+
+    @ConditionalOnMissingBean
+    @Bean
+    public ThingsInstancesProvider thingsInstancesProvider() {
+        return jtm -> Set.of();
     }
 }

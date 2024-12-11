@@ -6,5 +6,5 @@ dependencies {
     api project(path: ':things-api')
     api project(path: ':things-common')
     implementation 'cn.hutool:hutool-core'
-
+    implementation 'cn.hutool:hutool-cron'
 }
