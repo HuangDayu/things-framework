@@ -9,6 +9,9 @@ import java.util.Set;
  */
 public interface ThingsInstancesDiscoverer {
 
-    Set<ThingsInstance> getAllInstance();
-
+    /**
+     * 发现所有实例
+     * @return
+     */
+    Set<ThingsInstance> allInstance();
 }

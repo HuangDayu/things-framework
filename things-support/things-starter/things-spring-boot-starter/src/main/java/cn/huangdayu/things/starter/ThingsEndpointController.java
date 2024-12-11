@@ -2,17 +2,13 @@ package cn.huangdayu.things.starter;
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
 import cn.huangdayu.things.common.dsl.DslInfo;
-import cn.huangdayu.things.common.dsl.ThingsInfo;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
-import cn.huangdayu.things.common.wrapper.ThingsInstance;
-import com.alibaba.fastjson2.JSON;
+import cn.huangdayu.things.common.wrapper.ThingsConfiguration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
-import java.util.Set;
 
 @Slf4j
 @ConditionalOnBean(ThingsEndpoint.class)
@@ -52,11 +48,11 @@ public class ThingsEndpointController {
         return thingsEndpoint.getDsl();
     }
 
-    @PostMapping("/things/exchange")
-    public ThingsInstance exchangeInstance(@RequestBody ThingsInstance thingsInstance) {
-        log.debug("ThingsEndpoint exchange: {}", JSON.toJSONString(thingsInstance));
-        return thingsEndpoint.exchangeInstance(thingsInstance);
+    /**
+     * 配置实例
+     */
+    @PostMapping("/things/configuration")
+    public void configuration(@RequestBody ThingsConfiguration thingsConfiguration) {
+        thingsEndpoint.configuration(thingsConfiguration);
     }
-
-
 }

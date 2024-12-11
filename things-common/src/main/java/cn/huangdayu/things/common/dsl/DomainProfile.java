@@ -18,5 +18,4 @@ public class DomainProfile implements Serializable {
 
     private DomainProfileInfo application;
 
-    private ThingsInstance instance;
 }

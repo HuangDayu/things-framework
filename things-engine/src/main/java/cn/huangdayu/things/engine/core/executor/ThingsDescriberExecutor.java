@@ -60,7 +60,7 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
     }
 
     private DslInfo getDslInfo() {
-        return new DslInfo(getDomainInfo(), getThingsInfo());
+        return new DslInfo(thingsFrameworkProperties.getInstance(), getDomainInfo(), getThingsInfo());
     }
 
     private Set<DomainInfo> getDomainInfo() {
@@ -79,7 +79,6 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
         domainProfileInfo.setName("ThingsDomain");
         DomainProfile profile = new DomainProfile();
         profile.setSchema("1.0");
-        profile.setInstance(thingsFrameworkProperties.getInstance());
         return profile;
     }
 
@@ -126,7 +125,6 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
         ThingsProfile profile = new ThingsProfile();
         profile.setProduct(productInfo);
         profile.setSchema(things.schema());
-        profile.setInstance(thingsFrameworkProperties.getInstance());
         return profile;
     }
 

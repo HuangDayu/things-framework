@@ -3,12 +3,9 @@ package cn.huangdayu.things.api.endpoint;
 
 import cn.huangdayu.things.common.annotation.ThingsExchange;
 import cn.huangdayu.things.common.dsl.DslInfo;
-import cn.huangdayu.things.common.dsl.ThingsInfo;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
-import cn.huangdayu.things.common.wrapper.ThingsInstance;
+import cn.huangdayu.things.common.wrapper.ThingsConfiguration;
 import reactor.core.publisher.Mono;
-
-import java.util.Set;
 
 /**
  * 消息点对点发布
@@ -52,14 +49,13 @@ public interface ThingsEndpoint {
     @ThingsExchange(identifier = "handle-event")
     void handleEvent(JsonThingsMessage jtm);
 
+
     /**
-     * 交换实例信息
-     *
-     * @param thingsInstance 请求者的实例信息
-     * @return 本实例的信息
+     * 配置实例
+     * 由管理服务进行配置下发
      */
-    @ThingsExchange(identifier = "exchange-instance")
-    ThingsInstance exchangeInstance(ThingsInstance thingsInstance);
+    @ThingsExchange(identifier = "things-configuration")
+    void configuration(ThingsConfiguration thingsConfiguration);
 
 
 }

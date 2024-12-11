@@ -1,6 +1,7 @@
 package cn.huangdayu.things.discovery;
 
-import cn.huangdayu.things.api.instances.ThingsInstancesManager;
+import cn.huangdayu.things.api.instances.ThingsInstancesDiscoverer;
+import cn.huangdayu.things.api.instances.ThingsInstancesRegister;
 import cn.huangdayu.things.api.instances.ThingsInstancesServer;
 import cn.huangdayu.things.api.instances.ThingsInstancesTypeFinder;
 import cn.huangdayu.things.common.annotation.ThingsBean;
@@ -12,14 +13,12 @@ import cn.huangdayu.things.common.observer.event.ThingsInstancesUpdatedEvent;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 import java.util.Set;
 
-import static cn.huangdayu.things.common.enums.ThingsInstanceType.GATEWAY;
 import static cn.hutool.core.text.CharSequenceUtil.firstNonBlank;
 
 /**
@@ -31,7 +30,7 @@ public class ThingsInstanceUpdater {
     private final ThingsInstancesServer thingsInstancesServer;
     private final ThingsFrameworkProperties thingsFrameworkProperties;
     private final ThingsEventObserver thingsEventObserver;
-    private final ThingsInstancesManager thingsInstancesManager;
+    private final Map<String, ThingsInstancesRegister> thingsInstancesRegisterMap;
     private final Map<String, ThingsInstancesTypeFinder> thingsInstancesTypeFinderMap;
 
 
@@ -47,21 +46,11 @@ public class ThingsInstanceUpdater {
         thingsInstance.setName(firstNonBlank(thingsFrameworkProperties.getInstance().getName(), thingsInstancesServer.getServerName()));
         thingsInstance.setEndpointUri(firstNonBlank(thingsFrameworkProperties.getInstance().getEndpointUri(), getEndpointUri()));
         Set<ThingsInstanceType> thingsInstanceType = findThingsInstanceType(thingsInstance);
-        if (!thingsInstanceType.contains(GATEWAY) && StrUtil.isBlank(thingsInstance.getUpstreamUri())) {
-            String upstreamUri = findUpstreamUri();
-            if (StrUtil.isNotBlank(upstreamUri)) {
-                thingsInstance.setUpstreamUri(upstreamUri);
-            }
-        }
         if (CollUtil.isNotEmpty(thingsInstanceType)) {
             thingsInstance.setTypes(thingsInstanceType);
         }
         thingsFrameworkProperties.setInstance(thingsInstance);
-    }
-
-    private String findUpstreamUri() {
-        return thingsInstancesManager.getAllThingsInstances().stream().filter(v -> v.getTypes().contains(GATEWAY))
-                .map(ThingsInstance::getEndpointUri).findFirst().orElseGet(() -> null);
+        thingsInstancesRegisterMap.forEach((k, v) -> v.register(thingsInstance));
     }
 
     private Set<ThingsInstanceType> findThingsInstanceType(ThingsInstance thingsInstance) {

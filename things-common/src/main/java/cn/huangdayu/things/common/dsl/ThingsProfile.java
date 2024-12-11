@@ -12,7 +12,6 @@ public class ThingsProfile implements Serializable {
     private ThingsProfileInfo tenant;
     private ThingsProfileInfo application;
     private ThingsProfileInfo product;
-    private ThingsInstance instance;
 
 
     @Override

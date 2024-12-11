@@ -4,7 +4,7 @@ package cn.huangdayu.things.starter;
 import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
 import cn.huangdayu.things.common.dsl.DslInfo;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
-import cn.huangdayu.things.common.wrapper.ThingsInstance;
+import cn.huangdayu.things.common.wrapper.ThingsConfiguration;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
@@ -54,14 +54,10 @@ public interface ThingsRestfulEndpoint extends ThingsEndpoint {
     @PostExchange("/things/event")
     void handleEvent(@RequestBody JsonThingsMessage jtm);
 
+
     /**
-     * 交换实例信息
-     *
-     * @param thingsInstance 请求者的实例信息
-     * @return 本实例的信息
+     * 配置实例
      */
-    @PostExchange("/things/exchange")
-    ThingsInstance exchangeInstance(@RequestBody ThingsInstance thingsInstance);
-
-
+    @PostExchange("/things/configuration")
+    void configuration(@RequestBody ThingsConfiguration thingsConfiguration);
 }

@@ -11,7 +11,8 @@ import java.util.Set;
  * @author huangdayu
  */
 @ThingsBean
-public class ThingsInstancesProviderImpl implements ThingsInstancesProvider {
+public class ThingsInstancesProvideDiscoverer implements ThingsInstancesProvider {
+
     @Override
     public Set<ThingsInstance> getProvides(JsonThingsMessage jtm) {
         return Set.of();

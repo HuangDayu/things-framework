@@ -2,12 +2,14 @@ package cn.huangdayu.things.starter.nacos;
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpointFactory;
 import cn.huangdayu.things.api.instances.ThingsInstancesDiscoverer;
-import cn.huangdayu.things.api.instances.ThingsInstancesManager;
+import cn.huangdayu.things.api.instances.ThingsInstancesDslManager;
+import cn.huangdayu.things.api.instances.ThingsInstancesRegister;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.observer.event.ThingsInstancesChangedEvent;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
+import cn.huangdayu.things.discovery.ThingsBaseInstancesDiscoverer;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.hutool.core.util.ReflectUtil;
@@ -26,7 +28,6 @@ import com.alibaba.nacos.api.naming.utils.NamingUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,27 +43,20 @@ import static cn.huangdayu.things.api.endpoint.ThingsEndpointFactory.RESTFUL_SCH
 @Slf4j
 @ConditionalOnProperty(prefix = "spring.cloud.nacos.discovery", name = "server-addr")
 @ThingsBean
-public class ThingsNacosInstancesDiscoverer implements EventListener, ThingsInstancesDiscoverer {
+public class ThingsNacosInstancesDiscoverer extends ThingsBaseInstancesDiscoverer implements EventListener, ThingsInstancesDiscoverer, ThingsInstancesRegister {
 
     private final NamingService namingService;
     private final NacosServerProperties nacosServerProperties;
     private final NamingMaintainService namingMaintainService;
     private final ThingsEventObserver thingsEventObserver;
-    private final ThingsInstancesManager thingsInstancesManager;
-    private final ThingsEndpointFactory thingsEndpointFactory;
-    private final ThingsFrameworkProperties thingsFrameworkProperties;
-    public static final String METADATA_INSTANCES_CODE = "things-instances-code";
-    public static final String METADATA_INSTANCES_SIZE = "things-instances-size";
-    public static final String METADATA_INSTANCES_TYPE = "things-instances-type";
+    public static final String METADATA_INSTANCE = "things-instance";
     public static final Set<String> SUBSCRIBED_SERVERS = new ConcurrentHashSet<>();
 
     @SneakyThrows
-    public ThingsNacosInstancesDiscoverer(ThingsInstancesManager thingsInstancesManager, ThingsEventObserver thingsEventObserver,
+    public ThingsNacosInstancesDiscoverer(ThingsEventObserver thingsEventObserver,
                                           NacosServerProperties nacosServerProperties, ThingsEndpointFactory thingsEndpointFactory,
-                                          ThingsFrameworkProperties thingsFrameworkProperties) {
-        this.thingsInstancesManager = thingsInstancesManager;
-        this.thingsEndpointFactory = thingsEndpointFactory;
-        this.thingsFrameworkProperties = thingsFrameworkProperties;
+                                          ThingsFrameworkProperties thingsFrameworkProperties, ThingsInstancesDslManager thingsInstancesDslManager) {
+        super(thingsFrameworkProperties, thingsEndpointFactory, thingsInstancesDslManager);
         Properties properties = new Properties();
         properties.putAll((JSONObject) JSON.toJSON(nacosServerProperties));
         this.nacosServerProperties = nacosServerProperties;
@@ -71,26 +65,32 @@ public class ThingsNacosInstancesDiscoverer implements EventListener, ThingsInst
         this.thingsEventObserver = thingsEventObserver;
     }
 
-
-    @Scheduled(initialDelay = 10, fixedDelay = 30_000, scheduler = "thingsTaskScheduler")
     @SneakyThrows
-    private void updateMetaData() {
-        List<Instance> allInstances = namingService.selectInstances(nacosServerProperties.getService(), nacosServerProperties.getGroup(), true);
-        for (Instance instance : allInstances) {
-            ThingsInstance thingsInstance = thingsFrameworkProperties.getInstance();
-            if (thingsInstance.getEndpointUri().contains(instance.getIp() + ":" + instance.getPort())) {
-                instance.getMetadata().put(METADATA_INSTANCES_CODE, thingsInstance.getCode());
-                instance.getMetadata().put(METADATA_INSTANCES_SIZE, String.valueOf(thingsInstancesManager.getInstancesSize()));
-                instance.getMetadata().put(METADATA_INSTANCES_TYPE, JSON.toJSONString(thingsInstance.getTypes()));
-                namingMaintainService.updateInstance(nacosServerProperties.getService(), nacosServerProperties.getGroup(), instance);
-            }
+    @Override
+    public void register(ThingsInstance thingsInstance) {
+        Instance nacosInstance = findNacosInstance(thingsInstance);
+        if (nacosInstance != null) {
+            nacosInstance.getMetadata().put(METADATA_INSTANCE, JSON.toJSONString(thingsInstance));
+            namingMaintainService.updateInstance(nacosServerProperties.getService(), nacosServerProperties.getGroup(), nacosInstance);
         }
     }
 
 
     @SneakyThrows
+    private Instance findNacosInstance(ThingsInstance thingsInstance) {
+        List<Instance> allInstances = namingService.selectInstances(nacosServerProperties.getService(), nacosServerProperties.getGroup(), true);
+        for (Instance instance : allInstances) {
+            if (thingsInstance.getEndpointUri().contains(instance.getIp() + ":" + instance.getPort())) {
+                return instance;
+            }
+        }
+        return null;
+    }
+
+
+    @SneakyThrows
     @Override
-    public Set<ThingsInstance> getAllInstance() {
+    public Set<ThingsInstance> allInstance() {
         Set<String> servers = new ConcurrentHashSet<>();
         ListView<String> servicesOfServer = new ListView<>();
         int i = 1;
@@ -98,9 +98,7 @@ public class ThingsNacosInstancesDiscoverer implements EventListener, ThingsInst
             servicesOfServer = namingService.getServicesOfServer(i++, 100, nacosServerProperties.getGroup());
             for (String serviceName : servicesOfServer.getData()) {
                 List<Instance> instances = namingService.getAllInstances(serviceName, nacosServerProperties.getGroup());
-                instances.parallelStream().filter(instance ->
-                        StrUtil.isAllNotBlank(instance.getMetadata().get(METADATA_INSTANCES_CODE), instance.getMetadata().get(METADATA_INSTANCES_TYPE))
-                                && CollUtil.isNotEmpty(JSON.parseArray(instance.getMetadata().get(METADATA_INSTANCES_TYPE)))).forEach(instance -> {
+                instances.parallelStream().filter(instance -> StrUtil.isAllNotBlank(instance.getMetadata().get(METADATA_INSTANCE))).forEach(instance -> {
                     servers.add(RESTFUL_SCHEMA + instance.getIp() + ":" + instance.getPort());
                     addSubscribe(instance);
                 });
@@ -146,8 +144,8 @@ public class ThingsNacosInstancesDiscoverer implements EventListener, ThingsInst
     private Set<String> getInstanceCodes(List<Instance> instances) {
         if (CollUtil.isNotEmpty(instances)) {
             return instances.parallelStream()
-                    .filter(instance -> StrUtil.isNotBlank(instance.getMetadata().get(METADATA_INSTANCES_CODE)))
-                    .map(instance -> instance.getMetadata().get(METADATA_INSTANCES_CODE)).collect(Collectors.toSet());
+                    .filter(instance -> StrUtil.isNotBlank(instance.getMetadata().get(METADATA_INSTANCE)))
+                    .map(instance -> instance.getMetadata().get(METADATA_INSTANCE)).collect(Collectors.toSet());
         }
         return Collections.emptySet();
     }
@@ -155,28 +153,9 @@ public class ThingsNacosInstancesDiscoverer implements EventListener, ThingsInst
     private Set<String> getInstanceServers(List<Instance> instances) {
         if (CollUtil.isNotEmpty(instances)) {
             return instances.parallelStream()
-                    .filter(instance -> StrUtil.isNotBlank(instance.getMetadata().get(METADATA_INSTANCES_CODE)))
+                    .filter(instance -> StrUtil.isNotBlank(instance.getMetadata().get(METADATA_INSTANCE)))
                     .map(instance -> RESTFUL_SCHEMA + instance.getIp() + ":" + instance.getPort()).collect(Collectors.toSet());
         }
         return Collections.emptySet();
-    }
-
-    private Set<ThingsInstance> getAllThingsInstance(Set<String> servers) {
-        Set<ThingsInstance> thingsInstances = new ConcurrentHashSet<>();
-        if (CollUtil.isEmpty(servers)) {
-            return thingsInstances;
-        }
-        ThingsInstance thingsInstance = this.thingsFrameworkProperties.getInstance();
-        for (String server : servers) {
-            try {
-                if (server.equals(thingsInstance.getEndpointUri())) {
-                    continue;
-                }
-                thingsInstances.add(thingsEndpointFactory.create(server).exchangeInstance(thingsInstance));
-            } catch (Exception e) {
-                log.error("Get Things instances to {} server exception : ", server, e);
-            }
-        }
-        return thingsInstances;
     }
 }
