@@ -1,7 +1,6 @@
 package cn.huangdayu.things.engine.chaining;
 
 import cn.huangdayu.things.api.message.ThingsFilter;
-import cn.huangdayu.things.api.message.ThingsFilterChain;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
@@ -22,7 +21,7 @@ public abstract class DeviceStatusThingsFilter implements ThingsFilter {
     private final ThingsEventObserver thingsEventObserver;
 
     @Override
-    public void doFilter(ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsFilterChain thingsFilterChain) {
+    public void doFilter(ThingsRequest thingsRequest, ThingsResponse thingsResponse, Chain chain) {
         JsonThingsMessage jtm = thingsRequest.getJtm();
         BaseThingsMetadata baseMetadata = jtm.getBaseMetadata();
         ThingsSession thingsSession = new ThingsSession();

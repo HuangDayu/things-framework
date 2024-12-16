@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
 }
 
+
 dependencies {
     api project(path: ':things-api')
     api project(path: ':things-common')

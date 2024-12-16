@@ -1,7 +1,7 @@
 package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.api.endpoint.ThingsEndpointFactory;
-import cn.huangdayu.things.api.message.ThingsFilterChain;
+import cn.huangdayu.things.api.message.ThingsFilter;
 import cn.huangdayu.things.api.message.ThingsHandler;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.exception.ThingsException;
@@ -210,8 +210,8 @@ public class ThingsChainingExecutor implements ThingsChaining {
     }
 
     private void handleFilters(ThingsRequest thingsRequest, ThingsResponse thingsResponse, List<ThingsFilters> thingsFilter) {
-        ThingsFilterChain thingsFilterChain = new ThingsFilterChain(thingsFilter.stream().map(ThingsFilters::getThingsFilter).collect(Collectors.toList()));
-        thingsFilterChain.doFilter(thingsRequest, thingsResponse);
+        ThingsFilter.Chain chain = new ThingsFilter.Chain(thingsFilter.stream().map(ThingsFilters::getThingsFilter).collect(Collectors.toList()));
+        chain.doFilter(thingsRequest, thingsResponse);
     }
 
 }

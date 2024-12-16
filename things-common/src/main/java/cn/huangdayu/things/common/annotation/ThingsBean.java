@@ -22,6 +22,12 @@ public @interface ThingsBean {
     @AliasFor(annotation = Component.class, attribute = "value")
     String value() default "";
 
+    /**
+     * 存在多个bean冲突时，是否是主要的bean
+     * @return
+     */
+    boolean primary() default false;
+
 
     @AliasFor(annotation = Order.class, attribute = "value")
     int order() default Ordered.LOWEST_PRECEDENCE;

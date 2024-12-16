@@ -1,7 +1,7 @@
 package cn.huangdayu.things.session;
 
-import cn.huangdayu.things.api.infrastructure.CacheService;
-import cn.huangdayu.things.api.infrastructure.SessionService;
+import cn.huangdayu.things.api.infrastructure.ThingsCacheService;
+import cn.huangdayu.things.api.infrastructure.ThingsSessionService;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.constants.ThingsConstants;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
@@ -15,9 +15,9 @@ import lombok.RequiredArgsConstructor;
  */
 @ThingsBean
 @RequiredArgsConstructor
-public class ThingsSessionExecutor implements SessionService {
+public class ThingsSessionExecutor implements ThingsSessionService {
 
-    private final CacheService cacheService;
+    private final ThingsCacheService thingsCacheService;
     private final ThingsEventObserver thingsEventObserver;
 
 
@@ -37,22 +37,22 @@ public class ThingsSessionExecutor implements SessionService {
 
     @Override
     public ThingsSession getSession(String productCode, String deviceCode) {
-        return cacheService.get(productCode + ThingsConstants.THINGS_SEPARATOR + deviceCode, ThingsSession.class);
+        return thingsCacheService.get(productCode + ThingsConstants.THINGS_SEPARATOR + deviceCode, ThingsSession.class);
     }
 
     @Override
     public void addSession(ThingsSession session) {
-        cacheService.put(session.getProductCode() + ThingsConstants.THINGS_SEPARATOR + session.getDeviceCode(), session);
+        thingsCacheService.put(session.getProductCode() + ThingsConstants.THINGS_SEPARATOR + session.getDeviceCode(), session);
     }
 
     @Override
     public void removeSession(ThingsSession session) {
-        cacheService.remove(session.getProductCode() + ThingsConstants.THINGS_SEPARATOR + session.getDeviceCode());
+        thingsCacheService.remove(session.getProductCode() + ThingsConstants.THINGS_SEPARATOR + session.getDeviceCode());
     }
 
     @Override
     public void removeSession(String productCode, String deviceCode) {
-        cacheService.remove(productCode + ThingsConstants.THINGS_SEPARATOR + deviceCode);
+        thingsCacheService.remove(productCode + ThingsConstants.THINGS_SEPARATOR + deviceCode);
 
     }
 }

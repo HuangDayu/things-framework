@@ -1,6 +1,6 @@
 package cn.huangdayu.things.starter;
 
-import cn.huangdayu.things.api.infrastructure.CacheService;
+import cn.huangdayu.things.api.infrastructure.ThingsCacheService;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -9,7 +9,7 @@ import org.springframework.cache.CacheManager;
  * @author huangdayu
  */
 @ThingsBean
-public class SpringCacheService implements CacheService {
+public class SpringCacheService implements ThingsCacheService {
 
 
     private final Cache cache;
