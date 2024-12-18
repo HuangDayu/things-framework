@@ -1456,4 +1456,12 @@ public final class ThingsConstants {
 
         public static final String WEBSOCKET = "websocket";
     }
+
+    public static class SystemMethod {
+        public static final String SYSTEM_METHOD_START_WITH = "thing.system.";
+        public static final String SYSTEM_METHOD_LOGIN = "login";
+        public static final String SYSTEM_METHOD_LOGOUT = "logout";
+        public static final String SYSTEM_METHOD_DSL = "dsl";
+        public static final String SYSTEM_METHOD_CONFIG = "config";
+    }
 }

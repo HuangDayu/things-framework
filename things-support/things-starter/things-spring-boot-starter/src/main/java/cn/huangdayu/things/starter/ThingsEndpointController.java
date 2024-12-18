@@ -1,6 +1,6 @@
 package cn.huangdayu.things.starter;
 
-import cn.huangdayu.things.api.endpoint.ThingsEndpoint;
+import cn.huangdayu.things.starter.endpoint.ThingsEndpoint;
 import cn.huangdayu.things.common.dsl.DslInfo;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsConfiguration;

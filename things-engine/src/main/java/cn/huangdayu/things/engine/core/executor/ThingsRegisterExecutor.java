@@ -1,9 +1,10 @@
 package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.api.container.ThingsContainer;
-import cn.huangdayu.things.api.message.ThingsFilter;
-import cn.huangdayu.things.api.message.ThingsInterceptor;
 import cn.huangdayu.things.api.container.ThingsRegister;
+import cn.huangdayu.things.api.message.ThingsFiltering;
+import cn.huangdayu.things.api.message.ThingsHandling;
+import cn.huangdayu.things.api.message.ThingsIntercepting;
 import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
@@ -27,7 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.ERROR;
-import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_WILDCARD;
+import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_SEPARATOR;
 import static cn.huangdayu.things.common.utils.ThingsUtils.*;
 
 /**
@@ -50,8 +51,9 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         findBeans(thingsContainer, ThingsProperty.class, this::findThingsProperties);
         findBeans(thingsContainer, ThingsEvent.class, this::findThingsEvents);
         findBeans(thingsContainer, ThingsListener.class, this::findThingsListener);
-        findBeans(thingsContainer, ThingsFiltering.class, this::findThingsFilters);
-        findBeans(thingsContainer, ThingsIntercepting.class, this::findThingsInterceptors);
+        findBeans(thingsContainer, ThingsFilter.class, this::findThingsFilters);
+        findBeans(thingsContainer, ThingsInterceptor.class, this::findThingsInterceptors);
+        findBeans(thingsContainer, ThingsHandler.class, this::findThingsThingsHandlers);
         thingsEventObserver.notifyObservers(new ThingsContainerUpdatedEvent(thingsContainer));
         log.info("Started ThingsEngine in {} milliseconds with context {}.", System.currentTimeMillis() - start, thingsContainer.name());
         THINGS_CONTAINERS.put(thingsContainer.name(), thingsContainer);
@@ -225,39 +227,59 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
     }
 
 
-    private void findThingsFilters(ThingsContainer thingsContainer, ThingsFiltering thingsFiltering, Object bean) {
-        if (!thingsFiltering.enabled()) {
+    private void findThingsFilters(ThingsContainer thingsContainer, ThingsFilter thingsFilter, Object bean) {
+        if (!thingsFilter.enabled()) {
             return;
         }
-        if (!(bean instanceof ThingsFilter)) {
-            log.error("Things bean is not Filter : {}", bean.getClass().getName());
+        if (!(bean instanceof ThingsFiltering)) {
+            log.error("Things bean is not ThingsFiltering : {}", bean.getClass().getName());
+            return;
         }
-        String identifier = StrUtil.isNotBlank(thingsFiltering.identifier()) ? thingsFiltering.identifier() : THINGS_WILDCARD;
-        String productCode = StrUtil.isNotBlank(thingsFiltering.productCode()) ? thingsFiltering.productCode() : THINGS_WILDCARD;
+        String identifier = thingsFilter.method() + THINGS_SEPARATOR + thingsFilter.identifier();
+        String productCode = thingsFilter.productCode();
         Set<ThingsFilters> filters = THINGS_FILTERS_TABLE.get(identifier, productCode);
         if (filters == null) {
             filters = new ConcurrentHashSet<>();
         }
-        filters.add(new ThingsFilters(thingsFiltering, (ThingsFilter) bean));
+        filters.add(new ThingsFilters(thingsFilter, (ThingsFiltering) bean, thingsFilter.source()));
         THINGS_FILTERS_TABLE.put(identifier, productCode, filters);
     }
 
-    private void findThingsInterceptors(ThingsContainer thingsContainer, ThingsIntercepting thingsIntercepting, Object bean) {
-        if (!thingsIntercepting.enabled()) {
+    private void findThingsInterceptors(ThingsContainer thingsContainer, ThingsInterceptor thingsInterceptor, Object bean) {
+        if (!thingsInterceptor.enabled()) {
             return;
         }
-        if (!(bean instanceof ThingsInterceptor)) {
-            log.error("Things bean is not Filter : {}", bean.getClass().getName());
+        if (!(bean instanceof ThingsIntercepting)) {
+            log.error("Things bean is not ThingsIntercepting : {}", bean.getClass().getName());
+            return;
         }
-        String identifier = StrUtil.isNotBlank(thingsIntercepting.identifier()) ? thingsIntercepting.identifier() : THINGS_WILDCARD;
-        String productCode = StrUtil.isNotBlank(thingsIntercepting.productCode()) ? thingsIntercepting.productCode() : THINGS_WILDCARD;
-        Table<String, String, Set<ThingsInterceptors>> table = thingsIntercepting.request() ? THINGS_REQUEST_INTERCEPTORS_TABLE : THINGS_RESPONSE_INTERCEPTORS_TABLE;
-        Set<ThingsInterceptors> interceptors = table.get(identifier, productCode);
+        String identifier = thingsInterceptor.method() + THINGS_SEPARATOR + thingsInterceptor.identifier();
+        String productCode = thingsInterceptor.productCode();
+        Set<ThingsInterceptors> interceptors = THINGS_INTERCEPTORS_TABLE.get(identifier, productCode);
         if (interceptors == null) {
             interceptors = new ConcurrentHashSet<>();
         }
-        interceptors.add(new ThingsInterceptors(thingsIntercepting, (ThingsInterceptor) bean));
-        table.put(identifier, productCode, interceptors);
+        interceptors.add(new ThingsInterceptors(thingsInterceptor, (ThingsIntercepting) bean, thingsInterceptor.source()));
+        THINGS_INTERCEPTORS_TABLE.put(identifier, productCode, interceptors);
+    }
+
+
+    private void findThingsThingsHandlers(ThingsContainer thingsContainer, ThingsHandler thingsHandler, Object bean) {
+        if (!thingsHandler.enabled()) {
+            return;
+        }
+        if (!(bean instanceof ThingsHandling)) {
+            log.error("Things bean is not ThingsHandling : {}", bean.getClass().getName());
+            return;
+        }
+        String identifier = thingsHandler.method() + THINGS_SEPARATOR + thingsHandler.identifier();
+        String productCode = thingsHandler.productCode();
+        Set<ThingsHandlers> thingsHandlers = THINGS_HANDLERS_TABLE.get(identifier, productCode);
+        if (thingsHandlers == null) {
+            thingsHandlers = new ConcurrentHashSet<>();
+        }
+        thingsHandlers.add(new ThingsHandlers(thingsHandler, (ThingsHandling) bean, thingsHandler.source()));
+        THINGS_HANDLERS_TABLE.put(identifier, productCode, thingsHandlers);
     }
 
     private ThingsParameter[] scanParameter(Method method) {

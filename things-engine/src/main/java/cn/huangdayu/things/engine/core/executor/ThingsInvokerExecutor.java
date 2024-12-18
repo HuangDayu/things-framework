@@ -40,10 +40,21 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
     private final ThingsProperties thingsProperties;
     private final ThingsConverter thingsConverter;
 
+    @Override
+    public boolean canInvoke(JsonThingsMessage jtm) {
+        BaseThingsMetadata baseMetadata = jtm.getBaseMetadata();
+        if (jtm.getMethod().startsWith(EVENT_LISTENER_START_WITH)) {
+            return THINGS_EVENTS_LISTENER_TABLE.containsColumn(baseMetadata.getProductCode());
+        }
+        if (jtm.getMethod().startsWith(PROPERTY_METHOD_START_WITH)) {
+            return PRODUCT_PROPERTY_MAP.containsKey(baseMetadata.getProductCode()) || DEVICE_PROPERTY_MAP.containsColumn(baseMetadata.getDeviceCode());
+        }
+        return THINGS_SERVICES_TABLE.containsColumn(baseMetadata.getProductCode());
+    }
 
     @SneakyThrows
     @Override
-    public JsonThingsMessage syncInvoker(JsonThingsMessage jtm) {
+    public JsonThingsMessage syncInvoke(JsonThingsMessage jtm) {
         String method = jtm.getMethod();
         if (method.startsWith(SERVICE_START_WITH)) {
             return invokeService(jtm);
@@ -57,8 +68,8 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
     }
 
     @Override
-    public Mono<JsonThingsMessage> reactorInvoker(JsonThingsMessage jtm) {
-        return Mono.just(syncInvoker(jtm));
+    public Mono<JsonThingsMessage> reactorInvoke(JsonThingsMessage jtm) {
+        return Mono.just(syncInvoke(jtm));
     }
 
     private JsonThingsMessage invokeEventListener(JsonThingsMessage jtm) {

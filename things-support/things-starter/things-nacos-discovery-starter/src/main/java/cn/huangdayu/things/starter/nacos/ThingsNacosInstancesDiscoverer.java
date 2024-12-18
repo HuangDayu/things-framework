@@ -1,6 +1,6 @@
 package cn.huangdayu.things.starter.nacos;
 
-import cn.huangdayu.things.api.endpoint.ThingsEndpointFactory;
+import cn.huangdayu.things.starter.endpoint.ThingsEndpointFactory;
 import cn.huangdayu.things.api.instances.ThingsInstancesDiscoverer;
 import cn.huangdayu.things.api.instances.ThingsInstancesDslManager;
 import cn.huangdayu.things.api.instances.ThingsInstancesRegister;
@@ -9,7 +9,7 @@ import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.observer.event.ThingsInstancesChangedEvent;
 import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
-import cn.huangdayu.things.discovery.ThingsBaseInstancesDiscoverer;
+import cn.huangdayu.things.starter.instances.ThingsBaseInstancesDiscoverer;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.hutool.core.util.ReflectUtil;
@@ -35,7 +35,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static cn.huangdayu.things.api.endpoint.ThingsEndpointFactory.RESTFUL_SCHEMA;
+import static cn.huangdayu.things.starter.endpoint.ThingsEndpointFactory.RESTFUL_SCHEMA;
 
 /**
  * @author huangdayu

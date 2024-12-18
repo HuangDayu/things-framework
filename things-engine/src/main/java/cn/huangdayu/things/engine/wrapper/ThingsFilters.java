@@ -1,7 +1,8 @@
 package cn.huangdayu.things.engine.wrapper;
 
-import cn.huangdayu.things.api.message.ThingsFilter;
-import cn.huangdayu.things.common.annotation.ThingsFiltering;
+import cn.huangdayu.things.api.message.ThingsFiltering;
+import cn.huangdayu.things.common.annotation.ThingsFilter;
+import cn.huangdayu.things.common.enums.ThingsStreamingType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class ThingsFilters {
 
-    private ThingsFiltering thingsFiltering;
     private ThingsFilter thingsFilter;
-
+    private ThingsFiltering thingsFiltering;
+    private ThingsStreamingType sourceType;
 }

@@ -11,12 +11,20 @@ import reactor.core.publisher.Mono;
 public interface ThingsInvoker {
 
     /**
+     * 是否可以处理
+     *
+     * @param jtm
+     * @return
+     */
+    boolean canInvoke(JsonThingsMessage jtm);
+
+    /**
      * 同步调用
      *
      * @param jtm
      * @return
      */
-    JsonThingsMessage syncInvoker(JsonThingsMessage jtm);
+    JsonThingsMessage syncInvoke(JsonThingsMessage jtm);
 
 
     /**
@@ -25,6 +33,6 @@ public interface ThingsInvoker {
      * @param jtm
      * @return
      */
-    Mono<JsonThingsMessage> reactorInvoker(JsonThingsMessage jtm);
+    Mono<JsonThingsMessage> reactorInvoke(JsonThingsMessage jtm);
 
 }

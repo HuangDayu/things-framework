@@ -8,18 +8,8 @@ import cn.huangdayu.things.common.message.ThingsEventMessage;
  */
 public interface ThingsPublisher {
 
-    /**
-     * 发布事件
-     *
-     * @param tem
-     */
     void publishEvent(ThingsEventMessage tem);
 
-
-    /**
-     * 发布事件
-     *
-     * @param jtm
-     */
     void publishEvent(JsonThingsMessage jtm);
+
 }

@@ -13,6 +13,15 @@ import lombok.NoArgsConstructor;
 @Data
 public class ThingsRequest {
 
+    private Object source;
+    private String type;
+    private String endpoint;
+    private String clientCode;
+    private String groupCode;
+    private String sessionCode;
     private JsonThingsMessage jtm;
 
+    public ThingsRequest(JsonThingsMessage jtm) {
+        this.jtm = jtm;
+    }
 }

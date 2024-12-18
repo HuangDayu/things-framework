@@ -1,7 +1,8 @@
 package cn.huangdayu.things.engine.wrapper;
 
-import cn.huangdayu.things.api.message.ThingsInterceptor;
-import cn.huangdayu.things.common.annotation.ThingsIntercepting;
+import cn.huangdayu.things.api.message.ThingsIntercepting;
+import cn.huangdayu.things.common.annotation.ThingsInterceptor;
+import cn.huangdayu.things.common.enums.ThingsStreamingType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,8 @@ import lombok.NoArgsConstructor;
 @Data
 public class ThingsInterceptors {
 
-    private ThingsIntercepting thingsIntercepting;
     private ThingsInterceptor thingsInterceptor;
+    private ThingsIntercepting thingsIntercepting;
+    private ThingsStreamingType sourceType;
 
 }

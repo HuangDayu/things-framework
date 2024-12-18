@@ -2,6 +2,9 @@ package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.api.container.ThingsContainer;
 import cn.huangdayu.things.common.exception.ThingsException;
+import cn.huangdayu.things.engine.wrapper.ThingsFilters;
+import cn.huangdayu.things.engine.wrapper.ThingsHandlers;
+import cn.huangdayu.things.engine.wrapper.ThingsInterceptors;
 import cn.huangdayu.things.engine.wrapper.*;
 import cn.hutool.core.map.multi.RowKeyTable;
 import cn.hutool.core.map.multi.Table;
@@ -72,12 +75,13 @@ public abstract class ThingsBaseExecutor {
     /**
      * identifier vs productCode vs ThingsInterceptors
      */
-    protected static final Table<String, String, Set<ThingsInterceptors>> THINGS_REQUEST_INTERCEPTORS_TABLE = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
+    protected static final Table<String, String, Set<ThingsInterceptors>> THINGS_INTERCEPTORS_TABLE = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
+
 
     /**
-     * identifier vs productCode vs ThingsInterceptors
+     * identifier vs productCode vs ThingsHandlers
      */
-    protected static final Table<String, String, Set<ThingsInterceptors>> THINGS_RESPONSE_INTERCEPTORS_TABLE = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
+    protected static final Table<String, String, Set<ThingsHandlers>> THINGS_HANDLERS_TABLE = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
 
     public static <T> T getThingsBean(Class<T> requiredType) {
         for (Map.Entry<String, ThingsContainer> entry : THINGS_CONTAINERS.entrySet()) {

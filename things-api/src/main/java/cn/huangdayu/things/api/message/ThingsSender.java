@@ -8,20 +8,8 @@ import reactor.core.publisher.Mono;
  */
 public interface ThingsSender {
 
-    /**
-     * 发布同步消息
-     *
-     * @param jtm
-     * @return
-     */
     JsonThingsMessage sendMessage(JsonThingsMessage jtm);
 
-
-    /**
-     * 发布异步消息
-     *
-     * @param jtm
-     */
     Mono<JsonThingsMessage> sendReactorMessage(JsonThingsMessage jtm);
 
 }

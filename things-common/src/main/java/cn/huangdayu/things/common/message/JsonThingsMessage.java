@@ -143,7 +143,13 @@ public class JsonThingsMessage extends AbstractThingsMessage<JSONObject, JSONObj
 
     @JsonIgnore
     @JSONField(serialize = false, deserialize = false)
-    private JsonThingsMessage cloneMessage() {
+    public JsonThingsMessage cloneMessage() {
         return JSON.copy(this);
+    }
+
+    @JsonIgnore
+    @JSONField(serialize = false, deserialize = false)
+    public JSONObject toJson() {
+        return JSON.parseObject(JSON.toJSONString(this));
     }
 }
