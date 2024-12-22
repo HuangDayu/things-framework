@@ -1,28 +1,27 @@
 package cn.huangdayu.things.api.sofabus;
 
-import cn.huangdayu.things.api.message.ThingsChaining;
-import cn.huangdayu.things.common.enums.ThingsComponentType;
-import cn.huangdayu.things.common.properties.ThingsComponentProperties;
+import cn.huangdayu.things.common.enums.ThingsSofaBusType;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
+import cn.huangdayu.things.common.wrapper.ThingsResponse;
 
 /**
  * @author huangdayu
  */
 public interface ThingsSofaBus {
 
-    ThingsComponentType getType();
+    ThingsSofaBusType getType();
 
-    void init(ThingsComponentProperties properties);
+    void init();
 
     boolean start();
 
     boolean stop();
 
-    boolean output(String topic, ThingsRequest thingsRequest);
+    boolean output(String topicCode, ThingsRequest thingsRequest, ThingsResponse thingsResponse);
 
-    boolean subscribe(String topic, ThingsChaining thingsChaining);
+    boolean subscribe(String topicCode);
 
-    boolean unsubscribe(String topic);
+    boolean unsubscribe(String topicCode);
 
     boolean isStarted();
 

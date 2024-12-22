@@ -11,6 +11,7 @@ import cn.huangdayu.things.engine.wrapper.ThingsFunction;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.hutool.core.util.ReflectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,9 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
 
     @Override
     public boolean canInvoke(JsonThingsMessage jtm) {
+        if (StrUtil.isNotBlank(jtm.getBaseMetadata().getErrorCode())) {
+            return false;
+        }
         BaseThingsMetadata baseMetadata = jtm.getBaseMetadata();
         if (jtm.getMethod().startsWith(EVENT_LISTENER_START_WITH)) {
             return THINGS_EVENTS_LISTENER_TABLE.containsColumn(baseMetadata.getProductCode());

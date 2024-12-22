@@ -1,9 +1,11 @@
 package cn.huangdayu.things.starter.endpoint;
 
+import cn.huangdayu.things.api.infrastructure.ThingsConfigService;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
-import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
+import cn.huangdayu.things.starter.enums.EndpointCreatorType;
+import cn.huangdayu.things.starter.enums.EndpointGetterType;
 import cn.hutool.core.util.StrUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +27,9 @@ public class ThingsEndpointFactory {
 
     public static final String RESTFUL_SCHEMA = "restful://";
     public static final String SCHEMA = "://";
-    private final ThingsFrameworkProperties thingsFrameworkProperties;
-    private final static Map<EndpointCreatorType, ThingsEndpointCreator> SENDER_MAP = new ConcurrentHashMap<>();
-    private final static Map<EndpointGetterType, ThingsEndpointGetter> GETTER_MAP = new ConcurrentHashMap<>();
+    private final ThingsConfigService thingsConfigService;
+    private static final Map<EndpointCreatorType, ThingsEndpointCreator> SENDER_MAP = new ConcurrentHashMap<>();
+    private static final Map<EndpointGetterType, ThingsEndpointGetter> GETTER_MAP = new ConcurrentHashMap<>();
     private final Map<String, ThingsEndpointCreator> thingsMessageSenderMap;
     private final Map<String, ThingsEndpointGetter> typeThingsEndpointGetterMap;
 
@@ -43,7 +45,7 @@ public class ThingsEndpointFactory {
 
     public ThingsEndpoint create(JsonThingsMessage jtm, boolean reactor) {
         String endpointUri = findEndpointUri(jtm);
-        if (StrUtil.isBlank(endpointUri) || thingsFrameworkProperties.getInstance().getEndpointUri().equals(endpointUri)) {
+        if (StrUtil.isBlank(endpointUri) || thingsConfigService.getProperties().getInstance().getEndpointUri().equals(endpointUri)) {
             throw new ThingsException(jtm, BAD_REQUEST, "Not found the target endpointUri.");
         }
         return create(endpointUri, reactor);
@@ -57,7 +59,7 @@ public class ThingsEndpointFactory {
     private String findEndpointUri(JsonThingsMessage jtm) {
         return findFirst(true,
                 // 如果endpointUri非空且不是自己的端点
-                v -> StrUtil.isNotBlank(v) && !thingsFrameworkProperties.getInstance().getEndpointUri().equals(v),
+                v -> StrUtil.isNotBlank(v) && !thingsConfigService.getProperties().getInstance().getEndpointUri().equals(v),
                 // 如果是指定目标，则直接发送到目标服务
                 () -> GETTER_MAP.get(EndpointGetterType.TARGET).getEndpointUri(jtm),
                 // 如果是监听事件，则直接发送到上游服务

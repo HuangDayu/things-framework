@@ -1,6 +1,6 @@
 package cn.huangdayu.things.discovery;
 
-import cn.huangdayu.things.api.instances.ThingsInstancesDiscoverer;
+import cn.huangdayu.things.api.infrastructure.ThingsConfigService;
 import cn.huangdayu.things.api.instances.ThingsInstancesRegister;
 import cn.huangdayu.things.api.instances.ThingsInstancesServer;
 import cn.huangdayu.things.api.instances.ThingsInstancesTypeFinder;
@@ -8,9 +8,8 @@ import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.constants.ThingsConstants;
 import cn.huangdayu.things.common.enums.ThingsInstanceType;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
-import cn.huangdayu.things.common.observer.event.ThingsContainerUpdatedEvent;
 import cn.huangdayu.things.common.observer.event.ThingsInstancesUpdatedEvent;
-import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
+import cn.huangdayu.things.common.properties.ThingsInstanceProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
 import jakarta.annotation.PostConstruct;
@@ -28,7 +27,7 @@ import static cn.hutool.core.text.CharSequenceUtil.firstNonBlank;
 @RequiredArgsConstructor
 public class ThingsInstanceUpdater {
     private final ThingsInstancesServer thingsInstancesServer;
-    private final ThingsFrameworkProperties thingsFrameworkProperties;
+    private final ThingsConfigService thingsConfigService;
     private final ThingsEventObserver thingsEventObserver;
     private final Map<String, ThingsInstancesRegister> thingsInstancesRegisterMap;
     private final Map<String, ThingsInstancesTypeFinder> thingsInstancesTypeFinderMap;
@@ -41,14 +40,16 @@ public class ThingsInstanceUpdater {
     }
 
     private void updateThingsInstance() {
-        ThingsInstance thingsInstance = thingsFrameworkProperties.getInstance() == null ? new ThingsInstance() : thingsFrameworkProperties.getInstance();
-        thingsInstance.setName(firstNonBlank(thingsFrameworkProperties.getInstance().getName(), thingsInstancesServer.getServerName()));
-        thingsInstance.setEndpointUri(firstNonBlank(thingsFrameworkProperties.getInstance().getEndpointUri(), getEndpointUri()));
+        ThingsInstanceProperties properties = thingsConfigService.getProperties();
+        ThingsInstance thingsInstance = thingsConfigService.getProperties().getInstance() == null ? new ThingsInstance() : properties.getInstance();
+        thingsInstance.setName(firstNonBlank(thingsConfigService.getProperties().getInstance().getName(), thingsInstancesServer.getServerName()));
+        thingsInstance.setEndpointUri(firstNonBlank(thingsConfigService.getProperties().getInstance().getEndpointUri(), getEndpointUri()));
         Set<ThingsInstanceType> thingsInstanceType = findThingsInstanceType(thingsInstance);
         if (CollUtil.isNotEmpty(thingsInstanceType)) {
             thingsInstance.setTypes(thingsInstanceType);
         }
-        thingsFrameworkProperties.setInstance(thingsInstance);
+        properties.setInstance(thingsInstance);
+        thingsConfigService.updateProperties(properties);
         thingsInstancesRegisterMap.forEach((k, v) -> v.register(thingsInstance));
     }
 

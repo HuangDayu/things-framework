@@ -1,14 +1,15 @@
 package cn.huangdayu.things.camel.components;
 
 import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
-import cn.huangdayu.things.api.message.ThingsChaining;
-import cn.huangdayu.things.common.enums.ThingsComponentType;
+import cn.huangdayu.things.camel.CamelSofaBusConstructor;
+import cn.huangdayu.things.common.enums.ThingsSofaBusType;
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
-import cn.huangdayu.things.common.properties.ThingsComponentProperties;
+import cn.huangdayu.things.common.properties.ThingsSofaBusProperties;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ConcurrentHashSet;
 import com.alibaba.fastjson2.JSON;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +18,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultComponent;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.ERROR;
+import static cn.huangdayu.things.common.enums.ThingsSofaBusType.*;
 
 /**
  * @author huangdayu
@@ -33,70 +35,76 @@ import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.ER
 @Slf4j
 @RequiredArgsConstructor
 public abstract class AbstractCamelSofaBus implements ThingsSofaBus {
-    private final CamelContext camelContext;
-    private final ProducerTemplate producerTemplate;
-    private ThingsComponentProperties properties;
-    private DefaultComponent component;
-    private final static Map<ThingsComponentType, String> FROM_URI_TEMPLATES = new HashMap<>();
-    private final static Map<ThingsComponentType, String> TO_URI_TEMPLATES = new HashMap<>();
+    protected final CamelContext camelContext;
+    protected final CamelSofaBusConstructor constructor;
+    protected DefaultComponent component;
+    protected static final Map<ThingsSofaBusType, String> TOPIC_TEMPLATES = new HashMap<>();
+    protected final Set<String> subscribed = new ConcurrentHashSet<>();
+
+
+    public AbstractCamelSofaBus(CamelSofaBusConstructor constructor) {
+        this.constructor = constructor;
+        this.camelContext = constructor.getCamelContext();
+    }
 
     static {
-        FROM_URI_TEMPLATES.put(ThingsComponentType.AMQP, "amqp:queue:%s");
-        FROM_URI_TEMPLATES.put(ThingsComponentType.KAFKA, "kafka:%s?groupId=%s");
-        FROM_URI_TEMPLATES.put(ThingsComponentType.MQTT, "paho:%s");
-        FROM_URI_TEMPLATES.put(ThingsComponentType.ROCKETMQ, "rocketmq:topic:%s?consumerGroup=%s");
-
-        TO_URI_TEMPLATES.put(ThingsComponentType.AMQP, "amqp:queue:%s");
-        TO_URI_TEMPLATES.put(ThingsComponentType.KAFKA, "kafka:%s");
-        TO_URI_TEMPLATES.put(ThingsComponentType.MQTT, "paho:%s");
-        TO_URI_TEMPLATES.put(ThingsComponentType.ROCKETMQ, "rocketmq:topic:%s");
+        TOPIC_TEMPLATES.put(AMQP, "${componentName}:queue:/things/message/${topicCode}");
+        TOPIC_TEMPLATES.put(KAFKA, "${componentName}:/things/message/${topicCode}?groupId=${groupId}");
+        TOPIC_TEMPLATES.put(MQTT, "${componentName}:/things/message/${topicCode}");
+        TOPIC_TEMPLATES.put(ROCKETMQ, "${componentName}:topic:/things/message/${topicCode}?consumerGroup=${groupId}");
     }
 
-    public abstract DefaultComponent buildComponent(ThingsComponentProperties properties);
+    public abstract DefaultComponent buildComponent(ThingsSofaBusProperties properties);
 
 
     @Override
-    public void init(ThingsComponentProperties properties) {
-        component = buildComponent(properties);
-        if (CollUtil.isNotEmpty(properties.getProperties())) {
-            properties.getProperties().forEach((k, v) -> component.getComponentPropertyConfigurer().configure(camelContext, component, k, v, false));
+    public void init() {
+        component = buildComponent(constructor.getProperties());
+        if (CollUtil.isNotEmpty(constructor.getProperties().getProperties())) {
+            constructor.getProperties().getProperties().forEach((k, v) -> component.getComponentPropertyConfigurer().configure(camelContext, component, k, v, false));
         }
-        camelContext.addComponent(properties.getName(), component);
-        this.properties = properties;
+        camelContext.addComponent(constructor.getProperties().getName(), component);
     }
 
     @Override
-    public boolean output(String topic, ThingsRequest thingsRequest) {
+    public boolean output(String topicCode, ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
         checkComponentInit();
-        String toUri = String.format(TO_URI_TEMPLATES.get(getType()), topic, properties.getGroupId());
-        producerTemplate.sendBody(toUri, thingsRequest.getJtm().toString());
+        constructor.getProducerTemplate().sendBody(getTopic(topicCode), thingsRequest.getJtm().toString());
         return true;
+    }
+
+    private String getTopic(String topicCode) {
+        String topicTemplates = TOPIC_TEMPLATES.get(getType());
+        return topicTemplates.replace("${componentName}", constructor.getProperties().getName())
+                .replace("${topicCode}", topicCode)
+                .replace("${groupId}", constructor.getProperties().getGroupId());
     }
 
     @SneakyThrows
     @Override
-    public boolean subscribe(String topic, ThingsChaining thingsChaining) {
+    public boolean subscribe(String topicCode) {
         checkComponentInit();
-        String fromUri = String.format(FROM_URI_TEMPLATES.get(getType()), topic, properties.getGroupId());
-        String toUri = String.format(TO_URI_TEMPLATES.get(getType()), topic, properties.getGroupId());
+        String topic = getTopic(topicCode);
         String routeId = getRouteId(topic);
         if (camelContext.getRoute(routeId) != null) {
             return false;
         }
-        camelContext.addRoutes(new CustomRouteBuilder(this, routeId, fromUri, toUri, thingsChaining, properties));
+        camelContext.addRoutes(new CustomRouteBuilder(this, routeId, topic, constructor));
+        subscribed.add(routeId);
         return true;
     }
 
     @SneakyThrows
     @Override
-    public boolean unsubscribe(String topic) {
+    public boolean unsubscribe(String topicCode) {
         checkComponentInit();
+        String topic = getTopic(topicCode);
         String routeId = getRouteId(topic);
-        return camelContext.removeRoute(routeId);
+        return camelContext.removeRoute(routeId) && subscribed.remove(routeId);
     }
 
     public String getRouteId(String topic) {
-        return properties.hashCode() + "-" + topic;
+        return constructor.getProperties().hashCode() + "-" + topic;
     }
 
 
@@ -113,6 +121,7 @@ public abstract class AbstractCamelSofaBus implements ThingsSofaBus {
     @Override
     public boolean stop() {
         checkComponentInit();
+        subscribed.forEach(this::unsubscribe);
         if (component.isStopped()) {
             return true;
         }
@@ -135,43 +144,44 @@ public abstract class AbstractCamelSofaBus implements ThingsSofaBus {
 
     @Slf4j
     private static class CustomRouteBuilder extends RouteBuilder {
+        private final String topic;
         private final String routeId;
-        private final String fromUri;
-        private final String toUri;
-        private final ThingsChaining thingsChaining;
+        private final CamelSofaBusConstructor constructor;
         private final ThingsSofaBus thingsSofaBus;
-        private final ThingsComponentProperties properties;
 
-        public CustomRouteBuilder(ThingsSofaBus thingsSofaBus, String routeId, String fromUri, String toUri, ThingsChaining thingsChaining, ThingsComponentProperties properties) {
+        public CustomRouteBuilder(ThingsSofaBus thingsSofaBus, String routeId, String topic, CamelSofaBusConstructor constructor) {
             this.routeId = routeId;
-            this.fromUri = fromUri;
-            this.toUri = toUri;
-            this.thingsChaining = thingsChaining;
+            this.topic = topic;
+            this.constructor = constructor;
             this.thingsSofaBus = thingsSofaBus;
-            this.properties = properties;
         }
 
         @Override
         public void configure() throws Exception {
-            from(fromUri)
+            from(topic)
                     .routeId(routeId)
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
                             String receivedMessage = exchange.getIn().getBody(String.class);
-                            log.debug("Things Bus topic [{}] received message: {}", fromUri, receivedMessage);
+                            log.debug("Things Bus topic [{}] received message: {}", topic, receivedMessage);
                             JsonThingsMessage jtm = JSON.to(JsonThingsMessage.class, receivedMessage);
-                            ThingsRequest thingsRequest = new ThingsRequest(thingsSofaBus, thingsSofaBus.getType().name(), fromUri, properties.getClientId(), properties.getGroupId(), null, jtm);
-                            ThingsResponse thingsResponse = new ThingsResponse(thingsSofaBus, thingsSofaBus.getType().name(), fromUri, properties.getClientId(), properties.getGroupId(), null, null);
-                            thingsChaining.input(thingsRequest, thingsResponse);
-                            String replyMessage = thingsResponse.getJtm().toString();
-                            log.debug("Things Bus topic [{}] reply message: {}", toUri, replyMessage);
-                            exchange.getMessage().setBody(replyMessage);
+                            ThingsRequest thingsRequest = ThingsRequest.builder().source(thingsSofaBus).type(thingsSofaBus.getType().name())
+                                    .endpoint(topic).clientCode(constructor.getProperties().getClientId()).groupCode(constructor.getProperties().getGroupId()).jtm(jtm).build();
+
+                            ThingsResponse thingsResponse = ThingsResponse.builder().source(thingsSofaBus).type(thingsSofaBus.getType().name()).endpoint(topic)
+                                    .clientCode(constructor.getProperties().getClientId()).groupCode(constructor.getProperties().getGroupId())
+                                    .consumer(response -> {
+                                        String replyMessage = response.getJtm().toString();
+                                        log.debug("Things Bus topic [{}] reply message: {}", topic, replyMessage);
+                                        constructor.getProducerTemplate().sendBody(topic, replyMessage);
+                                    }).build();
+                            constructor.getThingsChaining().input(thingsRequest, thingsResponse);
                         }
-                    })
-                    .to(toUri);
+                    });
         }
 
     }
+
 
 }

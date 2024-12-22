@@ -1,14 +1,12 @@
 package cn.huangdayu.things.camel;
 
+import cn.huangdayu.things.api.message.ThingsChaining;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBusCreator;
-import cn.huangdayu.things.camel.components.AmqpSofaBus;
-import cn.huangdayu.things.camel.components.KafkaSofaBus;
-import cn.huangdayu.things.camel.components.MqttSofaBus;
-import cn.huangdayu.things.camel.components.RocketSofaBus;
+import cn.huangdayu.things.camel.components.*;
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.common.enums.ThingsComponentType;
-import cn.huangdayu.things.common.properties.ThingsComponentProperties;
+import cn.huangdayu.things.common.enums.ThingsSofaBusType;
+import cn.huangdayu.things.common.properties.ThingsSofaBusProperties;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.CamelContext;
@@ -18,7 +16,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -28,28 +26,26 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CamelSofaBusCreator implements ThingsSofaBusCreator {
     private final CamelContext camelContext;
-    public static final Map<ThingsComponentType, BiFunction<CamelContext, ProducerTemplate, ThingsSofaBus>> componentsMap = new ConcurrentHashMap<>();
+    public static final Map<ThingsSofaBusType, Function<CamelSofaBusConstructor, ThingsSofaBus>> componentsMap = new ConcurrentHashMap<>();
     private volatile static ProducerTemplate producerTemplate;
 
     @PostConstruct
     public void init() {
-        componentsMap.put(ThingsComponentType.KAFKA, KafkaSofaBus::new);
-        componentsMap.put(ThingsComponentType.AMQP, AmqpSofaBus::new);
-        componentsMap.put(ThingsComponentType.MQTT, MqttSofaBus::new);
-        componentsMap.put(ThingsComponentType.ROCKETMQ, RocketSofaBus::new);
+        componentsMap.put(ThingsSofaBusType.KAFKA, KafkaSofaBus::new);
+        componentsMap.put(ThingsSofaBusType.AMQP, AmqpSofaBus::new);
+        componentsMap.put(ThingsSofaBusType.MQTT, MqttSofaBus::new);
+        componentsMap.put(ThingsSofaBusType.ROCKETMQ, RocketSofaBus::new);
     }
 
     @Override
-    public Set<ThingsComponentType> supports() {
-        return Arrays.stream(ThingsComponentType.values()).collect(Collectors.toSet());
+    public Set<ThingsSofaBusType> supports() {
+        return Arrays.stream(ThingsSofaBusType.values()).collect(Collectors.toSet());
     }
 
     @Override
-    public ThingsSofaBus create(ThingsComponentProperties property) {
-        BiFunction<CamelContext, ProducerTemplate, ThingsSofaBus> function = componentsMap.get(property.getType());
-        ThingsSofaBus thingsSofaBus = function.apply(camelContext, getProducerTemplate());
-        thingsSofaBus.init(property);
-        return thingsSofaBus;
+    public ThingsSofaBus create(ThingsSofaBusProperties property, ThingsChaining thingsChaining) {
+        Function<CamelSofaBusConstructor, ThingsSofaBus> function = componentsMap.get(property.getType());
+        return function.apply(new CamelSofaBusConstructor(camelContext, getProducerTemplate(), thingsChaining, property));
     }
 
     public ProducerTemplate getProducerTemplate() {

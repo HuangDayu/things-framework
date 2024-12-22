@@ -1,10 +1,6 @@
 package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.api.container.ThingsContainer;
-import cn.huangdayu.things.common.exception.ThingsException;
-import cn.huangdayu.things.engine.wrapper.ThingsFilters;
-import cn.huangdayu.things.engine.wrapper.ThingsHandlers;
-import cn.huangdayu.things.engine.wrapper.ThingsInterceptors;
 import cn.huangdayu.things.engine.wrapper.*;
 import cn.hutool.core.map.multi.RowKeyTable;
 import cn.hutool.core.map.multi.Table;
@@ -14,8 +10,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.ERROR;
-
 /**
  * @author huangdayu
  */
@@ -24,13 +18,13 @@ public abstract class ThingsBaseExecutor {
     /**
      * containerName vs ThingsContainer
      */
-    protected final static Map<String, ThingsContainer> THINGS_CONTAINERS = new ConcurrentHashMap<>();
+    protected static final Map<String, ThingsContainer> THINGS_CONTAINERS = new ConcurrentHashMap<>();
 
 
     /**
      * productCode vs ThingsBeanClass vs ThingsEntity
      */
-    protected final static Table<String, Class<?>, ThingsEntity> THINGS_ENTITY_TABLE = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
+    protected static final Table<String, Class<?>, ThingsEntity> THINGS_ENTITY_TABLE = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
 
 
     /**
@@ -93,7 +87,8 @@ public abstract class ThingsBaseExecutor {
             } catch (Exception ignored) {
             }
         }
-        throw new ThingsException(ERROR, "Not found Things Bean .");
+        log.error("Not found Things Bean : [{}]", requiredType);
+        return null;
     }
 
 }

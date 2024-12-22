@@ -2,34 +2,29 @@ package cn.huangdayu.things.engine.chaining;
 
 import cn.huangdayu.things.api.message.ThingsHandling;
 import cn.huangdayu.things.common.annotation.ThingsHandler;
-import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.async.ThingsAsyncManager;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
-import cn.huangdayu.things.engine.core.ThingsInvoker;
+import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 
 import static cn.huangdayu.things.common.enums.ThingsStreamingType.INPUTTING;
 
 /**
+ * 处理异步消息的回复
  * @author huangdayu
  */
 @RequiredArgsConstructor
-@ThingsHandler(order = 1, source = INPUTTING)
-public class ThingsInvokeHandling implements ThingsHandling {
-
-    private final ThingsInvoker thingsInvoker;
-
+@ThingsHandler(order = 0, source = INPUTTING)
+public class ThingsResponseHandling implements ThingsHandling {
 
     @Override
     public boolean canHandle(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        return thingsInvoker.canInvoke(thingsRequest.getJtm());
+        return StrUtil.isNotBlank(thingsRequest.getJtm().getBaseMetadata().getErrorCode());
     }
 
     @Override
     public void doHandle(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        JsonThingsMessage jtm = thingsInvoker.syncInvoke(thingsRequest.getJtm());
-        if (jtm != null) {
-            thingsResponse.setJtm(jtm);
-        }
+        ThingsAsyncManager.asAsyncResponse(thingsRequest, thingsResponse);
     }
 }

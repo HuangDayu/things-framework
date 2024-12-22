@@ -11,28 +11,28 @@ public interface ThingsIntercepting {
 
     /**
      * 在请求处理之前被调用。
-     * @param request
-     * @param response
+     * @param thingsRequest
+     * @param thingsResponse
      * @return
      */
-    default boolean preHandle(ThingsRequest request, ThingsResponse response, ThingsHandling handling) {
+    default boolean preHandle(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
         return true;
     }
 
     /**
      * 在请求处理完成但未返回结果之前被调用
-     * @param request
-     * @param response
+     * @param thingsRequest
+     * @param thingsResponse
      */
-    default void postHandle(ThingsRequest request, ThingsResponse response, ThingsHandling handling) {
+    default void postHandle(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
     }
 
     /**
      * 在请求完全处理完成之后被调用。
-     * @param request
-     * @param response
+     * @param thingsRequest
+     * @param thingsResponse
      */
-    default void afterCompletion(ThingsRequest request, ThingsResponse response, ThingsHandling handling, Exception exception) {
+    default void afterCompletion(ThingsRequest thingsRequest, ThingsResponse thingsResponse, Exception exception) {
     }
 
 }

@@ -1,7 +1,8 @@
 package cn.huangdayu.things.api.sofabus;
 
-import cn.huangdayu.things.common.enums.ThingsComponentType;
-import cn.huangdayu.things.common.properties.ThingsComponentProperties;
+import cn.huangdayu.things.api.message.ThingsChaining;
+import cn.huangdayu.things.common.enums.ThingsSofaBusType;
+import cn.huangdayu.things.common.properties.ThingsSofaBusProperties;
 
 import java.util.Set;
 
@@ -10,9 +11,9 @@ import java.util.Set;
  */
 public interface ThingsSofaBusCreator {
 
-    Set<ThingsComponentType> supports();
+    Set<ThingsSofaBusType> supports();
 
 
-    ThingsSofaBus create(ThingsComponentProperties property);
+    ThingsSofaBus create(ThingsSofaBusProperties property, ThingsChaining thingsChaining);
 
 }

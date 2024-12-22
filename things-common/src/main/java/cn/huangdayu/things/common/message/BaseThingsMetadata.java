@@ -4,6 +4,7 @@ import cn.huangdayu.things.common.constants.ThingsConstants;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * @author huangdayu
@@ -26,6 +27,12 @@ public class BaseThingsMetadata implements Serializable {
      * 物标识/设备标识
      */
     private String deviceCode;
+
+
+    /**
+     * 分组标识
+     */
+    private Set<String> groupCode;
 
     /**
      * 来源服务信息

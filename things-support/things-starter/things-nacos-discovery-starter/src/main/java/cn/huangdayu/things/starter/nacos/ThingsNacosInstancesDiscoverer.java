@@ -1,14 +1,14 @@
 package cn.huangdayu.things.starter.nacos;
 
-import cn.huangdayu.things.starter.endpoint.ThingsEndpointFactory;
+import cn.huangdayu.things.api.infrastructure.ThingsConfigService;
 import cn.huangdayu.things.api.instances.ThingsInstancesDiscoverer;
 import cn.huangdayu.things.api.instances.ThingsInstancesDslManager;
 import cn.huangdayu.things.api.instances.ThingsInstancesRegister;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.observer.event.ThingsInstancesChangedEvent;
-import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
+import cn.huangdayu.things.starter.endpoint.ThingsEndpointFactory;
 import cn.huangdayu.things.starter.instances.ThingsBaseInstancesDiscoverer;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
@@ -55,8 +55,8 @@ public class ThingsNacosInstancesDiscoverer extends ThingsBaseInstancesDiscovere
     @SneakyThrows
     public ThingsNacosInstancesDiscoverer(ThingsEventObserver thingsEventObserver,
                                           NacosServerProperties nacosServerProperties, ThingsEndpointFactory thingsEndpointFactory,
-                                          ThingsFrameworkProperties thingsFrameworkProperties, ThingsInstancesDslManager thingsInstancesDslManager) {
-        super(thingsFrameworkProperties, thingsEndpointFactory, thingsInstancesDslManager);
+                                          ThingsConfigService thingsConfigService, ThingsInstancesDslManager thingsInstancesDslManager) {
+        super(thingsConfigService, thingsEndpointFactory, thingsInstancesDslManager);
         Properties properties = new Properties();
         properties.putAll((JSONObject) JSON.toJSON(nacosServerProperties));
         this.nacosServerProperties = nacosServerProperties;

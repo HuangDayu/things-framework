@@ -1,6 +1,7 @@
 package cn.huangdayu.things.starter.endpoint;
 
 import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.starter.enums.EndpointGetterType;
 
 /**
  * 端点获取器，解决发送给谁的问题

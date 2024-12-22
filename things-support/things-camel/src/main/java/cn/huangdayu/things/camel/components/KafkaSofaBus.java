@@ -1,15 +1,14 @@
 package cn.huangdayu.things.camel.components;
 
 import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
-import cn.huangdayu.things.common.enums.ThingsComponentType;
-import cn.huangdayu.things.common.properties.ThingsComponentProperties;
+import cn.huangdayu.things.camel.CamelSofaBusConstructor;
+import cn.huangdayu.things.common.enums.ThingsSofaBusType;
+import cn.huangdayu.things.common.properties.ThingsSofaBusProperties;
 import lombok.Getter;
-import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.component.ComponentsBuilderFactory;
 import org.apache.camel.support.DefaultComponent;
 
-import static cn.huangdayu.things.common.enums.ThingsComponentType.KAFKA;
+import static cn.huangdayu.things.common.enums.ThingsSofaBusType.KAFKA;
 
 /**
  * @author huangdayu
@@ -17,17 +16,17 @@ import static cn.huangdayu.things.common.enums.ThingsComponentType.KAFKA;
 @Getter
 public class KafkaSofaBus extends AbstractCamelSofaBus implements ThingsSofaBus {
 
-    public KafkaSofaBus(CamelContext camelContext, ProducerTemplate producerTemplate) {
-        super(camelContext, producerTemplate);
+    public KafkaSofaBus(CamelSofaBusConstructor constructor) {
+        super(constructor);
     }
 
     @Override
-    public ThingsComponentType getType() {
+    public ThingsSofaBusType getType() {
         return KAFKA;
     }
 
     @Override
-    public DefaultComponent buildComponent(ThingsComponentProperties properties) {
+    public DefaultComponent buildComponent(ThingsSofaBusProperties properties) {
         return ComponentsBuilderFactory.kafka()
                 .brokers(properties.getServer())
                 .clientId(properties.getClientId())

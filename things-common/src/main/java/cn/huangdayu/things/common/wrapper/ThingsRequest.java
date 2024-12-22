@@ -2,12 +2,14 @@ package cn.huangdayu.things.common.wrapper;
 
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
  * @author huangdayu
  */
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

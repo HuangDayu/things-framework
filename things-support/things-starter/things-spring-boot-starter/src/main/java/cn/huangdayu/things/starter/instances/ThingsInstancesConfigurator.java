@@ -1,11 +1,11 @@
 package cn.huangdayu.things.starter.instances;
 
+import cn.huangdayu.things.api.infrastructure.ThingsConfigService;
 import cn.huangdayu.things.api.instances.ThingsInstancesManager;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.enums.ThingsInstanceType;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.observer.event.ThingsInstancesUpdatedEvent;
-import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsConfiguration;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.huangdayu.things.starter.endpoint.ThingsEndpointFactory;
@@ -24,7 +24,7 @@ public class ThingsInstancesConfigurator {
 
     private final ThingsInstancesManager thingsInstancesManager;
     private final ThingsEventObserver thingsEventObserver;
-    private final ThingsFrameworkProperties thingsFrameworkProperties;
+    private final ThingsConfigService thingsConfigService;
     private final ThingsEndpointFactory thingsEndpointFactory;
 
     @PostConstruct
@@ -45,12 +45,12 @@ public class ThingsInstancesConfigurator {
             if (StrUtil.isBlank(v.getUpstreamUri())) {
                 return true;
             }
-            return !v.getUpstreamUri().equals(thingsFrameworkProperties.getInstance().getUpstreamUri()) &&
+            return !v.getUpstreamUri().equals(thingsConfigService.getProperties().getInstance().getUpstreamUri()) &&
                     thingsInstances.stream().noneMatch(w -> w.getEndpointUri().equals(v.getUpstreamUri()));
         }).forEach(v -> {
             ThingsConfiguration thingsConfiguration = new ThingsConfiguration();
             thingsConfiguration.setInstanceCode(v.getCode());
-            thingsConfiguration.setUpstreamUri(thingsFrameworkProperties.getInstance().getEndpointUri());
+            thingsConfiguration.setUpstreamUri(thingsConfigService.getProperties().getInstance().getEndpointUri());
             thingsEndpointFactory.create(v.getEndpointUri()).configuration(thingsConfiguration);
         });
     }

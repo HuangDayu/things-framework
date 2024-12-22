@@ -1,6 +1,6 @@
 package cn.huangdayu.things.common.properties;
 
-import cn.huangdayu.things.common.enums.ThingsComponentType;
+import cn.huangdayu.things.common.enums.ThingsSofaBusType;
 import lombok.Data;
 
 import java.util.Map;
@@ -10,11 +10,13 @@ import java.util.Objects;
  * @author huangdayu
  */
 @Data
-public class ThingsComponentProperties {
+public class ThingsSofaBusProperties {
 
     private String name;
 
-    private ThingsComponentType type;
+    private boolean enable = true;
+
+    private ThingsSofaBusType type;
 
     private String server;
 
@@ -34,7 +36,7 @@ public class ThingsComponentProperties {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ThingsComponentProperties that = (ThingsComponentProperties) o;
+        ThingsSofaBusProperties that = (ThingsSofaBusProperties) o;
         return type == that.type && Objects.equals(server, that.server) && Objects.equals(clientId, that.clientId) && Objects.equals(groupId, that.groupId);
     }
 

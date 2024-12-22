@@ -10,9 +10,9 @@ import java.util.Set;
  * @author huangdayu
  */
 @Data
-public class ThingsFrameworkProperties {
+public class ThingsInstanceProperties {
 
-    public ThingsFrameworkProperties() {
+    public ThingsInstanceProperties() {
         this.servers = new ConcurrentHashSet<>();
         this.instance = new ThingsInstance();
     }
@@ -21,6 +21,11 @@ public class ThingsFrameworkProperties {
      * 其他服务列表
      */
     private Set<String> servers;
+
+    /**
+     * 软总线服务列表
+     */
+    private Set<ThingsSofaBusProperties> sofaBus;
 
 
     /**

@@ -1,13 +1,13 @@
-package cn.huangdayu.things.starter.endpoint.getter;
+package cn.huangdayu.things.starter.getter;
 
+import cn.huangdayu.things.api.infrastructure.ThingsConfigService;
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.starter.endpoint.EndpointGetterType;
+import cn.huangdayu.things.starter.enums.EndpointGetterType;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
-import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.starter.endpoint.ThingsEndpointGetter;
 import lombok.RequiredArgsConstructor;
 
-import static cn.huangdayu.things.starter.endpoint.EndpointGetterType.UPSTREAM;
+import static cn.huangdayu.things.starter.enums.EndpointGetterType.UPSTREAM;
 
 /**
  * @author huangdayu
@@ -16,7 +16,7 @@ import static cn.huangdayu.things.starter.endpoint.EndpointGetterType.UPSTREAM;
 @ThingsBean
 public class UpstreamEndpointGetter implements ThingsEndpointGetter {
 
-    private final ThingsFrameworkProperties thingsFrameworkProperties;
+    private final ThingsConfigService thingsConfigService;
 
 
     @Override
@@ -26,6 +26,6 @@ public class UpstreamEndpointGetter implements ThingsEndpointGetter {
 
     @Override
     public String getEndpointUri(JsonThingsMessage jtm) {
-        return thingsFrameworkProperties.getInstance().getUpstreamUri();
+        return thingsConfigService.getProperties().getInstance().getUpstreamUri();
     }
 }

@@ -3,7 +3,7 @@ package cn.huangdayu.things.starter;
 import cn.huangdayu.things.starter.endpoint.ThingsEndpoint;
 import cn.huangdayu.things.starter.endpoint.ThingsEndpointCreator;
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.starter.endpoint.EndpointCreatorType;
+import cn.huangdayu.things.starter.enums.EndpointCreatorType;
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
 import org.springframework.http.client.ClientHttpResponse;
@@ -19,7 +19,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import java.io.IOException;
 
-import static cn.huangdayu.things.starter.endpoint.EndpointCreatorType.RESTFUL;
+import static cn.huangdayu.things.starter.enums.EndpointCreatorType.RESTFUL;
 
 /**
  * @author huangdayu

@@ -4,7 +4,7 @@ import cn.huangdayu.things.api.container.ThingsRegister;
 import cn.huangdayu.things.starter.endpoint.ThingsEndpoint;
 import cn.huangdayu.things.api.instances.ThingsInstancesProvider;
 import cn.huangdayu.things.common.factory.ThreadPoolFactory;
-import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
+import cn.huangdayu.things.common.properties.ThingsInstanceProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -47,8 +47,8 @@ public class ThingsBootAutoConfiguration {
     @ConditionalOnMissingBean
     @Bean
     @ConfigurationProperties("things")
-    public ThingsFrameworkProperties thingsEngineProperties() {
-        return new ThingsFrameworkProperties();
+    public ThingsInstanceProperties thingsEngineProperties() {
+        return new ThingsInstanceProperties();
     }
 
     @ConditionalOnMissingBean

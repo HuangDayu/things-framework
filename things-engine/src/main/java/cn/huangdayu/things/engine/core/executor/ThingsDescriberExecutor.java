@@ -1,11 +1,11 @@
 package cn.huangdayu.things.engine.core.executor;
 
+import cn.huangdayu.things.api.infrastructure.ThingsConfigService;
 import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.dsl.*;
 import cn.huangdayu.things.common.message.BaseThingsMessage;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.observer.event.ThingsContainerUpdatedEvent;
-import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.engine.core.ThingsDescriber;
 import cn.huangdayu.things.engine.wrapper.ThingsEvents;
 import cn.huangdayu.things.engine.wrapper.ThingsFunction;
@@ -41,7 +41,7 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
 
     private static final String CACHE_KEY = "things_dsl_cache";
     private final ThingsEventObserver thingsEventObserver;
-    private final ThingsFrameworkProperties thingsFrameworkProperties;
+    private final ThingsConfigService thingsConfigService;
     private final Cache<String, DslInfo> CACHE = CacheUtil.newTimedCache(TimeUnit.MINUTES.toMillis(10L));
 
     @PostConstruct
@@ -55,7 +55,7 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
     }
 
     private DslInfo getDslInfo() {
-        return new DslInfo(thingsFrameworkProperties.getInstance(), getDomainInfo(), getThingsInfo());
+        return new DslInfo(thingsConfigService.getProperties().getInstance(), getDomainInfo(), getThingsInfo());
     }
 
     private Set<DomainInfo> getDomainInfo() {

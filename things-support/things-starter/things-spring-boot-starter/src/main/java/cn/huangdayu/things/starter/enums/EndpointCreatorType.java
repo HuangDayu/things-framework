@@ -1,4 +1,4 @@
-package cn.huangdayu.things.starter.endpoint;
+package cn.huangdayu.things.starter.enums;
 
 /**
  * @author huangdayu

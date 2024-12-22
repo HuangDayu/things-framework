@@ -1,5 +1,6 @@
 package cn.huangdayu.things.discovery;
 
+import cn.huangdayu.things.api.infrastructure.ThingsConfigService;
 import cn.huangdayu.things.api.instances.ThingsInstancesDslManager;
 import cn.huangdayu.things.api.instances.ThingsInstancesProvider;
 import cn.huangdayu.things.api.instances.ThingsInstancesSubscriber;
@@ -9,7 +10,6 @@ import cn.huangdayu.things.common.dsl.DomainSubscribeInfo;
 import cn.huangdayu.things.common.dsl.DslInfo;
 import cn.huangdayu.things.common.dsl.ThingsInfo;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
-import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
@@ -32,7 +32,7 @@ public class ThingsInstancesDslExecutor implements ThingsInstancesDslManager, Th
     public static final Set<DslInfo> DSL_INFO_SET = new ConcurrentHashSet<>();
     public static final Set<ThingsInfo> THINGS_INFO_SET = new ConcurrentHashSet<>();
     public static final Set<DomainInfo> DOMAIN_INFO_SET = new ConcurrentHashSet<>();
-    private final ThingsFrameworkProperties thingsFrameworkProperties;
+    private final ThingsConfigService thingsConfigService;
 
     @Override
     public void addAllDsl(DslInfo dslInfo) {
@@ -49,7 +49,7 @@ public class ThingsInstancesDslExecutor implements ThingsInstancesDslManager, Th
 
     @Override
     public DslInfo getDsl() {
-        return new DslInfo(thingsFrameworkProperties.getInstance(), DOMAIN_INFO_SET, THINGS_INFO_SET);
+        return new DslInfo(thingsConfigService.getProperties().getInstance(), DOMAIN_INFO_SET, THINGS_INFO_SET);
     }
 
     @Override

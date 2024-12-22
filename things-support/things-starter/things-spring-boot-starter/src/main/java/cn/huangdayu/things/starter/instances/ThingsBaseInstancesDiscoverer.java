@@ -1,8 +1,8 @@
 package cn.huangdayu.things.starter.instances;
 
+import cn.huangdayu.things.api.infrastructure.ThingsConfigService;
 import cn.huangdayu.things.api.instances.ThingsInstancesDslManager;
 import cn.huangdayu.things.common.dsl.DslInfo;
-import cn.huangdayu.things.common.properties.ThingsFrameworkProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.huangdayu.things.starter.endpoint.ThingsEndpointFactory;
 import cn.hutool.core.collection.CollUtil;
@@ -21,7 +21,7 @@ import static cn.huangdayu.things.common.enums.ThingsInstanceType.GATEWAY;
 @RequiredArgsConstructor
 public abstract class ThingsBaseInstancesDiscoverer {
 
-    private final ThingsFrameworkProperties thingsFrameworkProperties;
+    private final ThingsConfigService thingsConfigService;
     private final ThingsEndpointFactory thingsEndpointFactory;
     private final ThingsInstancesDslManager thingsInstancesDslManager;
 
@@ -31,7 +31,7 @@ public abstract class ThingsBaseInstancesDiscoverer {
         if (CollUtil.isEmpty(servers)) {
             return thingsInstances;
         }
-        ThingsInstance thingsInstance = this.thingsFrameworkProperties.getInstance();
+        ThingsInstance thingsInstance = this.thingsConfigService.getProperties().getInstance();
         for (String server : servers) {
             try {
                 if (server.equals(thingsInstance.getEndpointUri())) {

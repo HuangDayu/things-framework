@@ -1,14 +1,12 @@
 package cn.huangdayu.things.client.proxy;
 
-import cn.huangdayu.things.api.message.ThingsChaining;
+import cn.huangdayu.things.api.message.ThingsPublisher;
 import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.constants.ThingsConstants;
 import cn.huangdayu.things.common.message.AbstractThingsMessage;
 import cn.huangdayu.things.common.message.BaseThingsMessage;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.utils.ThingsUtils;
-import cn.huangdayu.things.common.wrapper.ThingsRequest;
-import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
@@ -33,7 +31,7 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.getReturnType;
 @Slf4j
 public class ThingsClientsProxy {
 
-    private final ThingsChaining thingsChaining;
+    private final ThingsPublisher thingsPublisher;
 
     public Object invokeService(ThingsClient thingsClient, ThingsService thingsService, Method method, Object[] args) {
         JsonThingsMessage jtm = buildThingsMessage(thingsClient, thingsService, method, args);
@@ -45,29 +43,26 @@ public class ThingsClientsProxy {
 
     @SneakyThrows
     private Object reactorInvoke(Method method, JsonThingsMessage request) {
-        ThingsResponse thingsResponse = new ThingsResponse();
-        thingsChaining.output(new ThingsRequest(request), thingsResponse);
+        Mono<JsonThingsMessage> jtm = thingsPublisher.reactorSendMessage(request);
         Type type = getReturnType(method)[0];
         if (method.getReturnType().isAssignableFrom(Mono.class)) {
             if (type.equals(JsonThingsMessage.class)) {
-                return Mono.just(thingsResponse.getJtm());
+                return jtm;
             }
-            return Mono.just(thingsResponse.getJtm().getPayload().toJavaObject(type));
+            return Mono.just(jtm.block().getPayload().toJavaObject(type));
         }
 
         if (method.getReturnType().isAssignableFrom(Flux.class)) {
             if (type.equals(JsonThingsMessage.class)) {
-                return Flux.just(thingsResponse.getJtm());
+                return jtm.flux();
             }
-            return Flux.just(thingsResponse.getJtm().getPayload().toJavaObject(type));
+            return Flux.just(jtm.block().getPayload().toJavaObject(type));
         }
-        return thingsResponse.getJtm().toJson().toJavaObject(type);
+        return jtm.block().toJson().toJavaObject(type);
     }
 
     private Object syncInvoke(Method method, JsonThingsMessage request) {
-        ThingsResponse thingsResponse = new ThingsResponse();
-        thingsChaining.output(new ThingsRequest(request), thingsResponse);
-        JsonThingsMessage response = thingsResponse.getJtm();
+        JsonThingsMessage response = thingsPublisher.syncSendMessage(request);
         if (response == null) {
             return null;
         }
