@@ -14,6 +14,10 @@ import java.io.Serializable;
 import java.util.function.Consumer;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.*;
+import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.THINGS_IDENTIFIER;
+import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.THINGS_SERVICE_RESPONSE;
+import static cn.huangdayu.things.common.utils.ThingsUtils.isServiceRequest;
+import static cn.huangdayu.things.common.utils.ThingsUtils.subIdentifies;
 
 
 /**
@@ -54,49 +58,25 @@ public class JsonThingsMessage extends AbstractThingsMessage<JSONObject, JSONObj
     @JsonIgnore
     @JSONField(serialize = false, deserialize = false)
     public JsonThingsMessage clientError(String errorTraceCode) {
-        JsonThingsMessage response = cloneMessage();
-        response.setBaseMetadata(thingsMetadata -> {
-            thingsMetadata.setErrorCode(BAD_REQUEST);
-            thingsMetadata.setErrorMessage("Client error");
-            thingsMetadata.setErrorTraceCode(errorTraceCode);
-        });
-        return response;
+        return response(BAD_REQUEST, "Client error", errorTraceCode, null);
     }
 
     @JsonIgnore
     @JSONField(serialize = false, deserialize = false)
     public JsonThingsMessage notFound(String errorTraceCode) {
-        JsonThingsMessage response = cloneMessage();
-        response.setBaseMetadata(thingsMetadata -> {
-            thingsMetadata.setErrorCode(NOT_FOUND);
-            thingsMetadata.setErrorMessage("Not found");
-            thingsMetadata.setErrorTraceCode(errorTraceCode);
-        });
-        return response;
+        return response(NOT_FOUND, "Not found", errorTraceCode, null);
     }
 
     @JsonIgnore
     @JSONField(serialize = false, deserialize = false)
     public JsonThingsMessage serverError(String errorTraceCode) {
-        JsonThingsMessage response = cloneMessage();
-        response.setBaseMetadata(thingsMetadata -> {
-            thingsMetadata.setErrorCode(ERROR);
-            thingsMetadata.setErrorMessage("Server error");
-            thingsMetadata.setErrorTraceCode(errorTraceCode);
-        });
-        return response;
+        return response(ERROR, "Server error", errorTraceCode, null);
     }
 
     @JsonIgnore
     @JSONField(serialize = false, deserialize = false)
     public JsonThingsMessage serverError(String errorTraceCode, String errorMessage) {
-        JsonThingsMessage response = cloneMessage();
-        response.setBaseMetadata(thingsMetadata -> {
-            thingsMetadata.setErrorCode(ERROR);
-            thingsMetadata.setErrorMessage(errorMessage);
-            thingsMetadata.setErrorTraceCode(errorTraceCode);
-        });
-        return response;
+        return response(ERROR, errorMessage, errorTraceCode, null);
     }
 
 
@@ -109,35 +89,36 @@ public class JsonThingsMessage extends AbstractThingsMessage<JSONObject, JSONObj
     @JsonIgnore
     @JSONField(serialize = false, deserialize = false)
     public JsonThingsMessage success(Object payload) {
-        JsonThingsMessage response = cloneMessage();
-        response.setBaseMetadata(thingsMetadata -> {
-            thingsMetadata.setErrorCode(SUCCESS);
-            thingsMetadata.setErrorMessage("Success");
-        });
-        response.setPayload((JSONObject) JSON.toJSON(payload));
-        return response;
+        return response(SUCCESS, "Success", null, payload);
     }
 
     @JsonIgnore
     @JSONField(serialize = false, deserialize = false)
     public JsonThingsMessage exception(ThingsException thingsException) {
-        JsonThingsMessage response = cloneMessage();
-        response.setBaseMetadata(thingsMetadata -> {
-            thingsMetadata.setErrorCode(thingsException.getErrorCode());
-            thingsMetadata.setErrorMessage(thingsException.getErrorMessage());
-            thingsMetadata.setErrorTraceCode(thingsException.getErrorTraceCode());
-        });
-        return response;
+        return response(thingsException.getErrorCode(), thingsException.getErrorMessage(), thingsException.getErrorTraceCode(), null);
     }
 
     @JsonIgnore
     @JSONField(serialize = false, deserialize = false)
     public JsonThingsMessage timeout() {
+        return response(GATEWAY_TIMEOUT, "Async timeout", null, null);
+    }
+
+    @JsonIgnore
+    @JSONField(serialize = false, deserialize = false)
+    private JsonThingsMessage response(String errorCode, String errorMessage, String errorTraceCode, Object payload) {
         JsonThingsMessage response = cloneMessage();
         response.setBaseMetadata(thingsMetadata -> {
-            thingsMetadata.setErrorCode(GATEWAY_TIMEOUT);
-            thingsMetadata.setErrorMessage("Async timeout");
+            thingsMetadata.setErrorCode(errorCode);
+            thingsMetadata.setErrorMessage(errorMessage);
+            thingsMetadata.setErrorTraceCode(errorTraceCode);
         });
+        if (payload != null) {
+            response.setPayload((JSONObject) JSON.toJSON(payload));
+        }
+        if (isServiceRequest(response)) {
+            response.setMethod(THINGS_SERVICE_RESPONSE.replace(THINGS_IDENTIFIER, subIdentifies(response.getMethod())));
+        }
         return response;
     }
 

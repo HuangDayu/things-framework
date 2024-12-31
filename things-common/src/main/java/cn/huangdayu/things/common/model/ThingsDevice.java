@@ -14,7 +14,7 @@ public abstract class ThingsDevice {
 
     public abstract Set<ThingsService> getServices();
 
-    public abstract ThingsProperties getThingsProperties();
+    public abstract <T> T getPropertyEntity();
 
     public abstract <T> T getProperty(String identifier);
 

@@ -1401,20 +1401,23 @@ public final class ThingsConstants {
 
     /**
      * method常量
+     *
+     * things.${methodType}.${identifier}.${methodAction}
+     * thing.service.identifier.request
+     * thing.service.identifier.response
+     * thing.event.identifier.post
+     * thing.properties.all.set
+     * thing.properties.all.get
+     * thing.properties.all.post
      */
     public static class Methods {
-        public static final String IDENTIFIER = "identifier";
-        public static final String SERVICE = "thing.service.identifier";
-        public static final String SERVICE_START_WITH = "thing.service.";
-        public static final String EVENT_LISTENER = "thing.event.identifier";
-        public static final String EVENT_LISTENER_START_WITH = "thing.event.";
-        public static final String EVENT_POST = "thing.event.identifier.type.post";
-        public static final String EVENT_TYPE = "type";
-        public static final String EVENT_TYPE_POST = ".type.post";
-        public static final String PROPERTY_METHOD_START_WITH = "thing.property.";
-        public static final String PROPERTY_SET = "thing.property.set";
-        public static final String PROPERTY_GET = "thing.property.get";
-        public static final String PROPERTY_POST = "thing.property.post";
+        public static final String THINGS_IDENTIFIER = "identifier";
+        public static final String THINGS_SERVICE_REQUEST = "thing.service.identifier.request";
+        public static final String THINGS_SERVICE_RESPONSE = "thing.service.identifier.response";
+        public static final String THINGS_EVENT_POST = "thing.event.identifier.post";
+        public static final String THINGS_PROPERTIES_SET = "thing.properties.all.set";
+        public static final String THINGS_PROPERTIES_GET = "thing.properties.all.get";
+        public static final String THINGS_PROPERTIES_POST = "thing.properties.all.post";
     }
 
     /**

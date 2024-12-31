@@ -2,7 +2,6 @@ package cn.huangdayu.things.client.proxy;
 
 import cn.huangdayu.things.api.message.ThingsPublisher;
 import cn.huangdayu.things.common.annotation.*;
-import cn.huangdayu.things.common.constants.ThingsConstants;
 import cn.huangdayu.things.common.message.AbstractThingsMessage;
 import cn.huangdayu.things.common.message.BaseThingsMessage;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
@@ -21,6 +20,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 
+import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.THINGS_IDENTIFIER;
+import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.THINGS_SERVICE_REQUEST;
 import static cn.huangdayu.things.common.utils.ThingsUtils.getReturnType;
 
 /**
@@ -90,7 +91,7 @@ public class ThingsClientsProxy {
                 baseThingsMetadata.setTargetCode(thingsClient.uri());
             }
         });
-        jtm.setMethod(ThingsConstants.Methods.SERVICE_START_WITH.concat(identifier));
+        jtm.setMethod(THINGS_SERVICE_REQUEST.replace(THINGS_IDENTIFIER, identifier));
         return jtm;
     }
 

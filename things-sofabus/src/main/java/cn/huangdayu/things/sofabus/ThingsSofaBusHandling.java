@@ -23,10 +23,10 @@ public class ThingsSofaBusHandling implements ThingsHandling {
 
     @Override
     public void doHandle(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        Set<ThingsSofaBus> thingsSofaBus = thingsSofaBusFactory.getThingsSofaBus();
+        Set<ThingsSofaBus> thingsSofaBus = thingsSofaBusFactory.getAllSofaBus();
         for (ThingsSofaBus bus : thingsSofaBus) {
             if (bus.isStarted()) {
-                for (String topicCode : thingsSofaBusTopics.getPublishTopicCodes(thingsRequest)) {
+                for (String topicCode : thingsSofaBusTopics.getSubscribeTopics(thingsRequest)) {
                     bus.output(topicCode, thingsRequest, thingsResponse);
                 }
             }

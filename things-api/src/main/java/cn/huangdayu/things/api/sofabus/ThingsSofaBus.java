@@ -17,11 +17,11 @@ public interface ThingsSofaBus {
 
     boolean stop();
 
-    boolean output(String topicCode, ThingsRequest thingsRequest, ThingsResponse thingsResponse);
+    boolean output(String topic, ThingsRequest thingsRequest, ThingsResponse thingsResponse);
 
-    boolean subscribe(String topicCode);
+    boolean subscribe(String topic);
 
-    boolean unsubscribe(String topicCode);
+    boolean unsubscribe(String topic);
 
     boolean isStarted();
 

@@ -16,7 +16,7 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 @Documented
 @Scope(value = SCOPE_PROTOTYPE)
 @ThingsBean
-public @interface ThingsEvent {
+public @interface ThingsEventEntity {
 
     /**
      * 是否启用

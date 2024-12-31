@@ -48,8 +48,8 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         }
         long start = System.currentTimeMillis();
         findBeans(thingsContainer, Things.class, this::findThingsFunctions);
-        findBeans(thingsContainer, ThingsProperty.class, this::findThingsProperties);
-        findBeans(thingsContainer, ThingsEvent.class, this::findThingsEvents);
+        findBeans(thingsContainer, ThingsPropertyEntity.class, this::findThingsProperties);
+        findBeans(thingsContainer, ThingsEventEntity.class, this::findThingsEvents);
         findBeans(thingsContainer, ThingsListener.class, this::findThingsListener);
         findBeans(thingsContainer, ThingsFilter.class, this::findThingsFilters);
         findBeans(thingsContainer, ThingsInterceptor.class, this::findThingsInterceptors);
@@ -124,23 +124,23 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         }
     }
 
-    private void findThingsProperties(ThingsContainer thingsContainer, ThingsProperty thingsProperty, Object bean) {
-        if (!thingsProperty.enabled()) {
+    private void findThingsProperties(ThingsContainer thingsContainer, ThingsPropertyEntity thingsPropertyEntity, Object bean) {
+        if (!thingsPropertyEntity.enabled()) {
             return;
         }
-        if (PRODUCT_PROPERTY_MAP.get(thingsProperty.productCode()) == null) {
-            PRODUCT_PROPERTY_MAP.put(thingsProperty.productCode(), new ThingsPropertyWrapper(thingsContainer, thingsProperty, bean));
+        if (PRODUCT_PROPERTY_MAP.get(thingsPropertyEntity.productCode()) == null) {
+            PRODUCT_PROPERTY_MAP.put(thingsPropertyEntity.productCode(), new ThingsProperty(thingsContainer, thingsPropertyEntity, bean));
         } else {
             log.error("Duplicate registration ThingsProperty ({}), only effective once, effective ThingsProperty {} , invalid ThingsProperty : {}",
-                    thingsProperty.productCode(), PRODUCT_PROPERTY_MAP.get(thingsProperty.productCode()).getBean().getClass(), bean.getClass());
+                    thingsPropertyEntity.productCode(), PRODUCT_PROPERTY_MAP.get(thingsPropertyEntity.productCode()).getBean().getClass(), bean.getClass());
         }
     }
 
-    private void findThingsEvents(ThingsContainer thingsContainer, ThingsEvent thingsEvent, Object bean) {
-        if (!thingsEvent.enabled()) {
+    private void findThingsEvents(ThingsContainer thingsContainer, ThingsEventEntity thingsEventEntity, Object bean) {
+        if (!thingsEventEntity.enabled()) {
             return;
         }
-        THINGS_EVENTS_TABLE.put(thingsEvent.identifier(), thingsEvent.productCode(), new ThingsEvents(thingsContainer, thingsEvent, bean));
+        THINGS_EVENTS_TABLE.put(thingsEventEntity.identifier(), thingsEventEntity.productCode(), new ThingsEvents(thingsContainer, thingsEventEntity, bean));
     }
 
     private void findThingsFunctions(ThingsContainer thingsContainer, Things things, Object bean) {

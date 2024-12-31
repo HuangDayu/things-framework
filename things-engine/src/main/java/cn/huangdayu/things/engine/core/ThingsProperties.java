@@ -13,7 +13,7 @@ public interface ThingsProperties {
      * @param <T>
      * @return
      */
-    <T> T getProperties(String productCode);
+    <T> T getPropertyEntity(String productCode);
 
     /**
      * 获取设备配置信息对象
@@ -23,7 +23,7 @@ public interface ThingsProperties {
      * @param <T>
      * @return
      */
-    <T> T getProperties(String productCode, String deviceCode);
+    <T> T getPropertyEntity(String productCode, String deviceCode);
 
 
     /**
@@ -36,5 +36,33 @@ public interface ThingsProperties {
      * @return
      */
     <T> T getProperty(String productCode, String deviceCode, String propertyName);
+
+
+    /**
+     * 设置配置值
+     *
+     * @param productCode
+     * @param deviceCode
+     * @param propertyName
+     * @param value
+     */
+    void setProperty(String productCode, String deviceCode, String propertyName, Object value);
+
+
+    /**
+     * 更新配置对象信息
+     * @param productCode
+     * @param deviceCode
+     * @param properties
+     */
+    void updatePropertyEntity(String productCode, String deviceCode, Object properties);
+
+
+    /**
+     * 上报设备属性
+     * @param productCode
+     * @param deviceCode
+     */
+    void postProperty(String productCode, String deviceCode);
 
 }

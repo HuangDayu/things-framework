@@ -67,9 +67,9 @@ public abstract class AbstractCamelSofaBus implements ThingsSofaBus {
     }
 
     @Override
-    public boolean output(String topicCode, ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
+    public boolean output(String topic, ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
         checkComponentInit();
-        constructor.getProducerTemplate().sendBody(getTopic(topicCode), thingsRequest.getJtm().toString());
+        constructor.getProducerTemplate().sendBody(getTopic(topic), thingsRequest.getJtm().toString());
         return true;
     }
 

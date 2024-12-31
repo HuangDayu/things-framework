@@ -35,12 +35,12 @@ public abstract class ThingsBaseExecutor {
     /**
      * productCode vs ThingsProperties
      */
-    protected static final Map<String, ThingsPropertyWrapper> PRODUCT_PROPERTY_MAP = new ConcurrentHashMap<>();
+    protected static final Map<String, ThingsProperty> PRODUCT_PROPERTY_MAP = new ConcurrentHashMap<>();
 
     /**
      * deviceCode vs productCode vs ThingsProperties
      */
-    protected static final Table<String, String, ThingsPropertyWrapper> DEVICE_PROPERTY_MAP = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
+    protected static final Table<String, String, ThingsProperty> DEVICE_PROPERTY_MAP = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
 
 
     /**

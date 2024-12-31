@@ -1,6 +1,6 @@
 package cn.huangdayu.things.engine.wrapper;
 
-import cn.huangdayu.things.common.annotation.ThingsProperty;
+import cn.huangdayu.things.common.annotation.ThingsPropertyEntity;
 import cn.huangdayu.things.api.container.ThingsContainer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,11 +10,11 @@ import lombok.Data;
  */
 @AllArgsConstructor
 @Data
-public class ThingsPropertyWrapper {
+public class ThingsProperty {
 
     private ThingsContainer thingsContainer;
 
-    private ThingsProperty thingsProperty;
+    private ThingsPropertyEntity thingsPropertyEntity;
 
     private Object bean;
 }

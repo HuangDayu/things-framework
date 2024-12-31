@@ -10,7 +10,7 @@ import cn.huangdayu.things.engine.core.ThingsDescriber;
 import cn.huangdayu.things.engine.wrapper.ThingsEvents;
 import cn.huangdayu.things.engine.wrapper.ThingsFunction;
 import cn.huangdayu.things.engine.wrapper.ThingsParameter;
-import cn.huangdayu.things.engine.wrapper.ThingsPropertyWrapper;
+import cn.huangdayu.things.engine.wrapper.ThingsProperty;
 import cn.hutool.cache.Cache;
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.core.collection.CollUtil;
@@ -125,9 +125,9 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
 
     private Set<ThingsParamInfo> getProperties(String productCode) {
         Set<ThingsParamInfo> params = new ConcurrentHashSet<>();
-        ThingsPropertyWrapper thingsPropertyWrapper = PRODUCT_PROPERTY_MAP.get(productCode);
-        if (thingsPropertyWrapper != null) {
-            params.addAll(getParams(thingsPropertyWrapper.getBean().getClass(), true));
+        ThingsProperty thingsProperty = PRODUCT_PROPERTY_MAP.get(productCode);
+        if (thingsProperty != null) {
+            params.addAll(getParams(thingsProperty.getBean().getClass(), true));
         }
         return params;
     }
@@ -135,7 +135,7 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
     private Set<ThingsEventInfo> getEvents(String productCode) {
         Map<String, ThingsEvents> map = THINGS_EVENTS_TABLE.getColumn(productCode);
         return map.values().stream().map(thingsEvents -> {
-            ThingsEventInfo events = copyAnnotationValues(thingsEvents.getThingsEvent(), new ThingsEventInfo());
+            ThingsEventInfo events = copyAnnotationValues(thingsEvents.getThingsEventEntity(), new ThingsEventInfo());
             events.setOutputData(getParams(thingsEvents.getBean().getClass()));
             return events;
         }).collect(Collectors.toSet());

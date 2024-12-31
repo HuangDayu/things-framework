@@ -19,6 +19,7 @@ public class ThingsSubscribes implements Serializable {
     private String productCode;
     private String deviceCode;
     private String methodType;
+    private String methodAction;
     private String identifier;
 
 

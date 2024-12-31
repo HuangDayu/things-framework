@@ -4,7 +4,6 @@ import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.message.AbstractThingsMessage;
 import cn.huangdayu.things.common.message.BaseThingsMessage;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
-import cn.huangdayu.things.engine.core.ThingsConverter;
 import cn.huangdayu.things.engine.core.ThingsProperties;
 import cn.huangdayu.things.engine.wrapper.ThingsFunction;
 import cn.huangdayu.things.engine.wrapper.ThingsParameter;
@@ -28,7 +27,7 @@ import static cn.huangdayu.things.engine.core.executor.ThingsBaseExecutor.getThi
 @Slf4j
 @ThingsBean
 @RequiredArgsConstructor
-public class ThingsArgsConverter implements ThingsConverter {
+public class ThingsArgsConverter {
     private final ThingsProperties thingsProperties;
 
 
@@ -41,7 +40,6 @@ public class ThingsArgsConverter implements ThingsConverter {
     );
 
 
-    @Override
     public Object[] args(JsonThingsMessage jtm, ThingsFunction thingsFunction) {
         ThingsParameter[] thingsParameters = thingsFunction.getThingsParameters();
         Object[] args = new Object[thingsParameters.length];
@@ -70,14 +68,14 @@ public class ThingsArgsConverter implements ThingsConverter {
         ThingsParameter thingsParameter = war.getThingsParameter();
         JsonThingsMessage jtm = war.getJtm();
         ThingsFunction thingsFunction = war.getThingsFunction();
-        ThingsProperty annotation = thingsParameter.getType().getAnnotation(ThingsProperty.class);
+        ThingsPropertyEntity annotation = thingsParameter.getType().getAnnotation(ThingsPropertyEntity.class);
         if (annotation != null) {
             String productCode = jtm.getBaseMetadata().getProductCode();
             if (annotation.productCode().equals(productCode)) {
                 if (annotation.productPublic()) {
-                    return thingsProperties.getProperties(productCode);
+                    return thingsProperties.getPropertyEntity(productCode);
                 } else {
-                    return thingsProperties.getProperties(productCode, jtm.getBaseMetadata().getDeviceCode());
+                    return thingsProperties.getPropertyEntity(productCode, jtm.getBaseMetadata().getDeviceCode());
                 }
             }
             log.error("物模型方法调用需要注入的配置对象与产品标识不一致（{}），方法：{}，参数：{}", productCode, thingsFunction.getMethod().getName(), thingsParameter.getName());

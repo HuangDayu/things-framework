@@ -1,6 +1,6 @@
 package cn.huangdayu.things.common.utils;
 
-import cn.huangdayu.things.common.annotation.ThingsEvent;
+import cn.huangdayu.things.common.annotation.ThingsEventEntity;
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.message.ThingsEventMessage;
@@ -180,29 +180,23 @@ public class ThingsUtils {
 
 
     public static String subIdentifies(String method) {
-        if (method.startsWith(SERVICE_START_WITH)) {
-            return method.replace(SERVICE_START_WITH, "");
-        }
-        if (method.startsWith(PROPERTY_METHOD_START_WITH)) {
-            return method.replace(PROPERTY_METHOD_START_WITH, "");
-        }
-        return method.substring(0, method.indexOf(".", 12)).replace(EVENT_LISTENER_START_WITH, "");
+        return method.split("\\.")[2];
     }
 
 
     public static JsonThingsMessage covertEventMessage(ThingsEventMessage tem) {
-        ThingsEvent thingsEvent = findBeanAnnotation(tem, ThingsEvent.class);
-        if (thingsEvent == null) {
+        ThingsEventEntity thingsEventEntity = findBeanAnnotation(tem, ThingsEventEntity.class);
+        if (thingsEventEntity == null) {
             throw new ThingsException(BAD_REQUEST, "Message object is not ThingsEvent entry.");
         }
         JsonThingsMessage jtm = new JsonThingsMessage();
         jtm.setBaseMetadata(baseThingsMetadata -> {
-            baseThingsMetadata.setProductCode(thingsEvent.productCode());
+            baseThingsMetadata.setProductCode(thingsEventEntity.productCode());
             baseThingsMetadata.setDeviceCode(tem.getDeviceCode());
         });
-        jtm.setQos(thingsEvent.qos());
+        jtm.setQos(thingsEventEntity.qos());
         jtm.setPayload((JSONObject) JSON.toJSON(tem, JSONWriter.Feature.WriteNulls));
-        jtm.setMethod(EVENT_LISTENER_START_WITH.concat(thingsEvent.identifier()).concat(EVENT_TYPE_POST.replace(EVENT_TYPE, thingsEvent.type())));
+        jtm.setMethod(THINGS_EVENT_POST.replace(THINGS_IDENTIFIER, thingsEventEntity.identifier()));
         return jtm;
     }
 
@@ -259,5 +253,17 @@ public class ThingsUtils {
             case "struct" -> Object.class;
             default -> throw new IllegalArgumentException("Unsupported type name: " + typeName);
         };
+    }
+
+    public static boolean isServiceRequest(JsonThingsMessage jtm) {
+        return THINGS_SERVICE_REQUEST.equals(jtm.getMethod().replace(subIdentifies(jtm.getMethod()), THINGS_IDENTIFIER));
+    }
+
+    public static boolean isPropertiesSetOrGet(JsonThingsMessage jtm) {
+        return THINGS_PROPERTIES_SET.equals(jtm.getMethod()) || THINGS_PROPERTIES_GET.equals(jtm.getMethod());
+    }
+
+    public static boolean isEventPost(JsonThingsMessage jtm) {
+        return THINGS_EVENT_POST.equals(jtm.getMethod().replace(subIdentifies(jtm.getMethod()), THINGS_IDENTIFIER));
     }
 }

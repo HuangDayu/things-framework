@@ -1,0 +1,97 @@
+{
+  "服务调用": {
+    "id": "d9fb2270c9d74c7482ae8a6512e64f24",
+    "metadata": {
+      "deviceCode": "streaming-device-one",
+      "productCode": "streaming-adapter"
+    },
+    "method": "thing.service.captureStreaming.request",
+    "payload": {
+      "sourceUrl": "https://yzzy1.play-cdn1.com/20240322/30956_f5492326/2000k/hls/mixed.m3u8",
+      "taskCode": "6f51428097604374b9ba085f6fbe5312"
+    },
+    "qos": 0,
+    "time": 1733933831399,
+    "timeout": 10000,
+    "version": "1"
+  },
+  "服务响应": {
+    "id": "d9fb2270c9d74c7482ae8a6512e64f24",
+    "metadata": {
+      "deviceCode": "streaming-device-one",
+      "productCode": "streaming-adapter",
+      "errorCode": "200",
+      "errorMessage": "Success"
+    },
+    "method": "thing.service.captureStreaming.response",
+    "payload": {
+      "filePath": "E:\\Code\\me\\wwgy-cloud\\temp\\files\\image\\1733935074598_250478.jpg",
+      "sourceUrl": "https://yzzy1.play-cdn1.com/20240322/30956_f5492326/2000k/hls/mixed.m3u8",
+      "taskCode": "6f51428097604374b9ba085f6fbe5312"
+    },
+    "qos": 0,
+    "time": 1733935074566,
+    "timeout": 10000,
+    "version": "1"
+  },
+  "事件上报": {
+    "id": "129c847e8d464a6eb344179fc48c1cdc",
+    "metadata": {
+      "productCode": "streaming-adapter"
+    },
+    "method": "thing.event.recordingEnd.post",
+    "payload": {
+      "enableAcc": true,
+      "manySeconds": 20,
+      "sourceUrl": "https://yzzy1.play-cdn1.com/20240322/30956_f5492326/2000k/hls/mixed.m3u8",
+      "taskCode": "f82caf7630a04d418c7c13b14b62af17",
+      "videoPath": "E:\\Code\\me\\wwgy-cloud\\temp\\files\\video\\a1ba63c5ba204aaa97849725dfb72838.mp4"
+    },
+    "qos": 1,
+    "time": 1733935083027,
+    "timeout": 1000,
+    "version": "1"
+  },
+  "属性设置": {
+    "id": "129c847e8d464a6eb344179fc48c1345",
+    "metadata": {
+      "productCode": "streaming-adapter"
+    },
+    "method": "thing.properties.all.set",
+    "payload": {
+      "enableAcc": true,
+      "manySeconds": 20
+    },
+    "qos": 1,
+    "time": 1733935083097,
+    "timeout": 1000,
+    "version": "1"
+  },
+  "属性读取": {
+    "id": "129c847e8d464a6eb344179fc48c1346",
+    "metadata": {
+      "productCode": "streaming-adapter"
+    },
+    "method": "thing.properties.all.get",
+    "payload": {},
+    "qos": 1,
+    "time": 1733935083097,
+    "timeout": 1000,
+    "version": "1"
+  },
+  "属性上报": {
+    "id": "129c847e8d464a6eb344179fc48c1347",
+    "metadata": {
+      "productCode": "streaming-adapter"
+    },
+    "method": "thing.properties.all.post",
+    "payload": {
+      "enableAcc": true,
+      "manySeconds": 20
+    },
+    "qos": 1,
+    "time": 1733935083097,
+    "timeout": 1000,
+    "version": "1"
+  }
+}

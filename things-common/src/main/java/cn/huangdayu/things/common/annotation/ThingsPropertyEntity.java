@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ThingsBean
-public @interface ThingsProperty {
+public @interface ThingsPropertyEntity {
 
     /**
      * 是否启用
