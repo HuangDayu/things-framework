@@ -2,8 +2,8 @@ plugins {
     id 'base'
     id 'idea'
     id 'java-platform'
-    id 'org.springframework.boot' version '3.2.7'
-    id 'io.spring.dependency-management' version '1.1.6'
+    id 'org.springframework.boot' version '3.4.5'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group 'cn.huangdayu.things'
@@ -12,13 +12,13 @@ version '2024.1.0'
 
 ext {
     thingsFrameworkVersion = '2024.1.0'
-    springAlibabaVersion = '2023.0.1.2'
-    springBootVersion = '3.2.7'
-    springCloudVersion = '2023.0.3'
+    springAlibabaVersion = '2023.0.3.2'
+    springBootVersion = '3.4.5'
+    springCloudVersion = '2024.0.1'
     kouplelessVersion = "2.1.4"
-    nacosVersion = '2.4.0'
+    nacosVersion = '3.0.0'
     hutoolVersion = '5.8.31'
-    camelVersion = '4.7.0'
+    camelVersion = '4.11.0'
     fastjson2Version = '2.0.52'
 }
 

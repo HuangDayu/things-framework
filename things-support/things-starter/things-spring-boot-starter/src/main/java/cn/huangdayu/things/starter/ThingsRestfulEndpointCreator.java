@@ -67,16 +67,7 @@ public class ThingsRestfulEndpointCreator implements ThingsEndpointCreator {
         simpleClientHttpRequestFactory.setConnectTimeout(2000);
         simpleClientHttpRequestFactory.setReadTimeout(5000);
         restTemplate.setRequestFactory(simpleClientHttpRequestFactory);
-        restTemplate.setErrorHandler(new ResponseErrorHandler() {
-            @Override
-            public boolean hasError(ClientHttpResponse response) throws IOException {
-                return true;
-            }
-
-            @Override
-            public void handleError(ClientHttpResponse response) throws IOException {
-            }
-        });
+        restTemplate.setErrorHandler(response -> true);
         RestTemplateAdapter restTemplateAdapter = RestTemplateAdapter.create(restTemplate);
         return createProxyClient(serviceType, restTemplateAdapter);
     }
