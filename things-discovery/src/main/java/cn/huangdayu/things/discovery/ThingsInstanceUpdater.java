@@ -1,6 +1,6 @@
 package cn.huangdayu.things.discovery;
 
-import cn.huangdayu.things.api.infrastructure.ThingsConfigService;
+import cn.huangdayu.things.api.infrastructure.ThingsPropertiesService;
 import cn.huangdayu.things.api.instances.ThingsInstancesRegister;
 import cn.huangdayu.things.api.instances.ThingsInstancesServer;
 import cn.huangdayu.things.api.instances.ThingsInstancesTypeFinder;
@@ -27,7 +27,7 @@ import static cn.hutool.core.text.CharSequenceUtil.firstNonBlank;
 @RequiredArgsConstructor
 public class ThingsInstanceUpdater {
     private final ThingsInstancesServer thingsInstancesServer;
-    private final ThingsConfigService thingsConfigService;
+    private final ThingsPropertiesService thingsConfigService;
     private final ThingsEventObserver thingsEventObserver;
     private final Map<String, ThingsInstancesRegister> thingsInstancesRegisterMap;
     private final Map<String, ThingsInstancesTypeFinder> thingsInstancesTypeFinderMap;

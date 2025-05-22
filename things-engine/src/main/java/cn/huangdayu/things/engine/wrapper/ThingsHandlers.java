@@ -2,7 +2,7 @@ package cn.huangdayu.things.engine.wrapper;
 
 import cn.huangdayu.things.api.message.ThingsHandling;
 import cn.huangdayu.things.common.annotation.ThingsHandler;
-import cn.huangdayu.things.common.enums.ThingsStreamingType;
+import cn.huangdayu.things.common.enums.ThingsChainingType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +17,6 @@ public class ThingsHandlers {
 
     private ThingsHandler thingsHandler;
     private ThingsHandling thingsHandling;
-    private ThingsStreamingType sourceType;
+    private ThingsChainingType chainingType;
 
 }

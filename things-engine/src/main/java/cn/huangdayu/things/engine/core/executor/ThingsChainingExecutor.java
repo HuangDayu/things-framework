@@ -3,8 +3,8 @@ package cn.huangdayu.things.engine.core.executor;
 import cn.huangdayu.things.api.message.ThingsChaining;
 import cn.huangdayu.things.api.message.ThingsFiltering;
 import cn.huangdayu.things.common.annotation.ThingsBean;
+import cn.huangdayu.things.common.enums.ThingsChainingType;
 import cn.huangdayu.things.common.enums.ThingsMethodType;
-import cn.huangdayu.things.common.enums.ThingsStreamingType;
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
@@ -33,8 +33,9 @@ import java.util.stream.Collectors;
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.SERVICE_UNAVAILABLE;
 import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_SEPARATOR;
 import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_WILDCARD;
-import static cn.huangdayu.things.common.enums.ThingsStreamingType.INPUTTING;
-import static cn.huangdayu.things.common.enums.ThingsStreamingType.OUTPUTTING;
+import static cn.huangdayu.things.common.enums.ThingsChainingType.INPUTTING;
+import static cn.huangdayu.things.common.enums.ThingsChainingType.OUTPUTTING;
+import static cn.huangdayu.things.common.enums.ThingsMethodType.ALL_METHOD;
 import static cn.huangdayu.things.common.utils.ThingsUtils.subIdentifies;
 import static cn.huangdayu.things.engine.core.executor.ThingsBaseExecutor.*;
 
@@ -64,8 +65,8 @@ public class ThingsChainingExecutor implements ThingsChaining {
     /**
      * 输入和输出的消息都经过【过滤，拦截，处理，拦截】
      */
-    private void doChain(ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsStreamingType sourceType) {
-        ChainingValues chainingValues = getChainingValues(thingsRequest, thingsResponse, sourceType);
+    private void doChain(ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsChainingType chainingType) {
+        ChainingValues chainingValues = getChainingValues(thingsRequest, thingsResponse, chainingType);
         // 获取处理器链
         Set<ThingsHandlers> thingsHandlers = chainingValues.getThingsHandlers();
         if (CollUtil.isEmpty(thingsHandlers)) {
@@ -94,12 +95,12 @@ public class ThingsChainingExecutor implements ThingsChaining {
         }
     }
 
-    private ChainingValues getChainingValues(ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsStreamingType sourceType) {
-        ChainingKeys keys = getKeys(thingsRequest.getJtm(), sourceType);
+    private ChainingValues getChainingValues(ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsChainingType chainingType) {
+        ChainingKeys keys = getKeys(thingsRequest.getJtm(), chainingType);
         return CHAINING_VALUES_CACHE.get(keys.getKeyFlag(), () -> {
-            Set<ThingsFilters> filter = filter(keys, thingsRequest, sourceType);
-            Set<ThingsInterceptors> interceptors = getInterceptors(keys, thingsRequest, sourceType);
-            Set<ThingsHandlers> handlers = getHandlers(keys, thingsRequest, thingsResponse, sourceType);
+            Set<ThingsFilters> filter = filter(keys, thingsRequest, chainingType);
+            Set<ThingsInterceptors> interceptors = getInterceptors(keys, thingsRequest, chainingType);
+            Set<ThingsHandlers> handlers = getHandlers(keys, thingsRequest, thingsResponse, chainingType);
             return new ChainingValues(filter, handlers, interceptors);
         });
     }
@@ -135,17 +136,17 @@ public class ThingsChainingExecutor implements ThingsChaining {
     }
 
 
-    private Set<ThingsHandlers> getHandlers(ChainingKeys chainingKeys, ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsStreamingType sourceType) {
+    private Set<ThingsHandlers> getHandlers(ChainingKeys chainingKeys, ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsChainingType chainingType) {
         return getChains(chainingKeys, THINGS_HANDLERS_TABLE, thingsRequest.getJtm(), i -> i.getThingsHandler().order(),
-                v -> v.getSourceType().equals(sourceType) && v.getThingsHandling().canHandle(thingsRequest, thingsResponse));
+                v -> v.getChainingType().equals(chainingType) && v.getThingsHandling().canHandle(thingsRequest, thingsResponse));
     }
 
-    private Set<ThingsInterceptors> getInterceptors(ChainingKeys chainingKeys, ThingsRequest thingsRequest, ThingsStreamingType sourceType) {
-        return getChains(chainingKeys, THINGS_INTERCEPTORS_TABLE, thingsRequest.getJtm(), i -> i.getThingsInterceptor().order(), v -> v.getSourceType().equals(sourceType));
+    private Set<ThingsInterceptors> getInterceptors(ChainingKeys chainingKeys, ThingsRequest thingsRequest, ThingsChainingType chainingType) {
+        return getChains(chainingKeys, THINGS_INTERCEPTORS_TABLE, thingsRequest.getJtm(), i -> i.getThingsInterceptor().order(), v -> v.getChainingType().equals(chainingType));
     }
 
-    private Set<ThingsFilters> filter(ChainingKeys chainingKeys, ThingsRequest thingsRequest, ThingsStreamingType sourceType) {
-        return getChains(chainingKeys, THINGS_FILTERS_TABLE, thingsRequest.getJtm(), i -> i.getThingsFilter().order(), v -> v.getSourceType().equals(sourceType));
+    private Set<ThingsFilters> filter(ChainingKeys chainingKeys, ThingsRequest thingsRequest, ThingsChainingType chainingType) {
+        return getChains(chainingKeys, THINGS_FILTERS_TABLE, thingsRequest.getJtm(), i -> i.getThingsFilter().order(), v -> v.getChainingType().equals(chainingType));
     }
 
     private <T> Set<T> getChains(ChainingKeys chainingKeys, Table<String, String, Set<T>> table, JsonThingsMessage jtm, Function<T, Integer> comparing, Predicate<T> filtering) {
@@ -156,10 +157,14 @@ public class ThingsChainingExecutor implements ThingsChaining {
                 linkedHashSet.addAll(values);
             }
         });
+        Set<T> set = table.get(ALL_METHOD + THINGS_SEPARATOR + THINGS_WILDCARD, THINGS_WILDCARD);
+        if (CollUtil.isNotEmpty(set)) {
+            linkedHashSet.addAll(set);
+        }
         return linkedHashSet.stream().filter(filtering).sorted(Comparator.comparing(comparing)).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    private ChainingKeys getKeys(JsonThingsMessage jtm, ThingsStreamingType sourceType) {
+    private ChainingKeys getKeys(JsonThingsMessage jtm, ThingsChainingType chainingType) {
         Set<ChainingKey> keys = new HashSet<>();
         BaseThingsMetadata baseMetadata = jtm.getBaseMetadata();
         ThingsMethodType thingsMethodType = ThingsMethodType.getMethodType(extractMiddlePart(jtm.getMethod()));
@@ -168,7 +173,7 @@ public class ThingsChainingExecutor implements ThingsChaining {
         keys.add(new ChainingKey(thingsMethodType + THINGS_SEPARATOR + identifies, baseMetadata.getProductCode()));
         keys.add(new ChainingKey(thingsMethodType + THINGS_SEPARATOR + THINGS_WILDCARD, baseMetadata.getProductCode()));
         keys.add(new ChainingKey(thingsMethodType + THINGS_SEPARATOR + THINGS_WILDCARD, THINGS_WILDCARD));
-        return new ChainingKeys(keys, sourceType + THINGS_SEPARATOR + thingsMethodType + THINGS_SEPARATOR + identifies + THINGS_SEPARATOR + baseMetadata.getProductCode());
+        return new ChainingKeys(keys, chainingType + THINGS_SEPARATOR + thingsMethodType + THINGS_SEPARATOR + identifies + THINGS_SEPARATOR + baseMetadata.getProductCode());
     }
 
     private static String extractMiddlePart(String input) {

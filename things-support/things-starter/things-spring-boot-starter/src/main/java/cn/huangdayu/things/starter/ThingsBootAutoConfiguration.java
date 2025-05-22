@@ -4,13 +4,10 @@ import cn.huangdayu.things.api.container.ThingsRegister;
 import cn.huangdayu.things.api.instances.ThingsInstancesProvider;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.factory.ThreadPoolFactory;
-import cn.huangdayu.things.common.properties.ThingsInstanceProperties;
-import cn.huangdayu.things.starter.endpoint.ThingsEndpoint;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -30,8 +27,8 @@ import java.util.Set;
 @Configuration
 @EnableCaching
 @EnableScheduling
+@EnableConfigurationProperties(ThingsBootAutoProperties.class)
 @ComponentScan(value = "cn.huangdayu.things", includeFilters = @ComponentScan.Filter(ThingsBean.class))
-@ConfigurationPropertiesScan("cn.huangdayu.things")
 public class ThingsBootAutoConfiguration {
 
     @ConditionalOnMissingBean
@@ -42,14 +39,6 @@ public class ThingsBootAutoConfiguration {
         scheduler.setThreadFactory(ThreadPoolFactory.tryGetVirtualThreadFactory());
         scheduler.initialize();
         return scheduler;
-    }
-
-
-    @ConditionalOnMissingBean
-    @Bean
-    @ConfigurationProperties("things")
-    public ThingsInstanceProperties thingsEngineProperties() {
-        return new ThingsInstanceProperties();
     }
 
     @ConditionalOnMissingBean
@@ -65,12 +54,6 @@ public class ThingsBootAutoConfiguration {
         return new ThingsContainerRegister(thingsRegister);
     }
 
-    @ConditionalOnBean(ThingsEndpoint.class)
-    @ConditionalOnMissingBean
-    @Bean
-    public ThingsEndpointController thingsEndpointController(ThingsEndpoint thingsEndpoint) {
-        return new ThingsEndpointController(thingsEndpoint);
-    }
 
     @ConditionalOnMissingBean
     @Bean

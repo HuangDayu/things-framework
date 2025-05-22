@@ -14,7 +14,7 @@ import static cn.huangdayu.things.common.enums.ThingsSofaBusType.MQTT;
  * @author huangdayu
  */
 @Getter
-public class MqttSofaBus extends AbstractCamelSofaBus implements ThingsSofaBus {
+public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
 
 
     public MqttSofaBus(CamelSofaBusConstructor constructor) {

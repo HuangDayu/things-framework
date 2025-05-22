@@ -1,7 +1,7 @@
 package cn.huangdayu.things.common.annotation;
 
 import cn.huangdayu.things.common.enums.ThingsMethodType;
-import cn.huangdayu.things.common.enums.ThingsStreamingType;
+import cn.huangdayu.things.common.enums.ThingsChainingType;
 
 import java.lang.annotation.*;
 
@@ -37,7 +37,7 @@ public @interface ThingsFilter {
      *
      * @return
      */
-    ThingsStreamingType source();
+    ThingsChainingType chainingType();
 
 
     /**

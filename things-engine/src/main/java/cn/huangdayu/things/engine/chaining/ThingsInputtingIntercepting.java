@@ -15,13 +15,13 @@ import java.util.concurrent.TimeUnit;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.BAD_REQUEST;
 import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_SEPARATOR;
-import static cn.huangdayu.things.common.enums.ThingsStreamingType.INPUTTING;
+import static cn.huangdayu.things.common.enums.ThingsChainingType.INPUTTING;
 
 /**
  * @author huangdayu
  */
 @Slf4j
-@ThingsInterceptor(order = Integer.MIN_VALUE, source = INPUTTING)
+@ThingsInterceptor(order = Integer.MIN_VALUE, chainingType = INPUTTING)
 public class ThingsInputtingIntercepting implements ThingsIntercepting {
 
 

@@ -1418,6 +1418,9 @@ public final class ThingsConstants {
         public static final String THINGS_PROPERTIES_SET = "thing.properties.all.set";
         public static final String THINGS_PROPERTIES_GET = "thing.properties.all.get";
         public static final String THINGS_PROPERTIES_POST = "thing.properties.all.post";
+        public static final String THINGS_SYSTEM_SET = "thing.system.identifier.set";
+        public static final String THINGS_SYSTEM_GET = "thing.system.identifier.get";
+        public static final String THINGS_SYSTEM_POST = "thing.system.identifier.post";
     }
 
     /**

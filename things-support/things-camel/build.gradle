@@ -5,24 +5,26 @@ plugins {
 dependencies {
     api project(path: ':things-api')
     api project(path: ':things-common')
+    api project(path: ':things-sofabus')
 
-    implementation "org.apache.camel.springboot:camel-spring-boot-starter"
-    implementation "org.apache.camel.springboot:camel-rest-starter"
-    implementation "org.apache.camel.springboot:camel-rocketmq-starter"
-    implementation 'org.apache.camel.springboot:camel-vertx-websocket-starter'
-    implementation "org.apache.camel.springboot:camel-bean-starter"
-    implementation "org.apache.camel.springboot:camel-servlet-starter"
-    implementation "org.apache.camel.springboot:camel-jackson-starter"
-    implementation 'org.apache.camel.springboot:camel-console-starter'
-    implementation 'org.apache.camel.springboot:camel-management-starter'
     implementation 'org.apache.camel:camel-componentdsl'
-    implementation 'org.apache.camel:camel-kafka'
-    implementation 'org.apache.camel:camel-mybatis'
-    implementation 'org.apache.camel:camel-netty'
-    implementation 'org.apache.camel:camel-vertx-websocket'
-    implementation 'org.apache.camel:camel-paho-mqtt5'
-    implementation "org.apache.camel:camel-amqp"
-    implementation 'org.apache.camel:camel-rest-openapi'
+    compileOnly 'org.apache.camel:camel-kafka'
+    compileOnly 'org.apache.camel:camel-paho-mqtt5'
+    compileOnly "org.apache.camel:camel-amqp"
+    compileOnly "org.apache.camel:camel-rocketmq"
+    compileOnly "org.apache.camel:camel-netty"
 
-    implementation 'com.taosdata.jdbc:taos-jdbcdriver:3.2.7'
+//    implementation "org.apache.camel.springboot:camel-spring-boot-starter"
+//    implementation "org.apache.camel.springboot:camel-rest-starter"
+//    implementation "org.apache.camel.springboot:camel-rocketmq-starter"
+//    implementation 'org.apache.camel.springboot:camel-vertx-websocket-starter'
+//    implementation "org.apache.camel.springboot:camel-bean-starter"
+//    implementation "org.apache.camel.springboot:camel-servlet-starter"
+//    implementation "org.apache.camel.springboot:camel-jackson-starter"
+//    implementation 'org.apache.camel.springboot:camel-console-starter'
+//    implementation 'org.apache.camel.springboot:camel-management-starter'
+//    implementation 'org.apache.camel:camel-mybatis'
+//    implementation 'org.apache.camel:camel-vertx-websocket'
+//    implementation 'org.apache.camel:camel-rest-openapi'
+//    implementation 'com.taosdata.jdbc:taos-jdbcdriver:3.2.7'
 }

@@ -241,7 +241,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         if (filters == null) {
             filters = new ConcurrentHashSet<>();
         }
-        filters.add(new ThingsFilters(thingsFilter, (ThingsFiltering) bean, thingsFilter.source()));
+        filters.add(new ThingsFilters(thingsFilter, (ThingsFiltering) bean, thingsFilter.chainingType()));
         THINGS_FILTERS_TABLE.put(identifier, productCode, filters);
     }
 
@@ -259,7 +259,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         if (interceptors == null) {
             interceptors = new ConcurrentHashSet<>();
         }
-        interceptors.add(new ThingsInterceptors(thingsInterceptor, (ThingsIntercepting) bean, thingsInterceptor.source()));
+        interceptors.add(new ThingsInterceptors(thingsInterceptor, (ThingsIntercepting) bean, thingsInterceptor.chainingType()));
         THINGS_INTERCEPTORS_TABLE.put(identifier, productCode, interceptors);
     }
 
@@ -278,7 +278,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         if (thingsHandlers == null) {
             thingsHandlers = new ConcurrentHashSet<>();
         }
-        thingsHandlers.add(new ThingsHandlers(thingsHandler, (ThingsHandling) bean, thingsHandler.source()));
+        thingsHandlers.add(new ThingsHandlers(thingsHandler, (ThingsHandling) bean, thingsHandler.chainingType()));
         THINGS_HANDLERS_TABLE.put(identifier, productCode, thingsHandlers);
     }
 

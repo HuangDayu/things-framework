@@ -27,7 +27,7 @@ public abstract class ThingsDeviceStatusFiltering implements ThingsFiltering {
         ThingsSession thingsSession = new ThingsSession();
         thingsSession.setDeviceCode(baseMetadata.getDeviceCode());
         thingsSession.setOnline(status());
-        thingsSession.setOnlineTime(System.currentTimeMillis());
+        thingsSession.setTime(jtm.getTime());
         thingsSession.setProductCode(baseMetadata.getProductCode());
         thingsSession.setSessionCode(StrUtil.toString(ReflectUtil.getFieldValue(jtm.getPayload(), "sessionCode")));
         thingsEventObserver.notifyObservers(new ThingsSessionUpdatedEvent(this, thingsSession));

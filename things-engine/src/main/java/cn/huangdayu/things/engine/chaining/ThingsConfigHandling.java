@@ -8,13 +8,13 @@ import lombok.RequiredArgsConstructor;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.SystemMethod.SYSTEM_METHOD_CONFIG;
 import static cn.huangdayu.things.common.enums.ThingsMethodType.SYSTEM;
-import static cn.huangdayu.things.common.enums.ThingsStreamingType.INPUTTING;
+import static cn.huangdayu.things.common.enums.ThingsChainingType.INPUTTING;
 
 /**
  * @author huangdayu
  */
 @RequiredArgsConstructor
-@ThingsHandler(source = INPUTTING, method = SYSTEM, identifier = SYSTEM_METHOD_CONFIG)
+@ThingsHandler(chainingType = INPUTTING, method = SYSTEM, identifier = SYSTEM_METHOD_CONFIG)
 public class ThingsConfigHandling implements ThingsHandling {
 
 

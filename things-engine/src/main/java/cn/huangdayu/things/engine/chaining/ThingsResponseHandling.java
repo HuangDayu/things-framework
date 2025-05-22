@@ -8,14 +8,14 @@ import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 
-import static cn.huangdayu.things.common.enums.ThingsStreamingType.INPUTTING;
+import static cn.huangdayu.things.common.enums.ThingsChainingType.INPUTTING;
 
 /**
  * 处理异步消息的回复
  * @author huangdayu
  */
 @RequiredArgsConstructor
-@ThingsHandler(order = 0, source = INPUTTING)
+@ThingsHandler(order = 0, chainingType = INPUTTING)
 public class ThingsResponseHandling implements ThingsHandling {
 
     @Override

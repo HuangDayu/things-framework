@@ -7,12 +7,12 @@ import cn.huangdayu.things.common.wrapper.ThingsResponse;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.SystemMethod.SYSTEM_METHOD_LOGIN;
 import static cn.huangdayu.things.common.enums.ThingsMethodType.SYSTEM;
-import static cn.huangdayu.things.common.enums.ThingsStreamingType.INPUTTING;
+import static cn.huangdayu.things.common.enums.ThingsChainingType.INPUTTING;
 
 /**
  * @author huangdayu
  */
-@ThingsHandler(source = INPUTTING, method = SYSTEM, identifier = SYSTEM_METHOD_LOGIN)
+@ThingsHandler(chainingType = INPUTTING, method = SYSTEM, identifier = SYSTEM_METHOD_LOGIN)
 public class ThingsLoginHandling implements ThingsHandling {
     @Override
     public void doHandle(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {

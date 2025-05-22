@@ -7,13 +7,13 @@ import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import lombok.extern.slf4j.Slf4j;
 
-import static cn.huangdayu.things.common.enums.ThingsStreamingType.OUTPUTTING;
+import static cn.huangdayu.things.common.enums.ThingsChainingType.OUTPUTTING;
 
 /**
  * @author huangdayu
  */
 @Slf4j
-@ThingsInterceptor(order = Integer.MIN_VALUE, source = OUTPUTTING)
+@ThingsInterceptor(order = Integer.MIN_VALUE, chainingType = OUTPUTTING)
 public class ThingsOutputtingIntercepting implements ThingsIntercepting {
 
     @Override

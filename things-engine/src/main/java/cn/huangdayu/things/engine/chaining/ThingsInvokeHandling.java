@@ -8,13 +8,13 @@ import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.huangdayu.things.engine.core.ThingsInvoker;
 import lombok.RequiredArgsConstructor;
 
-import static cn.huangdayu.things.common.enums.ThingsStreamingType.INPUTTING;
+import static cn.huangdayu.things.common.enums.ThingsChainingType.INPUTTING;
 
 /**
  * @author huangdayu
  */
 @RequiredArgsConstructor
-@ThingsHandler(order = 1, source = INPUTTING)
+@ThingsHandler(order = 1, chainingType = INPUTTING)
 public class ThingsInvokeHandling implements ThingsHandling {
 
     private final ThingsInvoker thingsInvoker;

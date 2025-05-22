@@ -18,7 +18,7 @@ import java.util.Set;
 /**
  * @author huangdayu
  */
-@ThingsBean
+//@ThingsBean
 @RequiredArgsConstructor
 public class ThingsInstancesScheduled {
 

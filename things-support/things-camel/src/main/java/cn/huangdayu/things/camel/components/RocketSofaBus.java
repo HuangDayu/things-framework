@@ -12,7 +12,7 @@ import static cn.huangdayu.things.common.enums.ThingsSofaBusType.ROCKETMQ;
 /**
  * @author huangdayu
  */
-public class RocketSofaBus extends AbstractCamelSofaBus implements ThingsSofaBus {
+public class RocketSofaBus extends AbstractSofaBus implements ThingsSofaBus {
 
     public RocketSofaBus(CamelSofaBusConstructor constructor) {
         super(constructor);

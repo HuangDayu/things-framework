@@ -6,13 +6,13 @@ import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import lombok.extern.slf4j.Slf4j;
 
-import static cn.huangdayu.things.common.enums.ThingsStreamingType.INPUTTING;
+import static cn.huangdayu.things.common.enums.ThingsChainingType.INPUTTING;
 
 /**
  * @author huangdayu
  */
 @Slf4j
-@ThingsFilter(source = INPUTTING)
+@ThingsFilter(chainingType = INPUTTING)
 public class ThingsDebugFiltering implements ThingsFiltering {
     @Override
     public void doFilter(ThingsRequest thingsRequest, ThingsResponse thingsResponse, Chain chain) {

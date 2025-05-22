@@ -12,12 +12,10 @@ public class ThingsSession {
 
     private boolean online;
 
-    private Long onlineTime;
+    private Long time;
 
     private String productCode;
 
     private String deviceCode;
-
-    private String endpointUri;
 
 }

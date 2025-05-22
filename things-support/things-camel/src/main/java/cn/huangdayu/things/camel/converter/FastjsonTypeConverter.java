@@ -1,6 +1,6 @@
 package cn.huangdayu.things.camel.converter;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
