@@ -2,31 +2,31 @@ package cn.huangdayu.things.camel.components;
 
 import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
 import cn.huangdayu.things.camel.CamelSofaBusConstructor;
+import cn.huangdayu.things.camel.CamelSofaBusRouteBuilder;
+import cn.huangdayu.things.camel.ThingsSofaBusTopicValidator;
 import cn.huangdayu.things.common.enums.ThingsSofaBusType;
-import cn.huangdayu.things.common.exception.ThingsException;
+import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
-import cn.huangdayu.things.common.properties.ThingsSofaBusProperties;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
+import cn.huangdayu.things.common.wrapper.ThingsSubscribes;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson2.JSON;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.Endpoint;
+import org.apache.camel.component.paho.mqtt5.PahoMqtt5Constants;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.DefaultComponent;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
-import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.ERROR;
 import static cn.huangdayu.things.common.enums.ThingsSofaBusType.*;
 
 /**
@@ -39,84 +39,111 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
     protected final CamelContext camelContext;
     protected final CamelSofaBusConstructor constructor;
     protected DefaultComponent component;
-    protected static final Map<ThingsSofaBusType, String> TOPIC_TEMPLATES = new HashMap<>();
-    protected final Set<String> subscribed = new ConcurrentHashSet<>();
+    protected static final ThingsSofaBusTopicValidator TOPIC_VALIDATOR = new ThingsSofaBusTopicValidator();
+    protected static final Map<ThingsSofaBusType, String> ENDPOINT_URI_TEMPLATES = new HashMap<>();
+    protected volatile Map<String, String> ROUTE_ID_MAP = new ConcurrentHashMap<>();
 
+    protected abstract DefaultComponent buildComponent();
 
     public AbstractSofaBus(CamelSofaBusConstructor constructor) {
         this.constructor = constructor;
         this.camelContext = constructor.getCamelContext();
-    }
-
-    static {
-        TOPIC_TEMPLATES.put(AMQP, "${componentName}:queue:${topic}");
-        TOPIC_TEMPLATES.put(KAFKA, "${componentName}:${topic}?groupId=${groupId}");
-        TOPIC_TEMPLATES.put(MQTT, "${componentName}:${topic}");
-        TOPIC_TEMPLATES.put(ROCKETMQ, "${componentName}:topic:${topic}?consumerGroup=${groupId}");
-    }
-
-    public abstract DefaultComponent buildComponent(ThingsSofaBusProperties properties);
-
-
-    @Override
-    public void init() {
-        component = buildComponent(constructor.getProperties());
+        this.component = buildComponent();
         if (CollUtil.isNotEmpty(constructor.getProperties().getProperties())) {
-            constructor.getProperties().getProperties().forEach((k, v) -> component.getComponentPropertyConfigurer().configure(camelContext, component, k, v, true));
+            PropertyConfigurer configurer = component.getComponentPropertyConfigurer();
+            constructor.getProperties().getProperties().forEach((k, v) -> configurer.configure(camelContext, component, k, v, true));
         }
         camelContext.addComponent(constructor.getProperties().getName(), component);
     }
 
-    @Override
-    public boolean output(String topic, ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        checkComponentInit();
-        constructor.getProducerTemplate().sendBody(getTopic(topic), thingsRequest.getJtm().toString());
-        return true;
+    static {
+        ENDPOINT_URI_TEMPLATES.put(AMQP, "${componentName}:queue:${topic}");
+        ENDPOINT_URI_TEMPLATES.put(KAFKA, "${componentName}:${topic}?groupId=${groupId}");
+        ENDPOINT_URI_TEMPLATES.put(MQTT, "${componentName}:${topic}");
+        ENDPOINT_URI_TEMPLATES.put(ROCKETMQ, "${componentName}:topic:${topic}?consumerGroup=${groupId}");
     }
 
-    private String getTopic(String topic) {
-        String topicTemplates = TOPIC_TEMPLATES.get(getType());
-        topicTemplates = topicTemplates.replace("${componentName}", constructor.getProperties().getName());
-        topicTemplates = topicTemplates.replace("${topic}", topic);
-        if (StrUtil.isNotBlank(constructor.getProperties().getGroupId())) {
-            topicTemplates = topicTemplates.replace("${groupId}", constructor.getProperties().getGroupId());
+    @Override
+    public boolean output(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
+        JsonThingsMessage jtm = thingsRequest.getJtm();
+        if (thingsResponse != null && thingsResponse.getJtm() != null) {
+            jtm = thingsResponse.getJtm();
         }
-        return topicTemplates;
+        BaseThingsMetadata baseMetadata = jtm.getBaseMetadata();
+        String topic = createTopic(ThingsSubscribes.builder().share(false).productCode(baseMetadata.getProductCode())
+                .deviceCode(baseMetadata.getDeviceCode()).method(jtm.getMethod()).build());
+
+        return output(topic, jtm);
     }
 
     @SneakyThrows
+    private boolean output(String topic, JsonThingsMessage jtm) {
+        String endpointUri = getEndpointUri(topic);
+        String concatEndpointUri = concatEndpointUri(endpointUri, jtm);
+        Endpoint endpoint = camelContext.getEndpoint(concatEndpointUri);
+        constructor.getProducerTemplate().asyncRequestBodyAndHeader(endpoint, jtm.toString(), PahoMqtt5Constants.MQTT_TOPIC, topic);
+        log.debug("Things Bus topic [{}] output message: {}", concatEndpointUri, jtm);
+        return true;
+    }
+
+    protected String concatEndpointUri(String endpointUri, JsonThingsMessage jtm) {
+        return endpointUri;
+    }
+
+    private String getEndpointUri(String topic) {
+        String endpointUriTemplate = ENDPOINT_URI_TEMPLATES.get(getType());
+        endpointUriTemplate = endpointUriTemplate.replace("${componentName}", constructor.getProperties().getName());
+        endpointUriTemplate = endpointUriTemplate.replace("${topic}", topic);
+        if (StrUtil.isNotBlank(constructor.getProperties().getGroupId())) {
+            endpointUriTemplate = endpointUriTemplate.replace("${groupId}", constructor.getProperties().getGroupId());
+        }
+        return endpointUriTemplate;
+    }
+
     @Override
-    public boolean subscribe(String topic) {
-        checkComponentInit();
-        String topicTemplate = getTopic(topic);
-        String routeId = getRouteId(topicTemplate);
-        if (camelContext.getRoute(routeId) != null) {
+    public boolean subscribe(ThingsSubscribes thingsSubscribes) {
+        return subscribe(createTopic(thingsSubscribes));
+    }
+
+    @Override
+    public boolean unsubscribe(ThingsSubscribes thingsSubscribes) {
+        return unsubscribe(createTopic(thingsSubscribes));
+    }
+
+    protected String createTopic(ThingsSubscribes thingsSubscribes) {
+        return String.format("things-%s-%s-%s", thingsSubscribes.getProductCode(), thingsSubscribes.getDeviceCode(), thingsSubscribes.getMethod());
+    }
+
+    @SneakyThrows
+    private boolean subscribe(String topic) {
+        if (isDuplicateSubscription(topic)) {
+            log.warn("Things Bus subscribe topic [{}] duplicate subscription.", topic);
             return false;
         }
-        camelContext.addRoutes(new CustomRouteBuilder(this, routeId, topicTemplate, constructor));
-        subscribed.add(routeId);
+        String topicTemplate = getEndpointUri(topic);
+        String routeId = UUID.randomUUID().toString();
+        if (ROUTE_ID_MAP.containsKey(topicTemplate)) {
+            log.warn("Things Bus subscribe topic [{}] is contains.", topic);
+            return false;
+        }
+        camelContext.addRoutes(new CamelSofaBusRouteBuilder(this, routeId, topicTemplate, constructor));
         log.info("Things Bus topic [{}] subscribed for routeId [{}].", topic, routeId);
+        ROUTE_ID_MAP.put(topicTemplate, routeId);
         return true;
     }
 
     @SneakyThrows
-    @Override
-    public boolean unsubscribe(String topic) {
-        checkComponentInit();
-        String topicTemplate = getTopic(topic);
-        String routeId = getRouteId(topicTemplate);
+    private boolean unsubscribe(String topic) {
+        String topicTemplate = getEndpointUri(topic);
+        String routeId = ROUTE_ID_MAP.get(topicTemplate);
         log.info("Things Bus topic [{}] unsubscribe for routeId [{}].", topic, routeId);
-        return camelContext.removeRoute(routeId) && subscribed.remove(routeId);
-    }
-
-    public String getRouteId(String topic) {
-        return constructor.getProperties().hashCode() + "-" + topic;
+        checkRemoveTopic(topic);
+        return camelContext.removeRoute(routeId);
     }
 
 
     @Override
     public boolean start() {
-        checkComponentInit();
         if (component.isStarted()) {
             return true;
         }
@@ -126,8 +153,6 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
 
     @Override
     public boolean stop() {
-        checkComponentInit();
-        subscribed.forEach(this::unsubscribe);
         if (component.isStopped()) {
             return true;
         }
@@ -137,57 +162,18 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
 
     @Override
     public boolean isStarted() {
-        checkComponentInit();
         return component.isStarted();
     }
 
-    private void checkComponentInit() {
-        if (component == null) {
-            throw new ThingsException(ERROR, "Things Component Not Init .");
+    private boolean isDuplicateSubscription(String topic) {
+        if (TOPIC_VALIDATOR.isDuplicateSubscription(topic)) {
+            return true;
         }
+        TOPIC_VALIDATOR.addTopic(topic);
+        return false;
     }
 
-
-    @Slf4j
-    private static class CustomRouteBuilder extends RouteBuilder {
-        private final String topic;
-        private final String routeId;
-        private final CamelSofaBusConstructor constructor;
-        private final ThingsSofaBus thingsSofaBus;
-
-        public CustomRouteBuilder(ThingsSofaBus thingsSofaBus, String routeId, String topic, CamelSofaBusConstructor constructor) {
-            this.routeId = routeId;
-            this.topic = topic;
-            this.constructor = constructor;
-            this.thingsSofaBus = thingsSofaBus;
-        }
-
-        @Override
-        public void configure() throws Exception {
-            from(topic)
-                    .routeId(routeId)
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            String receivedMessage = exchange.getIn().getBody(String.class);
-                            log.debug("Things Bus topic [{}] received message: {}", topic, receivedMessage);
-                            JsonThingsMessage jtm = JSON.to(JsonThingsMessage.class, receivedMessage);
-                            ThingsRequest thingsRequest = ThingsRequest.builder().source(thingsSofaBus).type(thingsSofaBus.getType().name())
-                                    .endpoint(topic).clientCode(constructor.getProperties().getClientId()).groupCode(constructor.getProperties().getGroupId()).jtm(jtm).build();
-
-                            ThingsResponse thingsResponse = ThingsResponse.builder().source(thingsSofaBus).type(thingsSofaBus.getType().name()).endpoint(topic)
-                                    .clientCode(constructor.getProperties().getClientId()).groupCode(constructor.getProperties().getGroupId())
-                                    .consumer(response -> {
-                                        String replyMessage = response.getJtm().toString();
-                                        log.debug("Things Bus topic [{}] reply message: {}", topic, replyMessage);
-                                        constructor.getProducerTemplate().sendBody(topic, replyMessage);
-                                    }).build();
-                            constructor.getThingsChaining().input(thingsRequest, thingsResponse);
-                        }
-                    });
-        }
-
+    private boolean checkRemoveTopic(String topic) {
+        return TOPIC_VALIDATOR.removeTopic(topic);
     }
-
-
 }

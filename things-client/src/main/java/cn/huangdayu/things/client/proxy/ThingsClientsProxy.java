@@ -39,6 +39,10 @@ public class ThingsClientsProxy {
         if (method.getReturnType().isAssignableFrom(Publisher.class)) {
             return reactorInvoke(method, jtm);
         }
+        if (method.getReturnType().isAssignableFrom(void.class) || method.getReturnType().isAssignableFrom(Void.class)) {
+            thingsPublisher.asyncSendMessage(jtm, null);
+            return null;
+        }
         return syncInvoke(method, jtm);
     }
 

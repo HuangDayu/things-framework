@@ -27,9 +27,9 @@ public abstract class AbstractThingsMessage<M extends Serializable, P extends Se
     private Long time;
     /**
      * Qos级别
-     * QoS 0 - At most once（至多一次）
-     * QoS 1 - At least once（至少一次）
-     * QoS 2 - Exactly once（确保只有一次）
+     * QoS 0 - At most once 最多一次（可能丢失） 网络开销最低 适用场景： 环境传感器数据、非关键日志
+     * QoS 1 - At least once 至少一次（可能重复） 网络开销中等 适用场景： 设备控制指令、状态更新
+     * QoS 2 - Exactly once 恰好一次（不丢失不重复）网络开销最高 适用场景： 金融交易、关键配置下发
      *
      * @return
      */

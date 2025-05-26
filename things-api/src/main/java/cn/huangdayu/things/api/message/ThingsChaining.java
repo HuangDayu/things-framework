@@ -8,7 +8,7 @@ import cn.huangdayu.things.common.wrapper.ThingsResponse;
  */
 public interface ThingsChaining {
 
-    void input(ThingsRequest thingsRequest, ThingsResponse thingsResponse);
+    boolean input(ThingsRequest thingsRequest, ThingsResponse thingsResponse);
 
-    void output(ThingsRequest thingsRequest, ThingsResponse thingsResponse);
+    boolean output(ThingsRequest thingsRequest, ThingsResponse thingsResponse);
 }

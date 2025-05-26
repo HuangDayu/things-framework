@@ -16,11 +16,22 @@ import java.io.Serializable;
 @Data
 public class ThingsSubscribes implements Serializable {
 
+    /**
+     * 是否共享订阅，默认为false，如果是，则将产品标识作为共享订阅的分组标识，groupId=productCode
+     */
+    private boolean share;
+    /**
+     * 产品标识
+     */
     private String productCode;
+    /**
+     * 设备标识
+     */
     private String deviceCode;
-    private String methodType;
-    private String methodAction;
-    private String identifier;
+    /**
+     * 方法： thing.service.recordStreaming.request
+     */
+    private String method;
 
 
 }

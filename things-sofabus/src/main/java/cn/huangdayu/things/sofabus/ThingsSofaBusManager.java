@@ -7,13 +7,12 @@ import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBusCreator;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.exception.ThingsException;
-import cn.huangdayu.things.common.message.BaseThingsMetadata;
-import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.observer.event.ThingsContainerUpdatedEvent;
 import cn.huangdayu.things.common.observer.event.ThingsSessionUpdatedEvent;
 import cn.huangdayu.things.common.properties.ThingsSofaBusProperties;
 import cn.huangdayu.things.common.wrapper.ThingsSession;
+import cn.huangdayu.things.common.wrapper.ThingsSubscribes;
 import cn.hutool.core.collection.CollUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -26,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.ERROR;
+import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.*;
 
 /**
  * topic分级包括【系统级，租户级，应用级，产品级，设备级，指令级，分组级，任务级】
@@ -99,7 +99,6 @@ public class ThingsSofaBusManager {
                     break;
                 }
                 ThingsSofaBus thingsSofaBus = constructSofaBus(sofaBusProperties, thingsChaining);
-                thingsSofaBus.init();
                 thingsSofaBus.start();
                 log.info("Things sofaBus init success, type: {} , server: {}", sofaBusProperties.getType(), sofaBusProperties.getServer());
             }
@@ -110,34 +109,27 @@ public class ThingsSofaBusManager {
         thingsEventObserver.registerObserver(ThingsSessionUpdatedEvent.class, event -> {
             ThingsSession session = event.getSession();
             if (session != null) {
-                String topic = createTopic(session);
                 if (session.isOnline()) {
-                    subscribe(topic);
+                    subscribe(false, session.getProductCode(), session.getDeviceCode(), null);
                 } else {
-                    unsubscribe(topic);
+                    unsubscribe(false, session.getProductCode(), session.getDeviceCode(), null);
                 }
             }
         });
         thingsEventObserver.registerObserver(ThingsContainerUpdatedEvent.class, event -> {
             thingsDescriber.getDsl().getThingsDsl().forEach(thingsInfo -> {
                 String code = thingsInfo.getProfile().getProduct().getCode();
-                subscribe(createTopic(code, code));
+                subscribe(true, code, null, null);
+            });
+            thingsDescriber.getDsl().getDomainDsl().forEach(domainInfo -> {
+                domainInfo.getSubscribes().forEach(info -> {
+                    subscribe(false, info.getProductCode(), null, THINGS_EVENT_POST.replace(THINGS_IDENTIFIER, info.getEventIdentifier()));
+                });
+                domainInfo.getConsumes().forEach(info -> {
+                    subscribe(false, info.getProductCode(), null, THINGS_SERVICE_RESPONSE.replace(THINGS_IDENTIFIER, info.getServiceIdentifier()));
+                });
             });
         });
-    }
-
-    private void subscribe(String topic) {
-        Set<ThingsSofaBus> allSofaBus = getAllSofaBus();
-        if (CollUtil.isNotEmpty(allSofaBus)) {
-            allSofaBus.forEach(thingsSofaBus -> thingsSofaBus.subscribe(topic));
-        }
-    }
-
-    private void unsubscribe(String topic) {
-        Set<ThingsSofaBus> allSofaBus = getAllSofaBus();
-        if (CollUtil.isNotEmpty(allSofaBus)) {
-            allSofaBus.forEach(thingsSofaBus -> thingsSofaBus.unsubscribe(topic));
-        }
     }
 
     public boolean destroy(ThingsSofaBusProperties property) {
@@ -152,17 +144,28 @@ public class ThingsSofaBusManager {
         return new HashSet<>(propertiesComponentsMap.values());
     }
 
-    public static String createTopic(String productCode, String clientCode) {
-        return String.format("$sys/things/%s/%s/#", productCode, clientCode);
+    private void subscribe(boolean share, String productCode, String deviceCode, String method) {
+        Set<ThingsSofaBus> allSofaBus = getAllSofaBus();
+        if (CollUtil.isNotEmpty(allSofaBus)) {
+            ThingsSubscribes thingsSubscribes = new ThingsSubscribes();
+            thingsSubscribes.setShare(share);
+            thingsSubscribes.setProductCode(productCode);
+            thingsSubscribes.setDeviceCode(deviceCode);
+            thingsSubscribes.setMethod(method);
+            allSofaBus.forEach(thingsSofaBus -> thingsSofaBus.subscribe(thingsSubscribes));
+        }
     }
 
-    public static String createTopic(ThingsSession session) {
-        return String.format("$sys/things/%s/%s/#", session.getProductCode(), session.getDeviceCode());
-    }
-
-    public static String createTopic(JsonThingsMessage jtm) {
-        BaseThingsMetadata baseMetadata = jtm.getBaseMetadata();
-        return String.format("$sys/things/%s/%s/%s", baseMetadata.getProductCode(), baseMetadata.getDeviceCode(), jtm.getMethod());
+    private void unsubscribe(boolean share, String productCode, String deviceCode, String method) {
+        Set<ThingsSofaBus> allSofaBus = getAllSofaBus();
+        if (CollUtil.isNotEmpty(allSofaBus)) {
+            ThingsSubscribes thingsSubscribes = new ThingsSubscribes();
+            thingsSubscribes.setShare(share);
+            thingsSubscribes.setProductCode(productCode);
+            thingsSubscribes.setDeviceCode(deviceCode);
+            thingsSubscribes.setMethod(method);
+            allSofaBus.forEach(thingsSofaBus -> thingsSofaBus.unsubscribe(thingsSubscribes));
+        }
     }
 
 }

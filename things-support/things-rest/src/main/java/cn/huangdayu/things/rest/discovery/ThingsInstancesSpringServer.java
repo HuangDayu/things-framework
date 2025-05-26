@@ -1,6 +1,6 @@
-package cn.huangdayu.things.starter;
+package cn.huangdayu.things.rest.discovery;
 
-import cn.huangdayu.things.api.instances.ThingsInstancesServer;
+import cn.huangdayu.things.rest.instances.ThingsInstancesServer;
 import cn.hutool.core.net.Ipv4Util;
 import cn.hutool.core.net.NetUtil;
 import lombok.RequiredArgsConstructor;

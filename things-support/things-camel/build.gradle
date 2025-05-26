@@ -1,5 +1,10 @@
 plugins {
     id 'java-library'
+    id 'me.champeau.jmh' version '0.7.1' // JMH 专用插件
+}
+
+jmh {
+    includes = ['cn.huangdayu.things.camel.test.TopicValidatorBenchmark'] // 指定要运行的基准测试类
 }
 
 dependencies {
@@ -13,6 +18,9 @@ dependencies {
     compileOnly "org.apache.camel:camel-amqp"
     compileOnly "org.apache.camel:camel-rocketmq"
     compileOnly "org.apache.camel:camel-netty"
+
+    testImplementation 'org.openjdk.jmh:jmh-core:1.37'
+    testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
 
 //    implementation "org.apache.camel.springboot:camel-spring-boot-starter"
 //    implementation "org.apache.camel.springboot:camel-rest-starter"

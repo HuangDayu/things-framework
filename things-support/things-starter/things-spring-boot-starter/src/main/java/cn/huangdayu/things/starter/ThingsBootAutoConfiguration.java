@@ -1,7 +1,6 @@
 package cn.huangdayu.things.starter;
 
 import cn.huangdayu.things.api.container.ThingsRegister;
-import cn.huangdayu.things.api.instances.ThingsInstancesProvider;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.factory.ThreadPoolFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -55,9 +54,4 @@ public class ThingsBootAutoConfiguration {
     }
 
 
-    @ConditionalOnMissingBean
-    @Bean
-    public ThingsInstancesProvider thingsInstancesProvider() {
-        return jtm -> Set.of();
-    }
 }

@@ -31,6 +31,7 @@ public abstract class ThingsDeviceStatusFiltering implements ThingsFiltering {
         thingsSession.setProductCode(baseMetadata.getProductCode());
         thingsSession.setSessionCode(StrUtil.toString(ReflectUtil.getFieldValue(jtm.getPayload(), "sessionCode")));
         thingsEventObserver.notifyObservers(new ThingsSessionUpdatedEvent(this, thingsSession));
+        chain.doFilter(thingsRequest, thingsResponse);
     }
 
     abstract boolean status();

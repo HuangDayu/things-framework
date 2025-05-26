@@ -6,6 +6,7 @@ import cn.huangdayu.things.common.enums.ThingsSofaBusType;
 import cn.huangdayu.things.common.properties.ThingsSofaBusProperties;
 import lombok.Getter;
 import org.apache.camel.builder.component.ComponentsBuilderFactory;
+import org.apache.camel.component.amqp.AMQPComponent;
 import org.apache.camel.support.DefaultComponent;
 
 import static cn.huangdayu.things.common.enums.ThingsSofaBusType.AMQP;
@@ -27,8 +28,8 @@ public class AmqpSofaBus extends AbstractSofaBus implements ThingsSofaBus {
     }
 
     @Override
-    public DefaultComponent buildComponent(ThingsSofaBusProperties properties) {
-
+    public DefaultComponent buildComponent() {
+        ThingsSofaBusProperties properties = constructor.getProperties();
         return ComponentsBuilderFactory.amqp()
                 .clientId(properties.getClientId())
                 .host(properties.getServer().split(":")[0])

@@ -25,7 +25,7 @@ public class ThingsPublishExecutor implements ThingsPublisher {
     private final ThingsChaining thingsChaining;
 
     public void publishEvent(ThingsEventMessage tem) {
-        syncSendMessage(ThingsUtils.covertEventMessage(tem));
+        publishEvent(ThingsUtils.covertEventMessage(tem));
     }
 
     public void publishEvent(JsonThingsMessage jtm) {
@@ -44,7 +44,9 @@ public class ThingsPublishExecutor implements ThingsPublisher {
     @Override
     public void asyncSendMessage(JsonThingsMessage jtm, Consumer<JsonThingsMessage> consumer) {
         ThingsResponse thingsResponse = new ThingsResponse();
-        thingsResponse.setConsumer(response -> consumer.accept(response.getJtm()));
+        if (consumer != null) {
+            thingsResponse.setConsumer(response -> consumer.accept(response.getJtm()));
+        }
         thingsChaining.output(new ThingsRequest(jtm), thingsResponse);
     }
 

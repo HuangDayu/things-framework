@@ -1,8 +1,8 @@
-package cn.huangdayu.things.gateway;
+package cn.huangdayu.things.rest.type;
 
-import cn.huangdayu.things.api.instances.ThingsInstancesTypeFinder;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.enums.ThingsInstanceType;
+import cn.huangdayu.things.rest.instances.ThingsInstancesTypeFinder;
 
 /**
  * @author huangdayu

@@ -20,7 +20,7 @@ public class ThingsResponseHandling implements ThingsHandling {
 
     @Override
     public boolean canHandle(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        return StrUtil.isNotBlank(thingsRequest.getJtm().getBaseMetadata().getErrorCode());
+        return thingsRequest.getJtm().isResponse();
     }
 
     @Override

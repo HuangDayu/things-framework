@@ -1,6 +1,7 @@
 package cn.huangdayu.things.common.message;
 
 import cn.huangdayu.things.common.exception.ThingsException;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONWriter;
@@ -132,5 +133,11 @@ public class JsonThingsMessage extends AbstractThingsMessage<JSONObject, JSONObj
     @JSONField(serialize = false, deserialize = false)
     public JSONObject toJson() {
         return JSON.parseObject(JSON.toJSONString(this));
+    }
+
+    @JsonIgnore
+    @JSONField(serialize = false, deserialize = false)
+    public boolean isResponse(){
+        return StrUtil.isNotBlank(getBaseMetadata().getErrorCode());
     }
 }

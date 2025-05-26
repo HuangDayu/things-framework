@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.BAD_REQUEST;
 import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_SEPARATOR;
 import static cn.huangdayu.things.common.enums.ThingsChainingType.INPUTTING;
+import static cn.huangdayu.things.engine.chaining.ThingsOutputtingIntercepting.OUTPUTTING_MESSAGES_CACHE;
 
 /**
  * @author huangdayu
@@ -28,18 +29,22 @@ public class ThingsInputtingIntercepting implements ThingsIntercepting {
     /**
      * 先进先出缓存，防止重复处理消息
      */
-    private static final Cache<String, String> HANDLED_MESSAGES_CACHE = new FIFOCache<>(1000);
+    private static final Cache<String, String> INTPUTTING_MESSAGES_CACHE = new FIFOCache<>(1000);
 
     @Override
     public boolean preHandle(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
+        // 如果是自己发出的消息，并且不是回复消息，则直接返回false
+        if (OUTPUTTING_MESSAGES_CACHE.get(thingsRequest.getJtm().getId()) != null && !thingsRequest.getJtm().isResponse()) {
+            return false;
+        }
         if (StrUtil.isBlank(thingsRequest.getJtm().getBaseMetadata().getProductCode())) {
             throw new ThingsException(thingsRequest.getJtm(), BAD_REQUEST, "Things message not has productCode.");
         }
-        if (HANDLED_MESSAGES_CACHE.containsKey(thingsRequest.getJtm().getId())) {
+        if (INTPUTTING_MESSAGES_CACHE.containsKey(thingsRequest.getJtm().getId())) {
             log.warn("Things inputting repeat message : {}", thingsRequest.getJtm());
             return false;
         }
-        HANDLED_MESSAGES_CACHE.put(thingsRequest.getJtm().getId(), THINGS_SEPARATOR, TimeUnit.MINUTES.toMillis(5));
+        INTPUTTING_MESSAGES_CACHE.put(thingsRequest.getJtm().getId(), THINGS_SEPARATOR, TimeUnit.MINUTES.toMillis(5));
         return true;
     }
 

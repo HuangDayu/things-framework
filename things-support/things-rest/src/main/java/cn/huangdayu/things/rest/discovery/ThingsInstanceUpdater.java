@@ -1,9 +1,7 @@
-package cn.huangdayu.things.discovery;
+package cn.huangdayu.things.rest.discovery;
 
 import cn.huangdayu.things.api.infrastructure.ThingsPropertiesService;
-import cn.huangdayu.things.api.instances.ThingsInstancesRegister;
-import cn.huangdayu.things.api.instances.ThingsInstancesServer;
-import cn.huangdayu.things.api.instances.ThingsInstancesTypeFinder;
+
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.constants.ThingsConstants;
 import cn.huangdayu.things.common.enums.ThingsInstanceType;
@@ -11,6 +9,9 @@ import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.observer.event.ThingsInstancesUpdatedEvent;
 import cn.huangdayu.things.common.properties.ThingsInstanceProperties;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
+import cn.huangdayu.things.rest.instances.ThingsInstancesRegister;
+import cn.huangdayu.things.rest.instances.ThingsInstancesServer;
+import cn.huangdayu.things.rest.instances.ThingsInstancesTypeFinder;
 import cn.hutool.core.collection.CollUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;

@@ -37,5 +37,3 @@ def findIgnoredPaths() {
     def gitIgnoreFile = new File("${rootDir}", '.gitignore')
     return gitIgnoreFile.exists() ? gitIgnoreFile.readLines().collect { it.trim() } : []
 }
-
-include 'things-support:things-rest'

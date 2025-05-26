@@ -115,10 +115,10 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
     private <T extends Annotation> void findBeans(ThingsContainer thingsContainer, Class<T> annotationType, BeanConsumer<ThingsContainer, T, Object> beanConsumer) {
         Map<String, Object> thingsBeans = thingsContainer.getBeans(annotationType);
         if (CollUtil.isNotEmpty(thingsBeans)) {
-            thingsBeans.entrySet().parallelStream().forEach(entry -> {
-                T beanAnnotation = findBeanAnnotation(entry.getValue(), annotationType);
+            thingsBeans.forEach((key, value) -> {
+                T beanAnnotation = findBeanAnnotation(value, annotationType);
                 if (beanAnnotation != null) {
-                    beanConsumer.accept(thingsContainer, beanAnnotation, entry.getValue());
+                    beanConsumer.accept(thingsContainer, beanAnnotation, value);
                 }
             });
         }

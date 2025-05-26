@@ -1,4 +1,4 @@
-package cn.huangdayu.things.api.instances;
+package cn.huangdayu.things.rest.instances;
 
 /**
  * @author huangdayu

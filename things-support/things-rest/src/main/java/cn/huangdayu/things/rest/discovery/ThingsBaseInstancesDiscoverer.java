@@ -1,7 +1,7 @@
-package cn.huangdayu.things.rest.instances;
+package cn.huangdayu.things.rest.discovery;
 
 import cn.huangdayu.things.api.infrastructure.ThingsPropertiesService;
-import cn.huangdayu.things.api.instances.ThingsInstancesDslManager;
+import cn.huangdayu.things.rest.instances.ThingsInstancesDslManager;
 import cn.huangdayu.things.common.dsl.DslInfo;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import cn.huangdayu.things.rest.endpoint.ThingsEndpointFactory;

@@ -1,4 +1,4 @@
-package cn.huangdayu.things.api.instances;
+package cn.huangdayu.things.rest.instances;
 
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
 

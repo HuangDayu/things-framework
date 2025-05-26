@@ -1,11 +1,11 @@
-package cn.huangdayu.things.discovery;
+package cn.huangdayu.things.rest.discovery;
 
-import cn.huangdayu.things.api.instances.ThingsInstancesManager;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.observer.event.ThingsInstancesChangedEvent;
 import cn.huangdayu.things.common.observer.event.ThingsInstancesUpdatedEvent;
 import cn.huangdayu.things.common.wrapper.ThingsInstance;
+import cn.huangdayu.things.rest.instances.ThingsInstancesManager;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
 import jakarta.annotation.PostConstruct;

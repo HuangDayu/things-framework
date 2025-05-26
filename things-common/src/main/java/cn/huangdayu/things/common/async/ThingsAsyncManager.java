@@ -6,7 +6,6 @@ import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.hutool.cache.Cache;
 import cn.hutool.cache.CacheUtil;
-import cn.hutool.core.util.StrUtil;
 
 /**
  * @author huangdayu
@@ -38,7 +37,7 @@ public class ThingsAsyncManager {
 
     public static boolean asAsyncResponse(ThingsRequest request, ThingsResponse response) {
         JsonThingsMessage jtm = request.getJtm();
-        if (jtm != null && StrUtil.isNotBlank(jtm.getBaseMetadata().getErrorCode())) {
+        if (jtm != null && jtm.isResponse()) {
             ThingsAsync thingsAsync = THINGS_ASYNC_CACHE.get(jtm.getId());
             if (thingsAsync != null) {
                 asAsyncResponse(thingsAsync, jtm);

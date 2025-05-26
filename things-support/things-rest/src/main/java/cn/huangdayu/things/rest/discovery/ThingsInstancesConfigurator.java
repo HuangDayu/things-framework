@@ -1,7 +1,7 @@
-package cn.huangdayu.things.rest.instances;
+package cn.huangdayu.things.rest.discovery;
 
 import cn.huangdayu.things.api.infrastructure.ThingsPropertiesService;
-import cn.huangdayu.things.api.instances.ThingsInstancesManager;
+import cn.huangdayu.things.rest.instances.ThingsInstancesManager;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.enums.ThingsInstanceType;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;

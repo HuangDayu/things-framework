@@ -1,6 +1,6 @@
 package cn.huangdayu.things.rest.getter;
 
-import cn.huangdayu.things.api.instances.ThingsInstancesProvider;
+import cn.huangdayu.things.rest.instances.ThingsInstancesProvider;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.rest.enums.EndpointGetterType;
 import cn.huangdayu.things.common.message.JsonThingsMessage;

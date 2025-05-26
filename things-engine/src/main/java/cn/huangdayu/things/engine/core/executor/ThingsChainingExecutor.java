@@ -5,7 +5,6 @@ import cn.huangdayu.things.api.message.ThingsFiltering;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.enums.ThingsChainingType;
 import cn.huangdayu.things.common.enums.ThingsMethodType;
-import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
@@ -30,7 +29,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.SERVICE_UNAVAILABLE;
 import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_SEPARATOR;
 import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_WILDCARD;
 import static cn.huangdayu.things.common.enums.ThingsChainingType.INPUTTING;
@@ -53,25 +51,20 @@ public class ThingsChainingExecutor implements ThingsChaining {
     private static final Cache<String, ChainingValues> CHAINING_VALUES_CACHE = new LRUCache<>(1000, TimeUnit.MINUTES.toMillis(10));
 
     @Override
-    public void input(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        doChain(thingsRequest, thingsResponse, INPUTTING);
+    public boolean input(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
+        return doChain(thingsRequest, thingsResponse, INPUTTING);
     }
 
     @Override
-    public void output(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        doChain(thingsRequest, thingsResponse, OUTPUTTING);
+    public boolean output(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
+        return doChain(thingsRequest, thingsResponse, OUTPUTTING);
     }
 
     /**
      * 输入和输出的消息都经过【过滤，拦截，处理，拦截】
      */
-    private void doChain(ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsChainingType chainingType) {
+    private boolean doChain(ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsChainingType chainingType) {
         ChainingValues chainingValues = getChainingValues(thingsRequest, thingsResponse, chainingType);
-        // 获取处理器链
-        Set<ThingsHandlers> thingsHandlers = chainingValues.getThingsHandlers();
-        if (CollUtil.isEmpty(thingsHandlers)) {
-            throw new ThingsException(thingsRequest.getJtm(), SERVICE_UNAVAILABLE, "Can not handler this things message");
-        }
         // 获取拦截器链
         Set<ThingsInterceptors> interceptors = chainingValues.getThingsInterceptors();
         // 执行过滤器链
@@ -79,8 +72,14 @@ public class ThingsChainingExecutor implements ThingsChaining {
         Exception exception = null;
         try {
             // 前置拦截器
-            if (!interceptorPreHandle(thingsRequest, thingsResponse, interceptors)) {
-                return;
+            if (!interceptorPreHandle(chainingType, thingsRequest, thingsResponse, interceptors)) {
+                return false;
+            }
+            // 获取处理器链
+            Set<ThingsHandlers> thingsHandlers = chainingValues.getThingsHandlers();
+            if (CollUtil.isEmpty(thingsHandlers)) {
+                log.error("Things [{}] can not handler error, request jtm: {} , response jtm: {}", chainingType, thingsRequest.getJtm(), thingsResponse.getJtm());
+                return false;
             }
             // 遍历执行所有处理器
             thingsHandlers.forEach(handlers -> handlers.getThingsHandling().doHandle(thingsRequest, thingsResponse));
@@ -93,6 +92,7 @@ public class ThingsChainingExecutor implements ThingsChaining {
             // 完成拦截器
             interceptorAfterCompletion(thingsRequest, thingsResponse, exception, interceptors);
         }
+        return true;
     }
 
     private ChainingValues getChainingValues(ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsChainingType chainingType) {
@@ -105,10 +105,11 @@ public class ThingsChainingExecutor implements ThingsChaining {
         });
     }
 
-    private boolean interceptorPreHandle(ThingsRequest thingsRequest, ThingsResponse thingsResponse, Set<ThingsInterceptors> interceptors) {
+    private boolean interceptorPreHandle(ThingsChainingType chainingType, ThingsRequest thingsRequest, ThingsResponse thingsResponse, Set<ThingsInterceptors> interceptors) {
         for (ThingsInterceptors interceptor : interceptors) {
             if (!interceptor.getThingsIntercepting().preHandle(thingsRequest, thingsResponse)) {
-                log.error("Things request preHandle [{}] error, request jtm: {}", interceptor.getClass().getName(), thingsRequest.getJtm());
+                log.error("Things [{}] preHandle [{}] error, request jtm: {} , response jtm: {}", chainingType,
+                        interceptor.getThingsIntercepting().getClass().getName(), thingsRequest.getJtm(), thingsResponse.getJtm());
                 return false;
             }
         }
