@@ -70,23 +70,11 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
             jtm = thingsResponse.getJtm();
         }
         BaseThingsMetadata baseMetadata = jtm.getBaseMetadata();
-        String topic = createTopic(ThingsSubscribes.builder().share(false).productCode(baseMetadata.getProductCode())
+        String topic = getTopic(ThingsSubscribes.builder().jtm(jtm).share(false).productCode(baseMetadata.getProductCode())
                 .deviceCode(baseMetadata.getDeviceCode()).method(jtm.getMethod()).build());
-
-        return output(topic, jtm);
-    }
-
-    @SneakyThrows
-    private boolean output(String topic, JsonThingsMessage jtm) {
-        String endpointUri = getEndpointUri(topic);
-        String concatEndpointUri = concatEndpointUri(endpointUri, jtm);
-        Endpoint endpoint = camelContext.getEndpoint(concatEndpointUri);
+        Endpoint endpoint = camelContext.getEndpoint(getEndpointUri(topic));
         constructor.getProducerTemplate().asyncRequestBodyAndHeader(endpoint, jtm.toString(), PahoMqtt5Constants.MQTT_TOPIC, topic);
         return true;
-    }
-
-    protected String concatEndpointUri(String endpointUri, JsonThingsMessage jtm) {
-        return endpointUri;
     }
 
     private String getEndpointUri(String topic) {
@@ -99,18 +87,18 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
         return endpointUriTemplate;
     }
 
+    protected String getTopic(ThingsSubscribes thingsSubscribes) {
+        return String.format("things-%s-%s-%s", thingsSubscribes.getProductCode(), thingsSubscribes.getDeviceCode(), thingsSubscribes.getMethod());
+    }
+
     @Override
     public boolean subscribe(ThingsSubscribes thingsSubscribes) {
-        return subscribe(createTopic(thingsSubscribes));
+        return subscribe(getTopic(thingsSubscribes));
     }
 
     @Override
     public boolean unsubscribe(ThingsSubscribes thingsSubscribes) {
-        return unsubscribe(createTopic(thingsSubscribes));
-    }
-
-    protected String createTopic(ThingsSubscribes thingsSubscribes) {
-        return String.format("things-%s-%s-%s", thingsSubscribes.getProductCode(), thingsSubscribes.getDeviceCode(), thingsSubscribes.getMethod());
+        return unsubscribe(getTopic(thingsSubscribes));
     }
 
     @SneakyThrows

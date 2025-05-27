@@ -4,12 +4,10 @@ import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
 import cn.huangdayu.things.camel.CamelSofaBusConstructor;
 import cn.huangdayu.things.camel.ThingsMqttReconnectCallback;
 import cn.huangdayu.things.common.enums.ThingsSofaBusType;
-import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.properties.ThingsSofaBusProperties;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.huangdayu.things.common.wrapper.ThingsSubscribes;
-import cn.hutool.core.util.StrUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_WILDCARD;
 import static cn.huangdayu.things.common.enums.ThingsSofaBusType.MQTT;
+import static cn.hutool.core.text.CharSequenceUtil.isNotBlank;
 
 /**
  * @author huangdayu
@@ -46,10 +45,11 @@ public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
     }
 
     @Override
-    protected String createTopic(ThingsSubscribes thingsSubscribes) {
-        String baseTopic = thingsSubscribes.isShare() ? "$share/" + thingsSubscribes.getProductCode() + "/" : "";
+    protected String getTopic(ThingsSubscribes thingsSubscribes) {
+        String groupId = constructor.getProperties().getGroupId();
+        String baseTopic = thingsSubscribes.isShare() ? "$share/" + (isNotBlank(groupId) ? groupId : thingsSubscribes.getProductCode()) + "/" : "";
         String method = thingsSubscribes.getMethod();
-        if (StrUtil.isNotBlank(method) && method.split("\\.").length == 4) {
+        if (isNotBlank(method) && method.split("\\.").length == 4) {
             String[] split = method.split("\\.");
             method = split[1].concat("/").concat(split[2]).concat("/").concat(split[3]);
         } else {
@@ -57,12 +57,8 @@ public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
         }
         return baseTopic + String.format("things/%s/%s/%s", thingsSubscribes.getProductCode(), thingsSubscribes.getDeviceCode(), method)
                 .replaceAll(NULL_VALUE, ONE_LEVEL_TOPIC_WILDCARD)
-                .replaceAll(THINGS_WILDCARD, ONE_LEVEL_TOPIC_WILDCARD);
-    }
-
-    @Override
-    protected String concatEndpointUri(String endpointUri, JsonThingsMessage jtm) {
-        return endpointUri.concat(endpointUri.contains("?") ? "&" : "?") + "qos=" + jtm.getQos();
+                .replaceAll(THINGS_WILDCARD, ONE_LEVEL_TOPIC_WILDCARD)
+                .concat(thingsSubscribes.getJtm() != null ? "?qos=" + thingsSubscribes.getJtm().getQos() : "");
     }
 
     @Override
@@ -86,7 +82,7 @@ public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
         MqttClient client = new MqttClient(properties.getServer(), properties.getClientId(), new MqttDefaultFilePersistence(properties.getPersistenceDir()));
         MqttConnectionOptions options = new MqttConnectionOptions();
         options.setUserName(properties.getUserName());
-        if (StrUtil.isNotBlank(properties.getPassword())) {
+        if (isNotBlank(properties.getPassword())) {
             options.setPassword(properties.getPassword().getBytes(StandardCharsets.UTF_8));
         }
         options.setMaxReconnectDelay(30_000);
