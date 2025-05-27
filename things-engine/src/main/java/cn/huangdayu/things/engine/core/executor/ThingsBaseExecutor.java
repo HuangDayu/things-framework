@@ -60,12 +60,6 @@ public abstract class ThingsBaseExecutor {
      */
     protected static final Table<String, String, Set<ThingsFunction>> THINGS_PROPERTY_LISTENER_TABLE = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
 
-
-    /**
-     * identifier vs productCode vs ThingsFilters
-     */
-    protected static final Table<String, String, Set<ThingsFilters>> THINGS_FILTERS_TABLE = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
-
     /**
      * identifier vs productCode vs ThingsInterceptors
      */

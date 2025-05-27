@@ -2,7 +2,6 @@ package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.api.container.ThingsContainer;
 import cn.huangdayu.things.api.container.ThingsRegister;
-import cn.huangdayu.things.api.message.ThingsFiltering;
 import cn.huangdayu.things.api.message.ThingsHandling;
 import cn.huangdayu.things.api.message.ThingsIntercepting;
 import cn.huangdayu.things.common.annotation.*;
@@ -52,7 +51,6 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         findBeans(thingsContainer, ThingsPropertyEntity.class, this::findThingsProperties);
         findBeans(thingsContainer, ThingsEventEntity.class, this::findThingsEvents);
         findBeans(thingsContainer, ThingsListener.class, this::findThingsListener);
-        findBeans(thingsContainer, ThingsFilter.class, this::findThingsFilters);
         findBeans(thingsContainer, ThingsInterceptor.class, this::findThingsInterceptors);
         findBeans(thingsContainer, ThingsHandler.class, this::findThingsHandlers);
         findBeans(thingsContainer, ThingsClient.class, this::findThingsClients);
@@ -226,25 +224,6 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
             return true;
         }
         return false;
-    }
-
-
-    private void findThingsFilters(ThingsContainer thingsContainer, ThingsFilter thingsFilter, Object bean) {
-        if (!thingsFilter.enabled()) {
-            return;
-        }
-        if (!(bean instanceof ThingsFiltering)) {
-            log.error("Things bean is not ThingsFiltering : {}", bean.getClass().getName());
-            return;
-        }
-        String identifier = thingsFilter.method() + THINGS_SEPARATOR + thingsFilter.identifier();
-        String productCode = thingsFilter.productCode();
-        Set<ThingsFilters> filters = THINGS_FILTERS_TABLE.get(identifier, productCode);
-        if (filters == null) {
-            filters = new ConcurrentHashSet<>();
-        }
-        filters.add(new ThingsFilters(thingsFilter, (ThingsFiltering) bean, thingsFilter.chainingType()));
-        THINGS_FILTERS_TABLE.put(identifier, productCode, filters);
     }
 
     private void findThingsInterceptors(ThingsContainer thingsContainer, ThingsInterceptor thingsInterceptor, Object bean) {

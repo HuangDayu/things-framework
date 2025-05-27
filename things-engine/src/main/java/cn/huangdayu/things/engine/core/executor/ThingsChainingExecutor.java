@@ -1,7 +1,6 @@
 package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.api.message.ThingsChaining;
-import cn.huangdayu.things.api.message.ThingsFiltering;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.enums.ThingsChainingType;
 import cn.huangdayu.things.common.enums.ThingsMethodType;
@@ -9,7 +8,6 @@ import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
-import cn.huangdayu.things.engine.wrapper.ThingsFilters;
 import cn.huangdayu.things.engine.wrapper.ThingsHandlers;
 import cn.huangdayu.things.engine.wrapper.ThingsInterceptors;
 import cn.hutool.cache.Cache;
@@ -35,7 +33,8 @@ import static cn.huangdayu.things.common.enums.ThingsChainingType.INPUTTING;
 import static cn.huangdayu.things.common.enums.ThingsChainingType.OUTPUTTING;
 import static cn.huangdayu.things.common.enums.ThingsMethodType.ALL_METHOD;
 import static cn.huangdayu.things.common.utils.ThingsUtils.subIdentifies;
-import static cn.huangdayu.things.engine.core.executor.ThingsBaseExecutor.*;
+import static cn.huangdayu.things.engine.core.executor.ThingsBaseExecutor.THINGS_HANDLERS_TABLE;
+import static cn.huangdayu.things.engine.core.executor.ThingsBaseExecutor.THINGS_INTERCEPTORS_TABLE;
 
 /**
  * @author huangdayu
@@ -90,10 +89,9 @@ public class ThingsChainingExecutor implements ThingsChaining {
     private ChainingValues getChainingValues(ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsChainingType chainingType) {
         ChainingKeys keys = getKeys(thingsRequest.getJtm(), chainingType);
         return CHAINING_VALUES_CACHE.get(keys.getKeyFlag(), () -> {
-            Set<ThingsFilters> filter = filter(keys, thingsRequest, chainingType);
             Set<ThingsInterceptors> interceptors = getInterceptors(keys, thingsRequest, chainingType);
             Set<ThingsHandlers> handlers = getHandlers(keys, thingsRequest, thingsResponse, chainingType);
-            return new ChainingValues(filter, handlers, interceptors);
+            return new ChainingValues(handlers, interceptors);
         });
     }
 
@@ -104,13 +102,6 @@ public class ThingsChainingExecutor implements ThingsChaining {
             }
         }
         return true;
-    }
-
-    private void doFilterChain(ThingsRequest thingsRequest, ThingsResponse thingsResponse, Set<ThingsFilters> filters) {
-        if (CollUtil.isNotEmpty(filters)) {
-            ThingsFiltering.Chain chain = new ThingsFiltering.Chain(filters.stream().map(ThingsFilters::getThingsFiltering).collect(Collectors.toList()));
-            chain.doFilter(thingsRequest, thingsResponse);
-        }
     }
 
     private void interceptorPostHandle(ThingsRequest thingsRequest, ThingsResponse thingsResponse, Set<ThingsInterceptors> interceptors) {
@@ -134,10 +125,6 @@ public class ThingsChainingExecutor implements ThingsChaining {
 
     private Set<ThingsInterceptors> getInterceptors(ChainingKeys chainingKeys, ThingsRequest thingsRequest, ThingsChainingType chainingType) {
         return getChains(chainingKeys, THINGS_INTERCEPTORS_TABLE, thingsRequest.getJtm(), i -> i.getThingsInterceptor().order(), v -> v.getChainingType().equals(chainingType));
-    }
-
-    private Set<ThingsFilters> filter(ChainingKeys chainingKeys, ThingsRequest thingsRequest, ThingsChainingType chainingType) {
-        return getChains(chainingKeys, THINGS_FILTERS_TABLE, thingsRequest.getJtm(), i -> i.getThingsFilter().order(), v -> v.getChainingType().equals(chainingType));
     }
 
     private <T> Set<T> getChains(ChainingKeys chainingKeys, Table<String, String, Set<T>> table, JsonThingsMessage jtm, Function<T, Integer> comparing, Predicate<T> filtering) {
@@ -185,7 +172,6 @@ public class ThingsChainingExecutor implements ThingsChaining {
     @Data
     @AllArgsConstructor
     private static class ChainingValues {
-        private final Set<ThingsFilters> thingsFilters;
         private final Set<ThingsHandlers> thingsHandlers;
         private final Set<ThingsInterceptors> thingsInterceptors;
     }
