@@ -30,6 +30,8 @@ public class ThingsSofaBusProperties {
 
     private String password;
 
+    private String persistenceDir = "temp/sofabus/";
+
     private Map<String, String> properties;
 
     @Override

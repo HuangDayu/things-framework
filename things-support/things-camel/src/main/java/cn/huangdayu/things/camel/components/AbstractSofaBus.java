@@ -82,7 +82,6 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
         String concatEndpointUri = concatEndpointUri(endpointUri, jtm);
         Endpoint endpoint = camelContext.getEndpoint(concatEndpointUri);
         constructor.getProducerTemplate().asyncRequestBodyAndHeader(endpoint, jtm.toString(), PahoMqtt5Constants.MQTT_TOPIC, topic);
-        log.debug("Things Bus topic [{}] output message: {}", concatEndpointUri, jtm);
         return true;
     }
 

@@ -18,6 +18,7 @@ import org.apache.camel.component.paho.mqtt5.PahoMqtt5Component;
 import org.apache.camel.support.DefaultComponent;
 import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
+import org.eclipse.paho.mqttv5.client.persist.MqttDefaultFilePersistence;
 
 import java.nio.charset.StandardCharsets;
 
@@ -82,7 +83,7 @@ public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
     @Override
     public DefaultComponent buildComponent() {
         ThingsSofaBusProperties properties = constructor.getProperties();
-        MqttClient client = new MqttClient(properties.getServer(), properties.getClientId());
+        MqttClient client = new MqttClient(properties.getServer(), properties.getClientId(), new MqttDefaultFilePersistence(properties.getPersistenceDir()));
         MqttConnectionOptions options = new MqttConnectionOptions();
         options.setUserName(properties.getUserName());
         if (StrUtil.isNotBlank(properties.getPassword())) {
@@ -96,6 +97,9 @@ public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
         options.setSessionExpiryInterval(0L);
         client.setCallback(new ThingsMqttReconnectCallback(camelContext, client, ROUTE_ID_MAP, options));
         client.connect(options);
-        return ComponentsBuilderFactory.pahoMqtt5().client(client).build();
+        return ComponentsBuilderFactory.pahoMqtt5()
+                .filePersistenceDirectory(properties.getPersistenceDir())
+                .client(client)
+                .build();
     }
 }
