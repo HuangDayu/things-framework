@@ -73,7 +73,7 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
         String topic = getTopic(ThingsSubscribes.builder().jtm(jtm).share(false).productCode(baseMetadata.getProductCode())
                 .deviceCode(baseMetadata.getDeviceCode()).method(jtm.getMethod()).build());
         Endpoint endpoint = camelContext.getEndpoint(getEndpointUri(topic));
-        constructor.getProducerTemplate().asyncRequestBodyAndHeader(endpoint, jtm.toString(), PahoMqtt5Constants.MQTT_TOPIC, topic);
+        constructor.getProducerTemplate().asyncSendBody(endpoint, jtm.toString());
         return true;
     }
 

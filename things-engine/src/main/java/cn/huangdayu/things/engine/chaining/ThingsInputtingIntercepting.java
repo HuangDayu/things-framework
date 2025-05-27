@@ -1,5 +1,6 @@
 package cn.huangdayu.things.engine.chaining;
 
+import cn.huangdayu.things.api.message.ThingsChaining;
 import cn.huangdayu.things.api.message.ThingsIntercepting;
 import cn.huangdayu.things.common.annotation.ThingsInterceptor;
 import cn.huangdayu.things.common.async.ThingsAsyncManager;
@@ -8,6 +9,7 @@ import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.hutool.cache.Cache;
 import cn.hutool.cache.impl.FIFOCache;
 import cn.hutool.core.util.StrUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
@@ -20,9 +22,11 @@ import static cn.huangdayu.things.engine.chaining.ThingsOutputtingIntercepting.O
  * @author huangdayu
  */
 @Slf4j
+@RequiredArgsConstructor
 @ThingsInterceptor(order = Integer.MIN_VALUE, chainingType = INPUTTING)
 public class ThingsInputtingIntercepting implements ThingsIntercepting {
 
+    private final ThingsChaining thingsChaining;
 
     /**
      * 先进先出缓存，防止重复处理消息
@@ -36,10 +40,6 @@ public class ThingsInputtingIntercepting implements ThingsIntercepting {
             return false;
         }
         // 如果是回复，则将其加入异步处理，不进行下一步处理
-        if (thingsResponse.getJtm().isResponse()) {
-            ThingsAsyncManager.asAsyncResponse(thingsResponse);
-            return false;
-        }
         if (thingsRequest.getJtm().isResponse()) {
             thingsResponse.setJtm(thingsRequest.getJtm());
             ThingsAsyncManager.asAsyncResponse(thingsResponse);
@@ -61,10 +61,23 @@ public class ThingsInputtingIntercepting implements ThingsIntercepting {
         return true;
     }
 
+    /**
+     * 输入处理完成后，如果存在响应消息，则进行输出处理
+     * @param thingsRequest
+     * @param thingsResponse
+     */
+    @Override
+    public void postHandle(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
+        if (thingsResponse.getJtm() != null) {
+            thingsChaining.output(thingsRequest, thingsResponse);
+        }
+    }
+
+
     @Override
     public void afterCompletion(ThingsRequest thingsRequest, ThingsResponse thingsResponse, Exception exception) {
         log.debug("Things inputting message, times: {} , SofaBus type: {} , groupId: {} clientId: {} , topic: {} , sessionCode: {} , request： {} , response: {}  , exception: ",
                 System.currentTimeMillis() - thingsRequest.getJtm().getTime(), thingsRequest.getType(), thingsRequest.getGroupCode(), thingsRequest.getClientCode(),
-                thingsRequest.getTopic(), thingsRequest.getSessionCode(), thingsRequest.getJtm(), thingsRequest.getJtm(), exception);
+                thingsRequest.getTopic(), thingsRequest.getSessionCode(), thingsRequest.getJtm(), thingsResponse.getJtm(), exception);
     }
 }

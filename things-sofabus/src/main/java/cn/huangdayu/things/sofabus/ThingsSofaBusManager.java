@@ -144,7 +144,7 @@ public class ThingsSofaBusManager {
         return new HashSet<>(propertiesComponentsMap.values());
     }
 
-    private void subscribe(boolean share, String productCode, String deviceCode, String method) {
+    public void subscribe(boolean share, String productCode, String deviceCode, String method) {
         Set<ThingsSofaBus> allSofaBus = getAllSofaBus();
         if (CollUtil.isNotEmpty(allSofaBus)) {
             ThingsSubscribes thingsSubscribes = new ThingsSubscribes();
@@ -156,7 +156,7 @@ public class ThingsSofaBusManager {
         }
     }
 
-    private void unsubscribe(boolean share, String productCode, String deviceCode, String method) {
+    public void unsubscribe(boolean share, String productCode, String deviceCode, String method) {
         Set<ThingsSofaBus> allSofaBus = getAllSofaBus();
         if (CollUtil.isNotEmpty(allSofaBus)) {
             ThingsSubscribes thingsSubscribes = new ThingsSubscribes();

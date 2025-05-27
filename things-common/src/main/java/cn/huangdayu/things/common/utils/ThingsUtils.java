@@ -290,4 +290,18 @@ public class ThingsUtils {
         });
         return table;
     }
+
+    public static boolean equalsThings(String thingsTemplate, String things2) {
+        String[] splitTemplate = thingsTemplate.split("\\.");
+        String[] splitThings = things2.split("\\.");
+        for (int i = 0; i < splitTemplate.length; i++) {
+            if (i == 2) {
+                continue;
+            }
+            if (!splitTemplate[i].equals(splitThings[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

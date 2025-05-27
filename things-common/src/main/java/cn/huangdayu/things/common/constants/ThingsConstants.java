@@ -14,6 +14,8 @@ public final class ThingsConstants {
      * 物模型分隔符
      */
     public static final String THINGS_SEPARATOR = "#";
+    
+    public static final String THINGS_DOT = ".";
 
     /**
      * 物联网设备事件标识
@@ -1421,6 +1423,14 @@ public final class ThingsConstants {
         public static final String THINGS_SYSTEM_SET = "thing.system.identifier.set";
         public static final String THINGS_SYSTEM_GET = "thing.system.identifier.get";
         public static final String THINGS_SYSTEM_POST = "thing.system.identifier.post";
+    }
+
+    public static class MethodActions {
+        public static final String THINGS_ACTION_SET = "set";
+        public static final String THINGS_ACTION_GET = "get";
+        public static final String THINGS_ACTION_POST = "post";
+        public static final String THINGS_ACTION_REQUEST = "request";
+        public static final String THINGS_ACTION_RESPONSE = "response";
     }
 
     /**

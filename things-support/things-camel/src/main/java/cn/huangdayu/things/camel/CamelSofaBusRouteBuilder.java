@@ -42,8 +42,7 @@ public class CamelSofaBusRouteBuilder extends RouteBuilder {
                                 .jtm(jtm).build();
 
                         ThingsResponse thingsResponse = ThingsResponse.builder().source(thingsSofaBus).type(thingsSofaBus.getType().name())
-                                .topic(topic).clientCode(constructor.getProperties().getClientId()).groupCode(constructor.getProperties().getGroupId())
-                                .jtm(jtm).build();
+                                .topic(topic).clientCode(constructor.getProperties().getClientId()).groupCode(constructor.getProperties().getGroupId()).build();
                         constructor.getThingsChaining().input(thingsRequest, thingsResponse);
                     }
                 });

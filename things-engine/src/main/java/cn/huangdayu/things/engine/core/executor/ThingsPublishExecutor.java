@@ -51,7 +51,9 @@ public class ThingsPublishExecutor implements ThingsPublisher {
     @Override
     public void asyncSendMessage(JsonThingsMessage jtm, Consumer<JsonThingsMessage> consumer) {
         ThingsRequest thingsRequest = new ThingsRequest(jtm);
-        thingsRequest.setResponseConsumer(response -> consumer.accept(response.getJtm()));
+        if (consumer != null) {
+            thingsRequest.setResponseConsumer(response -> consumer.accept(response.getJtm()));
+        }
         thingsChaining.output(thingsRequest, new ThingsResponse());
     }
 
