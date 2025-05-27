@@ -67,22 +67,14 @@ public class ThingsChainingExecutor implements ThingsChaining {
         ChainingValues chainingValues = getChainingValues(thingsRequest, thingsResponse, chainingType);
         // 获取拦截器链
         Set<ThingsInterceptors> interceptors = chainingValues.getThingsInterceptors();
-        // 执行过滤器链
-        doFilterChain(thingsRequest, thingsResponse, chainingValues.getThingsFilters());
         Exception exception = null;
         try {
             // 前置拦截器
             if (!interceptorPreHandle(chainingType, thingsRequest, thingsResponse, interceptors)) {
                 return false;
             }
-            // 获取处理器链
-            Set<ThingsHandlers> thingsHandlers = chainingValues.getThingsHandlers();
-            if (CollUtil.isEmpty(thingsHandlers)) {
-                log.error("Things [{}] can not handler error, request jtm: {} , response jtm: {}", chainingType, thingsRequest.getJtm(), thingsResponse.getJtm());
-                return false;
-            }
             // 遍历执行所有处理器
-            thingsHandlers.forEach(handlers -> handlers.getThingsHandling().doHandle(thingsRequest, thingsResponse));
+            chainingValues.getThingsHandlers().forEach(handlers -> handlers.getThingsHandling().doHandle(thingsRequest, thingsResponse));
             // 后置拦截器
             interceptorPostHandle(thingsRequest, thingsResponse, interceptors);
         } catch (Exception e) {
@@ -108,8 +100,6 @@ public class ThingsChainingExecutor implements ThingsChaining {
     private boolean interceptorPreHandle(ThingsChainingType chainingType, ThingsRequest thingsRequest, ThingsResponse thingsResponse, Set<ThingsInterceptors> interceptors) {
         for (ThingsInterceptors interceptor : interceptors) {
             if (!interceptor.getThingsIntercepting().preHandle(thingsRequest, thingsResponse)) {
-                log.error("Things [{}] preHandle [{}] error, request jtm: {} , response jtm: {}", chainingType,
-                        interceptor.getThingsIntercepting().getClass().getName(), thingsRequest.getJtm(), thingsResponse.getJtm());
                 return false;
             }
         }

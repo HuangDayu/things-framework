@@ -77,6 +77,12 @@ public abstract class ThingsBaseExecutor {
      */
     protected static final Table<String, String, Set<ThingsHandlers>> THINGS_HANDLERS_TABLE = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
 
+
+    /**
+     * identifier vs productCode vs ThingsFunction
+     */
+    protected static final Table<String, String, ThingsFunction> THINGS_CLIENT_TABLE = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
+
     public static <T> T getThingsBean(Class<T> requiredType) {
         for (Map.Entry<String, ThingsContainer> entry : THINGS_CONTAINERS.entrySet()) {
             try {

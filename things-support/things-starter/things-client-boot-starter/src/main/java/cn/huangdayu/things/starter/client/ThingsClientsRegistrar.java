@@ -1,6 +1,7 @@
 package cn.huangdayu.things.starter.client;
 
 import cn.huangdayu.things.client.proxy.ThingsClientsProxy;
+import cn.huangdayu.things.common.annotation.ThingsClient;
 import cn.hutool.core.collection.CollUtil;
 import lombok.Getter;
 import org.springframework.beans.BeansException;
@@ -45,6 +46,9 @@ public class ThingsClientsRegistrar implements ImportBeanDefinitionRegistrar, Ap
     }
 
     private void registerBeanDefinition(BeanDefinitionRegistry beanDefinitionRegistry, Class<?> beanClass) {
+        if (!beanClass.getAnnotation(ThingsClient.class).enabled()) {
+            return;
+        }
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(beanClass);
         GenericBeanDefinition definition = (GenericBeanDefinition) builder.getRawBeanDefinition();
         MutablePropertyValues propertyValues = definition.getPropertyValues();

@@ -37,9 +37,9 @@ public abstract class AbstractThingsMessage<M extends Serializable, P extends Se
 
 
     /**
-     * 超时时间
+     * 超时时间，单位：毫秒
      */
-    private long timeout = 1000;
+    private long timeout = 5000;
 
     /**
      * 消息元数据

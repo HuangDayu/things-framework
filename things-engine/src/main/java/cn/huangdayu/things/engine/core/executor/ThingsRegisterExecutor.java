@@ -18,6 +18,7 @@ import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.ClassUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -47,13 +48,14 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
             throw new ThingsException(ERROR, "Container name already exists.");
         }
         long start = System.currentTimeMillis();
-        findBeans(thingsContainer, Things.class, this::findThingsFunctions);
+        findBeans(thingsContainer, Things.class, this::findThingsServices);
         findBeans(thingsContainer, ThingsPropertyEntity.class, this::findThingsProperties);
         findBeans(thingsContainer, ThingsEventEntity.class, this::findThingsEvents);
         findBeans(thingsContainer, ThingsListener.class, this::findThingsListener);
         findBeans(thingsContainer, ThingsFilter.class, this::findThingsFilters);
         findBeans(thingsContainer, ThingsInterceptor.class, this::findThingsInterceptors);
-        findBeans(thingsContainer, ThingsHandler.class, this::findThingsThingsHandlers);
+        findBeans(thingsContainer, ThingsHandler.class, this::findThingsHandlers);
+        findBeans(thingsContainer, ThingsClient.class, this::findThingsClients);
         thingsEventObserver.notifyObservers(new ThingsContainerUpdatedEvent(thingsContainer));
         log.info("Started ThingsEngine in {} milliseconds with context {}.", System.currentTimeMillis() - start, thingsContainer.name());
         THINGS_CONTAINERS.put(thingsContainer.name(), thingsContainer);
@@ -143,7 +145,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         THINGS_EVENTS_TABLE.put(thingsEventEntity.identifier(), thingsEventEntity.productCode(), new ThingsEvents(thingsContainer, thingsEventEntity, bean));
     }
 
-    private void findThingsFunctions(ThingsContainer thingsContainer, Things things, Object bean) {
+    private void findThingsServices(ThingsContainer thingsContainer, Things things, Object bean) {
         if (!things.enabled()) {
             return;
         }
@@ -264,7 +266,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
     }
 
 
-    private void findThingsThingsHandlers(ThingsContainer thingsContainer, ThingsHandler thingsHandler, Object bean) {
+    private void findThingsHandlers(ThingsContainer thingsContainer, ThingsHandler thingsHandler, Object bean) {
         if (!thingsHandler.enabled()) {
             return;
         }
@@ -280,6 +282,26 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         }
         thingsHandlers.add(new ThingsHandlers(thingsHandler, (ThingsHandling) bean, thingsHandler.chainingType()));
         THINGS_HANDLERS_TABLE.put(identifier, productCode, thingsHandlers);
+    }
+
+    private void findThingsClients(ThingsContainer thingsContainer, ThingsClient thingsClient, Object bean) {
+        if (!thingsClient.enabled()) {
+            return;
+        }
+        for (Class<?> aClass : ClassUtils.getAllInterfaces(bean)) {
+            Method[] methods = ReflectUtil.getMethods(aClass);
+            for (Method method : methods) {
+                ThingsService thingsService = method.getAnnotation(ThingsService.class);
+                if (thingsService != null) {
+                    String productCode = StrUtil.isNotBlank(thingsClient.productCode()) ? thingsClient.productCode() : thingsService.productCode();
+                    String identifier = StrUtil.isNotBlank(thingsService.identifier()) ? thingsService.identifier() : method.getName();
+                    if (StrUtil.isAllNotBlank(identifier, productCode)) {
+                        ThingsFunction thingsFunction = new ThingsFunction(thingsContainer, thingsClient, bean, method, thingsService.async(), thingsService, scanParameter(method));
+                        THINGS_CLIENT_TABLE.put(identifier, productCode, thingsFunction);
+                    }
+                }
+            }
+        }
     }
 
     private ThingsParameter[] scanParameter(Method method) {

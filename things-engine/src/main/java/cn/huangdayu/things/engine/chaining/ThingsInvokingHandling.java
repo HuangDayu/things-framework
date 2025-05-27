@@ -15,7 +15,7 @@ import static cn.huangdayu.things.common.enums.ThingsChainingType.INPUTTING;
  */
 @RequiredArgsConstructor
 @ThingsHandler(order = 1, chainingType = INPUTTING)
-public class ThingsInvokeHandling implements ThingsHandling {
+public class ThingsInvokingHandling implements ThingsHandling {
 
     private final ThingsInvoker thingsInvoker;
 

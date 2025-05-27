@@ -1,10 +1,14 @@
 package cn.huangdayu.things.common.utils;
 
+import cn.huangdayu.things.common.annotation.ThingsClient;
 import cn.huangdayu.things.common.annotation.ThingsEventEntity;
+import cn.huangdayu.things.common.annotation.ThingsService;
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.message.ThingsEventMessage;
+import cn.hutool.core.map.multi.RowKeyTable;
 import cn.hutool.core.map.multi.Table;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONWriter;
@@ -23,6 +27,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -265,5 +270,24 @@ public class ThingsUtils {
 
     public static boolean isEventPost(JsonThingsMessage jtm) {
         return THINGS_EVENT_POST.equals(jtm.getMethod().replace(subIdentifies(jtm.getMethod()), THINGS_IDENTIFIER));
+    }
+
+
+    public static Table<String, String, Class<?>> findThingsClientInfo(Set<Class<?>> classSet) {
+        Table<String, String, Class<?>> table = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
+        classSet.forEach(beanClass -> {
+            ThingsClient thingsClient = beanClass.getAnnotation(ThingsClient.class);
+            for (Method method : beanClass.getDeclaredMethods()) {
+                ThingsService thingsService = method.getAnnotation(ThingsService.class);
+                if (thingsService != null) {
+                    String productCode = StrUtil.isNotBlank(thingsClient.productCode()) ? thingsClient.productCode() : thingsService.productCode();
+                    String identifier = StrUtil.isNotBlank(thingsService.identifier()) ? thingsService.identifier() : method.getName();
+                    if (StrUtil.isAllNotBlank(identifier, productCode)) {
+                        table.put(identifier, productCode, beanClass);
+                    }
+                }
+            }
+        });
+        return table;
     }
 }

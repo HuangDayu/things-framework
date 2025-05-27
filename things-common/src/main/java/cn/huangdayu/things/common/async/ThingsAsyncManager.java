@@ -18,49 +18,36 @@ public class ThingsAsyncManager {
     static {
         THINGS_ASYNC_CACHE.setListener((key, thingsAsync) -> {
             if (!thingsAsync.isCompleted()) {
-                asAsyncResponse(thingsAsync, thingsAsync.getThingsRequest().getJtm().timeout());
+                asAsyncResponse(new ThingsResponse(thingsAsync.getThingsRequest().getJtm().timeout()));
             }
         });
     }
 
-    public static boolean asAsyncRequest(ThingsRequest request, ThingsResponse response) {
-        if (response.getConsumer() == null && response.getFuture() == null) {
-            return false;
+    public static void asAsyncRequest(ThingsRequest thingsRequest) {
+        if (thingsRequest.getResponseConsumer() == null && thingsRequest.getResponseFuture() == null) {
+            return;
         }
-        if (THINGS_ASYNC_CACHE.containsKey(request.getJtm().getId())) {
-            return true;
+        if (THINGS_ASYNC_CACHE.containsKey(thingsRequest.getJtm().getId())) {
+            return;
         }
-        ThingsAsync thingsAsync = new ThingsAsync(request.getJtm().getId(), request.getJtm().getTimeout(), false, request, response);
+        ThingsAsync thingsAsync = new ThingsAsync(thingsRequest.getJtm().getId(), thingsRequest.getJtm().getTimeout(), false, thingsRequest, null);
         THINGS_ASYNC_CACHE.put(thingsAsync.getAsyncId(), thingsAsync, thingsAsync.getTimeout());
-        return true;
-    }
-
-    public static boolean asAsyncResponse(ThingsRequest request, ThingsResponse response) {
-        JsonThingsMessage jtm = request.getJtm();
-        if (jtm != null && jtm.isResponse()) {
-            ThingsAsync thingsAsync = THINGS_ASYNC_CACHE.get(jtm.getId());
-            if (thingsAsync != null) {
-                asAsyncResponse(thingsAsync, jtm);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static void asAsyncResponse(ThingsAsync thingsAsync, JsonThingsMessage jtm) {
-        ThingsResponse thingsResponse = thingsAsync.getThingsResponse();
-        thingsResponse.setJtm(jtm);
-        asAsyncResponse(thingsResponse);
-        thingsAsync.setCompleted(true);
     }
 
     public static void asAsyncResponse(ThingsResponse thingsResponse) {
-        if (thingsResponse.getJtm() != null) {
-            if (thingsResponse.getConsumer() != null) {
-                thingsResponse.getConsumer().accept(thingsResponse);
-            }
-            if (thingsResponse.getFuture() != null) {
-                thingsResponse.getFuture().complete(thingsResponse);
+        JsonThingsMessage jtm = thingsResponse.getJtm();
+        if (jtm != null && jtm.isResponse()) {
+            ThingsAsync thingsAsync = THINGS_ASYNC_CACHE.get(jtm.getId());
+            if (thingsAsync != null) {
+                ThingsRequest thingsRequest = thingsAsync.getThingsRequest();
+                if (thingsRequest.getResponseConsumer() != null) {
+                    thingsRequest.getResponseConsumer().accept(thingsResponse);
+                }
+                if (thingsRequest.getResponseFuture() != null) {
+                    thingsRequest.getResponseFuture().complete(thingsResponse);
+                }
+                thingsAsync.setThingsResponse(thingsResponse);
+                thingsAsync.setCompleted(true);
             }
         }
     }

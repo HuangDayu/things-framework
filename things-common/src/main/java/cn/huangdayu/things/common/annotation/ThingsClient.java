@@ -32,6 +32,13 @@ public @interface ThingsClient {
      */
     String productCode();
 
+    /**
+     * 是否启用
+     *
+     * @return
+     */
+    boolean enabled() default true;
+
 
     /**
      * 重试次数

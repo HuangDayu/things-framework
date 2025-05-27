@@ -9,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.eclipse.paho.mqttv5.client.MqttClientException;
-import org.eclipse.paho.mqttv5.common.MqttException;
 
 /**
  * @author huangdayu
@@ -38,18 +36,14 @@ public class CamelSofaBusRouteBuilder extends RouteBuilder {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         String receivedMessage = exchange.getIn().getBody(String.class);
-                        log.debug("Things Bus topic [{}] inputting message: {}", topic, receivedMessage);
                         JsonThingsMessage jtm = JSON.to(JsonThingsMessage.class, receivedMessage);
                         ThingsRequest thingsRequest = ThingsRequest.builder().source(thingsSofaBus).type(thingsSofaBus.getType().name())
-                                .endpoint(topic).clientCode(constructor.getProperties().getClientId()).groupCode(constructor.getProperties().getGroupId()).jtm(jtm).build();
+                                .topic(topic).clientCode(constructor.getProperties().getClientId()).groupCode(constructor.getProperties().getGroupId())
+                                .jtm(jtm).build();
 
-                        ThingsResponse thingsResponse = ThingsResponse.builder().source(thingsSofaBus).type(thingsSofaBus.getType().name()).endpoint(topic)
-                                .clientCode(constructor.getProperties().getClientId()).groupCode(constructor.getProperties().getGroupId())
-                                .consumer(response -> {
-                                    String replyMessage = response.getJtm().toString();
-                                    log.debug("Things Bus topic [{}] outputting message: {}", topic, replyMessage);
-                                    thingsSofaBus.output(thingsRequest, response);
-                                }).build();
+                        ThingsResponse thingsResponse = ThingsResponse.builder().source(thingsSofaBus).type(thingsSofaBus.getType().name())
+                                .topic(topic).clientCode(constructor.getProperties().getClientId()).groupCode(constructor.getProperties().getGroupId())
+                                .jtm(jtm).build();
                         constructor.getThingsChaining().input(thingsRequest, thingsResponse);
                     }
                 });

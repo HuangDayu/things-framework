@@ -10,6 +10,7 @@ import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 import java.util.concurrent.CompletableFuture;
@@ -19,6 +20,7 @@ import java.util.function.Consumer;
 /**
  * @author huangdayu
  */
+@Slf4j
 @RequiredArgsConstructor
 @ThingsBean
 public class ThingsPublishExecutor implements ThingsPublisher {
@@ -34,20 +36,23 @@ public class ThingsPublishExecutor implements ThingsPublisher {
 
     @SneakyThrows
     public JsonThingsMessage syncSendMessage(JsonThingsMessage jtm) {
-        ThingsResponse thingsResponse = new ThingsResponse();
+        ThingsRequest thingsRequest = new ThingsRequest(jtm);
         CompletableFuture<ThingsResponse> future = new CompletableFuture<>();
-        thingsResponse.setFuture(future);
-        thingsChaining.output(new ThingsRequest(jtm), thingsResponse);
-        return future.get(jtm.getTimeout(), TimeUnit.MILLISECONDS).getJtm();
+        thingsRequest.setResponseFuture(future);
+        thingsChaining.output(thingsRequest, new ThingsResponse());
+        try {
+            return future.get(jtm.getTimeout(), TimeUnit.MILLISECONDS).getJtm();
+        } catch (Exception e) {
+            log.error("Things publish message [{}] error: {} ", jtm, e.getMessage());
+            return jtm.timeout();
+        }
     }
 
     @Override
     public void asyncSendMessage(JsonThingsMessage jtm, Consumer<JsonThingsMessage> consumer) {
-        ThingsResponse thingsResponse = new ThingsResponse();
-        if (consumer != null) {
-            thingsResponse.setConsumer(response -> consumer.accept(response.getJtm()));
-        }
-        thingsChaining.output(new ThingsRequest(jtm), thingsResponse);
+        ThingsRequest thingsRequest = new ThingsRequest(jtm);
+        thingsRequest.setResponseConsumer(response -> consumer.accept(response.getJtm()));
+        thingsChaining.output(thingsRequest, new ThingsResponse());
     }
 
     @SneakyThrows

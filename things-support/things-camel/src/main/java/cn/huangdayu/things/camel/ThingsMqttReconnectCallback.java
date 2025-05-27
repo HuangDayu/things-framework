@@ -30,14 +30,18 @@ public class ThingsMqttReconnectCallback implements MqttCallback {
         log.warn("MqttClient [{}/{}] disconnected to reconnect", client.getServerURI(), client.getClientId());
     }
 
-    @SneakyThrows
     @Override
     public void mqttErrorOccurred(MqttException exception) {
-        log.warn("MqttClient [{}/{}] exception to reconnect", client.getServerURI(), client.getClientId(), exception);
-        if (MqttClientException.REASON_CODE_CLIENT_NOT_CONNECTED == exception.getReasonCode()) {
-            if (!client.isConnected()) {
-                client.reconnect();
+        try {
+            log.warn("MqttClient [{}/{}] exception to reconnect", client.getServerURI(), client.getClientId(), exception);
+            if (MqttClientException.REASON_CODE_CLIENT_NOT_CONNECTED == exception.getReasonCode()) {
+                if (!client.isConnected()) {
+                    client.reconnect();
+                }
             }
+        } catch (Exception e) {
+            log.error("SofaBus MqttClient [{}/{}] connect error : {}",
+                    client.getServerURI(), client.getClientId(), e.getMessage());
         }
     }
 

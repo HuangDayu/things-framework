@@ -1,12 +1,12 @@
 package cn.huangdayu.things.engine.core.executor;
 
+import cn.huangdayu.things.api.container.ThingsDescriber;
 import cn.huangdayu.things.api.infrastructure.ThingsPropertiesService;
 import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.dsl.*;
 import cn.huangdayu.things.common.message.BaseThingsMessage;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.observer.event.ThingsContainerUpdatedEvent;
-import cn.huangdayu.things.api.container.ThingsDescriber;
 import cn.huangdayu.things.engine.wrapper.ThingsEvents;
 import cn.huangdayu.things.engine.wrapper.ThingsFunction;
 import cn.huangdayu.things.engine.wrapper.ThingsParameter;
@@ -78,7 +78,7 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
     }
 
     private Set<DomainConsumeInfo> getConsumes() {
-        return ThingsBaseExecutor.THINGS_EVENTS_LISTENER_TABLE.cellSet()
+        return ThingsBaseExecutor.THINGS_CLIENT_TABLE.cellSet()
                 .stream().map(cell -> new DomainConsumeInfo(cell.getColumnKey(), cell.getRowKey())).collect(Collectors.toSet());
     }
 

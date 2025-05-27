@@ -1,10 +1,8 @@
 package cn.huangdayu.things.common.wrapper;
 
 import cn.huangdayu.things.common.message.JsonThingsMessage;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -12,19 +10,13 @@ import java.util.function.Consumer;
 /**
  * @author huangdayu
  */
-@Builder
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
-public class ThingsResponse {
+public class ThingsResponse extends ThingsServlet {
 
-    private Object source;
-    private String type;
-    private String endpoint;
-    private String clientCode;
-    private String groupCode;
-    private String sessionCode;
-    private JsonThingsMessage jtm;
-    private Consumer<ThingsResponse> consumer;
-    private CompletableFuture<ThingsResponse> future;
+    public ThingsResponse(JsonThingsMessage jtm) {
+        super(jtm);
+    }
 }

@@ -12,6 +12,7 @@ import cn.huangdayu.things.common.wrapper.ThingsSubscribes;
 import cn.hutool.core.util.StrUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.builder.component.ComponentsBuilderFactory;
 import org.apache.camel.component.paho.mqtt5.PahoMqtt5Component;
 import org.apache.camel.support.DefaultComponent;
@@ -26,6 +27,7 @@ import static cn.huangdayu.things.common.enums.ThingsSofaBusType.MQTT;
 /**
  * @author huangdayu
  */
+@Slf4j
 @Getter
 public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
 
@@ -62,12 +64,16 @@ public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
         return endpointUri.concat(endpointUri.contains("?") ? "&" : "?") + "qos=" + jtm.getQos();
     }
 
-    @SneakyThrows
     @Override
     public boolean output(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        MqttClient client = ((PahoMqtt5Component) component).getClient();
-        if (client != null && !client.isConnected()) {
-            client.reconnect();
+        try {
+            MqttClient client = ((PahoMqtt5Component) component).getClient();
+            if (client != null && !client.isConnected()) {
+                client.reconnect();
+            }
+        } catch (Exception e) {
+            log.error("SofaBus MqttClient [{}/{}] connect error : {}",
+                    constructor.getProperties().getServer(), constructor.getProperties().getClientId(), e.getMessage());
         }
         return super.output(thingsRequest, thingsResponse);
     }

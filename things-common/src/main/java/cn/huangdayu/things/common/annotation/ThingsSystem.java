@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 /**
  * @author huangdayu
  */
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ThingsSystem {
