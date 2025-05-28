@@ -9,7 +9,6 @@ import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.observer.event.ThingsSessionUpdatedEvent;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
-import cn.huangdayu.things.common.wrapper.ThingsServlet;
 import cn.huangdayu.things.common.wrapper.ThingsSession;
 import cn.hutool.cache.Cache;
 import cn.hutool.cache.impl.FIFOCache;
@@ -17,6 +16,7 @@ import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.event.Level;
 
 import java.util.concurrent.TimeUnit;
 
@@ -33,16 +33,12 @@ public class ThingsOutputtingIntercepting implements ThingsIntercepting {
 
     private final ThingsEventObserver thingsEventObserver;
 
-    public static final Cache<String, String> OUTPUTTING_MESSAGES_CACHE = new FIFOCache<>(1000);
-
     @Override
     public void afterCompletion(ThingsRequest thingsRequest, ThingsResponse thingsResponse, Exception exception) {
-        ThingsServlet thingsServlet = thingsResponse != null && thingsResponse.getJtm() != null ? thingsResponse : thingsRequest;
-        log.debug("Things outputting message, times: {} , SofaBus type: {} , groupId: {} clientId: {} , topic: {} , sessionCode: {} , request： {} , response: {}  , exception: ",
-                System.currentTimeMillis() - thingsServlet.getJtm().getTime(), thingsServlet.getType(), thingsServlet.getGroupCode(), thingsServlet.getClientCode(),
-                thingsServlet.getTopic(), thingsServlet.getSessionCode(), thingsServlet.getJtm(), thingsServlet.getJtm(), exception);
+        log.atLevel(exception != null ? Level.WARN : Level.DEBUG).log("Things outputting message, times: {} , SofaBus type: {} , groupId: {} clientId: {} , topic: {} , sessionCode: {} , request： {} , response: {}  , exception: {}",
+                System.currentTimeMillis() - thingsRequest.getJtm().getTime(), thingsRequest.getType(), thingsRequest.getGroupCode(), thingsRequest.getClientCode(),
+                thingsRequest.getTopic(), thingsRequest.getSessionCode(), thingsRequest.getJtm(), thingsResponse.getJtm(), exception != null ? exception.getMessage() : "");
         ThingsAsyncManager.asAsyncRequest(thingsRequest);
-        OUTPUTTING_MESSAGES_CACHE.put(thingsServlet.getJtm().getId(), THINGS_SEPARATOR, TimeUnit.MINUTES.toMillis(5));
     }
 
 

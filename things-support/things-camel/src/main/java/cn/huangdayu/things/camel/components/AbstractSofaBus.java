@@ -18,7 +18,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.paho.mqtt5.PahoMqtt5Constants;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.DefaultComponent;
 
@@ -66,9 +65,6 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
     @Override
     public boolean output(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
         JsonThingsMessage jtm = thingsRequest.getJtm();
-        if (thingsResponse != null && thingsResponse.getJtm() != null) {
-            jtm = thingsResponse.getJtm();
-        }
         BaseThingsMetadata baseMetadata = jtm.getBaseMetadata();
         String topic = getTopic(ThingsSubscribes.builder().jtm(jtm).share(false).productCode(baseMetadata.getProductCode())
                 .deviceCode(baseMetadata.getDeviceCode()).method(jtm.getMethod()).build());

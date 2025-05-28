@@ -20,7 +20,6 @@ public class ThingsServlet {
         this.jtm = jtm;
     }
 
-    private Object source;
     private String type;
     private String topic;
     private String clientCode;

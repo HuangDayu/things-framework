@@ -19,7 +19,8 @@ public class ThingsRequest extends ThingsServlet {
     public ThingsRequest(JsonThingsMessage jtm) {
         super(jtm);
     }
-
+    private Object source;
+    private Object target;
     private Consumer<ThingsResponse> responseConsumer;
     private CompletableFuture<ThingsResponse> responseFuture;
 }

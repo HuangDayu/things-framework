@@ -28,10 +28,14 @@ public class ThingsSofaBusHandling implements ThingsHandling {
 
     @Override
     public void doHandle(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        Set<ThingsSofaBus> thingsSofaBus = thingsSofaBusManager.getAllSofaBus();
-        for (ThingsSofaBus bus : thingsSofaBus) {
-            if (bus.isStarted()) {
-                bus.output(thingsRequest, thingsResponse);
+        if (thingsRequest.getTarget() instanceof ThingsSofaBus thingsSofaBus) {
+            thingsSofaBus.output(thingsRequest, thingsResponse);
+        } else {
+            Set<ThingsSofaBus> thingsSofaBus = thingsSofaBusManager.getAllSofaBus();
+            for (ThingsSofaBus bus : thingsSofaBus) {
+                if (bus.isStarted()) {
+                    bus.output(thingsRequest, thingsResponse);
+                }
             }
         }
     }

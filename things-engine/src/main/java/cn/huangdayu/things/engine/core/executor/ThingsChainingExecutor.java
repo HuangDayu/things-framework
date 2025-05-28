@@ -4,6 +4,7 @@ import cn.huangdayu.things.api.message.ThingsChaining;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.enums.ThingsChainingType;
 import cn.huangdayu.things.common.enums.ThingsMethodType;
+import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
@@ -11,11 +12,13 @@ import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.huangdayu.things.engine.wrapper.ThingsHandlers;
 import cn.huangdayu.things.engine.wrapper.ThingsInterceptors;
 import cn.hutool.cache.Cache;
+import cn.hutool.cache.impl.FIFOCache;
 import cn.hutool.cache.impl.LRUCache;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.multi.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Comparator;
@@ -23,10 +26,12 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.ERROR;
 import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_SEPARATOR;
 import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_WILDCARD;
 import static cn.huangdayu.things.common.enums.ThingsChainingType.INPUTTING;
@@ -49,41 +54,93 @@ public class ThingsChainingExecutor implements ThingsChaining {
      */
     private static final Cache<String, ChainingValues> CHAINING_VALUES_CACHE = new LRUCache<>(1000, TimeUnit.MINUTES.toMillis(10));
 
+    /**
+     * 已处理的输入消息先进先出缓存，防止重复处理消息，执行失败可以重试
+     *
+     * messageId vs failed sum
+     * 消息id vs 失败次数
+     */
+    private static final Cache<String, AtomicInteger> INTPUTTING_HANDLED_MESSAGES_CACHE = new FIFOCache<>(1000);
+
+    /**
+     * 已处理的输出消息先进先出缓存，防止重复处理消息，执行失败可以重试
+     * messageId vs failed sum
+     * 消息id vs 失败次数
+     */
+    private static final Cache<String, AtomicInteger> OUTPUTTING_HANDLED_MESSAGES_CACHE = new FIFOCache<>(1000);
+
+
+    /**
+     * 重试次数
+     */
+    public static final int MAX_FAILED_SUM = 3;
+
+
     @Override
     public boolean input(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        return doChain(thingsRequest, thingsResponse, INPUTTING);
+        if (doChain(thingsRequest, thingsResponse, INPUTTING, INTPUTTING_HANDLED_MESSAGES_CACHE)) {
+            return responseInput(thingsRequest, thingsResponse);
+        }
+        return false;
     }
 
     @Override
     public boolean output(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        return doChain(thingsRequest, thingsResponse, OUTPUTTING);
+        return doChain(thingsRequest, thingsResponse, OUTPUTTING, OUTPUTTING_HANDLED_MESSAGES_CACHE);
+    }
+
+    /**
+     * 输入处理完成后，如果存在响应消息，则进行输入转输出处理
+     * @param thingsRequest
+     * @param thingsResponse
+     * @return
+     */
+    private boolean responseInput(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
+        if (thingsResponse.getJtm() != null) {
+            thingsRequest.setJtm(thingsResponse.getJtm());
+            thingsRequest.setTarget(thingsRequest.getSource());
+            return output(thingsRequest, new ThingsResponse());
+        }
+        return true;
     }
 
     /**
      * 输入和输出的消息都经过【过滤，拦截，处理，拦截】
      */
-    private boolean doChain(ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsChainingType chainingType) {
+    private boolean doChain(ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsChainingType chainingType, Cache<String, AtomicInteger> cache) {
         ChainingValues chainingValues = getChainingValues(thingsRequest, thingsResponse, chainingType);
-        // 获取拦截器链
-        Set<ThingsInterceptors> interceptors = chainingValues.getThingsInterceptors();
-        Exception exception = null;
+        ExceptionValue exceptionValue = new ExceptionValue();
         try {
-            // 前置拦截器
-            if (!interceptorPreHandle(chainingType, thingsRequest, thingsResponse, interceptors)) {
-                return false;
+            // 如果已经处理过则不再处理，0 未执行，小于 0 已成功执行，大于 0 失败次数
+            AtomicInteger atomicInteger = cache.get(thingsRequest.getJtm().getId(), () -> new AtomicInteger(0));
+            if (atomicInteger.get() < 0 || atomicInteger.get() >= MAX_FAILED_SUM) {
+                throw new ThingsException(ERROR, "Things chaining repeatedly messages: " + thingsRequest.getJtm().getId());
             }
+            // 遍历执行所有前置拦截器
+            chainingValues.getThingsInterceptors().forEach(interceptor -> {
+                if (!interceptor.getThingsIntercepting().preHandle(thingsRequest, thingsResponse)) {
+                    throw new ThingsException(ERROR, "Things chaining " + interceptor.getThingsIntercepting().getClass().getSimpleName() + " preHandle failed.");
+                }
+            });
             // 遍历执行所有处理器
             chainingValues.getThingsHandlers().forEach(handlers -> handlers.getThingsHandling().doHandle(thingsRequest, thingsResponse));
-            // 后置拦截器
-            interceptorPostHandle(thingsRequest, thingsResponse, interceptors);
+            // 遍历执行所有后置拦截器
+            chainingValues.getThingsInterceptors().forEach(interceptor -> interceptor.getThingsIntercepting().postHandle(thingsRequest, thingsResponse));
         } catch (Exception e) {
-            exception = e;
-            throw e;
+            exceptionValue.setException(e);
         } finally {
-            // 完成拦截器
-            interceptorAfterCompletion(thingsRequest, thingsResponse, exception, interceptors);
+            // 遍历执行所有完成拦截器
+            chainingValues.getThingsInterceptors().forEach(interceptor -> interceptor.getThingsIntercepting().afterCompletion(thingsRequest, thingsResponse, exceptionValue.getException()));
+            // 缓存已处理成功的消息id，5分钟后过期
+            AtomicInteger atomicInteger = cache.get(thingsRequest.getJtm().getId());
+            if (exceptionValue.getException() == null) {
+                atomicInteger.set(-1);
+            } else {
+                atomicInteger.addAndGet(1);
+            }
+            cache.put(thingsRequest.getJtm().getId(), atomicInteger, TimeUnit.MINUTES.toMillis(5));
         }
-        return true;
+        return exceptionValue.getException() == null;
     }
 
     private ChainingValues getChainingValues(ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsChainingType chainingType) {
@@ -93,28 +150,6 @@ public class ThingsChainingExecutor implements ThingsChaining {
             Set<ThingsHandlers> handlers = getHandlers(keys, thingsRequest, thingsResponse, chainingType);
             return new ChainingValues(handlers, interceptors);
         });
-    }
-
-    private boolean interceptorPreHandle(ThingsChainingType chainingType, ThingsRequest thingsRequest, ThingsResponse thingsResponse, Set<ThingsInterceptors> interceptors) {
-        for (ThingsInterceptors interceptor : interceptors) {
-            if (!interceptor.getThingsIntercepting().preHandle(thingsRequest, thingsResponse)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void interceptorPostHandle(ThingsRequest thingsRequest, ThingsResponse thingsResponse, Set<ThingsInterceptors> interceptors) {
-        for (ThingsInterceptors interceptor : interceptors) {
-            interceptor.getThingsIntercepting().postHandle(thingsRequest, thingsResponse);
-        }
-    }
-
-
-    private void interceptorAfterCompletion(ThingsRequest thingsRequest, ThingsResponse thingsResponse, Exception exception, Set<ThingsInterceptors> interceptors) {
-        for (ThingsInterceptors interceptor : interceptors) {
-            interceptor.getThingsIntercepting().afterCompletion(thingsRequest, thingsResponse, exception);
-        }
     }
 
 
@@ -181,5 +216,12 @@ public class ThingsChainingExecutor implements ThingsChaining {
     private static class ChainingKeys {
         private final Set<ChainingKey> keys;
         private final String keyFlag;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    private static class ExceptionValue {
+        private Exception exception;
     }
 }

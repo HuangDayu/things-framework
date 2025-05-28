@@ -34,9 +34,6 @@ public class ThingsSofaBusIntercepting implements ThingsIntercepting {
     @Override
     public void afterCompletion(ThingsRequest thingsRequest, ThingsResponse thingsResponse, Exception exception) {
         JsonThingsMessage jtm = thingsRequest.getJtm();
-        if (thingsResponse != null && thingsResponse.getJtm() != null) {
-            jtm = thingsResponse.getJtm();
-        }
         if (equalsThings(THINGS_SERVICE_REQUEST, jtm.getMethod())) {
             String method = jtm.getMethod().replace(THINGS_DOT + THINGS_ACTION_REQUEST, THINGS_DOT + THINGS_ACTION_RESPONSE);
             thingsSofaBusManager.subscribe(false, jtm.getBaseMetadata().getProductCode(), jtm.getBaseMetadata().getDeviceCode(), method);
