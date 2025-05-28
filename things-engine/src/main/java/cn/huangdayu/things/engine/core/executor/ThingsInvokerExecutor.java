@@ -152,7 +152,7 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
                 THINGS_EXECUTOR.execute(() -> syncInvokeFunction(jtm, function));
             }
         }
-        return jtm.success();
+        return null;
     }
 
     @SneakyThrows

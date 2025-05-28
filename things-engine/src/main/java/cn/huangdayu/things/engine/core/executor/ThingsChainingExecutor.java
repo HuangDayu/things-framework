@@ -60,14 +60,14 @@ public class ThingsChainingExecutor implements ThingsChaining {
      * messageId vs failed sum
      * 消息id vs 失败次数
      */
-    private static final Cache<String, AtomicInteger> INTPUTTING_HANDLED_MESSAGES_CACHE = new FIFOCache<>(1000);
+    private static final Cache<String, AtomicInteger> INTPUTED_CACHE = new FIFOCache<>(1000);
 
     /**
      * 已处理的输出消息先进先出缓存，防止重复处理消息，执行失败可以重试
      * messageId vs failed sum
      * 消息id vs 失败次数
      */
-    private static final Cache<String, AtomicInteger> OUTPUTTING_HANDLED_MESSAGES_CACHE = new FIFOCache<>(1000);
+    private static final Cache<String, AtomicInteger> OUTPUTED_CACHE = new FIFOCache<>(1000);
 
 
     /**
@@ -78,7 +78,7 @@ public class ThingsChainingExecutor implements ThingsChaining {
 
     @Override
     public boolean input(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        if (doChain(thingsRequest, thingsResponse, INPUTTING, INTPUTTING_HANDLED_MESSAGES_CACHE)) {
+        if (doChain(thingsRequest, thingsResponse, INPUTTING, INTPUTED_CACHE)) {
             return responseInput(thingsRequest, thingsResponse);
         }
         return false;
@@ -86,7 +86,7 @@ public class ThingsChainingExecutor implements ThingsChaining {
 
     @Override
     public boolean output(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        return doChain(thingsRequest, thingsResponse, OUTPUTTING, OUTPUTTING_HANDLED_MESSAGES_CACHE);
+        return doChain(thingsRequest, thingsResponse, OUTPUTTING, OUTPUTED_CACHE);
     }
 
     /**
@@ -131,16 +131,25 @@ public class ThingsChainingExecutor implements ThingsChaining {
         } finally {
             // 遍历执行所有完成拦截器
             chainingValues.getThingsInterceptors().forEach(interceptor -> interceptor.getThingsIntercepting().afterCompletion(thingsRequest, thingsResponse, exceptionValue.getException()));
-            // 缓存已处理成功的消息id，5分钟后过期
-            AtomicInteger atomicInteger = cache.get(thingsRequest.getJtm().getId());
-            if (exceptionValue.getException() == null) {
-                atomicInteger.set(-1);
-            } else {
-                atomicInteger.addAndGet(1);
-            }
-            cache.put(thingsRequest.getJtm().getId(), atomicInteger, TimeUnit.MINUTES.toMillis(5));
+            cacheHandledMessage(thingsRequest, exceptionValue, cache);
         }
         return exceptionValue.getException() == null;
+    }
+
+    /**
+     * 缓存已处理的消息id和失败次数，5分钟后过期
+     * @param thingsRequest
+     * @param exceptionValue
+     * @param cache
+     */
+    private void cacheHandledMessage(ThingsRequest thingsRequest, ExceptionValue exceptionValue, Cache<String, AtomicInteger> cache) {
+        AtomicInteger atomicInteger = cache.get(thingsRequest.getJtm().getId());
+        if (exceptionValue.getException() == null) {
+            atomicInteger.set(-1);
+        } else {
+            atomicInteger.addAndGet(1);
+        }
+        cache.put(thingsRequest.getJtm().getId(), atomicInteger, TimeUnit.MINUTES.toMillis(5));
     }
 
     private ChainingValues getChainingValues(ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsChainingType chainingType) {

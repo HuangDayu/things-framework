@@ -52,4 +52,8 @@ public class ThingsAsyncManager {
         }
     }
 
+    public static boolean hasAsyncRequest(String jtmId) {
+        return THINGS_ASYNC_CACHE.containsKey(jtmId);
+    }
+
 }

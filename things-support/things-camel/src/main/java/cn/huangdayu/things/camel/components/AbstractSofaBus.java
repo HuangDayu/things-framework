@@ -68,8 +68,14 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
         BaseThingsMetadata baseMetadata = jtm.getBaseMetadata();
         String topic = getTopic(ThingsSubscribes.builder().jtm(jtm).share(false).productCode(baseMetadata.getProductCode())
                 .deviceCode(baseMetadata.getDeviceCode()).method(jtm.getMethod()).build());
-        Endpoint endpoint = camelContext.getEndpoint(getEndpointUri(topic));
+        String endpointUri = getEndpointUri(topic);
+        Endpoint endpoint = camelContext.getEndpoint(endpointUri);
         constructor.getProducerTemplate().asyncSendBody(endpoint, jtm.toString());
+        thingsRequest.setTarget(this);
+        thingsRequest.setType(getType().name());
+        thingsRequest.setTopic(endpointUri);
+        thingsRequest.setClientCode(constructor.getProperties().getClientId());
+        thingsRequest.setGroupCode(constructor.getProperties().getGroupId());
         return true;
     }
 
@@ -104,7 +110,7 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
             return false;
         }
         String topicTemplate = getEndpointUri(topic);
-        String routeId = UUID.randomUUID().toString();
+        String routeId = UUID.randomUUID().toString().split("-")[0];
         if (ROUTE_ID_MAP.containsKey(topicTemplate)) {
             log.warn("Things Bus subscribe topic [{}] is contains.", topic);
             return false;

@@ -2,7 +2,6 @@ package cn.huangdayu.things.engine.chaining;
 
 import cn.huangdayu.things.api.message.ThingsIntercepting;
 import cn.huangdayu.things.common.annotation.ThingsInterceptor;
-import cn.huangdayu.things.common.async.ThingsAsyncManager;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.hutool.core.util.StrUtil;
@@ -10,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.event.Level;
 
+import static cn.huangdayu.things.common.async.ThingsAsyncManager.hasAsyncRequest;
 import static cn.huangdayu.things.common.enums.ThingsChainingType.INPUTTING;
 
 /**
@@ -27,9 +27,7 @@ public class ThingsInputtingIntercepting implements ThingsIntercepting {
             return false;
         }
         // 如果是回复，则将其加入异步处理，不进行下一步处理
-        if (thingsRequest.getJtm().isResponse()) {
-            thingsResponse.setJtm(thingsRequest.getJtm());
-            ThingsAsyncManager.asAsyncResponse(thingsResponse);
+        if (thingsRequest.getJtm().isResponse() && !hasAsyncRequest(thingsRequest.getJtm().getId())) {
             return false;
         }
         // 如果产品码为空，则直接返回false
