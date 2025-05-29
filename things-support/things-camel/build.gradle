@@ -12,6 +12,7 @@ dependencies {
     api project(path: ':things-common')
     api project(path: ':things-sofabus')
 
+    implementation 'org.apache.camel.springboot:camel-spring-boot-starter'
     implementation 'org.apache.camel:camel-componentdsl'
     compileOnly 'org.apache.camel:camel-kafka'
     compileOnly 'org.apache.camel:camel-paho-mqtt5'
@@ -21,18 +22,4 @@ dependencies {
 
     testImplementation 'org.openjdk.jmh:jmh-core:1.37'
     testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
-
-//    implementation "org.apache.camel.springboot:camel-spring-boot-starter"
-//    implementation "org.apache.camel.springboot:camel-rest-starter"
-//    implementation "org.apache.camel.springboot:camel-rocketmq-starter"
-//    implementation 'org.apache.camel.springboot:camel-vertx-websocket-starter'
-//    implementation "org.apache.camel.springboot:camel-bean-starter"
-//    implementation "org.apache.camel.springboot:camel-servlet-starter"
-//    implementation "org.apache.camel.springboot:camel-jackson-starter"
-//    implementation 'org.apache.camel.springboot:camel-console-starter'
-//    implementation 'org.apache.camel.springboot:camel-management-starter'
-//    implementation 'org.apache.camel:camel-mybatis'
-//    implementation 'org.apache.camel:camel-vertx-websocket'
-//    implementation 'org.apache.camel:camel-rest-openapi'
-//    implementation 'com.taosdata.jdbc:taos-jdbcdriver:3.2.7'
 }
