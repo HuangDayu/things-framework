@@ -19,14 +19,12 @@ import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ClassUtils;
 
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -40,6 +38,18 @@ import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.*;
  */
 @Slf4j
 public class ThingsUtils {
+
+    public static void loadProperties(String fileName) {
+        try (InputStream input = ThingsUtils.class.getClassLoader().getResourceAsStream(fileName)) {
+            Properties prop = new Properties();
+            if (input != null) {
+                prop.load(input);
+                prop.forEach((k, v) -> System.setProperty(k.toString(), v.toString()));
+            }
+        } catch (Exception e) {
+            log.error("Load system properties [{}] error", fileName, e);
+        }
+    }
 
     public static <R, C, V> void deleteTable(Table<R, C, V> table, Function<V, Boolean> function) {
         Set<Table.Cell<R, C, V>> collect = table.cellSet().parallelStream().filter(cell -> function.apply(cell.getValue())).collect(Collectors.toSet());

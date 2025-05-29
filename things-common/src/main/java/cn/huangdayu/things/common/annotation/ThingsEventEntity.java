@@ -54,6 +54,17 @@ public @interface ThingsEventEntity {
 
 
     /**
+     * 事件级别
+     * critical     需立即处理（如设备离线）
+     * high         高优先级（如数据异常波动）
+     * medium       常规告警（如存储空间不足）
+     * low          信息类通知（如固件更新完成）
+     * @return
+     */
+    String level() default "low";
+
+
+    /**
      * 事件的Qos级别
      * QoS 0 - At most once（至多一次）
      * QoS 1 - At least once（至少一次）
