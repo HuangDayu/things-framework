@@ -7,6 +7,7 @@ import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.paho.mqtt5.PahoMqtt5Constants;
@@ -32,6 +33,10 @@ public class CamelSofaBusRouteBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from(topic)
+                .errorHandler(defaultErrorHandler()
+                        .maximumRedeliveries(3)
+                        .redeliveryDelay(5000)
+                        .retryAttemptedLogLevel(LoggingLevel.WARN))
                 .routeId(routeId)
                 .onException(Exception.class)
                 .maximumRedeliveries(3)
@@ -42,12 +47,16 @@ public class CamelSofaBusRouteBuilder extends RouteBuilder {
                 .process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        String receivedMessage = exchange.getIn().getBody(String.class);
-                        JsonThingsMessage jtm = JSON.to(JsonThingsMessage.class, receivedMessage);
-                        ThingsRequest thingsRequest = ThingsRequest.builder().source(thingsSofaBus).type(thingsSofaBus.getType().name())
-                                .topic(exchange.getIn().getHeader(PahoMqtt5Constants.MQTT_TOPIC, String.class)).clientCode(constructor.getProperties().getClientId())
-                                .groupCode(constructor.getProperties().getGroupId()).jtm(jtm).build();
-                        constructor.getThingsChaining().input(thingsRequest, new ThingsResponse());
+                        try {
+                            String receivedMessage = exchange.getIn().getBody(String.class);
+                            JsonThingsMessage jtm = JSON.to(JsonThingsMessage.class, receivedMessage);
+                            ThingsRequest thingsRequest = ThingsRequest.builder().source(thingsSofaBus).type(thingsSofaBus.getType().name())
+                                    .topic(exchange.getIn().getHeader(PahoMqtt5Constants.MQTT_TOPIC, String.class)).clientCode(constructor.getProperties().getClientId())
+                                    .groupCode(constructor.getProperties().getGroupId()).jtm(jtm).build();
+                            constructor.getThingsChaining().input(thingsRequest, new ThingsResponse());
+                        } catch (Exception e) {
+                            exchange.setException(e);
+                        }
                     }
                 });
     }
