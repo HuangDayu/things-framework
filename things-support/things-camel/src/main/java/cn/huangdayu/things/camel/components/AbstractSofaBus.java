@@ -4,14 +4,13 @@ import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
 import cn.huangdayu.things.camel.CamelSofaBusConstructor;
 import cn.huangdayu.things.camel.CamelSofaBusRouteBuilder;
 import cn.huangdayu.things.camel.mqtt.ThingsSofaBusTopicValidator;
-import cn.huangdayu.things.common.enums.ThingsSofaBusType;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.huangdayu.things.common.wrapper.ThingsSubscribes;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.map.MapUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -21,10 +20,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.DefaultComponent;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static cn.huangdayu.things.common.enums.ThingsSofaBusType.*;
 
 /**
  * @author huangdayu
@@ -37,7 +37,6 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
     protected final CamelSofaBusConstructor constructor;
     protected DefaultComponent component;
     protected static final ThingsSofaBusTopicValidator TOPIC_VALIDATOR = new ThingsSofaBusTopicValidator();
-    protected static final Map<ThingsSofaBusType, String> ENDPOINT_URI_TEMPLATES = new HashMap<>();
     protected volatile Map<String, String> ROUTE_MAP = new ConcurrentHashMap<>();
 
     protected abstract DefaultComponent buildComponent();
@@ -53,20 +52,13 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
         camelContext.addComponent(constructor.getProperties().getName(), component);
     }
 
-    static {
-        ENDPOINT_URI_TEMPLATES.put(AMQP, "${componentName}:queue:${topic}");
-        ENDPOINT_URI_TEMPLATES.put(KAFKA, "${componentName}:${topic}?groupId=${groupId}");
-        ENDPOINT_URI_TEMPLATES.put(MQTT, "${componentName}:${topic}");
-        ENDPOINT_URI_TEMPLATES.put(ROCKETMQ, "${componentName}:topic:${topic}?consumerGroup=${groupId}");
-    }
-
     @Override
     public boolean output(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
         JsonThingsMessage jtm = thingsRequest.getJtm();
         BaseThingsMetadata baseMetadata = jtm.getBaseMetadata();
-        String topic = getTopic(ThingsSubscribes.builder().jtm(jtm).share(false).productCode(baseMetadata.getProductCode())
+        String topic = createTopic(ThingsSubscribes.builder().jtm(jtm).share(false).productCode(baseMetadata.getProductCode())
                 .deviceCode(baseMetadata.getDeviceCode()).method(jtm.getMethod()).build());
-        String endpointUri = getEndpointUri(topic);
+        String endpointUri = createEndpointUri(topic, createParameterMap(thingsRequest));
         Endpoint endpoint = camelContext.getEndpoint(endpointUri);
         constructor.getProducerTemplate().asyncSendBody(endpoint, jtm.toString());
         thingsRequest.setTarget(this);
@@ -77,33 +69,24 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
         return true;
     }
 
-    private String getEndpointUri(String topic) {
-        String endpointUriTemplate = ENDPOINT_URI_TEMPLATES.get(getType());
-        endpointUriTemplate = endpointUriTemplate.replace("${componentName}", constructor.getProperties().getName());
-        endpointUriTemplate = endpointUriTemplate.replace("${topic}", topic);
-        if (StrUtil.isNotBlank(constructor.getProperties().getGroupId())) {
-            endpointUriTemplate = endpointUriTemplate.replace("${groupId}", constructor.getProperties().getGroupId());
-        }
-        return endpointUriTemplate;
+    protected String createEndpointUri(String topic, Map<String, String> parameterMap) {
+        String parameter = CollUtil.isNotEmpty(parameterMap) ? "?" + MapUtil.join(parameterMap, "&", "=") : "";
+        return String.format("%s:%s%s", constructor.getProperties().getName(), topic, parameter);
     }
 
-    protected String getTopic(ThingsSubscribes thingsSubscribes) {
-        return String.format("things-%s-%s-%s", thingsSubscribes.getProductCode(), thingsSubscribes.getDeviceCode(), thingsSubscribes.getMethod());
+    protected Map<String, String> createParameterMap(ThingsRequest thingsRequest) {
+        return Map.of("qos", String.valueOf(thingsRequest.getJtm().getQos()));
     }
 
-    @Override
-    public boolean subscribe(ThingsSubscribes thingsSubscribes) {
-        return subscribe(getTopic(thingsSubscribes));
-    }
-
-    @Override
-    public boolean unsubscribe(ThingsSubscribes thingsSubscribes) {
-        return unsubscribe(getTopic(thingsSubscribes));
+    protected String createTopic(ThingsSubscribes thingsSubscribes) {
+        return String.format("things-%s-%s", thingsSubscribes.getProductCode(), thingsSubscribes.getDeviceCode());
     }
 
     @SneakyThrows
-    private boolean subscribe(String topic) {
-        String topicTemplate = getEndpointUri(topic);
+    @Override
+    public boolean subscribe(ThingsSubscribes thingsSubscribes) {
+        String topic = createTopic(thingsSubscribes);
+        String topicTemplate = createEndpointUri(topic, null);
         if (ROUTE_MAP.containsKey(topicTemplate) && camelContext.getRoute(ROUTE_MAP.get(topicTemplate)) != null) {
             log.warn("Things Bus subscribe topic [{}] is contains.", topic);
             return false;
@@ -116,8 +99,10 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
     }
 
     @SneakyThrows
-    private boolean unsubscribe(String topic) {
-        String topicTemplate = getEndpointUri(topic);
+    @Override
+    public boolean unsubscribe(ThingsSubscribes thingsSubscribes) {
+        String topic = createTopic(thingsSubscribes);
+        String topicTemplate = createEndpointUri(topic, null);
         String routeId = ROUTE_MAP.get(topicTemplate);
         log.info("Things Bus topic [{}] unsubscribe for routeId [{}].", topic, routeId);
         return camelContext.removeRoute(routeId);

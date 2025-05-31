@@ -43,7 +43,7 @@ public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
     }
 
     @Override
-    protected String getTopic(ThingsSubscribes thingsSubscribes) {
+    protected String createTopic(ThingsSubscribes thingsSubscribes) {
         String groupId = constructor.getProperties().getGroupId();
         String baseTopic = thingsSubscribes.isShare() ? "$share/" + (isNotBlank(groupId) ? groupId : thingsSubscribes.getProductCode()) + "/" : "";
         String method = thingsSubscribes.getMethod();
@@ -55,8 +55,7 @@ public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
         }
         return baseTopic + String.format("things/%s/%s/%s", thingsSubscribes.getProductCode(), thingsSubscribes.getDeviceCode(), method)
                 .replaceAll(NULL_VALUE, ONE_LEVEL_TOPIC_WILDCARD)
-                .replaceAll(THINGS_WILDCARD, ONE_LEVEL_TOPIC_WILDCARD)
-                .concat(thingsSubscribes.getJtm() != null ? "?qos=" + thingsSubscribes.getJtm().getQos() : "");
+                .replaceAll(THINGS_WILDCARD, ONE_LEVEL_TOPIC_WILDCARD);
     }
 
     @SneakyThrows
