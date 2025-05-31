@@ -3,7 +3,7 @@ package cn.huangdayu.things.camel.components;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
 import cn.huangdayu.things.camel.CamelSofaBusConstructor;
 import cn.huangdayu.things.camel.CamelSofaBusRouteBuilder;
-import cn.huangdayu.things.camel.ThingsSofaBusTopicValidator;
+import cn.huangdayu.things.camel.mqtt.ThingsSofaBusTopicValidator;
 import cn.huangdayu.things.common.enums.ThingsSofaBusType;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
@@ -105,16 +105,12 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
 
     @SneakyThrows
     private boolean subscribe(String topic) {
-        if (isDuplicateSubscription(topic)) {
-            log.warn("Things Bus subscribe topic [{}] duplicate subscription.", topic);
-            return false;
-        }
         String topicTemplate = getEndpointUri(topic);
-        String routeId = UUID.randomUUID().toString().split("-")[0];
-        if (ROUTE_ID_MAP.containsKey(topicTemplate)) {
+        if (ROUTE_ID_MAP.containsKey(topicTemplate) && camelContext.getRoute(ROUTE_ID_MAP.get(topicTemplate)) != null) {
             log.warn("Things Bus subscribe topic [{}] is contains.", topic);
             return false;
         }
+        String routeId = UUID.randomUUID().toString().split("-")[0];
         camelContext.addRoutes(new CamelSofaBusRouteBuilder(this, routeId, topicTemplate, constructor));
         log.info("Things Bus topic [{}] subscribed for routeId [{}].", topic, routeId);
         ROUTE_ID_MAP.put(topicTemplate, routeId);
@@ -126,7 +122,6 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
         String topicTemplate = getEndpointUri(topic);
         String routeId = ROUTE_ID_MAP.get(topicTemplate);
         log.info("Things Bus topic [{}] unsubscribe for routeId [{}].", topic, routeId);
-        checkRemoveTopic(topic);
         return camelContext.removeRoute(routeId);
     }
 

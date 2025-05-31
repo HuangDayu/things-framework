@@ -1,7 +1,7 @@
 package cn.huangdayu.things.camel.test;
 
 
-import cn.huangdayu.things.camel.ThingsSofaBusTopicValidator;
+import cn.huangdayu.things.camel.mqtt.ThingsSofaBusTopicValidator;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

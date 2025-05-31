@@ -28,9 +28,6 @@ public class ThingsCamelConfiguration {
                 camelContext.getTypeConverterRegistry().addTypeConverter(converter.toType(), converter.fromType(), converter.typeConverter());
             }
         }
-        ThingsSofaBusEventNotifier thingsSofaBusEventNotifier = new ThingsSofaBusEventNotifier(camelContext);
-        thingsSofaBusEventNotifier.setIgnoreRouteEvents(false);
-        camelContext.getManagementStrategy().addEventNotifier(thingsSofaBusEventNotifier);
     }
 
 }

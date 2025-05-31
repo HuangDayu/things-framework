@@ -1,10 +1,8 @@
-package cn.huangdayu.things.camel;
+package cn.huangdayu.things.camel.mqtt;
 
 /**
  * @author huangdayu
  */
-
-import cn.huangdayu.things.common.annotation.ThingsBean;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
