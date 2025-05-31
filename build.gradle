@@ -1,14 +1,17 @@
+import java.util.stream.Collectors
+
 plugins {
     id 'base'
     id 'idea'
     id 'java-platform'
-    id 'org.springframework.boot' version '3.4.5'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'maven-publish'
 }
 
-group 'cn.huangdayu.things'
-version '2024.1.0'
+apply plugin: 'idea'
+apply plugin: 'java-platform'
+apply plugin: 'maven-publish'
 
+javaPlatform.allowDependencies()
 
 ext {
     thingsFrameworkVersion = '2024.1.0'
@@ -22,49 +25,22 @@ ext {
     fastjson2Version = '2.0.52'
 }
 
-subprojects { project ->
+group 'cn.huangdayu.things'
+version "${thingsFrameworkVersion}"
 
 
+allprojects {
     group "cn.huangdayu.things"
     version "${thingsFrameworkVersion}"
 
-    apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'maven-publish'
-    apply plugin: 'io.spring.dependency-management'
-
-    if (project.name.endsWith("-app")) {
-        apply plugin: 'org.springframework.boot'
-        bootJar.destinationDirectory = file("$rootDir/build/libs")
-        bootJar.enabled = true
-    }
 
     tasks.withType(GradleBuild).configureEach {
         build {
             args = ['-x test']
         }
     }
-
-    dependencies {
-        implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
-        implementation platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
-        implementation platform("com.alibaba.cloud:spring-cloud-alibaba-dependencies:${springAlibabaVersion}")
-        implementation platform("com.alibaba.nacos:nacos-all:${nacosVersion}")
-        implementation platform("cn.hutool:hutool-bom:${hutoolVersion}")
-        implementation platform("org.apache.camel.springboot:camel-spring-boot-dependencies:${camelVersion}")
-
-        implementation 'cn.hutool:hutool-core'
-        implementation "org.slf4j:slf4j-api"
-        implementation 'jakarta.annotation:jakarta.annotation-api'
-        implementation "com.alibaba.fastjson2:fastjson2:${fastjson2Version}"
-        compileOnly 'org.projectlombok:lombok:1.18.34'
-        annotationProcessor 'org.projectlombok:lombok:1.18.34'
-        testCompileOnly 'org.projectlombok:lombok:1.18.34'
-        testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
-        testImplementation "org.springframework.boot:spring-boot-starter-test"
-        testImplementation 'junit:junit:4.13.2'
-    }
-
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
         options.compilerArgs.add('-parameters')
@@ -78,20 +54,10 @@ subprojects { project ->
 
     repositories {
         mavenCentral()
+        mavenLocal()
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
         maven { url 'https://repo1.maven.org/maven2/' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-
-    }
-
-
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                from components.java
-                artifactId "${project.name}"
-            }
-        }
     }
 
     publishing {
@@ -106,4 +72,34 @@ subprojects { project ->
             }
         }
     }
+}
+
+
+configure(subprojects.stream().filter { !it.name.endsWith("-dependencies") }.collect(Collectors.toSet())) { project ->
+    apply plugin: 'java'
+
+    dependencies {
+        implementation platform("cn.huangdayu.things:things-dependencies:${thingsFrameworkVersion}")
+
+        implementation 'cn.hutool:hutool-core'
+        implementation "org.slf4j:slf4j-api"
+        implementation 'jakarta.annotation:jakarta.annotation-api'
+        implementation "com.alibaba.fastjson2:fastjson2:${fastjson2Version}"
+        compileOnly 'org.projectlombok:lombok:1.18.34'
+        annotationProcessor 'org.projectlombok:lombok:1.18.34'
+        testCompileOnly 'org.projectlombok:lombok:1.18.34'
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+        testImplementation "org.springframework.boot:spring-boot-starter-test"
+        testImplementation 'junit:junit:4.13.2'
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifactId "${project.name}"
+            }
+        }
+    }
+
 }

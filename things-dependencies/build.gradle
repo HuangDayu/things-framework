@@ -1,0 +1,39 @@
+plugins {
+    id 'java-platform'
+    id 'maven-publish'
+    id 'org.springframework.boot' version '3.4.5'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+apply plugin: 'idea'
+apply plugin: 'java-platform'
+apply plugin: 'maven-publish'
+apply plugin: 'io.spring.dependency-management'
+
+javaPlatform.allowDependencies()
+
+dependencies {
+    api platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+    api platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
+    api platform("com.alibaba.cloud:spring-cloud-alibaba-dependencies:${springAlibabaVersion}")
+    api platform("com.alibaba.nacos:nacos-all:${nacosVersion}")
+    api platform("cn.hutool:hutool-bom:${hutoolVersion}")
+    api platform("org.apache.camel.springboot:camel-spring-boot-dependencies:${camelVersion}")
+
+    constraints {
+        rootProject.subprojects.each {
+            if (!it.name.endsWith("-example") && !it.name.endsWith("-dependencies") && !it.name.endsWith("-app")) {
+                api it
+            }
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenBom(MavenPublication) {
+            from components.javaPlatform
+            artifactId "${project.name}"
+        }
+    }
+}
