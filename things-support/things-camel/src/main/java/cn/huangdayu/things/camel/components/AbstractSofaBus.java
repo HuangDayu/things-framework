@@ -21,9 +21,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.DefaultComponent;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cn.huangdayu.things.common.enums.ThingsSofaBusType.*;
@@ -40,7 +38,7 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
     protected DefaultComponent component;
     protected static final ThingsSofaBusTopicValidator TOPIC_VALIDATOR = new ThingsSofaBusTopicValidator();
     protected static final Map<ThingsSofaBusType, String> ENDPOINT_URI_TEMPLATES = new HashMap<>();
-    protected volatile Map<String, String> ROUTE_ID_MAP = new ConcurrentHashMap<>();
+    protected volatile Map<String, String> ROUTE_MAP = new ConcurrentHashMap<>();
 
     protected abstract DefaultComponent buildComponent();
 
@@ -106,23 +104,27 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
     @SneakyThrows
     private boolean subscribe(String topic) {
         String topicTemplate = getEndpointUri(topic);
-        if (ROUTE_ID_MAP.containsKey(topicTemplate) && camelContext.getRoute(ROUTE_ID_MAP.get(topicTemplate)) != null) {
+        if (ROUTE_MAP.containsKey(topicTemplate) && camelContext.getRoute(ROUTE_MAP.get(topicTemplate)) != null) {
             log.warn("Things Bus subscribe topic [{}] is contains.", topic);
             return false;
         }
         String routeId = UUID.randomUUID().toString().split("-")[0];
         camelContext.addRoutes(new CamelSofaBusRouteBuilder(this, routeId, topicTemplate, constructor));
         log.info("Things Bus topic [{}] subscribed for routeId [{}].", topic, routeId);
-        ROUTE_ID_MAP.put(topicTemplate, routeId);
+        ROUTE_MAP.put(topicTemplate, routeId);
         return true;
     }
 
     @SneakyThrows
     private boolean unsubscribe(String topic) {
         String topicTemplate = getEndpointUri(topic);
-        String routeId = ROUTE_ID_MAP.get(topicTemplate);
+        String routeId = ROUTE_MAP.get(topicTemplate);
         log.info("Things Bus topic [{}] unsubscribe for routeId [{}].", topic, routeId);
         return camelContext.removeRoute(routeId);
+    }
+
+    public Set<String> getRouteIds() {
+        return new HashSet<>(ROUTE_MAP.values());
     }
 
 

@@ -75,7 +75,7 @@ public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
         options.setAutomaticReconnect(true);
         options.setCleanStart(false);
         options.setSessionExpiryInterval(0L);
-        client.setCallback(new ThingsCamelMqttCallback(camelContext, client, ROUTE_ID_MAP, options));
+        client.setCallback(new ThingsCamelMqttCallback(camelContext, client, this, options));
         client.connect(options);
         return ComponentsBuilderFactory.pahoMqtt5()
                 .filePersistenceDirectory(properties.getPersistenceDir())
