@@ -91,8 +91,8 @@ public class ThingsClientsProxy {
         JsonThingsMessage jtm = buildThingsMessage(method, args);
         jtm.setBaseMetadata(baseThingsMetadata -> {
             baseThingsMetadata.setProductCode(productCode);
-            if (StrUtil.isNotBlank(thingsClient.uri())) {
-                baseThingsMetadata.setTargetCode(thingsClient.uri());
+            if (StrUtil.isNotBlank(thingsClient.targetCode())) {
+                baseThingsMetadata.setTargetCode(thingsClient.targetCode());
             }
         });
         jtm.setMethod(THINGS_SERVICE_REQUEST.replace(THINGS_IDENTIFIER, identifier));

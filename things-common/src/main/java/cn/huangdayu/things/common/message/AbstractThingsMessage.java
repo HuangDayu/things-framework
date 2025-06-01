@@ -2,6 +2,7 @@ package cn.huangdayu.things.common.message;
 
 import cn.huangdayu.things.common.constants.ThingsConstants;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -10,6 +11,7 @@ import java.util.UUID;
 /**
  * @author huangdayu
  */
+@SuperBuilder
 @Data
 public abstract class AbstractThingsMessage<M extends Serializable, P extends Serializable> implements Serializable {
 

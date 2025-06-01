@@ -6,7 +6,7 @@ import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.dsl.*;
 import cn.huangdayu.things.common.message.BaseThingsMessage;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
-import cn.huangdayu.things.common.observer.event.ThingsContainerUpdatedEvent;
+import cn.huangdayu.things.common.events.ThingsContainerUpdatedEvent;
 import cn.huangdayu.things.engine.wrapper.ThingsEvents;
 import cn.huangdayu.things.engine.wrapper.ThingsFunction;
 import cn.huangdayu.things.engine.wrapper.ThingsParameter;

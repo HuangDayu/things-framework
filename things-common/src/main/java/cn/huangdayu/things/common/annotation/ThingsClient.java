@@ -23,7 +23,7 @@ public @interface ThingsClient {
      *
      * @return
      */
-    String uri() default "";
+    String targetCode() default "";
 
     /**
      * 产品标识

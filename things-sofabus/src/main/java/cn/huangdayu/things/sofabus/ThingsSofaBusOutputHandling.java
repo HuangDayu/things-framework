@@ -1,14 +1,11 @@
 package cn.huangdayu.things.sofabus;
 
 import cn.huangdayu.things.api.message.ThingsHandling;
-import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
 import cn.huangdayu.things.common.annotation.ThingsHandler;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.hutool.core.collection.CollUtil;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Set;
 
 import static cn.huangdayu.things.common.enums.ThingsChainingType.OUTPUTTING;
 
@@ -17,7 +14,7 @@ import static cn.huangdayu.things.common.enums.ThingsChainingType.OUTPUTTING;
  */
 @RequiredArgsConstructor
 @ThingsHandler(order = 1, chainingType = OUTPUTTING)
-public class ThingsSofaBusHandling implements ThingsHandling {
+public class ThingsSofaBusOutputHandling implements ThingsHandling {
 
     private final ThingsSofaBusManager thingsSofaBusManager;
 
@@ -28,15 +25,6 @@ public class ThingsSofaBusHandling implements ThingsHandling {
 
     @Override
     public void doHandle(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        if (thingsRequest.getTarget() instanceof ThingsSofaBus thingsSofaBus) {
-            thingsSofaBus.output(thingsRequest, thingsResponse);
-        } else {
-            Set<ThingsSofaBus> thingsSofaBus = thingsSofaBusManager.getAllSofaBus();
-            for (ThingsSofaBus bus : thingsSofaBus) {
-                if (bus.isStarted()) {
-                    bus.output(thingsRequest, thingsResponse);
-                }
-            }
-        }
+        thingsSofaBusManager.output(thingsRequest, thingsResponse);
     }
 }

@@ -7,7 +7,7 @@ import cn.huangdayu.things.api.message.ThingsIntercepting;
 import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
-import cn.huangdayu.things.common.observer.event.ThingsContainerUpdatedEvent;
+import cn.huangdayu.things.common.events.ThingsContainerUpdatedEvent;
 import cn.huangdayu.things.engine.wrapper.*;
 import cn.hutool.core.annotation.AnnotationUtil;
 import cn.hutool.core.collection.CollUtil;

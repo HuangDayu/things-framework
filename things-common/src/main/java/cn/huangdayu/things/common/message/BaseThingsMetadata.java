@@ -1,7 +1,9 @@
 package cn.huangdayu.things.common.message;
 
 import cn.huangdayu.things.common.constants.ThingsConstants;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -9,9 +11,15 @@ import java.util.Set;
 /**
  * @author huangdayu
  */
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class BaseThingsMetadata implements Serializable {
 
+    public BaseThingsMetadata(String productCode, String deviceCode) {
+        this.productCode = productCode;
+        this.deviceCode = deviceCode;
+    }
 
     /**
      * 密钥

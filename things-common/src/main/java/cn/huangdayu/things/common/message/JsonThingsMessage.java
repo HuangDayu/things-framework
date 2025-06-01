@@ -9,6 +9,7 @@ import com.alibaba.fastjson2.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -27,6 +28,7 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.subIdentifies;
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 @Data
+@SuperBuilder
 public class JsonThingsMessage extends AbstractThingsMessage<JSONObject, JSONObject> implements Serializable {
 
 
@@ -53,7 +55,7 @@ public class JsonThingsMessage extends AbstractThingsMessage<JSONObject, JSONObj
 
     @Override
     public String toString() {
-        return JSON.toJSONString(this);
+        return JSON.toJSONString(this, JSONWriter.Feature.NullAsDefaultValue);
     }
 
     @JsonIgnore
@@ -137,7 +139,7 @@ public class JsonThingsMessage extends AbstractThingsMessage<JSONObject, JSONObj
 
     @JsonIgnore
     @JSONField(serialize = false, deserialize = false)
-    public boolean isResponse(){
+    public boolean isResponse() {
         return StrUtil.isNotBlank(getBaseMetadata().getErrorCode());
     }
 }

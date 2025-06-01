@@ -1,6 +1,6 @@
 package cn.huangdayu.things.camel;
 
-import cn.huangdayu.things.api.message.ThingsChaining;
+import cn.huangdayu.things.api.sofabus.ThingsSofaBusInputting;
 import cn.huangdayu.things.common.properties.ThingsSofaBusProperties;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class CamelSofaBusConstructor {
 
     private final CamelContext camelContext;
     private final ProducerTemplate producerTemplate;
-    private final ThingsChaining thingsChaining;
+    private final ThingsSofaBusInputting thingsSofaBusInputting;
     private final ThingsSofaBusProperties properties;
 
 }

@@ -1,4 +1,4 @@
-package cn.huangdayu.things.common.observer.event;
+package cn.huangdayu.things.common.events;
 
 import cn.huangdayu.things.common.observer.ThingsBaseEvent;
 import lombok.AllArgsConstructor;

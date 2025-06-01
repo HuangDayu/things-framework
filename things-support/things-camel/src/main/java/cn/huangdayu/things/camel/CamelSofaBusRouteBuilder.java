@@ -53,7 +53,7 @@ public class CamelSofaBusRouteBuilder extends RouteBuilder {
                             ThingsRequest thingsRequest = ThingsRequest.builder().source(thingsSofaBus).type(thingsSofaBus.getType().name())
                                     .topic(exchange.getIn().getHeader(PahoMqtt5Constants.MQTT_TOPIC, String.class)).clientCode(constructor.getProperties().getClientId())
                                     .groupCode(constructor.getProperties().getGroupId()).jtm(jtm).build();
-                            constructor.getThingsChaining().input(thingsRequest, new ThingsResponse());
+                            constructor.getThingsSofaBusInputting().input(thingsRequest, new ThingsResponse());
                         } catch (Exception e) {
                             exchange.setException(e);
                         }

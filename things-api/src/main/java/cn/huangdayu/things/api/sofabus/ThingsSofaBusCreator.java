@@ -14,6 +14,6 @@ public interface ThingsSofaBusCreator {
     Set<ThingsSofaBusType> supports();
 
 
-    ThingsSofaBus create(ThingsSofaBusProperties property, ThingsChaining thingsChaining);
+    ThingsSofaBus create(ThingsSofaBusProperties property, ThingsSofaBusInputting thingsChaining);
 
 }

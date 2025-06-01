@@ -14,7 +14,7 @@ public final class ThingsConstants {
      * 物模型分隔符
      */
     public static final String THINGS_SEPARATOR = "#";
-    
+
     public static final String THINGS_DOT = ".";
 
     /**
@@ -1403,7 +1403,7 @@ public final class ThingsConstants {
 
     /**
      * method常量
-     *
+     * <p>
      * things.${methodType}.${identifier}.${methodAction}
      * thing.service.identifier.request
      * thing.service.identifier.response
@@ -1420,9 +1420,6 @@ public final class ThingsConstants {
         public static final String THINGS_PROPERTIES_SET = "thing.properties.all.set";
         public static final String THINGS_PROPERTIES_GET = "thing.properties.all.get";
         public static final String THINGS_PROPERTIES_POST = "thing.properties.all.post";
-        public static final String THINGS_SYSTEM_SET = "thing.system.identifier.set";
-        public static final String THINGS_SYSTEM_GET = "thing.system.identifier.get";
-        public static final String THINGS_SYSTEM_POST = "thing.system.identifier.post";
     }
 
     public static class MethodActions {
@@ -1474,12 +1471,15 @@ public final class ThingsConstants {
     }
 
     public static class SystemMethod {
+        public static final String THINGS_SYSTEM_SET = "thing.system.identifier.set";
+        public static final String THINGS_SYSTEM_GET = "thing.system.identifier.get";
+        public static final String THINGS_SYSTEM_POST = "thing.system.identifier.post";
+        public static final String SYSTEM_METHOD_TOPIC = "system";
         public static final String SYSTEM_METHOD_START_WITH = "thing.system.";
         public static final String SYSTEM_METHOD_LOGIN = "login";
         public static final String SYSTEM_METHOD_LOGOUT = "logout";
         public static final String SYSTEM_METHOD_DSL = "dsl";
         public static final String SYSTEM_METHOD_CONFIG_SET = "configSet";
         public static final String SYSTEM_METHOD_CONFIG_GET = "configGet";
-
     }
 }
