@@ -4,7 +4,6 @@ package cn.huangdayu.things.common.dsl;
  * @author huangdayu
  */
 
-import cn.huangdayu.things.common.wrapper.ThingsInstance;
 import lombok.Data;
 
 import java.io.Serializable;

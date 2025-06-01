@@ -1,8 +1,0 @@
-plugins {
-    id 'java-library'
-}
-
-dependencies {
-    api project(path: ':things-engine')
-    api project(path: ':things-support:things-starter:things-spring-boot-starter')
-}

@@ -1478,6 +1478,8 @@ public final class ThingsConstants {
         public static final String SYSTEM_METHOD_LOGIN = "login";
         public static final String SYSTEM_METHOD_LOGOUT = "logout";
         public static final String SYSTEM_METHOD_DSL = "dsl";
-        public static final String SYSTEM_METHOD_CONFIG = "config";
+        public static final String SYSTEM_METHOD_CONFIG_SET = "configSet";
+        public static final String SYSTEM_METHOD_CONFIG_GET = "configGet";
+
     }
 }

@@ -4,7 +4,9 @@ plugins {
 
 dependencies {
     api project(path: ':things-api')
-    
+    api project(path: ':things-engine')
+    api project(path: ':things-client')
+
     implementation 'cn.hutool:hutool-core'
     implementation 'cn.hutool:hutool-cache'
     implementation "org.springframework.boot:spring-boot-starter-web"

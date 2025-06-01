@@ -1,6 +1,6 @@
 package cn.huangdayu.things.api.container;
 
-import cn.huangdayu.things.common.dsl.DslInfo;
+import cn.huangdayu.things.common.dsl.ThingsDslInfo;
 
 /**
  * 物模型DSL文档（领域特定语言）引擎
@@ -14,6 +14,6 @@ public interface ThingsDescriber {
      *
      * @return
      */
-    DslInfo getDsl();
+    ThingsDslInfo getDsl();
 
 }

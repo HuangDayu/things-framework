@@ -1,7 +1,7 @@
 package cn.huangdayu.things.sofabus;
 
 import cn.huangdayu.things.api.container.ThingsDescriber;
-import cn.huangdayu.things.api.infrastructure.ThingsPropertiesService;
+import cn.huangdayu.things.api.infrastructure.ThingsConfigurator;
 import cn.huangdayu.things.api.message.ThingsChaining;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBusCreator;
@@ -61,7 +61,7 @@ import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.*;
 public class ThingsSofaBusManager {
 
     private final ThingsChaining thingsChaining;
-    private final ThingsPropertiesService thingsConfigService;
+    private final ThingsConfigurator thingsConfigService;
     private final ThingsEventObserver thingsEventObserver;
     private final ThingsDescriber thingsDescriber;
     private final Map<String, ThingsSofaBusCreator> thingsBusComponentCreators;

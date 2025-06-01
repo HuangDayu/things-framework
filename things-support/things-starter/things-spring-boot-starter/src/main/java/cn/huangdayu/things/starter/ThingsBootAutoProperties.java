@@ -1,12 +1,11 @@
 package cn.huangdayu.things.starter;
 
-import cn.huangdayu.things.common.properties.ThingsInstanceProperties;
+import cn.huangdayu.things.common.properties.ThingsSystemProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * @author huangdayu
  */
 @ConfigurationProperties(prefix = "things")
-public class ThingsBootAutoProperties extends ThingsInstanceProperties {
+public class ThingsBootAutoProperties extends ThingsSystemProperties {
 }

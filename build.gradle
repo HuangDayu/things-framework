@@ -7,12 +7,6 @@ plugins {
     id 'maven-publish'
 }
 
-apply plugin: 'idea'
-apply plugin: 'java-platform'
-apply plugin: 'maven-publish'
-
-javaPlatform.allowDependencies()
-
 ext {
     thingsFrameworkVersion = '2024.1.0'
     springAlibabaVersion = '2023.0.3.2'
@@ -33,7 +27,6 @@ allprojects {
     group "cn.huangdayu.things"
     version "${thingsFrameworkVersion}"
 
-    apply plugin: 'idea'
     apply plugin: 'maven-publish'
 
     tasks.withType(GradleBuild).configureEach {
@@ -75,7 +68,7 @@ allprojects {
 }
 
 
-configure(subprojects.stream().filter { !it.name.endsWith("-dependencies") }.collect(Collectors.toSet())) { project ->
+configure(subprojects.stream().filter { !it.name.endsWithAny("-dependencies", "-example") }.collect(Collectors.toSet())) { project ->
     apply plugin: 'java'
 
     dependencies {

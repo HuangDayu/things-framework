@@ -22,7 +22,7 @@ dependencies {
 
     constraints {
         rootProject.subprojects.each {
-            if (!it.name.endsWith("-example") && !it.name.endsWith("-dependencies") && !it.name.endsWith("-app")) {
+            if (!it.name.endsWithAny("-dependencies", "-example", "-app")) {
                 api it
             }
         }
