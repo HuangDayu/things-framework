@@ -5,7 +5,7 @@ import cn.huangdayu.things.camel.CamelSofaBusConstructor;
 import cn.huangdayu.things.camel.mqtt.ThingsCamelMqttCallback;
 import cn.huangdayu.things.camel.mqtt.ThingsSofaBusMqttClient;
 import cn.huangdayu.things.common.enums.ThingsSofaBusType;
-import cn.huangdayu.things.common.properties.ThingsSofaBusProperties;
+import cn.huangdayu.things.common.properties.ThingsEngineProperties;
 import cn.huangdayu.things.common.wrapper.ThingsSubscribes;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -61,7 +61,7 @@ public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
     @SneakyThrows
     @Override
     public DefaultComponent buildComponent() {
-        ThingsSofaBusProperties properties = constructor.getProperties();
+        ThingsEngineProperties.ThingsSofaBusProperties properties = constructor.getProperties();
         MqttClient client = new ThingsSofaBusMqttClient(properties.getServer(), properties.getClientId(), new MqttDefaultFilePersistence(properties.getPersistenceDir()));
         MqttConnectionOptions options = new MqttConnectionOptions();
         options.setUserName(properties.getUserName());

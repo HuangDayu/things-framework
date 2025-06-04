@@ -1,14 +1,14 @@
 package cn.huangdayu.things.api.infrastructure;
 
-import cn.huangdayu.things.common.properties.ThingsSystemProperties;
+import cn.huangdayu.things.common.properties.ThingsEngineProperties;
 
 /**
  * @author huangdayu
  */
 public interface ThingsConfigurator {
 
-    ThingsSystemProperties getProperties();
+    ThingsEngineProperties getProperties();
 
-    void updateProperties(ThingsSystemProperties properties);
+    void updateProperties(ThingsEngineProperties properties);
 
 }

@@ -19,6 +19,8 @@ dependencies {
     api platform("com.alibaba.nacos:nacos-all:${nacosVersion}")
     api platform("cn.hutool:hutool-bom:${hutoolVersion}")
     api platform("org.apache.camel.springboot:camel-spring-boot-dependencies:${camelVersion}")
+    api platform("com.alipay.sofa.koupleless:koupleless-runtime:${kouplelessVersion}")
+    api platform("com.alipay.sofa:sofa-ark-bom:${sofaArkVersion}")
 
     constraints {
         rootProject.subprojects.each {

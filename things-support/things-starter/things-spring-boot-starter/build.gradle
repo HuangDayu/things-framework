@@ -11,7 +11,9 @@ dependencies {
     implementation 'cn.hutool:hutool-cache'
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-cache"
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
     implementation "org.springframework.boot:spring-boot-configuration-processor"
     api "org.springframework.boot:spring-boot-autoconfigure"
     api "org.springframework.boot:spring-boot-configuration-processor"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}"
 }

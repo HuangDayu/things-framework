@@ -12,7 +12,8 @@ ext {
     springAlibabaVersion = '2023.0.3.2'
     springBootVersion = '3.4.5'
     springCloudVersion = '2024.0.1'
-    kouplelessVersion = "2.1.4"
+    kouplelessVersion = "2.1.11"
+    sofaArkVersion = "3.1.9"
     nacosVersion = '3.0.0'
     hutoolVersion = '5.8.31'
     camelVersion = '4.11.0'

@@ -4,7 +4,7 @@ import cn.huangdayu.things.api.infrastructure.ThingsConfigurator;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.events.ThingsPropertiesUpdatedEvent;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
-import cn.huangdayu.things.common.properties.ThingsSystemProperties;
+import cn.huangdayu.things.common.properties.ThingsEngineProperties;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONWriter;
 import lombok.extern.slf4j.Slf4j;
@@ -23,25 +23,25 @@ import java.time.format.DateTimeFormatter;
 @ThingsBean
 public class ThingsConfiguratorExecutor implements ThingsConfigurator {
 
-    private volatile ThingsSystemProperties thingsSystemProperties;
+    private volatile ThingsEngineProperties thingsEngineProperties;
     private final ThingsEventObserver thingsEventObserver;
     private static final DateTimeFormatter BACKUP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
-    public ThingsConfiguratorExecutor(ThingsSystemProperties thingsSystemProperties, ThingsEventObserver thingsEventObserver) {
-        this.thingsSystemProperties = thingsSystemProperties;
+    public ThingsConfiguratorExecutor(ThingsEngineProperties thingsEngineProperties, ThingsEventObserver thingsEventObserver) {
+        this.thingsEngineProperties = thingsEngineProperties;
         this.thingsEventObserver = thingsEventObserver;
     }
 
     @Override
-    public ThingsSystemProperties getProperties() {
-        return thingsSystemProperties != null ? thingsSystemProperties : loadObjectFromJson(new File(thingsSystemProperties.getConfigPath()), ThingsSystemProperties.class);
+    public ThingsEngineProperties getProperties() {
+        return thingsEngineProperties != null ? thingsEngineProperties : loadObjectFromJson(new File(thingsEngineProperties.getConfigPath()), ThingsEngineProperties.class);
     }
 
     @Override
-    public void updateProperties(ThingsSystemProperties properties) {
-        thingsEventObserver.notifyObservers(new ThingsPropertiesUpdatedEvent(this, this.thingsSystemProperties, properties));
-        this.thingsSystemProperties = properties;
-        saveObjectWithBackup(new File(thingsSystemProperties.getConfigPath()), properties, null);
+    public void updateProperties(ThingsEngineProperties properties) {
+        thingsEventObserver.notifyObservers(new ThingsPropertiesUpdatedEvent(this, this.thingsEngineProperties, properties));
+        this.thingsEngineProperties = properties;
+        saveObjectWithBackup(new File(thingsEngineProperties.getConfigPath()), properties, null);
     }
 
     /**

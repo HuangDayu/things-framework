@@ -1,7 +1,7 @@
 package cn.huangdayu.things.common.events;
 
 import cn.huangdayu.things.common.observer.ThingsBaseEvent;
-import cn.huangdayu.things.common.properties.ThingsSystemProperties;
+import cn.huangdayu.things.common.properties.ThingsEngineProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,8 +16,8 @@ public class ThingsPropertiesUpdatedEvent implements ThingsBaseEvent {
 
     private Object source;
 
-    private ThingsSystemProperties oldProperties;
+    private ThingsEngineProperties oldProperties;
 
-    private ThingsSystemProperties newProperties;
+    private ThingsEngineProperties newProperties;
 
 }

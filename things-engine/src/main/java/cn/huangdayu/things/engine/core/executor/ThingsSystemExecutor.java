@@ -6,7 +6,7 @@ import cn.huangdayu.things.common.annotation.ThingsPayload;
 import cn.huangdayu.things.common.annotation.ThingsService;
 import cn.huangdayu.things.common.annotation.ThingsSystem;
 import cn.huangdayu.things.common.dsl.ThingsDslInfo;
-import cn.huangdayu.things.common.properties.ThingsSystemProperties;
+import cn.huangdayu.things.common.properties.ThingsEngineProperties;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.RequiredArgsConstructor;
 
@@ -29,12 +29,12 @@ public class ThingsSystemExecutor {
 
     @ThingsService(identifier = SYSTEM_METHOD_CONFIG_SET)
     public void setConfig(@ThingsPayload JSONObject payload) {
-        thingsConfigurator.updateProperties(payload.toJavaObject(ThingsSystemProperties.class));
+        thingsConfigurator.updateProperties(payload.toJavaObject(ThingsEngineProperties.class));
     }
 
 
     @ThingsService(identifier = SYSTEM_METHOD_CONFIG_GET)
-    public ThingsSystemProperties getConfig() {
+    public ThingsEngineProperties getConfig() {
         return thingsConfigurator.getProperties();
     }
 

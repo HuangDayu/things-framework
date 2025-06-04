@@ -9,12 +9,12 @@ import org.springframework.cache.CacheManager;
  * @author huangdayu
  */
 @ThingsBean
-public class SpringCacheService implements ThingsCacheService {
+public class ThingsSpringCacheService implements ThingsCacheService {
 
 
     private final Cache cache;
 
-    public SpringCacheService(CacheManager cacheManager) {
+    public ThingsSpringCacheService(CacheManager cacheManager) {
         this.cache = cacheManager.getCache("things-engine-map-local-cache");
     }
 

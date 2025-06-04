@@ -12,7 +12,7 @@ import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
-import cn.huangdayu.things.common.properties.ThingsSofaBusProperties;
+import cn.huangdayu.things.common.properties.ThingsEngineProperties;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.huangdayu.things.common.wrapper.ThingsSession;
@@ -72,7 +72,7 @@ public class ThingsSofaBusManager {
     private final ThingsEventObserver thingsEventObserver;
     private final ThingsDescriber thingsDescriber;
     private final Map<String, ThingsSofaBusCreator> thingsBusComponentCreators;
-    private static final Map<ThingsSofaBusProperties, ThingsSofaBus> propertiesComponentsMap = new ConcurrentHashMap<>();
+    private static final Map<ThingsEngineProperties.ThingsSofaBusProperties, ThingsSofaBus> propertiesComponentsMap = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void init() {
@@ -86,7 +86,7 @@ public class ThingsSofaBusManager {
     }
 
 
-    private ThingsSofaBus constructSofaBus(ThingsSofaBusProperties property, ThingsSofaBusInputting thingsSofaBusInputting) {
+    private ThingsSofaBus constructSofaBus(ThingsEngineProperties.ThingsSofaBusProperties property, ThingsSofaBusInputting thingsSofaBusInputting) {
         return propertiesComponentsMap.computeIfAbsent(property, k -> {
             for (Map.Entry<String, ThingsSofaBusCreator> entry : thingsBusComponentCreators.entrySet()) {
                 if (entry.getValue().supports().contains(property.getType())) {
@@ -99,9 +99,9 @@ public class ThingsSofaBusManager {
 
 
     private void initSofaBus() {
-        Set<ThingsSofaBusProperties> sofaBus = thingsConfigurator.getProperties().getSofaBus();
+        Set<ThingsEngineProperties.ThingsSofaBusProperties> sofaBus = thingsConfigurator.getProperties().getSofaBus();
         if (CollUtil.isNotEmpty(sofaBus)) {
-            for (ThingsSofaBusProperties sofaBusProperties : sofaBus) {
+            for (ThingsEngineProperties.ThingsSofaBusProperties sofaBusProperties : sofaBus) {
                 if (!sofaBusProperties.isEnable()) {
                     break;
                 }
@@ -180,7 +180,7 @@ public class ThingsSofaBusManager {
         }
     }
 
-    public boolean destroy(ThingsSofaBusProperties property) {
+    public boolean destroy(ThingsEngineProperties.ThingsSofaBusProperties property) {
         ThingsSofaBus thingsSofaBus = propertiesComponentsMap.get(property);
         if (thingsSofaBus != null) {
             return thingsSofaBus.stop();

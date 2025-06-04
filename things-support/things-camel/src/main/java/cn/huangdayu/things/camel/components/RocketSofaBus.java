@@ -3,9 +3,8 @@ package cn.huangdayu.things.camel.components;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
 import cn.huangdayu.things.camel.CamelSofaBusConstructor;
 import cn.huangdayu.things.common.enums.ThingsSofaBusType;
-import cn.huangdayu.things.common.properties.ThingsSofaBusProperties;
+import cn.huangdayu.things.common.properties.ThingsEngineProperties;
 import org.apache.camel.builder.component.ComponentsBuilderFactory;
-import org.apache.camel.component.rocketmq.RocketMQComponent;
 import org.apache.camel.support.DefaultComponent;
 
 import static cn.huangdayu.things.common.enums.ThingsSofaBusType.ROCKETMQ;
@@ -27,7 +26,7 @@ public class RocketSofaBus extends AbstractSofaBus implements ThingsSofaBus {
 
     @Override
     public DefaultComponent buildComponent() {
-        ThingsSofaBusProperties properties = constructor.getProperties();
+        ThingsEngineProperties.ThingsSofaBusProperties properties = constructor.getProperties();
         return ComponentsBuilderFactory.rocketmq()
                 .namesrvAddr(properties.getServer())
                 .accessKey(properties.getUserName())

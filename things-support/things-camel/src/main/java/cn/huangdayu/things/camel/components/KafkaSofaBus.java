@@ -3,10 +3,9 @@ package cn.huangdayu.things.camel.components;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
 import cn.huangdayu.things.camel.CamelSofaBusConstructor;
 import cn.huangdayu.things.common.enums.ThingsSofaBusType;
-import cn.huangdayu.things.common.properties.ThingsSofaBusProperties;
+import cn.huangdayu.things.common.properties.ThingsEngineProperties;
 import lombok.Getter;
 import org.apache.camel.builder.component.ComponentsBuilderFactory;
-import org.apache.camel.component.kafka.KafkaComponent;
 import org.apache.camel.support.DefaultComponent;
 
 import static cn.huangdayu.things.common.enums.ThingsSofaBusType.KAFKA;
@@ -28,7 +27,7 @@ public class KafkaSofaBus extends AbstractSofaBus implements ThingsSofaBus {
 
     @Override
     public DefaultComponent buildComponent() {
-        ThingsSofaBusProperties properties = constructor.getProperties();
+        ThingsEngineProperties.ThingsSofaBusProperties properties = constructor.getProperties();
         return ComponentsBuilderFactory.kafka()
                 .brokers(properties.getServer())
                 .clientId(properties.getClientId())

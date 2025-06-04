@@ -3,6 +3,7 @@ package cn.huangdayu.things.starter;
 import cn.huangdayu.things.api.container.ThingsRegister;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.factory.ThreadPoolFactory;
+import cn.huangdayu.things.common.properties.ThingsEngineProperties;
 import cn.huangdayu.things.starter.client.EnableThingsClientCondition;
 import cn.huangdayu.things.starter.client.ThingsClientsRegistrar;
 import cn.huangdayu.things.starter.engine.EnableThingsEngineCondition;
@@ -11,6 +12,8 @@ import cn.hutool.core.collection.CollUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -31,7 +34,8 @@ import java.util.Objects;
 @Configuration
 @EnableCaching
 @EnableScheduling
-@EnableConfigurationProperties(ThingsBootAutoProperties.class)
+@EnableConfigurationProperties
+@ConfigurationPropertiesScan(value = "cn.huangdayu.things")
 @ComponentScan(value = "cn.huangdayu.things", includeFilters = @ComponentScan.Filter(ThingsBean.class))
 public class ThingsBootAutoConfiguration {
 
@@ -68,5 +72,11 @@ public class ThingsBootAutoConfiguration {
         return CollUtil.isNotEmpty(beans) && beans.values().stream()
                 .map(Object::getClass)
                 .anyMatch(clazz -> clazz.isAnnotationPresent(annotationClass));
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "things")
+    public ThingsEngineProperties thingsEngineProperties() {
+        return new ThingsEngineProperties();
     }
 }

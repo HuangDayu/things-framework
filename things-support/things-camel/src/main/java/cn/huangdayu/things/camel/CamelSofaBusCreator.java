@@ -1,13 +1,12 @@
 package cn.huangdayu.things.camel;
 
-import cn.huangdayu.things.api.message.ThingsChaining;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBusCreator;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBusInputting;
 import cn.huangdayu.things.camel.components.*;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.enums.ThingsSofaBusType;
-import cn.huangdayu.things.common.properties.ThingsSofaBusProperties;
+import cn.huangdayu.things.common.properties.ThingsEngineProperties;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.CamelContext;
@@ -44,7 +43,7 @@ public class CamelSofaBusCreator implements ThingsSofaBusCreator {
     }
 
     @Override
-    public ThingsSofaBus create(ThingsSofaBusProperties property, ThingsSofaBusInputting thingsSofaBusInputting) {
+    public ThingsSofaBus create(ThingsEngineProperties.ThingsSofaBusProperties property, ThingsSofaBusInputting thingsSofaBusInputting) {
         Function<CamelSofaBusConstructor, ThingsSofaBus> function = componentsMap.get(property.getType());
         return function.apply(new CamelSofaBusConstructor(camelContext, getProducerTemplate(), thingsSofaBusInputting, property));
     }

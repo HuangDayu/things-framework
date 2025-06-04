@@ -1,6 +1,7 @@
 package cn.huangdayu.things.common.message;
 
 import cn.huangdayu.things.common.constants.ThingsConstants;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
@@ -35,12 +36,14 @@ public abstract class AbstractThingsMessage<M extends Serializable, P extends Se
      *
      * @return
      */
+    @Builder.Default
     private int qos = 0;
 
 
     /**
      * 超时时间，单位：毫秒
      */
+    @Builder.Default
     private long timeout = 5000;
 
     /**
