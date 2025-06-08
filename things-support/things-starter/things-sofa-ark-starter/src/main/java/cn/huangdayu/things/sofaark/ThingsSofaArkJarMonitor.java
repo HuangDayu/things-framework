@@ -37,21 +37,10 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class ThingsSofaArkJarMonitor {
-    // region 配置参数
     /**
      * 定时任务调度器，用于执行每分钟的扫描任务
      */
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-
-    /**
-     * MD5计算线程池，使用工作窃取算法提高并行效率
-     */
-    private final ExecutorService md5Executor = Executors.newWorkStealingPool();
-
-    /**
-     * 文件复制线程池，用于异步处理副本操作
-     */
-    private final ExecutorService copyExecutor = Executors.newCachedThreadPool();
 
     /**
      * 监控的目标目录路径（标准化绝对路径）
@@ -81,8 +70,6 @@ public class ThingsSofaArkJarMonitor {
     private final String unpackEndsWith;
 
 
-    // region 初始化与验证
-
     /**
      * 创建JAR文件监控实例
      *
@@ -108,8 +95,6 @@ public class ThingsSofaArkJarMonitor {
     }
 
 
-    // region 服务控制
-
     /**
      * 启动监控服务（立即执行首次扫描，之后每分钟执行一次）
      */
@@ -122,13 +107,9 @@ public class ThingsSofaArkJarMonitor {
      */
     public void stop() {
         shutdownExecutor(scheduler);
-        shutdownExecutor(md5Executor);
-        shutdownExecutor(copyExecutor);
         cleanManagedCopies();
     }
 
-
-    // region 核心扫描逻辑
 
     /**
      * 执行完整的扫描流程
@@ -137,23 +118,12 @@ public class ThingsSofaArkJarMonitor {
         try {
             // 阶段1：扫描目录获取当前状态
             Map<Path, FileMeta> currentState = scanOriginalJars();
-
             // 阶段2：检测变化并处理
             List<JarFileInfo> changes = detectChanges(currentState);
-
             if (!changes.isEmpty()) {
-                List<CompletableFuture<Void>> operations = processChanges(changes);
-
-                // 等待所有副本操作完成
-                CompletableFuture.allOf(operations.toArray(new CompletableFuture[0])).thenRun(() -> {
-                    // 确保在主线程执行回调
-                    scheduler.execute(() ->
-                            // 阶段3：触发回调并更新状态
-                            listener.onChange(changes, List.copyOf(managedCopies)));
-                }).exceptionally(ex -> {
-                    log.error("Operations failed: {}", ex.getMessage());
-                    return null;
-                });
+                processChanges(changes);
+                // 阶段3：触发回调并更新状态
+                listener.onChange(changes, List.copyOf(managedCopies));
             }
             // 阶段4：更新快照数据
             lastSnapshot.clear();
@@ -181,21 +151,16 @@ public class ThingsSofaArkJarMonitor {
     }
 
 
-    // region 变化检测
-
     /**
      * 检测文件变化并生成变更列表
      */
     private List<JarFileInfo> detectChanges(Map<Path, FileMeta> current) {
         List<JarFileInfo> changes = new CopyOnWriteArrayList<>();
-
         // 检测删除文件（存在于上次快照但不存在于当前状态）
         lastSnapshot.keySet().stream().filter(p -> !current.containsKey(p)).forEach(p -> changes.add(createFileInfo(p, ChangeType.REMOVED)));
-
         // 检测新增/修改文件
         current.forEach((path, meta) -> {
             FileMeta previous = lastSnapshot.get(path);
-
             if (previous == null) {
                 // 新增文件
                 changes.add(createFileInfo(path, ChangeType.ADDED));
@@ -255,55 +220,45 @@ public class ThingsSofaArkJarMonitor {
     /**
      * 处理检测到的变更事件
      */
-    private List<CompletableFuture<Void>> processChanges(List<JarFileInfo> changes) {
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
-
+    private void processChanges(List<JarFileInfo> changes) {
         changes.forEach(info -> {
             switch (info.getChangeType()) {
-                case ADDED, UPDATED -> futures.add(handleAddOrUpdate(info));
-                case REMOVED -> futures.add(handleRemoval(info));
+                case ADDED, UPDATED -> handleAddOrUpdate(info);
+                case REMOVED -> handleRemoval(info);
             }
         });
-
-        return futures;
     }
 
     /**
      * 处理新增/更新事件：创建或更新副本文件
      */
-    private CompletableFuture<Void> handleAddOrUpdate(JarFileInfo info) {
+    private void handleAddOrUpdate(JarFileInfo info) {
         Path copyPath = generateCopyPath(info.getOriginalPath());
         managedCopies.add(copyPath);
-
-        return CompletableFuture.runAsync(() -> {
-            try {
-                Files.copy(info.getOriginalPath(), copyPath, StandardCopyOption.REPLACE_EXISTING);
-                System.out.println("Copied: " + copyPath);
-            } catch (IOException e) {
-                managedCopies.remove(copyPath); // 回滚添加
-                log.error("Copy failed: {}", e.getMessage());
-                throw new CompletionException(e);
-            }
-        }, copyExecutor);
+        try {
+            Files.copy(info.getOriginalPath(), copyPath, StandardCopyOption.REPLACE_EXISTING);
+            log.info("Copied: " + copyPath);
+        } catch (IOException e) {
+            managedCopies.remove(copyPath); // 回滚添加
+            log.error("Copy failed: {}", e.getMessage());
+            throw new CompletionException(e);
+        }
     }
 
     /**
      * 处理删除事件：移除并删除副本文件
      */
-    private CompletableFuture<Void> handleRemoval(JarFileInfo info) {
+    private void handleRemoval(JarFileInfo info) {
         Path copyPath = generateCopyPath(info.getOriginalPath());
-
-        return CompletableFuture.runAsync(() -> {
-            try {
-                if (Files.deleteIfExists(copyPath)) {
-                    System.out.println("Deleted: " + copyPath);
-                }
-                managedCopies.remove(copyPath);
-            } catch (IOException e) {
-                log.error("Delete failed: {}", e.getMessage());
-                throw new CompletionException(e);
+        try {
+            if (Files.deleteIfExists(copyPath)) {
+                log.info("Deleted: " + copyPath);
             }
-        }, copyExecutor);
+            managedCopies.remove(copyPath);
+        } catch (IOException e) {
+            log.error("Delete failed: {}", e.getMessage());
+            throw new CompletionException(e);
+        }
     }
 
 
