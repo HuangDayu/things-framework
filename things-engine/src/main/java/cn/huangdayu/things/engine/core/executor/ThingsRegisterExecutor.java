@@ -5,9 +5,8 @@ import cn.huangdayu.things.api.container.ThingsRegister;
 import cn.huangdayu.things.api.message.ThingsHandling;
 import cn.huangdayu.things.api.message.ThingsIntercepting;
 import cn.huangdayu.things.common.annotation.*;
-import cn.huangdayu.things.common.exception.ThingsException;
-import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.events.ThingsContainerUpdatedEvent;
+import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.engine.wrapper.*;
 import cn.hutool.core.annotation.AnnotationUtil;
 import cn.hutool.core.collection.CollUtil;
@@ -25,9 +24,9 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.ERROR;
 import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_SEPARATOR;
 import static cn.huangdayu.things.common.utils.ThingsUtils.*;
 
@@ -43,20 +42,18 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
 
     @Override
     public void register(ThingsContainer thingsContainer) {
-        if (THINGS_CONTAINERS.get(thingsContainer.name()) != null) {
-            throw new ThingsException(ERROR, "Container name already exists.");
-        }
         long start = System.currentTimeMillis();
-        findBeans(thingsContainer, Things.class, this::findThingsServices);
-        findBeans(thingsContainer, ThingsPropertyEntity.class, this::findThingsProperties);
-        findBeans(thingsContainer, ThingsEventEntity.class, this::findThingsEvents);
-        findBeans(thingsContainer, ThingsListener.class, this::findThingsListener);
-        findBeans(thingsContainer, ThingsInterceptor.class, this::findThingsInterceptors);
-        findBeans(thingsContainer, ThingsHandler.class, this::findThingsHandlers);
-        findBeans(thingsContainer, ThingsClient.class, this::findThingsClients);
+        AtomicInteger sumBeans = new AtomicInteger();
+        findBeans(sumBeans, thingsContainer, Things.class, this::findThingsServices);
+        findBeans(sumBeans, thingsContainer, ThingsPropertyEntity.class, this::findThingsProperties);
+        findBeans(sumBeans, thingsContainer, ThingsEventEntity.class, this::findThingsEvents);
+        findBeans(sumBeans, thingsContainer, ThingsListener.class, this::findThingsListener);
+        findBeans(sumBeans, thingsContainer, ThingsInterceptor.class, this::findThingsInterceptors);
+        findBeans(sumBeans, thingsContainer, ThingsHandler.class, this::findThingsHandlers);
+        findBeans(sumBeans, thingsContainer, ThingsClient.class, this::findThingsClients);
         thingsEventObserver.notifyObservers(new ThingsContainerUpdatedEvent(thingsContainer));
-        log.info("Started ThingsEngine in {} milliseconds with context {}.", System.currentTimeMillis() - start, thingsContainer.name());
-        THINGS_CONTAINERS.put(thingsContainer.name(), thingsContainer);
+        log.info("ThingsEngine register {} beans for container [{}] takes {} milliseconds.", sumBeans.get(), thingsContainer.name(), System.currentTimeMillis() - start);
+        THINGS_CONTAINERS.add(thingsContainer);
     }
 
     @Override
@@ -67,7 +64,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         cancelEventListener(thingsContainer);
         deleteMap(PRODUCT_PROPERTY_MAP, v -> v.getThingsContainer() == thingsContainer);
         thingsEventObserver.notifyObservers(new ThingsContainerUpdatedEvent(thingsContainer));
-        THINGS_CONTAINERS.remove(thingsContainer.name());
+        THINGS_CONTAINERS.remove(thingsContainer);
     }
 
     @Override
@@ -112,13 +109,14 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
      * @param beanConsumer
      * @param <T>
      */
-    private <T extends Annotation> void findBeans(ThingsContainer thingsContainer, Class<T> annotationType, BeanConsumer<ThingsContainer, T, Object> beanConsumer) {
+    private <T extends Annotation> void findBeans(AtomicInteger sumBeans, ThingsContainer thingsContainer, Class<T> annotationType, BeanConsumer<ThingsContainer, T, Object> beanConsumer) {
         Map<String, Object> thingsBeans = thingsContainer.getBeans(annotationType);
         if (CollUtil.isNotEmpty(thingsBeans)) {
             thingsBeans.forEach((key, value) -> {
                 T beanAnnotation = findBeanAnnotation(value, annotationType);
                 if (beanAnnotation != null) {
                     beanConsumer.accept(thingsContainer, beanAnnotation, value);
+                    sumBeans.addAndGet(1);
                 }
             });
         }

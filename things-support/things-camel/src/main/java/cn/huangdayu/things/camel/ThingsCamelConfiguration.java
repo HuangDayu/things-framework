@@ -1,6 +1,7 @@
 package cn.huangdayu.things.camel;
 
 import cn.huangdayu.things.camel.converter.AbstractTypeConverter;
+import cn.huangdayu.things.common.annotation.ThingsBean;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,7 @@ import java.util.Map;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Component
+@ThingsBean
 public class ThingsCamelConfiguration {
 
     private final CamelContext camelContext;

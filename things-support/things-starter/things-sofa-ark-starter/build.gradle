@@ -1,0 +1,15 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    api project(path: ':things-api')
+    api project(path: ':things-support:things-starter:things-spring-boot-starter')
+    implementation "com.alipay.sofa:sofa-ark-api"
+    implementation "com.alipay.sofa:sofa-ark-spi"
+    implementation "com.alipay.sofa.koupleless:koupleless-common"
+    implementation "com.alipay.sofa.koupleless:koupleless-base-starter"
+    implementation "com.alipay.sofa.koupleless:koupleless-app-starter"
+    implementation "com.alipay.sofa.koupleless:arklet-springboot-starter"
+    implementation "com.alipay.sofa:web-ark-plugin"
+}

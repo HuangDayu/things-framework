@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * @author huangdayu
@@ -18,7 +19,7 @@ public abstract class ThingsBaseExecutor {
     /**
      * containerName vs ThingsContainer
      */
-    protected static final Map<String, ThingsContainer> THINGS_CONTAINERS = new ConcurrentHashMap<>();
+    protected static final Set<ThingsContainer> THINGS_CONTAINERS = new CopyOnWriteArraySet<>();
 
 
     /**
@@ -78,9 +79,9 @@ public abstract class ThingsBaseExecutor {
     protected static final Table<String, String, ThingsFunction> THINGS_CLIENT_TABLE = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
 
     public static <T> T getThingsBean(Class<T> requiredType) {
-        for (Map.Entry<String, ThingsContainer> entry : THINGS_CONTAINERS.entrySet()) {
+        for (ThingsContainer thingsContainer : THINGS_CONTAINERS) {
             try {
-                T bean = entry.getValue().getBean(requiredType);
+                T bean = thingsContainer.getBean(requiredType);
                 if (bean != null) {
                     return bean;
                 }

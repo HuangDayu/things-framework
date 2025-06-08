@@ -7,6 +7,7 @@ import cn.huangdayu.things.common.properties.ThingsEngineProperties;
 import cn.huangdayu.things.starter.client.EnableThingsClientCondition;
 import cn.huangdayu.things.starter.client.ThingsClientsRegistrar;
 import cn.huangdayu.things.starter.engine.EnableThingsEngineCondition;
+import cn.huangdayu.things.starter.engine.ThingsBeanFactoryPostProcessor;
 import cn.huangdayu.things.starter.engine.ThingsContainerRegister;
 import cn.hutool.core.collection.CollUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ import java.util.Objects;
  * @author huangdayu
  */
 @Slf4j
+@Conditional(EnableThingsEngineCondition.class)
 @Configuration
 @EnableCaching
 @EnableScheduling
@@ -78,5 +80,10 @@ public class ThingsBootAutoConfiguration {
     @ConfigurationProperties(prefix = "things")
     public ThingsEngineProperties thingsEngineProperties() {
         return new ThingsEngineProperties();
+    }
+
+    @Bean
+    public ThingsBeanFactoryPostProcessor thingsBeanFactoryPostProcessor() {
+        return new ThingsBeanFactoryPostProcessor();
     }
 }

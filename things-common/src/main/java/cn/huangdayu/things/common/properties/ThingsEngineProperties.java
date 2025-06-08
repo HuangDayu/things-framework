@@ -15,6 +15,7 @@ public class ThingsEngineProperties {
         this.code = UUID.randomUUID().toString().replace("-", "");
         this.configPath = "temp/things/config/" + code + "/config.json";
         this.sofaArk = new ThingsSofaArkProperties();
+        this.sofaBiz = new ThingsSofaBizProperties();
         this.sofaBus = new HashSet<>();
     }
 
@@ -28,6 +29,8 @@ public class ThingsEngineProperties {
     private Set<ThingsSofaBusProperties> sofaBus;
 
     private ThingsSofaArkProperties sofaArk;
+
+    private ThingsSofaBizProperties sofaBiz;
 
     /**
      * @author huangdayu
@@ -83,6 +86,21 @@ public class ThingsEngineProperties {
 
 
         private String arkBizJarEndsWith = "-biz.jar";
+
+    }
+
+    @Data
+    public static class ThingsSofaBizProperties {
+
+        /**
+         * biz获取ark的bean的类（全路径）
+         */
+        private Set<String> sharedBeanClasses;
+
+        /**
+         * biz获取ark的bean的名称
+         */
+        private Set<String> sharedBeanNames;
 
     }
 }

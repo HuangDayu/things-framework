@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
  * 出现多个bean冲突异常时，通过primary字段来选择主要的bean
  * @author huangdayu
  */
-@Component
 public class ThingsBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
     @Override

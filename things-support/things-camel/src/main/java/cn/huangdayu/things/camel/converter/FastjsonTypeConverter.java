@@ -1,5 +1,6 @@
 package cn.huangdayu.things.camel.converter;
 
+import cn.huangdayu.things.common.annotation.ThingsBean;
 import com.alibaba.fastjson2.JSONObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 /**
  * @author huangdayu
  */
-@Component
+@ThingsBean
 public class FastjsonTypeConverter extends AbstractTypeConverter {
     @Override
     public Class<?> toType() {

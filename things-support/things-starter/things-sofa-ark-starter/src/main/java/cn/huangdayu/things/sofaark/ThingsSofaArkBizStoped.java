@@ -1,19 +1,19 @@
 package cn.huangdayu.things.sofaark;
 
 import cn.huangdayu.things.api.container.ThingsRegister;
+import cn.huangdayu.things.common.annotation.ThingsBean;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStopEvent;
 import com.alipay.sofa.ark.spi.service.event.EventHandler;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import static cn.huangdayu.things.sofaark.ThingsSofaArkContainer.ARK_CONTAINER_MAP;
 
 /**
  * @author huangdayu
  */
-@Component
+@ThingsBean
 @RequiredArgsConstructor
-public class ThingsSofaArkStopEventHandler implements EventHandler<AfterBizStopEvent> {
+public class ThingsSofaArkBizStoped implements EventHandler<AfterBizStopEvent> {
 
     private final ThingsRegister thingsRegister;
 

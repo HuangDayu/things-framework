@@ -1,22 +1,22 @@
 package cn.huangdayu.things.sofaark;
 
 import cn.huangdayu.things.api.container.ThingsRegister;
+import cn.huangdayu.things.common.annotation.ThingsBean;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupEvent;
 import com.alipay.sofa.ark.spi.service.event.EventHandler;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.common.model.ApplicationContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
 import static cn.huangdayu.things.sofaark.ThingsSofaArkContainer.ARK_CONTAINER_MAP;
 
 /**
  * @author huangdayu
  */
-@Component
+@ThingsBean
 @RequiredArgsConstructor
-public class ThingsSofaArkStartupEventHandler implements EventHandler<AfterBizStartupEvent> {
+public class ThingsSofaArkBizStarted implements EventHandler<AfterBizStartupEvent> {
 
     private final ThingsRegister thingsRegister;
 

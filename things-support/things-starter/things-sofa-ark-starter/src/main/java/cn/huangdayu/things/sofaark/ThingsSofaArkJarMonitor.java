@@ -1,5 +1,6 @@
 package cn.huangdayu.things.sofaark;
 
+import cn.huangdayu.things.common.exception.ThingsException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -102,7 +103,7 @@ public class ThingsSofaArkJarMonitor {
      */
     private void validateDirectory() {
         if (!Files.isDirectory(targetDir)) {
-            throw new IllegalArgumentException("Path is not a directory: " + targetDir);
+            throw new ThingsException(null, "Path is not a directory: " + targetDir);
         }
     }
 
@@ -113,7 +114,7 @@ public class ThingsSofaArkJarMonitor {
      * 启动监控服务（立即执行首次扫描，之后每分钟执行一次）
      */
     public void start() {
-        scheduler.scheduleAtFixedRate(this::performScan, 0, 1, TimeUnit.MINUTES);
+        scheduler.scheduleAtFixedRate(this::performScan, 30, 30, TimeUnit.SECONDS);
     }
 
     /**
