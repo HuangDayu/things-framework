@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ThingsContainerUpdatedEvent implements ThingsBaseEvent {
+public class ThingsContainerRegisteredEvent implements ThingsBaseEvent {
 
     private Object source;
 

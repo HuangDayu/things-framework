@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author huangdayu
@@ -31,5 +32,17 @@ public class ThingsFunctionContainer implements ThingsContainer {
             return (T) bean;
         }
         return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ThingsFunctionContainer that = (ThingsFunctionContainer) o;
+        return Objects.equals(bean, that.bean);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(bean);
     }
 }

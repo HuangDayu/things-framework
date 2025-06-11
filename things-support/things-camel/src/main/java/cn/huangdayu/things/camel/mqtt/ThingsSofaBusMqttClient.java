@@ -34,7 +34,7 @@ public class ThingsSofaBusMqttClient extends MqttClient {
      */
     @Override
     public void setCallback(MqttCallback callback) {
-        ThingsMultiMqttCallback mqtt5Callback = ThingsMultiMqttCallback.getInstance();
+        ThingsProxyMqttCallback mqtt5Callback = ThingsProxyMqttCallback.getInstance();
         mqtt5Callback.addMqttCallback(callback);
         super.setCallback(mqtt5Callback);
     }

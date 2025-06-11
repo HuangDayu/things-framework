@@ -3,9 +3,12 @@ package cn.huangdayu.things.common.utils;
 import cn.huangdayu.things.common.annotation.ThingsClient;
 import cn.huangdayu.things.common.annotation.ThingsEventEntity;
 import cn.huangdayu.things.common.annotation.ThingsService;
+import cn.huangdayu.things.common.dsl.ThingsDslInfo;
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.message.ThingsEventMessage;
+import cn.huangdayu.things.common.wrapper.ThingsSubscribes;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.multi.RowKeyTable;
 import cn.hutool.core.map.multi.Table;
 import cn.hutool.core.util.StrUtil;
@@ -26,6 +29,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -51,18 +56,39 @@ public class ThingsUtils {
         }
     }
 
-    public static <R, C, V> void deleteTable(Table<R, C, V> table, Function<V, Boolean> function) {
+    public static <R, C, V> AtomicInteger deleteTable(Table<R, C, V> table, Function<V, Boolean> function) {
+        AtomicInteger sum = new AtomicInteger();
         Set<Table.Cell<R, C, V>> collect = table.cellSet().parallelStream().filter(cell -> function.apply(cell.getValue())).collect(Collectors.toSet());
         for (Table.Cell<R, C, V> cell : collect) {
             table.remove(cell.getRowKey(), cell.getColumnKey());
+            sum.addAndGet(1);
         }
+        return sum;
     }
 
-    public static <K, V> void deleteMap(Map<K, V> map, Function<V, Boolean> function) {
+    public static <T> AtomicInteger deleteTableForSet(Table<String, String, Set<T>> table, Function<T, Boolean> function) {
+        AtomicInteger sum = new AtomicInteger();
+        for (Table.Cell<String, String, Set<T>> cell : table.cellSet()) {
+            Set<T> collect = cell.getValue().stream().filter(function::apply).collect(Collectors.toSet());
+            if (CollUtil.isNotEmpty(collect)) {
+                cell.getValue().removeAll(collect);
+                sum.addAndGet(1);
+            }
+            if (cell.getValue().isEmpty()) {
+                table.remove(cell.getRowKey(), cell.getColumnKey());
+            }
+        }
+        return sum;
+    }
+
+    public static <K, V> AtomicInteger deleteMap(Map<K, V> map, Function<V, Boolean> function) {
+        AtomicInteger sum = new AtomicInteger();
         Set<Map.Entry<K, V>> collect = map.entrySet().parallelStream().filter(entry -> function.apply(entry.getValue())).collect(Collectors.toSet());
         for (Map.Entry<K, V> entry : collect) {
             map.remove(entry.getKey());
+            sum.addAndGet(1);
         }
+        return sum;
     }
 
 
@@ -313,5 +339,22 @@ public class ThingsUtils {
             }
         }
         return true;
+    }
+
+    public static Set<ThingsSubscribes> createDslSubscribes(Object subscriber, ThingsDslInfo thingsDslInfo) {
+        Set<ThingsSubscribes> thingsSubscribes = new CopyOnWriteArraySet<>();
+        thingsDslInfo.getThingsDsl().forEach(thingsInfo -> {
+            String code = thingsInfo.getProfile().getProduct().getCode();
+            thingsSubscribes.add(new ThingsSubscribes(subscriber, null, true, code, null, null));
+        });
+        thingsDslInfo.getDomainDsl().forEach(domainInfo -> {
+            domainInfo.getSubscribes().forEach(info -> {
+                thingsSubscribes.add(new ThingsSubscribes(subscriber, null, false, info.getProductCode(), null, THINGS_EVENT_POST.replace(THINGS_IDENTIFIER, info.getEventIdentifier())));
+            });
+            domainInfo.getConsumes().forEach(info -> {
+                thingsSubscribes.add(new ThingsSubscribes(subscriber, null, false, info.getProductCode(), null, THINGS_SERVICE_RESPONSE.replace(THINGS_IDENTIFIER, info.getServiceIdentifier())));
+            });
+        });
+        return thingsSubscribes;
     }
 }

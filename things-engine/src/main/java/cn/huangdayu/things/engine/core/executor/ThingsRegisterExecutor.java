@@ -5,13 +5,13 @@ import cn.huangdayu.things.api.container.ThingsRegister;
 import cn.huangdayu.things.api.message.ThingsHandling;
 import cn.huangdayu.things.api.message.ThingsIntercepting;
 import cn.huangdayu.things.common.annotation.*;
-import cn.huangdayu.things.common.events.ThingsContainerUpdatedEvent;
+import cn.huangdayu.things.common.events.ThingsContainerCancelledEvent;
+import cn.huangdayu.things.common.events.ThingsContainerRegisteredEvent;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.engine.wrapper.*;
 import cn.hutool.core.annotation.AnnotationUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
-import cn.hutool.core.map.multi.Table;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_SEPARATOR;
 import static cn.huangdayu.things.common.utils.ThingsUtils.*;
@@ -43,49 +42,51 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
     @Override
     public void register(ThingsContainer thingsContainer) {
         long start = System.currentTimeMillis();
-        AtomicInteger sumBeans = new AtomicInteger();
-        findBeans(sumBeans, thingsContainer, Things.class, this::findThingsServices);
-        findBeans(sumBeans, thingsContainer, ThingsPropertyEntity.class, this::findThingsProperties);
-        findBeans(sumBeans, thingsContainer, ThingsEventEntity.class, this::findThingsEvents);
-        findBeans(sumBeans, thingsContainer, ThingsListener.class, this::findThingsListener);
-        findBeans(sumBeans, thingsContainer, ThingsInterceptor.class, this::findThingsInterceptors);
-        findBeans(sumBeans, thingsContainer, ThingsHandler.class, this::findThingsHandlers);
-        findBeans(sumBeans, thingsContainer, ThingsClient.class, this::findThingsClients);
-        thingsEventObserver.notifyObservers(new ThingsContainerUpdatedEvent(thingsContainer));
-        log.info("ThingsEngine register {} beans for container [{}] takes {} milliseconds.", sumBeans.get(), thingsContainer.name(), System.currentTimeMillis() - start);
+        AtomicInteger sum = new AtomicInteger();
+        sum.addAndGet(findBeans(thingsContainer, Things.class, this::findThingsServices).get());
+        sum.addAndGet(findBeans(thingsContainer, ThingsPropertyEntity.class, this::findThingsProperties).get());
+        sum.addAndGet(findBeans(thingsContainer, ThingsEventEntity.class, this::findThingsEvents).get());
+        sum.addAndGet(findBeans(thingsContainer, ThingsListener.class, this::findThingsListener).get());
+        sum.addAndGet(findBeans(thingsContainer, ThingsInterceptor.class, this::findThingsInterceptors).get());
+        sum.addAndGet(findBeans(thingsContainer, ThingsHandler.class, this::findThingsHandlers).get());
+        sum.addAndGet(findBeans(thingsContainer, ThingsClient.class, this::findThingsClients).get());
         THINGS_CONTAINERS.add(thingsContainer);
+        thingsEventObserver.notifyObservers(new ThingsContainerRegisteredEvent(thingsContainer));
+        log.info("ThingsEngine register {} beans for container [{}] takes {} milliseconds.", sum.get(), thingsContainer.name(), System.currentTimeMillis() - start);
     }
 
     @Override
     public void cancel(ThingsContainer thingsContainer) {
-        deleteTable(THINGS_SERVICES_TABLE, v -> v.getThingsContainer() == thingsContainer);
-        deleteTable(DEVICE_PROPERTY_MAP, v -> v.getThingsContainer() == thingsContainer);
-        deleteTable(THINGS_EVENTS_TABLE, v -> v.getThingsContainer() == thingsContainer);
-        cancelEventListener(thingsContainer);
-        deleteMap(PRODUCT_PROPERTY_MAP, v -> v.getThingsContainer() == thingsContainer);
-        thingsEventObserver.notifyObservers(new ThingsContainerUpdatedEvent(thingsContainer));
+        long start = System.currentTimeMillis();
+        AtomicInteger sum = new AtomicInteger();
+        sum.addAndGet(deleteTable(THINGS_ENTITY_TABLE, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteTable(THINGS_SERVICES_TABLE, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteMap(PRODUCT_PROPERTY_MAP, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteTable(DEVICE_PROPERTY_MAP, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteTable(THINGS_EVENTS_TABLE, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteTableForSet(THINGS_EVENTS_LISTENER_TABLE, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteTableForSet(THINGS_PROPERTY_LISTENER_TABLE, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteTableForSet(THINGS_INTERCEPTORS_TABLE, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteTableForSet(THINGS_HANDLERS_TABLE, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteTable(THINGS_CLIENT_TABLE, v -> v.getThingsContainer() == thingsContainer).get());
         THINGS_CONTAINERS.remove(thingsContainer);
+        thingsEventObserver.notifyObservers(new ThingsContainerCancelledEvent(thingsContainer));
+        log.info("ThingsEngine cancel {} methods or beans for container [{}] takes {} milliseconds.", sum.get(), thingsContainer.name(), System.currentTimeMillis() - start);
     }
 
     @Override
     public void register(String containerName, Object bean) {
-        register(new ThingsFunctionContainer(containerName, bean));
+        ThingsFunctionContainer thingsFunctionContainer = new ThingsFunctionContainer(containerName, bean);
+        register(thingsFunctionContainer);
+        THINGS_FUNCTION_MAP.put(bean, thingsFunctionContainer);
     }
 
     @Override
     public void cancel(String containerName, Object bean) {
-        cancel(new ThingsFunctionContainer(containerName, bean));
-    }
-
-    private void cancelEventListener(ThingsContainer thingsContainer) {
-        for (Table.Cell<String, String, Set<ThingsFunction>> cell : THINGS_EVENTS_LISTENER_TABLE.cellSet()) {
-            Set<ThingsFunction> collect = cell.getValue().stream().filter(v -> v.getThingsContainer() == thingsContainer).collect(Collectors.toSet());
-            if (CollUtil.isNotEmpty(collect)) {
-                cell.getValue().removeAll(collect);
-            }
-            if (cell.getValue().isEmpty()) {
-                THINGS_EVENTS_LISTENER_TABLE.remove(cell.getRowKey(), cell.getColumnKey());
-            }
+        ThingsContainer thingsContainer = THINGS_FUNCTION_MAP.get(bean);
+        if (thingsContainer != null) {
+            cancel(thingsContainer);
+            THINGS_FUNCTION_MAP.remove(bean);
         }
     }
 
@@ -109,7 +110,8 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
      * @param beanConsumer
      * @param <T>
      */
-    private <T extends Annotation> void findBeans(AtomicInteger sumBeans, ThingsContainer thingsContainer, Class<T> annotationType, BeanConsumer<ThingsContainer, T, Object> beanConsumer) {
+    private <T extends Annotation> AtomicInteger findBeans(ThingsContainer thingsContainer, Class<T> annotationType, BeanConsumer<ThingsContainer, T, Object> beanConsumer) {
+        AtomicInteger sumBeans = new AtomicInteger();
         Map<String, Object> thingsBeans = thingsContainer.getBeans(annotationType);
         if (CollUtil.isNotEmpty(thingsBeans)) {
             thingsBeans.forEach((key, value) -> {
@@ -120,6 +122,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
                 }
             });
         }
+        return sumBeans;
     }
 
     private void findThingsProperties(ThingsContainer thingsContainer, ThingsPropertyEntity thingsPropertyEntity, Object bean) {
@@ -155,7 +158,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
                 log.error("Things engine scan service {}.{} exception : {}", bean.getClass().getSimpleName(), method.getName(), e.getMessage());
             }
         });
-        THINGS_ENTITY_TABLE.put(things.productCode(), bean.getClass(), new ThingsEntity(things.productCode(), bean, things));
+        THINGS_ENTITY_TABLE.put(things.productCode(), bean.getClass(), new ThingsEntity(thingsContainer, things.productCode(), bean, things));
     }
 
 
@@ -238,7 +241,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         if (interceptors == null) {
             interceptors = new ConcurrentHashSet<>();
         }
-        interceptors.add(new ThingsInterceptors(thingsInterceptor, (ThingsIntercepting) bean, thingsInterceptor.chainingType()));
+        interceptors.add(new ThingsInterceptors(thingsContainer, thingsInterceptor, (ThingsIntercepting) bean, thingsInterceptor.chainingType()));
         THINGS_INTERCEPTORS_TABLE.put(identifier, productCode, interceptors);
     }
 
@@ -257,7 +260,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         if (thingsHandlers == null) {
             thingsHandlers = new ConcurrentHashSet<>();
         }
-        thingsHandlers.add(new ThingsHandlers(thingsHandler, (ThingsHandling) bean, thingsHandler.chainingType()));
+        thingsHandlers.add(new ThingsHandlers(thingsContainer, thingsHandler, (ThingsHandling) bean, thingsHandler.chainingType()));
         THINGS_HANDLERS_TABLE.put(identifier, productCode, thingsHandlers);
     }
 

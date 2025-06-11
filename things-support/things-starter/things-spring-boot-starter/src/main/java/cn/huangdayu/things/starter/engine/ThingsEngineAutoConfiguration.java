@@ -1,14 +1,10 @@
-package cn.huangdayu.things.starter;
+package cn.huangdayu.things.starter.engine;
 
 import cn.huangdayu.things.api.container.ThingsRegister;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.factory.ThreadPoolFactory;
+import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.properties.ThingsEngineProperties;
-import cn.huangdayu.things.starter.client.EnableThingsClientCondition;
-import cn.huangdayu.things.starter.client.ThingsClientsRegistrar;
-import cn.huangdayu.things.starter.engine.EnableThingsEngineCondition;
-import cn.huangdayu.things.starter.engine.ThingsBeanFactoryPostProcessor;
-import cn.huangdayu.things.starter.engine.ThingsContainerRegister;
 import cn.hutool.core.collection.CollUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -37,9 +33,9 @@ import java.util.Objects;
 @EnableCaching
 @EnableScheduling
 @EnableConfigurationProperties
-@ConfigurationPropertiesScan(value = "cn.huangdayu.things")
-@ComponentScan(value = "cn.huangdayu.things", includeFilters = @ComponentScan.Filter(ThingsBean.class))
-public class ThingsBootAutoConfiguration {
+@ConfigurationPropertiesScan(value = {"cn.huangdayu.things.engine", "cn.huangdayu.things.starter.engine"})
+@ComponentScan(value = {"cn.huangdayu.things.engine", "cn.huangdayu.things.starter.engine"}, includeFilters = @ComponentScan.Filter(ThingsBean.class))
+public class ThingsEngineAutoConfiguration {
 
     @ConditionalOnMissingBean
     @Bean("thingsTaskScheduler")
@@ -57,26 +53,13 @@ public class ThingsBootAutoConfiguration {
         return new ConcurrentMapCacheManager();
     }
 
-    @Conditional(EnableThingsEngineCondition.class)
     @Bean
     public ThingsContainerRegister thingsContainerRegister(ThingsRegister thingsRegister) {
         return new ThingsContainerRegister(thingsRegister);
     }
 
-    @Conditional(EnableThingsClientCondition.class)
     @Bean
-    public ThingsClientsRegistrar thingsClientsRegistrar() {
-        return new ThingsClientsRegistrar();
-    }
-
-    public static boolean isAnnotationPresent(ConditionContext context, Class<? extends Annotation> annotationClass) {
-        Map<String, Object> beans = Objects.requireNonNull(context.getBeanFactory()).getBeansWithAnnotation(SpringBootApplication.class);
-        return CollUtil.isNotEmpty(beans) && beans.values().stream()
-                .map(Object::getClass)
-                .anyMatch(clazz -> clazz.isAnnotationPresent(annotationClass));
-    }
-
-    @Bean
+    @ConditionalOnMissingBean
     @ConfigurationProperties(prefix = "things")
     public ThingsEngineProperties thingsEngineProperties() {
         return new ThingsEngineProperties();
@@ -85,5 +68,11 @@ public class ThingsBootAutoConfiguration {
     @Bean
     public ThingsBeanFactoryPostProcessor thingsBeanFactoryPostProcessor() {
         return new ThingsBeanFactoryPostProcessor();
+    }
+
+    @ConditionalOnMissingBean
+    @Bean
+    public ThingsEventObserver thingsEventObserver() {
+        return new ThingsEventObserver();
     }
 }

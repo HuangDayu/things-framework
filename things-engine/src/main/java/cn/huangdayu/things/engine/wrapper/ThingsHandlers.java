@@ -1,5 +1,6 @@
 package cn.huangdayu.things.engine.wrapper;
 
+import cn.huangdayu.things.api.container.ThingsContainer;
 import cn.huangdayu.things.api.message.ThingsHandling;
 import cn.huangdayu.things.common.annotation.ThingsHandler;
 import cn.huangdayu.things.common.enums.ThingsChainingType;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class ThingsHandlers {
 
+    private ThingsContainer thingsContainer;
     private ThingsHandler thingsHandler;
     private ThingsHandling thingsHandling;
     private ThingsChainingType chainingType;

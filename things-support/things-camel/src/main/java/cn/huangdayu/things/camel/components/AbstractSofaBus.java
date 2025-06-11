@@ -1,6 +1,8 @@
 package cn.huangdayu.things.camel.components;
 
+import cn.huangdayu.things.api.message.ThingsSubscriber;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
+import cn.huangdayu.things.api.sofabus.ThingsSofaBusCallback;
 import cn.huangdayu.things.camel.CamelSofaBusConstructor;
 import cn.huangdayu.things.camel.CamelSofaBusRouteBuilder;
 import cn.huangdayu.things.camel.mqtt.ThingsSofaBusTopicValidator;
@@ -23,7 +25,6 @@ import org.apache.camel.support.DefaultComponent;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -84,17 +85,17 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
 
     @SneakyThrows
     @Override
-    public boolean subscribe(ThingsSubscribes thingsSubscribes) {
+    public boolean subscribe(ThingsSubscribes thingsSubscribes, ThingsSubscriber thingsSubscriber) {
         String topic = createTopic(thingsSubscribes);
-        String topicTemplate = createEndpointUri(topic, null);
-        if (ROUTE_MAP.containsKey(topicTemplate) && camelContext.getRoute(ROUTE_MAP.get(topicTemplate)) != null) {
+        String endpointUri = createEndpointUri(topic, null);
+        if (ROUTE_MAP.containsKey(endpointUri) && camelContext.getRoute(ROUTE_MAP.get(endpointUri)) != null) {
             log.warn("Things Bus subscribe topic [{}] is contains.", topic);
             return false;
         }
-        String routeId = UUID.randomUUID().toString().split("-")[0];
-        camelContext.addRoutes(new CamelSofaBusRouteBuilder(this, routeId, topicTemplate, constructor));
-        log.info("Things Bus topic [{}] subscribed for routeId [{}].", topic, routeId);
-        ROUTE_MAP.put(topicTemplate, routeId);
+        CamelSofaBusRouteBuilder routeBuilder = new CamelSofaBusRouteBuilder(topic, endpointUri, this, constructor, thingsSubscribes, thingsSubscriber, getCallback());
+        camelContext.addRoutes(routeBuilder);
+        log.info("Things Bus topic [{}] subscribed for routeId [{}].", topic, routeBuilder.getRouteId());
+        ROUTE_MAP.put(endpointUri, routeBuilder.getRouteId());
         return true;
     }
 
@@ -104,8 +105,14 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
         String topic = createTopic(thingsSubscribes);
         String topicTemplate = createEndpointUri(topic, null);
         String routeId = ROUTE_MAP.get(topicTemplate);
-        log.info("Things Bus topic [{}] unsubscribe for routeId [{}].", topic, routeId);
-        return camelContext.removeRoute(routeId);
+        camelContext.getRouteController().stopRoute(routeId);
+        boolean result = camelContext.removeRoute(routeId);
+        log.info("Things Bus stop route [{}] for unsubscribe topic [{}] the result: {}", routeId, topic, result);
+        return result;
+    }
+
+    protected ThingsSofaBusCallback getCallback() {
+        return null;
     }
 
     public Set<String> getRouteIds() {

@@ -3,6 +3,7 @@ package cn.huangdayu.things.starter.engine;
 import cn.huangdayu.things.api.container.ThingsContainer;
 import cn.huangdayu.things.api.container.ThingsRegister;
 import cn.hutool.core.util.StrUtil;
+import jakarta.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
@@ -18,7 +19,7 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.getUUID;
  * @author huangdayu
  */
 @RequiredArgsConstructor
-public class ThingsContainerRegister implements ApplicationContextAware {
+public class ThingsContainerRegister implements ApplicationContextAware, ThingsContainer {
 
     @Getter
     private static ApplicationContext context;
@@ -28,33 +29,32 @@ public class ThingsContainerRegister implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ThingsContainerRegister.context = applicationContext;
-        thingsRegister.register(new SpringThingsContainer(applicationContext));
+        thingsRegister.register(this);
+    }
+
+    @PreDestroy
+    public void destroy() {
+        thingsRegister.cancel(this);
     }
 
 
-    @RequiredArgsConstructor
-    public static class SpringThingsContainer implements ThingsContainer {
-
-        private final ApplicationContext context;
-
-        @Override
-        public String name() {
-            if (StrUtil.isNotBlank(contextName)) {
-                return contextName;
-            }
-            contextName = StrUtil.isNotBlank(context.getApplicationName()) ? context.getApplicationName() : getUUID();
+    @Override
+    public String name() {
+        if (StrUtil.isNotBlank(contextName)) {
             return contextName;
         }
+        contextName = StrUtil.isNotBlank(context.getApplicationName()) ? context.getApplicationName() : getUUID();
+        return contextName;
+    }
 
-        @Override
-        public Map<String, Object> getBeans(Class<? extends Annotation> annotationType) {
-            return context.getBeansWithAnnotation(annotationType);
-        }
+    @Override
+    public Map<String, Object> getBeans(Class<? extends Annotation> annotationType) {
+        return context.getBeansWithAnnotation(annotationType);
+    }
 
-        @Override
-        public <T> T getBean(Class<T> requiredType) {
-            return context.getBean(requiredType);
-        }
+    @Override
+    public <T> T getBean(Class<T> requiredType) {
+        return context.getBean(requiredType);
     }
 
 }

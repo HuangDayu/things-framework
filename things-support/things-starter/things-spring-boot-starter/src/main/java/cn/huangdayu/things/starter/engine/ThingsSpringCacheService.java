@@ -1,4 +1,4 @@
-package cn.huangdayu.things.starter;
+package cn.huangdayu.things.starter.engine;
 
 import cn.huangdayu.things.api.infrastructure.ThingsCacheService;
 import cn.huangdayu.things.common.annotation.ThingsBean;

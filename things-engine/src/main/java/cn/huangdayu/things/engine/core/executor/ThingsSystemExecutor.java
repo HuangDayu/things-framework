@@ -24,7 +24,7 @@ public class ThingsSystemExecutor {
 
     @ThingsService(identifier = SYSTEM_METHOD_DSL)
     public ThingsDslInfo getDSL() {
-        return thingsDescriber.getDsl();
+        return thingsDescriber.getDSL();
     }
 
     @ThingsService(identifier = SYSTEM_METHOD_CONFIG_SET)

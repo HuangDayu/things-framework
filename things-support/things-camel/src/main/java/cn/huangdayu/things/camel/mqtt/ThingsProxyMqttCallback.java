@@ -8,13 +8,12 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
  * @author huangdayu
  */
-public class ThingsMultiMqttCallback implements MqttCallback {
+public class ThingsProxyMqttCallback implements MqttCallback {
 
     /**
      * 一个callback实现类只保留一个对象
@@ -29,12 +28,12 @@ public class ThingsMultiMqttCallback implements MqttCallback {
             return super.add(mqttCallback);
         }
     };
-    private static final ThingsMultiMqttCallback INSTANCE = new ThingsMultiMqttCallback();
+    private static final ThingsProxyMqttCallback INSTANCE = new ThingsProxyMqttCallback();
 
-    private ThingsMultiMqttCallback() {
+    private ThingsProxyMqttCallback() {
     }
 
-    public static ThingsMultiMqttCallback getInstance() {
+    public static ThingsProxyMqttCallback getInstance() {
         return INSTANCE;
     }
 

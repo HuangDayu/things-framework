@@ -10,7 +10,6 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -19,13 +18,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ThingsSofaBizBeanPostProcessor implements BeanFactoryPostProcessor {
 
-
-    private static final Set<String> THINGS_SERVICES = new HashSet<>() {
-        {
-            add("cn.huangdayu.things.api.message.ThingsPublisher");
-        }
-    };
-
     private final ThingsEngineProperties thingsEngineProperties;
 
 
@@ -33,10 +25,7 @@ public class ThingsSofaBizBeanPostProcessor implements BeanFactoryPostProcessor 
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         ApplicationContext applicationContext = (ApplicationContext) BizRuntimeContextRegistry.getMasterBizRuntimeContext().getApplicationContext().get();
         Set<String> sharedBeanClasses = thingsEngineProperties.getSofaBiz().getSharedBeanClasses();
-        if (CollUtil.isNotEmpty(sharedBeanClasses)) {
-            THINGS_SERVICES.addAll(sharedBeanClasses);
-        }
-        registerBeanForClasses(THINGS_SERVICES, beanFactory, applicationContext);
+        registerBeanForClasses(sharedBeanClasses, beanFactory, applicationContext);
         registerBeanForNames(thingsEngineProperties, beanFactory, applicationContext);
     }
 

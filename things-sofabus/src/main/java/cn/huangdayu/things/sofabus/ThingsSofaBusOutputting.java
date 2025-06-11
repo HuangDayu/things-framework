@@ -1,6 +1,7 @@
 package cn.huangdayu.things.sofabus;
 
 import cn.huangdayu.things.api.message.ThingsHandling;
+import cn.huangdayu.things.api.sofabus.ThingsSofaBusPublisher;
 import cn.huangdayu.things.common.annotation.ThingsHandler;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
@@ -14,9 +15,10 @@ import static cn.huangdayu.things.common.enums.ThingsChainingType.OUTPUTTING;
  */
 @RequiredArgsConstructor
 @ThingsHandler(order = 1, chainingType = OUTPUTTING)
-public class ThingsSofaBusOutputHandling implements ThingsHandling {
+public class ThingsSofaBusOutputting implements ThingsHandling {
 
     private final ThingsSofaBusManager thingsSofaBusManager;
+    private final ThingsSofaBusPublisher thingsSofaBusPublisher;
 
     @Override
     public boolean canHandle(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
@@ -25,6 +27,6 @@ public class ThingsSofaBusOutputHandling implements ThingsHandling {
 
     @Override
     public void doHandle(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        thingsSofaBusManager.output(thingsRequest, thingsResponse);
+        thingsSofaBusPublisher.output(thingsRequest, thingsResponse);
     }
 }

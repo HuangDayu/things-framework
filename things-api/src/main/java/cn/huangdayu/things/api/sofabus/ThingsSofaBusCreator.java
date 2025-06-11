@@ -13,6 +13,6 @@ public interface ThingsSofaBusCreator {
     Set<ThingsSofaBusType> supports();
 
 
-    ThingsSofaBus create(ThingsEngineProperties.ThingsSofaBusProperties property, ThingsSofaBusInputting thingsChaining);
+    ThingsSofaBus create(ThingsEngineProperties.ThingsSofaBusProperties property);
 
 }

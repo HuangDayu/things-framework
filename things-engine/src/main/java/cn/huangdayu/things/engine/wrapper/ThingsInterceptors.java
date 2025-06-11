@@ -1,5 +1,6 @@
 package cn.huangdayu.things.engine.wrapper;
 
+import cn.huangdayu.things.api.container.ThingsContainer;
 import cn.huangdayu.things.api.message.ThingsIntercepting;
 import cn.huangdayu.things.common.annotation.ThingsInterceptor;
 import cn.huangdayu.things.common.enums.ThingsChainingType;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class ThingsInterceptors {
 
+    private ThingsContainer thingsContainer;
     private ThingsInterceptor thingsInterceptor;
     private ThingsIntercepting thingsIntercepting;
     private ThingsChainingType chainingType;

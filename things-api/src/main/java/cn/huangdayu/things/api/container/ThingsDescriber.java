@@ -14,6 +14,9 @@ public interface ThingsDescriber {
      *
      * @return
      */
-    ThingsDslInfo getDsl();
+    ThingsDslInfo getDSL();
+
+
+    ThingsDslInfo getDSL(ThingsContainer thingsContainer);
 
 }

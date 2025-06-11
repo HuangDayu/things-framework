@@ -11,7 +11,6 @@ import static cn.huangdayu.things.common.factory.ThreadPoolFactory.THINGS_EXECUT
 /**
  * @author huangdayu
  */
-@ThingsBean
 public class ThingsEventObserver {
     private final List<ThingsEventSubscriber> consumers = new ArrayList<>();
 

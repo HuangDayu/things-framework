@@ -9,7 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author huangdayu
@@ -42,7 +44,8 @@ public class ThingsSofaArkJarListener implements ThingsSofaArkJarMonitor.JarChan
 
     private void installBiz(ThingsSofaArkJarMonitor.JarFileInfo jarFileInfo) {
         try {
-            ClientResponse clientResponse = ArkClient.installBiz(jarFileInfo.getCopyPath().toFile());
+            CompletableFuture<ClientResponse> future = CompletableFuture.completedFuture(ArkClient.installBiz(jarFileInfo.getCopyPath().toFile()));
+            ClientResponse clientResponse = future.get(2, TimeUnit.MINUTES);
             if (clientResponse.getCode() == ResponseCode.SUCCESS) {
                 BizInfo bizInfo = clientResponse.getBizInfos().iterator().next();
                 BIZ_INFO_MAP.put(jarFileInfo, bizInfo);
@@ -60,7 +63,8 @@ public class ThingsSofaArkJarListener implements ThingsSofaArkJarMonitor.JarChan
         try {
             BizInfo bizInfo = BIZ_INFO_MAP.get(jarFileInfo);
             if (bizInfo != null) {
-                ClientResponse clientResponse = ArkClient.uninstallBiz(bizInfo.getBizName(), bizInfo.getBizVersion());
+                CompletableFuture<ClientResponse> future = CompletableFuture.completedFuture(ArkClient.uninstallBiz(bizInfo.getBizName(), bizInfo.getBizVersion()));
+                ClientResponse clientResponse = future.get(2, TimeUnit.MINUTES);
                 if (clientResponse.getCode() == ResponseCode.SUCCESS) {
                     BIZ_INFO_MAP.remove(jarFileInfo);
                     log.info("Things SofaArk uninstall biz success , name: {} , version: {}", bizInfo.getBizName(), bizInfo.getBizVersion());

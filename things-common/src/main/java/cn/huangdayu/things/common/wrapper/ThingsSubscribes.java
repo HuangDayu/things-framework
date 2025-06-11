@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author huangdayu
@@ -17,6 +18,14 @@ import java.io.Serializable;
 @Data
 public class ThingsSubscribes implements Serializable {
 
+    /**
+     * 订阅者
+     */
+    private Object subscriber;
+
+    /**
+     * 物模型消息
+     */
     private JsonThingsMessage jtm;
     /**
      * 是否共享订阅，默认为false，如果是，则将产品标识作为共享订阅的分组标识，groupId=productCode
@@ -35,5 +44,15 @@ public class ThingsSubscribes implements Serializable {
      */
     private String method;
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ThingsSubscribes that = (ThingsSubscribes) o;
+        return share == that.share && Objects.equals(productCode, that.productCode) && Objects.equals(deviceCode, that.deviceCode) && Objects.equals(method, that.method);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(share, productCode, deviceCode, method);
+    }
 }

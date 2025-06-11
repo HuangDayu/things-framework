@@ -1,24 +1,20 @@
 package cn.huangdayu.things.sofabus;
 
-import cn.huangdayu.things.api.container.ThingsDescriber;
 import cn.huangdayu.things.api.infrastructure.ThingsConfigurator;
+import cn.huangdayu.things.api.message.ThingsSubscriber;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBusCreator;
-import cn.huangdayu.things.api.sofabus.ThingsSofaBusInputting;
+import cn.huangdayu.things.api.sofabus.ThingsSofaBusSubscriber;
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.common.events.ThingsContainerUpdatedEvent;
+import cn.huangdayu.things.common.events.ThingsContainerCancelledEvent;
+import cn.huangdayu.things.common.events.ThingsContainerRegisteredEvent;
 import cn.huangdayu.things.common.events.ThingsSessionUpdatedEvent;
 import cn.huangdayu.things.common.exception.ThingsException;
-import cn.huangdayu.things.common.message.BaseThingsMetadata;
-import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.properties.ThingsEngineProperties;
-import cn.huangdayu.things.common.wrapper.ThingsRequest;
-import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.huangdayu.things.common.wrapper.ThingsSession;
 import cn.huangdayu.things.common.wrapper.ThingsSubscribes;
 import cn.hutool.core.collection.CollUtil;
-import com.alibaba.fastjson2.JSONObject;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +24,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.ERROR;
-import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.*;
-import static cn.huangdayu.things.common.constants.ThingsConstants.SystemMethod.*;
+import static cn.huangdayu.things.common.constants.ThingsConstants.SystemMethod.SYSTEM_METHOD_TOPIC;
 import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_WILDCARD;
 
 /**
@@ -67,12 +63,12 @@ import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_WILDCA
 @ThingsBean
 public class ThingsSofaBusManager {
 
-    private final ThingsSofaBusInputting thingsSofaBusInputting;
-    private final ThingsConfigurator thingsConfigurator;
     private final ThingsEventObserver thingsEventObserver;
-    private final ThingsDescriber thingsDescriber;
+    private final ThingsSofaBusSubscriber thingsSofaBusSubscriber;
+    private final ThingsConfigurator thingsConfigurator;
     private final Map<String, ThingsSofaBusCreator> thingsBusComponentCreators;
     private static final Map<ThingsEngineProperties.ThingsSofaBusProperties, ThingsSofaBus> propertiesComponentsMap = new ConcurrentHashMap<>();
+    private static final Set<ThingsSubscribes> DSL_SUBSCRIBES = new CopyOnWriteArraySet<>();
 
     @PostConstruct
     public void init() {
@@ -81,103 +77,8 @@ public class ThingsSofaBusManager {
     }
 
     @PreDestroy
-    private void stopSofaBus() {
+    private void destroy() {
         propertiesComponentsMap.forEach((key, value) -> value.stop());
-    }
-
-
-    private ThingsSofaBus constructSofaBus(ThingsEngineProperties.ThingsSofaBusProperties property, ThingsSofaBusInputting thingsSofaBusInputting) {
-        return propertiesComponentsMap.computeIfAbsent(property, k -> {
-            for (Map.Entry<String, ThingsSofaBusCreator> entry : thingsBusComponentCreators.entrySet()) {
-                if (entry.getValue().supports().contains(property.getType())) {
-                    return entry.getValue().create(property, thingsSofaBusInputting);
-                }
-            }
-            throw new ThingsException(ERROR, "Not found supports Things sofaBus for " + property.getTopic() + ".");
-        });
-    }
-
-
-    private void initSofaBus() {
-        Set<ThingsEngineProperties.ThingsSofaBusProperties> sofaBus = thingsConfigurator.getProperties().getSofaBus();
-        if (CollUtil.isNotEmpty(sofaBus)) {
-            for (ThingsEngineProperties.ThingsSofaBusProperties sofaBusProperties : sofaBus) {
-                if (!sofaBusProperties.isEnable()) {
-                    break;
-                }
-                ThingsSofaBus thingsSofaBus = constructSofaBus(sofaBusProperties, thingsSofaBusInputting);
-                thingsSofaBus.start();
-                log.info("Things sofaBus init success, type: {} , server: {}", sofaBusProperties.getType(), sofaBusProperties.getServer());
-            }
-        }
-    }
-
-    private void initListener() {
-        thingsEventObserver.registerObserver(ThingsSessionUpdatedEvent.class, event -> initSessionSubscribe(event.getSession()));
-        thingsEventObserver.registerObserver(ThingsContainerUpdatedEvent.class, event -> {
-            initDslSubscribe();
-            initSystemSubscribe();
-            dslPost();
-        });
-    }
-
-    private void dslPost() {
-        ThingsRequest thingsRequest = new ThingsRequest();
-        thingsRequest.setJtm(JsonThingsMessage.builder()
-                .qos(2)
-                .metadata(JSONObject.from(new BaseThingsMetadata(SYSTEM_METHOD_TOPIC, thingsConfigurator.getProperties().getCode())))
-                .payload(JSONObject.from(thingsDescriber.getDsl()))
-                .method(THINGS_SYSTEM_POST.replace(THINGS_IDENTIFIER, SYSTEM_METHOD_DSL))
-                .build());
-        output(thingsRequest, new ThingsResponse());
-    }
-
-    private void initSystemSubscribe() {
-        subscribe(false, SYSTEM_METHOD_TOPIC, thingsConfigurator.getProperties().getCode(), THINGS_WILDCARD);
-    }
-
-    private void initDslSubscribe() {
-        thingsDescriber.getDsl().getThingsDsl().forEach(thingsInfo -> {
-            String code = thingsInfo.getProfile().getProduct().getCode();
-            subscribe(true, code, null, null);
-        });
-        thingsDescriber.getDsl().getDomainDsl().forEach(domainInfo -> {
-            domainInfo.getSubscribes().forEach(info -> {
-                subscribe(false, info.getProductCode(), null, THINGS_EVENT_POST.replace(THINGS_IDENTIFIER, info.getEventIdentifier()));
-            });
-            domainInfo.getConsumes().forEach(info -> {
-                subscribe(false, info.getProductCode(), null, THINGS_SERVICE_RESPONSE.replace(THINGS_IDENTIFIER, info.getServiceIdentifier()));
-            });
-        });
-    }
-
-    private void initSessionSubscribe(ThingsSession session) {
-        if (session != null) {
-            if (session.isOnline()) {
-                subscribe(false, session.getProductCode(), session.getDeviceCode(), null);
-            } else {
-                unsubscribe(false, session.getProductCode(), session.getDeviceCode(), null);
-            }
-        }
-    }
-
-    /**
-     * 输出消息，如果指定目标SofaBus则指定输出，否则全部多sofaBus都输出
-     *
-     * @param thingsRequest
-     * @param thingsResponse
-     */
-    public void output(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        if (thingsRequest.getTarget() instanceof ThingsSofaBus thingsSofaBus) {
-            thingsSofaBus.output(thingsRequest, thingsResponse);
-        } else {
-            Set<ThingsSofaBus> thingsSofaBus = getAllSofaBus();
-            for (ThingsSofaBus bus : thingsSofaBus) {
-                if (bus.isStarted()) {
-                    bus.output(thingsRequest, thingsResponse);
-                }
-            }
-        }
     }
 
     public boolean destroy(ThingsEngineProperties.ThingsSofaBusProperties property) {
@@ -188,32 +89,106 @@ public class ThingsSofaBusManager {
         return false;
     }
 
+    private void initListener() {
+        thingsEventObserver.registerObserver(ThingsSessionUpdatedEvent.class, event -> handleSessionSubscribe(event.getSession()));
+        thingsEventObserver.registerObserver(ThingsContainerRegisteredEvent.class, event -> {
+            handleDslSubscribe();
+            handleSystemSubscribe();
+        });
+        thingsEventObserver.registerObserver(ThingsContainerCancelledEvent.class, event -> handleDslSubscribe());
+    }
+
+
+    private void initSofaBus() {
+        Set<ThingsEngineProperties.ThingsSofaBusProperties> sofaBus = thingsConfigurator.getProperties().getSofaBus();
+        if (CollUtil.isNotEmpty(sofaBus)) {
+            for (ThingsEngineProperties.ThingsSofaBusProperties sofaBusProperties : sofaBus) {
+                if (!sofaBusProperties.isEnable()) {
+                    break;
+                }
+                ThingsSofaBus thingsSofaBus = constructSofaBus(sofaBusProperties);
+                thingsSofaBus.start();
+                log.info("Things sofaBus init success, type: {} , server: {}", sofaBusProperties.getType(), sofaBusProperties.getServer());
+            }
+        }
+    }
+
+    private ThingsSofaBus constructSofaBus(ThingsEngineProperties.ThingsSofaBusProperties property) {
+        return propertiesComponentsMap.computeIfAbsent(property, k -> {
+            for (Map.Entry<String, ThingsSofaBusCreator> entry : thingsBusComponentCreators.entrySet()) {
+                if (entry.getValue().supports().contains(property.getType())) {
+                    return entry.getValue().create(property);
+                }
+            }
+            throw new ThingsException(ERROR, "Not found supports Things sofaBus for " + property.getTopic() + ".");
+        });
+    }
+
     public Set<ThingsSofaBus> getAllSofaBus() {
         return new HashSet<>(propertiesComponentsMap.values());
     }
 
-    public void subscribe(boolean share, String productCode, String deviceCode, String method) {
+    public void subscribe(Object subscriber, boolean share, String productCode, String deviceCode, String method) {
+        ThingsSubscribes thingsSubscribes = new ThingsSubscribes();
+        thingsSubscribes.setSubscriber(subscriber);
+        thingsSubscribes.setShare(share);
+        thingsSubscribes.setProductCode(productCode);
+        thingsSubscribes.setDeviceCode(deviceCode);
+        thingsSubscribes.setMethod(method);
+        ThingsSubscriber thingsSubscriber = thingsSofaBusSubscriber.create(thingsSubscribes);
+        subscribe(thingsSubscribes, thingsSubscriber);
+    }
+
+    public void subscribe(ThingsSubscribes thingsSubscribes, ThingsSubscriber thingsSubscriber) {
         Set<ThingsSofaBus> allSofaBus = getAllSofaBus();
         if (CollUtil.isNotEmpty(allSofaBus)) {
-            ThingsSubscribes thingsSubscribes = new ThingsSubscribes();
-            thingsSubscribes.setShare(share);
-            thingsSubscribes.setProductCode(productCode);
-            thingsSubscribes.setDeviceCode(deviceCode);
-            thingsSubscribes.setMethod(method);
-            allSofaBus.forEach(thingsSofaBus -> thingsSofaBus.subscribe(thingsSubscribes));
+            allSofaBus.forEach(thingsSofaBus -> thingsSofaBus.subscribe(thingsSubscribes, thingsSubscriber));
         }
     }
 
     public void unsubscribe(boolean share, String productCode, String deviceCode, String method) {
+        ThingsSubscribes thingsSubscribes = new ThingsSubscribes();
+        thingsSubscribes.setShare(share);
+        thingsSubscribes.setProductCode(productCode);
+        thingsSubscribes.setDeviceCode(deviceCode);
+        thingsSubscribes.setMethod(method);
+        unsubscribe(thingsSubscribes);
+    }
+
+    public void unsubscribe(ThingsSubscribes thingsSubscribes) {
         Set<ThingsSofaBus> allSofaBus = getAllSofaBus();
         if (CollUtil.isNotEmpty(allSofaBus)) {
-            ThingsSubscribes thingsSubscribes = new ThingsSubscribes();
-            thingsSubscribes.setShare(share);
-            thingsSubscribes.setProductCode(productCode);
-            thingsSubscribes.setDeviceCode(deviceCode);
-            thingsSubscribes.setMethod(method);
             allSofaBus.forEach(thingsSofaBus -> thingsSofaBus.unsubscribe(thingsSubscribes));
         }
+    }
+
+    private void handleSessionSubscribe(ThingsSession session) {
+        if (session != null) {
+            if (session.isOnline()) {
+                subscribe(session, false, session.getProductCode(), session.getDeviceCode(), null);
+            } else {
+                unsubscribe(false, session.getProductCode(), session.getDeviceCode(), null);
+            }
+        }
+    }
+
+    private void handleDslSubscribe() {
+        Set<ThingsSubscribes> dslSubscribes = thingsSofaBusSubscriber.getDslSubscribes();
+
+        dslSubscribes.stream()
+                .filter(e -> !DSL_SUBSCRIBES.contains(e))
+                .forEach(e -> subscribe(e, thingsSofaBusSubscriber.create(e)));
+
+        DSL_SUBSCRIBES.stream()
+                .filter(e -> !dslSubscribes.contains(e))
+                .forEach(this::unsubscribe);
+
+        DSL_SUBSCRIBES.clear();
+        DSL_SUBSCRIBES.addAll(dslSubscribes);
+    }
+
+    private void handleSystemSubscribe() {
+        subscribe(this, false, SYSTEM_METHOD_TOPIC, thingsConfigurator.getProperties().getCode(), THINGS_WILDCARD);
     }
 
 }

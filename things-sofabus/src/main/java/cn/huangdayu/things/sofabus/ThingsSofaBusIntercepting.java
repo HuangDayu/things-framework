@@ -27,6 +27,7 @@ public class ThingsSofaBusIntercepting implements ThingsIntercepting {
 
     /**
      * 发送完成后，如果没有订阅request对应的response则订阅
+     *
      * @param thingsRequest
      * @param thingsResponse
      * @param exception
@@ -36,7 +37,7 @@ public class ThingsSofaBusIntercepting implements ThingsIntercepting {
         JsonThingsMessage jtm = thingsRequest.getJtm();
         if (equalsThings(THINGS_SERVICE_REQUEST, jtm.getMethod())) {
             String method = jtm.getMethod().replace(THINGS_DOT + THINGS_ACTION_REQUEST, THINGS_DOT + THINGS_ACTION_RESPONSE);
-            thingsSofaBusManager.subscribe(false, jtm.getBaseMetadata().getProductCode(), jtm.getBaseMetadata().getDeviceCode(), method);
+            thingsSofaBusManager.subscribe(thingsRequest.getSubscriber(), false, jtm.getBaseMetadata().getProductCode(), jtm.getBaseMetadata().getDeviceCode(), method);
         }
     }
 }

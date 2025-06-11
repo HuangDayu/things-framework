@@ -12,7 +12,6 @@ dependencies {
     api project(path: ':things-common')
     api project(path: ':things-sofabus')
 
-    implementation 'org.apache.camel.springboot:camel-spring-boot-starter'
     implementation 'org.apache.camel:camel-componentdsl'
     compileOnly 'org.apache.camel:camel-kafka'
     compileOnly 'org.apache.camel:camel-paho-mqtt5'

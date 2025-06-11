@@ -1,5 +1,6 @@
 package cn.huangdayu.things.api.sofabus;
 
+import cn.huangdayu.things.api.message.ThingsSubscriber;
 import cn.huangdayu.things.common.enums.ThingsSofaBusType;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
@@ -18,7 +19,7 @@ public interface ThingsSofaBus {
 
     boolean output(ThingsRequest thingsRequest, ThingsResponse thingsResponse);
 
-    boolean subscribe(ThingsSubscribes thingsSubscribes);
+    boolean subscribe(ThingsSubscribes thingsSubscribes, ThingsSubscriber thingsSubscriber);
 
     boolean unsubscribe(ThingsSubscribes thingsSubscribes);
 

@@ -86,6 +86,17 @@ public class ThingsSofaArkJarMonitor {
     }
 
     /**
+     * 字节数组转十六进制字符串
+     */
+    private static String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+
+    /**
      * 验证目标路径是否为有效目录
      */
     private void validateDirectory() {
@@ -93,7 +104,6 @@ public class ThingsSofaArkJarMonitor {
             throw new ThingsException(null, "Path is not a directory: " + targetDir);
         }
     }
-
 
     /**
      * 启动监控服务（立即执行首次扫描，之后每分钟执行一次）
@@ -109,7 +119,6 @@ public class ThingsSofaArkJarMonitor {
         shutdownExecutor(scheduler);
         cleanManagedCopies();
     }
-
 
     /**
      * 执行完整的扫描流程
@@ -150,7 +159,6 @@ public class ThingsSofaArkJarMonitor {
         return filename.endsWith(jarEndsWith) && !filename.contains("-copy");
     }
 
-
     /**
      * 检测文件变化并生成变更列表
      */
@@ -174,7 +182,6 @@ public class ThingsSofaArkJarMonitor {
 
         return Collections.unmodifiableList(changes);
     }
-
 
     /**
      * 计算文件内容哈希（使用延迟加载策略）
@@ -201,17 +208,6 @@ public class ThingsSofaArkJarMonitor {
             }
             return bytesToHex(md.digest());
         }
-    }
-
-    /**
-     * 字节数组转十六进制字符串
-     */
-    private static String bytesToHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format("%02x", b));
-        }
-        return sb.toString();
     }
 
 
@@ -312,6 +308,24 @@ public class ThingsSofaArkJarMonitor {
     // region 数据结构
 
     /**
+     * 文件变更类型枚举
+     */
+    public enum ChangeType {
+        /**
+         * 新增文件
+         */
+        ADDED,
+        /**
+         * 文件内容更新
+         */
+        UPDATED,
+        /**
+         * 文件被删除
+         */
+        REMOVED
+    }
+
+    /**
      * 文件变化监听器接口
      */
     public interface JarChangeListener {
@@ -391,24 +405,6 @@ public class ThingsSofaArkJarMonitor {
         boolean isModified(FileMeta other) {
             return this.size != other.size || this.lastModified != other.lastModified;
         }
-    }
-
-    /**
-     * 文件变更类型枚举
-     */
-    public enum ChangeType {
-        /**
-         * 新增文件
-         */
-        ADDED,
-        /**
-         * 文件内容更新
-         */
-        UPDATED,
-        /**
-         * 文件被删除
-         */
-        REMOVED
     }
 
 }
