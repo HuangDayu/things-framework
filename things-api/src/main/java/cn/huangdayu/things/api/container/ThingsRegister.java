@@ -19,7 +19,7 @@ public interface ThingsRegister {
      *
      * @param thingsContainer
      */
-    void cancel(ThingsContainer thingsContainer);
+    void unregister(ThingsContainer thingsContainer);
 
 
     /**
@@ -37,5 +37,5 @@ public interface ThingsRegister {
      * @param containerName
      * @param bean
      */
-    void cancel(String containerName, Object bean);
+    void unregister(String containerName, Object bean);
 }

@@ -56,7 +56,7 @@ public class ThingsRegisterExecutor extends ThingsContainerManager implements Th
     }
 
     @Override
-    public void cancel(ThingsContainer thingsContainer) {
+    public void unregister(ThingsContainer thingsContainer) {
         long start = System.currentTimeMillis();
         AtomicInteger sum = new AtomicInteger();
         sum.addAndGet(deleteTable(thingsEntityTable, v -> v.getThingsContainer() == thingsContainer).get());
@@ -82,10 +82,10 @@ public class ThingsRegisterExecutor extends ThingsContainerManager implements Th
     }
 
     @Override
-    public void cancel(String containerName, Object bean) {
+    public void unregister(String containerName, Object bean) {
         ThingsContainer thingsContainer = thingsFunctionMap.get(bean);
         if (thingsContainer != null) {
-            cancel(thingsContainer);
+            unregister(thingsContainer);
             thingsFunctionMap.remove(bean);
         }
     }

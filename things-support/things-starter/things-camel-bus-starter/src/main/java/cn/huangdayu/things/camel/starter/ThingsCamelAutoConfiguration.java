@@ -9,6 +9,7 @@ import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.properties.ThingsEngineProperties;
 import cn.huangdayu.things.engine.core.executor.ThingsConfiguratorExecutor;
+import cn.huangdayu.things.sofabus.ThingsSofaBusDescribing;
 import cn.huangdayu.things.sofabus.ThingsSofaBusSubscribing;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,7 +37,7 @@ public class ThingsCamelAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ThingsSofaBusDescriber thingsSofaBusDescriber(ThingsDescriber thingsDescriber) {
-        return thingsDescriber::getDSL;
+        return new ThingsSofaBusDescribing(thingsDescriber);
     }
 
     @Bean

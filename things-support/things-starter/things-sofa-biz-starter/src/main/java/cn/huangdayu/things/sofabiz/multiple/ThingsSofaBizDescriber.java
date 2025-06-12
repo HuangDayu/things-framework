@@ -1,19 +1,22 @@
-package cn.huangdayu.things.sofabiz;
+package cn.huangdayu.things.sofabiz.multiple;
 
 import cn.huangdayu.things.api.container.ThingsContainer;
 import cn.huangdayu.things.api.container.ThingsDescriber;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBusDescriber;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.dsl.ThingsDslInfo;
+import cn.huangdayu.things.sofabiz.condition.ThingsSofaBizMultipleCondition;
 import cn.hutool.core.collection.CollUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Conditional;
 
 import java.util.Map;
 
 /**
  * @author huangdayu
  */
+@Conditional(ThingsSofaBizMultipleCondition.class)
 @ThingsBean
 @RequiredArgsConstructor
 public class ThingsSofaBizDescriber implements ThingsSofaBusDescriber {

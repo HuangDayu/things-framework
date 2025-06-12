@@ -1,4 +1,4 @@
-package cn.huangdayu.things.sofaark;
+package cn.huangdayu.things.sofaark.multiple;
 
 import cn.huangdayu.things.api.container.ThingsDescriber;
 import cn.huangdayu.things.api.message.ThingsChaining;
@@ -8,6 +8,7 @@ import cn.huangdayu.things.api.sofabus.ThingsSofaBusSubscriber;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.dsl.ThingsDslInfo;
 import cn.huangdayu.things.common.wrapper.ThingsSubscribes;
+import cn.huangdayu.things.sofaark.condition.ThingsSofaArkMultipleCondition;
 import cn.hutool.core.util.ReflectUtil;
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.container.model.BizModel;
@@ -15,6 +16,7 @@ import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.ark.spi.model.BizState;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Conditional;
 
 import java.util.Map;
 import java.util.Set;
@@ -22,13 +24,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import static cn.huangdayu.things.common.utils.ThingsUtils.createDslSubscribes;
-import static cn.huangdayu.things.sofaark.ThingsSofaArkUtils.getArkService;
-import static cn.huangdayu.things.sofaark.ThingsSofaArkUtils.getBizService;
+import static cn.huangdayu.things.sofaark.utils.ThingsSofaArkUtils.getArkService;
+import static cn.huangdayu.things.sofaark.utils.ThingsSofaArkUtils.getBizService;
 
 /**
  * @author huangdayu
  */
 @Slf4j
+@Conditional(ThingsSofaArkMultipleCondition.class)
 @ThingsBean
 public class ThingsSofaArkSubscribing implements ThingsSofaBusSubscriber {
 

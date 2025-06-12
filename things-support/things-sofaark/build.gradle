@@ -1,0 +1,8 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    api project(path: ':things-api')
+    implementation "com.alipay.sofa:sofa-ark-spi"
+}

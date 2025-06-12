@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 /**
  * @author huangdayu
  */
@@ -21,4 +23,15 @@ public class ThingsHandlers {
     private ThingsHandling thingsHandling;
     private ThingsChainingType chainingType;
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ThingsHandlers that = (ThingsHandlers) o;
+        return Objects.equals(thingsHandling, that.thingsHandling);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(thingsHandling);
+    }
 }

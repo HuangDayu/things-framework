@@ -1,4 +1,4 @@
-package cn.huangdayu.things.sofaark;
+package cn.huangdayu.things.sofaark.manager;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.api.ClientResponse;

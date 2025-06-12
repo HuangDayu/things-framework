@@ -19,7 +19,7 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.getUUID;
  * @author huangdayu
  */
 @RequiredArgsConstructor
-public class ThingsContainerRegister implements ApplicationContextAware, ThingsContainer {
+public class ThingsSpringContainer implements ApplicationContextAware, ThingsContainer {
 
     @Getter
     private static ApplicationContext context;
@@ -28,13 +28,13 @@ public class ThingsContainerRegister implements ApplicationContextAware, ThingsC
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        ThingsContainerRegister.context = applicationContext;
+        ThingsSpringContainer.context = applicationContext;
         thingsRegister.register(this);
     }
 
     @PreDestroy
     public void destroy() {
-        thingsRegister.cancel(this);
+        thingsRegister.unregister(this);
     }
 
 

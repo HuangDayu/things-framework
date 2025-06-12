@@ -1,13 +1,14 @@
-package cn.huangdayu.things.sofaark;
+package cn.huangdayu.things.sofaark.singleton;
 
 import cn.huangdayu.things.api.container.ThingsContainer;
-import com.alipay.sofa.ark.spi.model.Biz;
+import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+
+import static cn.huangdayu.things.common.utils.ThingsUtils.getUUID;
 
 /**
  * @author huangdayu
@@ -15,13 +16,16 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class ThingsSofaArkContainer implements ThingsContainer {
 
-    public static final Map<Biz, ThingsSofaArkContainer> ARK_CONTAINER_MAP = new ConcurrentHashMap<>();
-
+    private static String contextName;
     private final ApplicationContext context;
 
     @Override
     public String name() {
-        return context.getApplicationName();
+        if (StrUtil.isNotBlank(contextName)) {
+            return contextName;
+        }
+        contextName = StrUtil.isNotBlank(context.getApplicationName()) ? context.getApplicationName() : getUUID();
+        return contextName;
     }
 
     @Override

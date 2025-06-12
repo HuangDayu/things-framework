@@ -1,11 +1,10 @@
-package cn.huangdayu.things.sofaark;
+package cn.huangdayu.things.sofaark.multiple;
 
 import cn.huangdayu.things.api.message.ThingsChaining;
 import cn.huangdayu.things.api.message.ThingsSubscriber;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 /**
  * @author huangdayu

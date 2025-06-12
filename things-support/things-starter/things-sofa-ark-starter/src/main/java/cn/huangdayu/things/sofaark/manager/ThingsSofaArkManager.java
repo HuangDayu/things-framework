@@ -1,4 +1,4 @@
-package cn.huangdayu.things.sofaark;
+package cn.huangdayu.things.sofaark.manager;
 
 import cn.huangdayu.things.api.infrastructure.ThingsConfigurator;
 import cn.huangdayu.things.common.annotation.ThingsBean;

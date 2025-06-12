@@ -1,4 +1,4 @@
-package cn.huangdayu.things.sofaark;
+package cn.huangdayu.things.sofaark.utils;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.container.model.BizModel;
@@ -46,6 +46,10 @@ public class ThingsSofaArkUtils {
             log.warn("Things SofaArk get module ark service [{}] error: {}", serviceType.getName(), e.getMessage());
         }
         return getArkContext().getBean(serviceType);
+    }
+
+    public static <T> T getArkBean(Class<T> beanType) {
+        return getArkContext().getBean(beanType);
     }
 
     public static ApplicationContext getArkContext() {

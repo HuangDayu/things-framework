@@ -5,9 +5,7 @@ import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.factory.ThreadPoolFactory;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.properties.ThingsEngineProperties;
-import cn.hutool.core.collection.CollUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -19,10 +17,6 @@ import org.springframework.context.annotation.*;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-
-import java.lang.annotation.Annotation;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author huangdayu
@@ -54,8 +48,8 @@ public class ThingsEngineAutoConfiguration {
     }
 
     @Bean
-    public ThingsContainerRegister thingsContainerRegister(ThingsRegister thingsRegister) {
-        return new ThingsContainerRegister(thingsRegister);
+    public ThingsSpringContainer thingsContainerRegister(ThingsRegister thingsRegister) {
+        return new ThingsSpringContainer(thingsRegister);
     }
 
     @Bean

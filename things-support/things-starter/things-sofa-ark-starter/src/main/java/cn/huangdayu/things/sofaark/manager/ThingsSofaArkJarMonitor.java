@@ -1,4 +1,4 @@
-package cn.huangdayu.things.sofaark;
+package cn.huangdayu.things.sofaark.manager;
 
 import cn.huangdayu.things.common.exception.ThingsException;
 import lombok.AllArgsConstructor;
