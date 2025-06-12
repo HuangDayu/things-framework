@@ -89,12 +89,13 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
         String topic = createTopic(thingsSubscribes);
         String endpointUri = createEndpointUri(topic, null);
         if (ROUTE_MAP.containsKey(endpointUri) && camelContext.getRoute(ROUTE_MAP.get(endpointUri)) != null) {
-            log.warn("Things Bus subscribe topic [{}] is contains.", topic);
+            log.warn("Things SofaBus subscribe topic [{}] is contains.", topic);
             return false;
         }
         CamelSofaBusRouteBuilder routeBuilder = new CamelSofaBusRouteBuilder(topic, endpointUri, this, constructor, thingsSubscribes, thingsSubscriber, getCallback());
         camelContext.addRoutes(routeBuilder);
-        log.info("Things Bus topic [{}] subscribed for routeId [{}].", topic, routeBuilder.getRouteId());
+        log.info("Things SofaBus [{}] subscribed topic [{}]  for routeId [{}] to subscribe handler [{}]",
+                thingsSubscribes.getSubscriber(), topic, routeBuilder.getRouteId(), thingsSubscriber.getClass().getName());
         ROUTE_MAP.put(endpointUri, routeBuilder.getRouteId());
         return true;
     }
@@ -107,7 +108,7 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
         String routeId = ROUTE_MAP.get(topicTemplate);
         camelContext.getRouteController().stopRoute(routeId);
         boolean result = camelContext.removeRoute(routeId);
-        log.info("Things Bus stop route [{}] for unsubscribe topic [{}] the result: {}", routeId, topic, result);
+        log.info("Things SofaBus stop route [{}] for unsubscribe topic [{}] the result: {}", routeId, topic, result);
         return result;
     }
 

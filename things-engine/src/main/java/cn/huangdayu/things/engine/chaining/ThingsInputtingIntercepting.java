@@ -2,6 +2,7 @@ package cn.huangdayu.things.engine.chaining;
 
 import cn.huangdayu.things.api.message.ThingsIntercepting;
 import cn.huangdayu.things.common.annotation.ThingsInterceptor;
+import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.hutool.core.util.StrUtil;
@@ -39,6 +40,6 @@ public class ThingsInputtingIntercepting implements ThingsIntercepting {
     public void afterCompletion(ThingsRequest thingsRequest, ThingsResponse thingsResponse, Exception exception) {
         log.atLevel(exception != null ? Level.WARN : Level.DEBUG).log("Things inputting message, times: {} , SofaBus type: {} , groupId: {} clientId: {} , topic: {} , sessionCode: {} , request： {} , response: {}  , exception: {}",
                 System.currentTimeMillis() - thingsRequest.getJtm().getTime(), thingsRequest.getType(), thingsRequest.getGroupCode(), thingsRequest.getClientCode(),
-                thingsRequest.getTopic(), thingsRequest.getSessionCode(), thingsRequest.getJtm(), thingsResponse.getJtm(), exception != null ? exception.getMessage() : "");
+                thingsRequest.getTopic(), thingsRequest.getSessionCode(), thingsRequest.getJtm(), thingsResponse.getJtm(), exception instanceof ThingsException ? exception.getMessage() : exception);
     }
 }

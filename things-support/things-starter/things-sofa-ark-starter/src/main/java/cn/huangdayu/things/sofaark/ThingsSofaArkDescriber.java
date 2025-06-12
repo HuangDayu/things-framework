@@ -7,7 +7,8 @@ import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.ark.spi.model.BizState;
 
-import static cn.huangdayu.things.sofaark.ThingsSofaArkSubscribing.getModuleService;
+import static cn.huangdayu.things.sofaark.ThingsSofaArkUtils.getBizService;
+
 
 /**
  * @author huangdayu
@@ -22,7 +23,7 @@ public class ThingsSofaArkDescriber implements ThingsSofaBusDescriber {
         Biz masterBiz = ArkClient.getMasterBiz();
         ArkClient.getBizManagerService().getBizInOrder().forEach(biz -> {
             if (biz != null && biz.getBizState().equals(BizState.ACTIVATED) && !biz.equals(masterBiz)) {
-                ThingsSofaBusDescriber thingsSofaBusDescriber = getModuleService(biz.getBizName(), biz.getBizVersion(), ThingsSofaBusDescriber.class);
+                ThingsSofaBusDescriber thingsSofaBusDescriber = getBizService(biz.getBizName(), biz.getBizVersion(), ThingsSofaBusDescriber.class);
                 if (thingsSofaBusDescriber != null) {
                     ThingsDslInfo dslInfo = thingsSofaBusDescriber.getDSL();
                     thingsDslInfo.getDomainDsl().addAll(dslInfo.getDomainDsl());

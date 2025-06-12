@@ -35,7 +35,7 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.*;
 @Slf4j
 @ThingsBean
 @RequiredArgsConstructor
-public class ThingsRegisterExecutor extends ThingsBaseExecutor implements ThingsRegister {
+public class ThingsRegisterExecutor extends ThingsContainerManager implements ThingsRegister {
 
     private final ThingsEventObserver thingsEventObserver;
 
@@ -50,8 +50,8 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         sum.addAndGet(findBeans(thingsContainer, ThingsInterceptor.class, this::findThingsInterceptors).get());
         sum.addAndGet(findBeans(thingsContainer, ThingsHandler.class, this::findThingsHandlers).get());
         sum.addAndGet(findBeans(thingsContainer, ThingsClient.class, this::findThingsClients).get());
-        THINGS_CONTAINERS.add(thingsContainer);
-        thingsEventObserver.notifyObservers(new ThingsContainerRegisteredEvent(thingsContainer));
+        thingsContainers.add(thingsContainer);
+        thingsEventObserver.notifyObservers(new ThingsContainerRegisteredEvent(this, thingsContainer));
         log.info("ThingsEngine register {} beans for container [{}] takes {} milliseconds.", sum.get(), thingsContainer.name(), System.currentTimeMillis() - start);
     }
 
@@ -59,18 +59,18 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
     public void cancel(ThingsContainer thingsContainer) {
         long start = System.currentTimeMillis();
         AtomicInteger sum = new AtomicInteger();
-        sum.addAndGet(deleteTable(THINGS_ENTITY_TABLE, v -> v.getThingsContainer() == thingsContainer).get());
-        sum.addAndGet(deleteTable(THINGS_SERVICES_TABLE, v -> v.getThingsContainer() == thingsContainer).get());
-        sum.addAndGet(deleteMap(PRODUCT_PROPERTY_MAP, v -> v.getThingsContainer() == thingsContainer).get());
-        sum.addAndGet(deleteTable(DEVICE_PROPERTY_MAP, v -> v.getThingsContainer() == thingsContainer).get());
-        sum.addAndGet(deleteTable(THINGS_EVENTS_TABLE, v -> v.getThingsContainer() == thingsContainer).get());
-        sum.addAndGet(deleteTableForSet(THINGS_EVENTS_LISTENER_TABLE, v -> v.getThingsContainer() == thingsContainer).get());
-        sum.addAndGet(deleteTableForSet(THINGS_PROPERTY_LISTENER_TABLE, v -> v.getThingsContainer() == thingsContainer).get());
-        sum.addAndGet(deleteTableForSet(THINGS_INTERCEPTORS_TABLE, v -> v.getThingsContainer() == thingsContainer).get());
-        sum.addAndGet(deleteTableForSet(THINGS_HANDLERS_TABLE, v -> v.getThingsContainer() == thingsContainer).get());
-        sum.addAndGet(deleteTable(THINGS_CLIENT_TABLE, v -> v.getThingsContainer() == thingsContainer).get());
-        THINGS_CONTAINERS.remove(thingsContainer);
-        thingsEventObserver.notifyObservers(new ThingsContainerCancelledEvent(thingsContainer));
+        sum.addAndGet(deleteTable(thingsEntityTable, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteTable(thingsFunctionTable, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteMap(thingsPropertyMap, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteTable(devicePropertyMap, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteTable(thingsEventsTable, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteTableForSet(thingsEventsListenerTable, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteTableForSet(thingsPropertyListenerTable, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteTableForSet(thingsInterceptorsTable, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteTableForSet(thingsHandlersTable, v -> v.getThingsContainer() == thingsContainer).get());
+        sum.addAndGet(deleteTable(thingsClientTable, v -> v.getThingsContainer() == thingsContainer).get());
+        thingsContainers.remove(thingsContainer);
+        thingsEventObserver.notifyObservers(new ThingsContainerCancelledEvent(this, thingsContainer));
         log.info("ThingsEngine cancel {} methods or beans for container [{}] takes {} milliseconds.", sum.get(), thingsContainer.name(), System.currentTimeMillis() - start);
     }
 
@@ -78,15 +78,15 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
     public void register(String containerName, Object bean) {
         ThingsFunctionContainer thingsFunctionContainer = new ThingsFunctionContainer(containerName, bean);
         register(thingsFunctionContainer);
-        THINGS_FUNCTION_MAP.put(bean, thingsFunctionContainer);
+        thingsFunctionMap.put(bean, thingsFunctionContainer);
     }
 
     @Override
     public void cancel(String containerName, Object bean) {
-        ThingsContainer thingsContainer = THINGS_FUNCTION_MAP.get(bean);
+        ThingsContainer thingsContainer = thingsFunctionMap.get(bean);
         if (thingsContainer != null) {
             cancel(thingsContainer);
-            THINGS_FUNCTION_MAP.remove(bean);
+            thingsFunctionMap.remove(bean);
         }
     }
 
@@ -129,11 +129,11 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         if (!thingsPropertyEntity.enabled()) {
             return;
         }
-        if (PRODUCT_PROPERTY_MAP.get(thingsPropertyEntity.productCode()) == null) {
-            PRODUCT_PROPERTY_MAP.put(thingsPropertyEntity.productCode(), new ThingsProperty(thingsContainer, thingsPropertyEntity, bean));
+        if (thingsPropertyMap.get(thingsPropertyEntity.productCode()) == null) {
+            thingsPropertyMap.put(thingsPropertyEntity.productCode(), new ThingsProperty(thingsContainer, thingsPropertyEntity, bean));
         } else {
             log.error("Duplicate registration ThingsProperty ({}), only effective once, effective ThingsProperty {} , invalid ThingsProperty : {}",
-                    thingsPropertyEntity.productCode(), PRODUCT_PROPERTY_MAP.get(thingsPropertyEntity.productCode()).getBean().getClass(), bean.getClass());
+                    thingsPropertyEntity.productCode(), thingsPropertyMap.get(thingsPropertyEntity.productCode()).getBean().getClass(), bean.getClass());
         }
     }
 
@@ -141,7 +141,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         if (!thingsEventEntity.enabled()) {
             return;
         }
-        THINGS_EVENTS_TABLE.put(thingsEventEntity.identifier(), thingsEventEntity.productCode(), new ThingsEvents(thingsContainer, thingsEventEntity, bean));
+        thingsEventsTable.put(thingsEventEntity.identifier(), thingsEventEntity.productCode(), new ThingsEvents(thingsContainer, thingsEventEntity, bean));
     }
 
     private void findThingsServices(ThingsContainer thingsContainer, Things things, Object bean) {
@@ -158,7 +158,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
                 log.error("Things engine scan service {}.{} exception : {}", bean.getClass().getSimpleName(), method.getName(), e.getMessage());
             }
         });
-        THINGS_ENTITY_TABLE.put(things.productCode(), bean.getClass(), new ThingsEntity(thingsContainer, things.productCode(), bean, things));
+        thingsEntityTable.put(things.productCode(), bean.getClass(), new ThingsEntity(thingsContainer, things.productCode(), bean, things));
     }
 
 
@@ -168,7 +168,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
             String identifier = StrUtil.isNotBlank(thingsService.identifier()) ? thingsService.identifier() : method.getName();
             method.trySetAccessible();
             ThingsFunction thingsFunction = new ThingsFunction(thingsContainer, things, bean, method, thingsService.async(), thingsService, scanParameter(method));
-            THINGS_SERVICES_TABLE.put(identifier, things.productCode(), thingsFunction);
+            thingsFunctionTable.put(identifier, things.productCode(), thingsFunction);
             return true;
         }
         return false;
@@ -195,12 +195,12 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         if (thingsEventListener != null) {
             method.trySetAccessible();
             ThingsFunction thingsServices = new ThingsFunction(thingsContainer, beanAnnotation, bean, method, true, thingsEventListener, scanParameter(method));
-            Set<ThingsFunction> thingsFunctions = THINGS_EVENTS_LISTENER_TABLE.get(thingsEventListener.identifier(), thingsEventListener.productCode());
+            Set<ThingsFunction> thingsFunctions = thingsEventsListenerTable.get(thingsEventListener.identifier(), thingsEventListener.productCode());
             if (thingsFunctions == null) {
                 thingsFunctions = new ConcurrentHashSet<>();
             }
             thingsFunctions.add(thingsServices);
-            THINGS_EVENTS_LISTENER_TABLE.put(thingsEventListener.identifier(), thingsEventListener.productCode(), thingsFunctions);
+            thingsEventsListenerTable.put(thingsEventListener.identifier(), thingsEventListener.productCode(), thingsFunctions);
             return true;
         }
         return false;
@@ -216,12 +216,12 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
             }
             method.trySetAccessible();
             ThingsFunction thingsServices = new ThingsFunction(thingsContainer, things, bean, method, true, thingsPropertyListener, scanParameter(method));
-            Set<ThingsFunction> thingsFunctions = THINGS_PROPERTY_LISTENER_TABLE.get(identifier, productCode);
+            Set<ThingsFunction> thingsFunctions = thingsPropertyListenerTable.get(identifier, productCode);
             if (thingsFunctions == null) {
                 thingsFunctions = new ConcurrentHashSet<>();
             }
             thingsFunctions.add(thingsServices);
-            THINGS_PROPERTY_LISTENER_TABLE.put(identifier, productCode, thingsFunctions);
+            thingsPropertyListenerTable.put(identifier, productCode, thingsFunctions);
             return true;
         }
         return false;
@@ -237,12 +237,12 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         }
         String identifier = thingsInterceptor.method() + THINGS_SEPARATOR + thingsInterceptor.identifier();
         String productCode = thingsInterceptor.productCode();
-        Set<ThingsInterceptors> interceptors = THINGS_INTERCEPTORS_TABLE.get(identifier, productCode);
+        Set<ThingsInterceptors> interceptors = thingsInterceptorsTable.get(identifier, productCode);
         if (interceptors == null) {
             interceptors = new ConcurrentHashSet<>();
         }
         interceptors.add(new ThingsInterceptors(thingsContainer, thingsInterceptor, (ThingsIntercepting) bean, thingsInterceptor.chainingType()));
-        THINGS_INTERCEPTORS_TABLE.put(identifier, productCode, interceptors);
+        thingsInterceptorsTable.put(identifier, productCode, interceptors);
     }
 
 
@@ -256,12 +256,12 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
         }
         String identifier = thingsHandler.method() + THINGS_SEPARATOR + thingsHandler.identifier();
         String productCode = thingsHandler.productCode();
-        Set<ThingsHandlers> thingsHandlers = THINGS_HANDLERS_TABLE.get(identifier, productCode);
+        Set<ThingsHandlers> thingsHandlers = thingsHandlersTable.get(identifier, productCode);
         if (thingsHandlers == null) {
             thingsHandlers = new ConcurrentHashSet<>();
         }
         thingsHandlers.add(new ThingsHandlers(thingsContainer, thingsHandler, (ThingsHandling) bean, thingsHandler.chainingType()));
-        THINGS_HANDLERS_TABLE.put(identifier, productCode, thingsHandlers);
+        thingsHandlersTable.put(identifier, productCode, thingsHandlers);
     }
 
     private void findThingsClients(ThingsContainer thingsContainer, ThingsClient thingsClient, Object bean) {
@@ -277,7 +277,7 @@ public class ThingsRegisterExecutor extends ThingsBaseExecutor implements Things
                     String identifier = StrUtil.isNotBlank(thingsService.identifier()) ? thingsService.identifier() : method.getName();
                     if (StrUtil.isAllNotBlank(identifier, productCode)) {
                         ThingsFunction thingsFunction = new ThingsFunction(thingsContainer, thingsClient, bean, method, thingsService.async(), thingsService, scanParameter(method));
-                        THINGS_CLIENT_TABLE.put(identifier, productCode, thingsFunction);
+                        thingsClientTable.put(identifier, productCode, thingsFunction);
                     }
                 }
             }

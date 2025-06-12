@@ -18,8 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
 import java.util.function.Function;
 
+import static cn.huangdayu.things.common.utils.ThingsUtils.jsonToObject;
 import static cn.huangdayu.things.common.utils.ThingsUtils.typeConvert;
-import static cn.huangdayu.things.engine.core.executor.ThingsBaseExecutor.getThingsBean;
 
 /**
  * @author huangdayu
@@ -29,15 +29,10 @@ import static cn.huangdayu.things.engine.core.executor.ThingsBaseExecutor.getThi
 @RequiredArgsConstructor
 public class ThingsArgsConverter {
     private final ThingsProperties thingsProperties;
+    private final ThingsContainerManager thingsContainerManager;
 
 
-    private final Map<String, Function<ThingsArgsConverter.War, Object>> functionMap = Map.of(
-            ThingsParam.class.getName(), this::argForThingsParam,
-            ThingsMessage.class.getName(), this::argForThingsMessage,
-            ThingsPayload.class.getName(), this::argForThingsPayload,
-            ThingsMetadata.class.getName(), this::argForThingsMetadata,
-            ThingsInject.class.getName(), this::argForThingsInject
-    );
+    private final Map<String, Function<ThingsArgsConverter.War, Object>> functionMap = Map.of(ThingsParam.class.getName(), this::argForThingsParam, ThingsMessage.class.getName(), this::argForThingsMessage, ThingsPayload.class.getName(), this::argForThingsPayload, ThingsMetadata.class.getName(), this::argForThingsMetadata, ThingsInject.class.getName(), this::argForThingsInject);
 
 
     public Object[] args(JsonThingsMessage jtm, ThingsFunction thingsFunction) {
@@ -57,11 +52,11 @@ public class ThingsArgsConverter {
     }
 
     private Object argForThingsPayload(War war) {
-        return war.getJtm().getPayload().toJavaObject(war.getThingsParameter().getType());
+        return jsonToObject(war.getJtm().getPayload(), war.getThingsParameter().getType());
     }
 
     private Object argForThingsMetadata(War war) {
-        return war.getJtm().getMetadata().toJavaObject(war.getThingsParameter().getType());
+        return jsonToObject(war.getJtm().getMetadata(), war.getThingsParameter().getType());
     }
 
     private Object argForThingsInject(War war) {
@@ -81,7 +76,7 @@ public class ThingsArgsConverter {
             log.error("物模型方法调用需要注入的配置对象与产品标识不一致（{}），方法：{}，参数：{}", productCode, thingsFunction.getMethod().getName(), thingsParameter.getName());
             return null;
         }
-        return getThingsBean(thingsParameter.getType());
+        return thingsContainerManager.getThingsBean(thingsParameter.getType());
     }
 
     private Object argForThingsMessage(War war) {

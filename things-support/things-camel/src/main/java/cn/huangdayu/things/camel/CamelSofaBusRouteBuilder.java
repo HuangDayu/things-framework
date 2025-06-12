@@ -64,6 +64,7 @@ public class CamelSofaBusRouteBuilder extends RouteBuilder {
                     }
                 })
                 .onException(Exception.class)
+                .logHandled(true)
                 .maximumRedeliveries(3)
                 .redeliveryDelay(1000)
                 .useOriginalMessage()
@@ -77,8 +78,10 @@ public class CamelSofaBusRouteBuilder extends RouteBuilder {
                                 .clientCode(constructor.getProperties().getClientId()).subscriber(thingsSubscribes.getSubscriber())
                                 .topic(exchange.getIn().getHeader(PahoMqtt5Constants.MQTT_TOPIC, String.class))
                                 .groupCode(constructor.getProperties().getGroupId()).jtm(jtm).build();
+                        log.debug("Things SofaBus Camel route message {} to {} ", jtm.getId(), thingsSubscriber);
                         thingsSubscriber.input(thingsRequest, new ThingsResponse());
                     } catch (Exception e) {
+                        log.error("Things SofaBus Camel route process message error.", e);
                         exchange.setException(e);
                     }
                 });

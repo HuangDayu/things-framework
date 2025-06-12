@@ -357,4 +357,21 @@ public class ThingsUtils {
         });
         return thingsSubscribes;
     }
+
+    public static <T> T jsonToObject(JSONObject jsonObject, Type type) {
+        try {
+            return jsonObject.to(type);
+        } catch (Throwable e) {
+            return JSON.parseObject(jsonObject.toJSONString(), type);
+        }
+    }
+
+    public static <T> T jsonToObject(JSONObject jsonObject, Class<T> type) {
+        try {
+            return jsonObject.toJavaObject(type);
+        } catch (Throwable e) {
+            return JSON.parseObject(jsonObject.toJSONString(), type);
+        }
+    }
+
 }

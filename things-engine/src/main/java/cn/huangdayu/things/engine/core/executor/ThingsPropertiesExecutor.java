@@ -6,20 +6,21 @@ import cn.huangdayu.things.engine.core.ThingsProperties;
 import cn.huangdayu.things.engine.wrapper.ThingsProperty;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
+import lombok.RequiredArgsConstructor;
 
-import static cn.huangdayu.things.engine.core.executor.ThingsRegisterExecutor.DEVICE_PROPERTY_MAP;
-import static cn.huangdayu.things.engine.core.executor.ThingsRegisterExecutor.PRODUCT_PROPERTY_MAP;
 
 /**
  * @author huangdayu
  */
 @ThingsBean
+@RequiredArgsConstructor
 public class ThingsPropertiesExecutor implements ThingsProperties {
 
+    private final ThingsContainerManager thingsContainerManager;
 
     @Override
     public <T> T getPropertyEntity(String productCode) {
-        ThingsProperty thingsProperty = PRODUCT_PROPERTY_MAP.get(productCode);
+        ThingsProperty thingsProperty = thingsContainerManager.getThingsPropertyMap().get(productCode);
         if (thingsProperty != null) {
             ThingsPropertyEntity thingsPropertyEntity = thingsProperty.getThingsPropertyEntity();
             if (thingsPropertyEntity.productPublic()) {
@@ -31,9 +32,9 @@ public class ThingsPropertiesExecutor implements ThingsProperties {
 
     @Override
     public <T> T getPropertyEntity(String productCode, String deviceCode) {
-        ThingsProperty thingsPropertyForDevice = DEVICE_PROPERTY_MAP.get(deviceCode, productCode);
+        ThingsProperty thingsPropertyForDevice = thingsContainerManager.getDevicePropertyMap().get(deviceCode, productCode);
         if (thingsPropertyForDevice == null) {
-            ThingsProperty thingsPropertyForProduct = PRODUCT_PROPERTY_MAP.get(productCode);
+            ThingsProperty thingsPropertyForProduct = thingsContainerManager.getThingsPropertyMap().get(productCode);
             if (thingsPropertyForProduct == null) {
                 return null;
             }
@@ -41,7 +42,7 @@ public class ThingsPropertiesExecutor implements ThingsProperties {
                 return (T) thingsPropertyForProduct.getBean();
             }
             thingsPropertyForDevice = new ThingsProperty(thingsPropertyForProduct.getThingsContainer(), thingsPropertyForProduct.getThingsPropertyEntity(), ObjectUtil.clone(thingsPropertyForProduct.getBean()));
-            DEVICE_PROPERTY_MAP.put(deviceCode, productCode, thingsPropertyForDevice);
+            thingsContainerManager.getDevicePropertyMap().put(deviceCode, productCode, thingsPropertyForDevice);
         }
         return (T) thingsPropertyForDevice.getBean();
     }

@@ -15,4 +15,5 @@ public class ThingsContainerRegisteredEvent implements ThingsBaseEvent {
 
     private Object source;
 
+    private Object thingsContainer;
 }

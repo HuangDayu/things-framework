@@ -38,10 +38,11 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.*;
 @Slf4j
 @RequiredArgsConstructor
 @ThingsBean
-public class ThingsDescriberExecutor extends ThingsBaseExecutor implements ThingsDescriber {
+public class ThingsDescriberExecutor implements ThingsDescriber {
 
     private static final String CACHE_KEY = "things_dsl_cache";
     private final ThingsEventObserver thingsEventObserver;
+    private final ThingsContainerManager thingsContainerManager;
     private final Cache<String, ThingsDslInfo> CACHE = CacheUtil.newTimedCache(TimeUnit.MINUTES.toMillis(10L));
 
     @PostConstruct
@@ -84,20 +85,20 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
     }
 
     private Set<DomainConsumeInfo> getConsumes(ThingsContainer thingsContainer) {
-        return ThingsBaseExecutor.THINGS_CLIENT_TABLE.cellSet().stream()
-                .filter(v -> v.getValue().getThingsContainer() == thingsContainer)
+        return thingsContainerManager.getThingsClientTable().cellSet().stream()
+                .filter(v -> thingsContainer == null || v.getValue().getThingsContainer() == thingsContainer)
                 .map(cell -> new DomainConsumeInfo(cell.getColumnKey(), cell.getRowKey())).collect(Collectors.toSet());
     }
 
     private Set<DomainSubscribeInfo> getSubscribes(ThingsContainer thingsContainer) {
-        return ThingsBaseExecutor.THINGS_EVENTS_LISTENER_TABLE.cellSet().stream()
-                .filter(v -> v.getValue().stream().anyMatch(w -> w.getThingsContainer() == thingsContainer))
+        return thingsContainerManager.getThingsEventsListenerTable().cellSet().stream()
+                .filter(v -> v.getValue().stream().anyMatch(w -> thingsContainer == null || w.getThingsContainer() == thingsContainer))
                 .map(cell -> new DomainSubscribeInfo(cell.getColumnKey(), cell.getRowKey())).collect(Collectors.toSet());
     }
 
     private Set<ThingsInfo> getThingsInfo(ThingsContainer thingsContainer) {
-        return THINGS_ENTITY_TABLE.cellSet().stream()
-                .filter(v -> v.getValue().getThingsContainer() == thingsContainer)
+        return thingsContainerManager.getThingsEntityTable().cellSet().stream()
+                .filter(v -> thingsContainer == null || v.getValue().getThingsContainer() == thingsContainer)
                 .map(m -> getThingsInfo(m.getRowKey())).collect(Collectors.toSet());
     }
 
@@ -119,7 +120,7 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
     }
 
     private Things getThings(String productCode) {
-        return THINGS_ENTITY_TABLE.getRow(productCode).values().stream().findFirst().orElseThrow().getThings();
+        return thingsContainerManager.getThingsEntityTable().getRow(productCode).values().stream().findFirst().orElseThrow().getThings();
     }
 
     private ThingsProfile getThingsProfile(String productCode) {
@@ -135,7 +136,7 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
 
     private Set<ThingsParamInfo> getProperties(String productCode) {
         Set<ThingsParamInfo> params = new ConcurrentHashSet<>();
-        ThingsProperty thingsProperty = PRODUCT_PROPERTY_MAP.get(productCode);
+        ThingsProperty thingsProperty = thingsContainerManager.getThingsPropertyMap().get(productCode);
         if (thingsProperty != null) {
             params.addAll(getParams(thingsProperty.getBean().getClass(), true));
         }
@@ -143,7 +144,7 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
     }
 
     private Set<ThingsEventInfo> getEvents(String productCode) {
-        Map<String, ThingsEvents> map = THINGS_EVENTS_TABLE.getColumn(productCode);
+        Map<String, ThingsEvents> map = thingsContainerManager.getThingsEventsTable().getColumn(productCode);
         return map.values().stream().map(thingsEvents -> {
             ThingsEventInfo events = copyAnnotationValues(thingsEvents.getThingsEventEntity(), new ThingsEventInfo());
             events.setOutputData(getParams(thingsEvents.getBean().getClass()));
@@ -152,7 +153,7 @@ public class ThingsDescriberExecutor extends ThingsBaseExecutor implements Thing
     }
 
     private Set<ThingsServiceInfo> getServices(String productCode) {
-        return THINGS_SERVICES_TABLE.getColumn(productCode).entrySet().parallelStream()
+        return thingsContainerManager.getThingsFunctionTable().getColumn(productCode).entrySet().parallelStream()
                 .filter(entry -> entry.getValue().getMethodAnnotation() instanceof ThingsService)
                 .map(entry -> getServices(entry.getKey(), entry.getValue(), (ThingsService) entry.getValue().getMethodAnnotation()))
                 .collect(Collectors.toSet());

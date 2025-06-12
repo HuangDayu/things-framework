@@ -22,7 +22,7 @@ import static cn.huangdayu.things.common.constants.ThingsConstants.SystemMethod.
  */
 @ThingsBean
 @RequiredArgsConstructor
-public class ThingsSofaBusDslPoster {
+public class ThingsSofaBusRegister {
     private final ThingsSofaBusDescriber thingsSofaBusDescriber;
     private final ThingsConfigurator thingsConfigurator;
     private final ThingsSofaBusPublisher thingsSofaBusPublisher;
@@ -30,10 +30,10 @@ public class ThingsSofaBusDslPoster {
 
     @PostConstruct
     public void initListener() {
-        thingsEventObserver.registerObserver(ThingsContainerRegisteredEvent.class, event -> dslPost());
+        thingsEventObserver.registerObserver(ThingsContainerRegisteredEvent.class, event -> registerDSL());
     }
 
-    private void dslPost() {
+    private void registerDSL() {
         ThingsRequest thingsRequest = new ThingsRequest();
         thingsRequest.setJtm(JsonThingsMessage.builder()
                 .qos(2)

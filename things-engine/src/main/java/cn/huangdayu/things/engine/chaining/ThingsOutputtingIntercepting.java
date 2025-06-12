@@ -3,6 +3,7 @@ package cn.huangdayu.things.engine.chaining;
 import cn.huangdayu.things.api.message.ThingsIntercepting;
 import cn.huangdayu.things.common.annotation.ThingsInterceptor;
 import cn.huangdayu.things.common.async.ThingsAsyncManager;
+import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.BaseThingsMetadata;
 import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
@@ -32,7 +33,7 @@ public class ThingsOutputtingIntercepting implements ThingsIntercepting {
     public void afterCompletion(ThingsRequest thingsRequest, ThingsResponse thingsResponse, Exception exception) {
         log.atLevel(exception != null ? Level.WARN : Level.DEBUG).log("Things outputting message, times: {} , SofaBus type: {} , groupId: {} clientId: {} , topic: {} , sessionCode: {} , request： {} , response: {}  , exception: {}",
                 System.currentTimeMillis() - thingsRequest.getJtm().getTime(), thingsRequest.getType(), thingsRequest.getGroupCode(), thingsRequest.getClientCode(),
-                thingsRequest.getTopic(), thingsRequest.getSessionCode(), thingsRequest.getJtm(), thingsResponse.getJtm(), exception != null ? exception.getMessage() : "");
+                thingsRequest.getTopic(), thingsRequest.getSessionCode(), thingsRequest.getJtm(), thingsResponse.getJtm(), exception instanceof ThingsException ? exception.getMessage() : exception);
         ThingsAsyncManager.asAsyncRequest(thingsRequest);
     }
 

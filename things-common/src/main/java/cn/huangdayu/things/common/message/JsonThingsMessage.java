@@ -18,8 +18,7 @@ import java.util.function.Consumer;
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.*;
 import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.THINGS_IDENTIFIER;
 import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.THINGS_SERVICE_RESPONSE;
-import static cn.huangdayu.things.common.utils.ThingsUtils.isServiceRequest;
-import static cn.huangdayu.things.common.utils.ThingsUtils.subIdentifies;
+import static cn.huangdayu.things.common.utils.ThingsUtils.*;
 
 
 /**
@@ -41,7 +40,7 @@ public class JsonThingsMessage extends AbstractThingsMessage<JSONObject, JSONObj
     @JsonIgnore
     @JSONField(serialize = false, deserialize = false)
     public BaseThingsMetadata getBaseMetadata() {
-        return getMetadata().toJavaObject(BaseThingsMetadata.class);
+        return jsonToObject(getMetadata(), BaseThingsMetadata.class);
     }
 
     @JsonIgnore

@@ -15,4 +15,6 @@ public class ThingsContainerCancelledEvent implements ThingsBaseEvent {
 
     private Object source;
 
+    private Object thingsContainer;
+
 }

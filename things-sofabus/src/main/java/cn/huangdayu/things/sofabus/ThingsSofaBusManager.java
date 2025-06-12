@@ -128,15 +128,17 @@ public class ThingsSofaBusManager {
         return new HashSet<>(propertiesComponentsMap.values());
     }
 
+
+    public void subscribe(Object subscriber, boolean share, String productCode, String deviceCode, String method, ThingsSubscriber thingsSubscriber) {
+        subscribe(new ThingsSubscribes(subscriber, null, share, productCode, deviceCode, method), thingsSubscriber);
+    }
+
     public void subscribe(Object subscriber, boolean share, String productCode, String deviceCode, String method) {
-        ThingsSubscribes thingsSubscribes = new ThingsSubscribes();
-        thingsSubscribes.setSubscriber(subscriber);
-        thingsSubscribes.setShare(share);
-        thingsSubscribes.setProductCode(productCode);
-        thingsSubscribes.setDeviceCode(deviceCode);
-        thingsSubscribes.setMethod(method);
-        ThingsSubscriber thingsSubscriber = thingsSofaBusSubscriber.create(thingsSubscribes);
-        subscribe(thingsSubscribes, thingsSubscriber);
+        subscribe(new ThingsSubscribes(subscriber, null, share, productCode, deviceCode, method));
+    }
+
+    public void subscribe(ThingsSubscribes thingsSubscribes) {
+        subscribe(thingsSubscribes, thingsSofaBusSubscriber.create(thingsSubscribes));
     }
 
     public void subscribe(ThingsSubscribes thingsSubscribes, ThingsSubscriber thingsSubscriber) {
@@ -177,7 +179,7 @@ public class ThingsSofaBusManager {
 
         dslSubscribes.stream()
                 .filter(e -> !DSL_SUBSCRIBES.contains(e))
-                .forEach(e -> subscribe(e, thingsSofaBusSubscriber.create(e)));
+                .forEach(this::subscribe);
 
         DSL_SUBSCRIBES.stream()
                 .filter(e -> !dslSubscribes.contains(e))

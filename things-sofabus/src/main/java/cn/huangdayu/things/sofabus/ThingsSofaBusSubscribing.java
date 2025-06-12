@@ -18,7 +18,7 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.createDslSubscribes;
 public class ThingsSofaBusSubscribing implements ThingsSofaBusSubscriber {
 
     private final ThingsChaining thingsChaining;
-    private final ThingsDescriber thingsSofaBusDescriber;
+    private final ThingsDescriber thingsDescriber;
 
     @Override
     public ThingsSubscriber create(ThingsSubscribes thingsSubscribes) {
@@ -27,7 +27,7 @@ public class ThingsSofaBusSubscribing implements ThingsSofaBusSubscriber {
 
     @Override
     public Set<ThingsSubscribes> getDslSubscribes() {
-        return createDslSubscribes(this, thingsSofaBusDescriber.getDSL());
+        return createDslSubscribes(this, thingsDescriber.getDSL());
     }
 
 

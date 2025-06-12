@@ -11,6 +11,7 @@ import com.alibaba.fastjson2.JSONObject;
 import lombok.RequiredArgsConstructor;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.SystemMethod.*;
+import static cn.huangdayu.things.common.utils.ThingsUtils.jsonToObject;
 
 /**
  * @author huangdayu
@@ -29,7 +30,7 @@ public class ThingsSystemExecutor {
 
     @ThingsService(identifier = SYSTEM_METHOD_CONFIG_SET)
     public void setConfig(@ThingsPayload JSONObject payload) {
-        thingsConfigurator.updateProperties(payload.toJavaObject(ThingsEngineProperties.class));
+        thingsConfigurator.updateProperties(jsonToObject(payload, ThingsEngineProperties.class));
     }
 
 

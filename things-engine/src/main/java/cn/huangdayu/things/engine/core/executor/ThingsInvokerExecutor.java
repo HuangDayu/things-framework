@@ -35,10 +35,11 @@ import static cn.huangdayu.things.common.utils.ThingsUtils.*;
 @Slf4j
 @RequiredArgsConstructor
 @ThingsBean
-public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsInvoker {
+public class ThingsInvokerExecutor implements ThingsInvoker {
 
     private final ThingsProperties thingsProperties;
     private final ThingsArgsConverter thingsArgsConverter;
+    private final ThingsContainerManager thingsContainerManager;
 
     @Override
     public boolean canInvoke(JsonThingsMessage jtm) {
@@ -47,13 +48,14 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
         }
         BaseThingsMetadata baseMetadata = jtm.getBaseMetadata();
         if (isEventPost(jtm)) {
-            return THINGS_EVENTS_LISTENER_TABLE.containsColumn(baseMetadata.getProductCode());
+            return thingsContainerManager.getThingsEventsListenerTable().containsColumn(baseMetadata.getProductCode());
         }
         if (isPropertiesSetOrGet(jtm)) {
-            return PRODUCT_PROPERTY_MAP.containsKey(baseMetadata.getProductCode()) || DEVICE_PROPERTY_MAP.containsColumn(baseMetadata.getDeviceCode());
+            return thingsContainerManager.getThingsPropertyMap().containsKey(baseMetadata.getProductCode()) ||
+                    thingsContainerManager.getDevicePropertyMap().containsColumn(baseMetadata.getDeviceCode());
         }
         if (isServiceRequest(jtm)) {
-            return THINGS_SERVICES_TABLE.containsColumn(baseMetadata.getProductCode());
+            return thingsContainerManager.getThingsFunctionTable().containsColumn(baseMetadata.getProductCode());
         }
         return false;
     }
@@ -97,15 +99,15 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
      */
     private Set<ThingsFunction> findEventListenerFunction(String identifies, String productCode) {
         Set<ThingsFunction> functions = new ConcurrentHashSet<>();
-        Set<ThingsFunction> thingsFunctions = THINGS_EVENTS_LISTENER_TABLE.get(identifies, productCode);
+        Set<ThingsFunction> thingsFunctions = thingsContainerManager.getThingsEventsListenerTable().get(identifies, productCode);
         if (CollUtil.isNotEmpty(thingsFunctions)) {
             functions.addAll(thingsFunctions);
         }
-        Set<ThingsFunction> thingsFunctions1 = THINGS_EVENTS_LISTENER_TABLE.get(identifies, THINGS_WILDCARD);
+        Set<ThingsFunction> thingsFunctions1 = thingsContainerManager.getThingsEventsListenerTable().get(identifies, THINGS_WILDCARD);
         if (CollUtil.isNotEmpty(thingsFunctions1)) {
             functions.addAll(thingsFunctions1);
         }
-        Set<ThingsFunction> thingsFunctions2 = THINGS_EVENTS_LISTENER_TABLE.get(THINGS_WILDCARD, productCode);
+        Set<ThingsFunction> thingsFunctions2 = thingsContainerManager.getThingsEventsListenerTable().get(THINGS_WILDCARD, productCode);
         if (CollUtil.isNotEmpty(thingsFunctions2)) {
             functions.addAll(thingsFunctions2);
         }
@@ -128,9 +130,9 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
             JSONObject payload = jtm.getPayload();
             for (Map.Entry<String, Object> entry : payload.entrySet()) {
                 ReflectUtil.setFieldValue(propertyBean, entry.getKey(), entry.getValue());
-                asyncInvokeFunctions(jtm, THINGS_PROPERTY_LISTENER_TABLE.get(entry.getKey(), baseThingsMetadata.getProductCode()));
+                asyncInvokeFunctions(jtm, thingsContainerManager.getThingsPropertyListenerTable().get(entry.getKey(), baseThingsMetadata.getProductCode()));
             }
-            asyncInvokeFunctions(jtm, THINGS_PROPERTY_LISTENER_TABLE.get(THINGS_WILDCARD, baseThingsMetadata.getProductCode()));
+            asyncInvokeFunctions(jtm, thingsContainerManager.getThingsPropertyListenerTable().get(THINGS_WILDCARD, baseThingsMetadata.getProductCode()));
         }
         jtm.setPayload((JSONObject) JSON.toJSON(propertyBean));
         jtm.setMethod(THINGS_PROPERTIES_POST);
@@ -139,7 +141,7 @@ public class ThingsInvokerExecutor extends ThingsBaseExecutor implements ThingsI
 
     @SneakyThrows
     private JsonThingsMessage invokeService(JsonThingsMessage jtm) {
-        ThingsFunction thingsFunction = THINGS_SERVICES_TABLE.get(subIdentifies(jtm.getMethod()), jtm.getBaseMetadata().getProductCode());
+        ThingsFunction thingsFunction = thingsContainerManager.getThingsFunctionTable().get(subIdentifies(jtm.getMethod()), jtm.getBaseMetadata().getProductCode());
         if (thingsFunction == null) {
             throw new ThingsException(jtm, BAD_REQUEST, "Things not found this service.");
         }

@@ -19,6 +19,7 @@ import cn.hutool.core.map.multi.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Comparator;
@@ -38,15 +39,16 @@ import static cn.huangdayu.things.common.enums.ThingsChainingType.INPUTTING;
 import static cn.huangdayu.things.common.enums.ThingsChainingType.OUTPUTTING;
 import static cn.huangdayu.things.common.enums.ThingsMethodType.ALL_METHOD;
 import static cn.huangdayu.things.common.utils.ThingsUtils.subIdentifies;
-import static cn.huangdayu.things.engine.core.executor.ThingsBaseExecutor.THINGS_HANDLERS_TABLE;
-import static cn.huangdayu.things.engine.core.executor.ThingsBaseExecutor.THINGS_INTERCEPTORS_TABLE;
 
 /**
  * @author huangdayu
  */
 @Slf4j
 @ThingsBean
+@RequiredArgsConstructor
 public class ThingsChainingExecutor implements ThingsChaining {
+
+    private final ThingsContainerManager thingsContainerManager;
 
     /**
      * LRU (least recently used) 最近最久未使用缓存
@@ -56,7 +58,7 @@ public class ThingsChainingExecutor implements ThingsChaining {
 
     /**
      * 已处理的输入消息先进先出缓存，防止重复处理消息，执行失败可以重试
-     *
+     * <p>
      * messageId vs failed sum
      * 消息id vs 失败次数
      */
@@ -91,6 +93,7 @@ public class ThingsChainingExecutor implements ThingsChaining {
 
     /**
      * 输入处理完成后，如果存在响应消息，则进行输入转输出处理
+     *
      * @param thingsRequest
      * @param thingsResponse
      * @return
@@ -138,6 +141,7 @@ public class ThingsChainingExecutor implements ThingsChaining {
 
     /**
      * 缓存已处理的消息id和失败次数，5分钟后过期
+     *
      * @param thingsRequest
      * @param exceptionValue
      * @param cache
@@ -163,12 +167,12 @@ public class ThingsChainingExecutor implements ThingsChaining {
 
 
     private Set<ThingsHandlers> getHandlers(ChainingKeys chainingKeys, ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsChainingType chainingType) {
-        return getChains(chainingKeys, THINGS_HANDLERS_TABLE, thingsRequest.getJtm(), i -> i.getThingsHandler().order(),
+        return getChains(chainingKeys, thingsContainerManager.getThingsHandlersTable(), thingsRequest.getJtm(), i -> i.getThingsHandler().order(),
                 v -> v.getChainingType().equals(chainingType) && v.getThingsHandling().canHandle(thingsRequest, thingsResponse));
     }
 
     private Set<ThingsInterceptors> getInterceptors(ChainingKeys chainingKeys, ThingsRequest thingsRequest, ThingsChainingType chainingType) {
-        return getChains(chainingKeys, THINGS_INTERCEPTORS_TABLE, thingsRequest.getJtm(), i -> i.getThingsInterceptor().order(), v -> v.getChainingType().equals(chainingType));
+        return getChains(chainingKeys, thingsContainerManager.getThingsInterceptorsTable(), thingsRequest.getJtm(), i -> i.getThingsInterceptor().order(), v -> v.getChainingType().equals(chainingType));
     }
 
     private <T> Set<T> getChains(ChainingKeys chainingKeys, Table<String, String, Set<T>> table, JsonThingsMessage jtm, Function<T, Integer> comparing, Predicate<T> filtering) {

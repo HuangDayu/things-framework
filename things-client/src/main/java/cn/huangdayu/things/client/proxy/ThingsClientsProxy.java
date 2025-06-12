@@ -23,6 +23,7 @@ import java.lang.reflect.Type;
 import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.THINGS_IDENTIFIER;
 import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.THINGS_SERVICE_REQUEST;
 import static cn.huangdayu.things.common.utils.ThingsUtils.getReturnType;
+import static cn.huangdayu.things.common.utils.ThingsUtils.jsonToObject;
 
 /**
  * @author huangdayu
@@ -54,16 +55,16 @@ public class ThingsClientsProxy {
             if (type.equals(JsonThingsMessage.class)) {
                 return jtm;
             }
-            return Mono.just(jtm.block().getPayload().toJavaObject(type));
+            return Mono.just(jsonToObject(jtm.block().getPayload(), type));
         }
 
         if (method.getReturnType().isAssignableFrom(Flux.class)) {
             if (type.equals(JsonThingsMessage.class)) {
                 return jtm.flux();
             }
-            return Flux.just(jtm.block().getPayload().toJavaObject(type));
+            return Flux.just(jsonToObject(jtm.block().getPayload(), type));
         }
-        return jtm.block().toJson().toJavaObject(type);
+        return jsonToObject(jtm.block().toJson(), type);
     }
 
     private Object syncInvoke(Method method, JsonThingsMessage request) {
@@ -81,7 +82,7 @@ public class ThingsClientsProxy {
         } else if (returnType.isAssignableFrom(String.class)) {
             return response.getPayload().toJSONString();
         }
-        return response.getPayload().toJavaObject(returnType);
+        return jsonToObject(response.getPayload(), returnType);
     }
 
 

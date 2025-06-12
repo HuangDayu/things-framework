@@ -3,6 +3,7 @@ package cn.huangdayu.things.common.message;
 import cn.huangdayu.things.common.constants.ThingsConstants;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import java.util.UUID;
 /**
  * @author huangdayu
  */
+@NoArgsConstructor
 @SuperBuilder
 @Data
 public abstract class AbstractThingsMessage<M extends Serializable, P extends Serializable> implements Serializable {
@@ -19,15 +21,18 @@ public abstract class AbstractThingsMessage<M extends Serializable, P extends Se
     /**
      * 消息id
      */
-    private String id;
+    @Builder.Default
+    private String id = UUID.randomUUID().toString().replaceAll("-", "");
     /**
      * 消息版本
      */
-    private String version;
+    @Builder.Default
+    private String version = "1";
     /**
      * 消息时间
      */
-    private Long time;
+    @Builder.Default
+    private Long time = System.currentTimeMillis();
     /**
      * Qos级别
      * QoS 0 - At most once 最多一次（可能丢失） 网络开销最低 适用场景： 环境传感器数据、非关键日志
@@ -60,12 +65,6 @@ public abstract class AbstractThingsMessage<M extends Serializable, P extends Se
      * @see ThingsConstants.Methods
      */
     private String method;
-
-    public AbstractThingsMessage() {
-        setId(UUID.randomUUID().toString().replaceAll("-", ""));
-        setVersion("1");
-        setTime(System.currentTimeMillis());
-    }
 
 
     @Override
