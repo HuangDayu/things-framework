@@ -13,6 +13,7 @@ import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.huangdayu.things.common.wrapper.ThingsSubscribes;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.StrUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -83,12 +84,20 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
         return String.format("things-%s-%s", thingsSubscribes.getProductCode(), thingsSubscribes.getDeviceCode());
     }
 
+    /**
+     * 由于addRoutes操作存在耗时，这里做同步锁防止相同endpointUri重复创建的异常问题
+     *
+     * @param thingsSubscribes
+     * @param thingsSubscriber
+     * @return
+     */
     @SneakyThrows
     @Override
-    public boolean subscribe(ThingsSubscribes thingsSubscribes, ThingsSubscriber thingsSubscriber) {
+    public synchronized boolean subscribe(ThingsSubscribes thingsSubscribes, ThingsSubscriber thingsSubscriber) {
         String topic = createTopic(thingsSubscribes);
         String endpointUri = createEndpointUri(topic, null);
-        if (ROUTE_MAP.containsKey(endpointUri) && camelContext.getRoute(ROUTE_MAP.get(endpointUri)) != null) {
+        String routeId = ROUTE_MAP.get(endpointUri);
+        if (StrUtil.isNotBlank(routeId) && camelContext.getRoute(routeId) != null) {
             log.warn("Things SofaBus subscribe topic [{}] is contains.", topic);
             return false;
         }

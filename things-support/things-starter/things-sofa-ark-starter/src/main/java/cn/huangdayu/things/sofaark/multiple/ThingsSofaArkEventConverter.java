@@ -2,7 +2,7 @@ package cn.huangdayu.things.sofaark.multiple;
 
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
-import cn.huangdayu.things.sofaark.ThingsSofaArkEvent;
+import cn.huangdayu.things.sofaark.event.ThingsSofaArkEvent;
 import cn.huangdayu.things.sofaark.condition.ThingsSofaArkMultipleCondition;
 import com.alipay.sofa.ark.spi.service.event.EventHandler;
 import lombok.RequiredArgsConstructor;

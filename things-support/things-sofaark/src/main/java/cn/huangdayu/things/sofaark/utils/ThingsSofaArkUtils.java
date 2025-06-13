@@ -1,12 +1,15 @@
 package cn.huangdayu.things.sofaark.utils;
 
 import com.alipay.sofa.ark.api.ArkClient;
-import com.alipay.sofa.ark.container.model.BizModel;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.common.api.SpringServiceFinder;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author huangdayu
@@ -14,7 +17,7 @@ import org.springframework.context.ApplicationContext;
 @Slf4j
 public class ThingsSofaArkUtils {
 
-    public static <T> T getBizService(BizModel bizModel, Class<T> serviceType) {
+    public static <T> T getBizService(Biz bizModel, Class<T> serviceType) {
         return getBizService(bizModel.getBizName(), bizModel.getBizVersion(), serviceType);
     }
 
@@ -31,12 +34,8 @@ public class ThingsSofaArkUtils {
         return getBizContext(ArkClient.getBizManagerService().getBiz(bizName, bizVersion));
     }
 
-    public static ApplicationContext getBizContext(BizModel bizModel) {
+    public static ApplicationContext getBizContext(Biz bizModel) {
         return (ApplicationContext) BizRuntimeContextRegistry.getBizRuntimeContext(bizModel).getApplicationContext().get();
-    }
-
-    public static ApplicationContext getBizContext(Biz biz) {
-        return (ApplicationContext) BizRuntimeContextRegistry.getBizRuntimeContextByClassLoader(biz.getBizClassLoader()).getApplicationContext().get();
     }
 
     public static <T> T getArkService(Class<T> serviceType) {
@@ -54,6 +53,15 @@ public class ThingsSofaArkUtils {
 
     public static ApplicationContext getArkContext() {
         return (ApplicationContext) BizRuntimeContextRegistry.getMasterBizRuntimeContext().getApplicationContext().get();
+    }
+
+
+    public static ClassLoader getCurrentBizClassloader(ApplicationContext applicationContext) {
+        Optional<Map.Entry<String, Object>> first = applicationContext.getBeansWithAnnotation(SpringBootApplication.class).entrySet().stream().findFirst();
+        if (first.isPresent()) {
+            return first.get().getValue().getClass().getClassLoader();
+        }
+        return applicationContext.getClassLoader();
     }
 
 }

@@ -4,5 +4,7 @@ plugins {
 
 dependencies {
     api project(path: ':things-api')
-    implementation "com.alipay.sofa:sofa-ark-spi"
+    compileOnly "com.alipay.sofa:sofa-ark-api"
+    compileOnly "com.alipay.sofa:sofa-ark-spi"
+    compileOnly "com.alipay.sofa.koupleless:koupleless-common"
 }

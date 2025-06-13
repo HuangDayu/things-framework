@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
-import static cn.huangdayu.things.sofabiz.ThingsSofaBizUtils.getArkService;
+import static cn.huangdayu.things.sofaark.utils.ThingsSofaArkUtils.getArkService;
 
 /**
  * @author huangdayu

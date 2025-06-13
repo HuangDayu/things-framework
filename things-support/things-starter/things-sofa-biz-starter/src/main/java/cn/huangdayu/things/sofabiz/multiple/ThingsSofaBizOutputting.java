@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Conditional;
 
 import static cn.huangdayu.things.common.enums.ThingsChainingType.OUTPUTTING;
-import static cn.huangdayu.things.sofabiz.ThingsSofaBizUtils.getArkService;
+import static cn.huangdayu.things.sofaark.utils.ThingsSofaArkUtils.getArkService;
 
 /**
  * @author huangdayu

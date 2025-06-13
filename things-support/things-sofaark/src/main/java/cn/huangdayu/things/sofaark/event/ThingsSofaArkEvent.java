@@ -1,4 +1,4 @@
-package cn.huangdayu.things.sofaark;
+package cn.huangdayu.things.sofaark.event;
 
 import cn.huangdayu.things.common.observer.ThingsBaseEvent;
 import com.alipay.sofa.ark.spi.event.AbstractArkEvent;

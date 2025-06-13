@@ -3,7 +3,7 @@ package cn.huangdayu.things.sofabiz.multiple;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.observer.ThingsBaseEvent;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
-import cn.huangdayu.things.sofaark.ThingsSofaArkEvent;
+import cn.huangdayu.things.sofaark.event.ThingsSofaArkEvent;
 import cn.huangdayu.things.sofabiz.condition.ThingsSofaBizMultipleCondition;
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.model.Biz;
