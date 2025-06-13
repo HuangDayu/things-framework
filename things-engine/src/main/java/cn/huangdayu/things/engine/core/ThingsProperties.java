@@ -51,18 +51,11 @@ public interface ThingsProperties {
 
     /**
      * 更新配置对象信息
+     *
      * @param productCode
      * @param deviceCode
      * @param properties
      */
     void updatePropertyEntity(String productCode, String deviceCode, Object properties);
-
-
-    /**
-     * 上报设备属性
-     * @param productCode
-     * @param deviceCode
-     */
-    void postProperty(String productCode, String deviceCode);
 
 }

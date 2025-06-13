@@ -2,6 +2,8 @@ package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.annotation.ThingsPropertyEntity;
+import cn.huangdayu.things.common.events.ThingsPropertiesUpdateEvent;
+import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.engine.core.ThingsProperties;
 import cn.huangdayu.things.engine.wrapper.ThingsProperty;
 import cn.hutool.core.util.ObjectUtil;
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class ThingsPropertiesExecutor implements ThingsProperties {
 
     private final ThingsContainerManager thingsContainerManager;
+    private final ThingsEventObserver thingsEventObserver;
 
     @Override
     public <T> T getPropertyEntity(String productCode) {
@@ -59,25 +62,36 @@ public class ThingsPropertiesExecutor implements ThingsProperties {
 
     @Override
     public void setProperty(String productCode, String deviceCode, String propertyName, Object value) {
-        Object bean = getPropertyEntity(productCode, deviceCode);
+        ThingsProperty thingsPropertyForDevice = thingsContainerManager.getDevicePropertyMap().get(deviceCode, productCode);
+        Object bean = thingsPropertyForDevice.getBean();
         if (bean != null) {
             ReflectUtil.setFieldValue(bean, propertyName, value);
-            postProperties(productCode, deviceCode, bean);
+            postProperties(productCode, deviceCode, thingsPropertyForDevice);
         }
     }
 
     @Override
     public void updatePropertyEntity(String productCode, String deviceCode, Object properties) {
-        postProperties(productCode, deviceCode, properties);
+        ThingsProperty thingsPropertyForDevice = thingsContainerManager.getDevicePropertyMap().get(deviceCode, productCode);
+        if (thingsPropertyForDevice == null) {
+            ThingsProperty thingsPropertyForProduct = thingsContainerManager.getThingsPropertyMap().get(productCode);
+            if (thingsPropertyForProduct == null) {
+                return;
+            }
+            if (thingsPropertyForProduct.getThingsPropertyEntity().productPublic()) {
+                thingsPropertyForProduct.setBean(properties);
+                thingsContainerManager.getThingsPropertyMap().put(productCode, thingsPropertyForProduct);
+                postProperties(productCode, deviceCode, thingsPropertyForDevice);
+                return;
+            }
+            thingsPropertyForDevice = ObjectUtil.clone(thingsPropertyForProduct);
+        }
+        thingsPropertyForDevice.setBean(properties);
+        thingsContainerManager.getDevicePropertyMap().put(deviceCode, productCode, thingsPropertyForDevice);
+        postProperties(productCode, deviceCode, thingsPropertyForDevice);
     }
 
-    @Override
-    public void postProperty(String productCode, String deviceCode) {
-
-    }
-
-
-    private void postProperties(String productCode, String deviceCode, Object properties) {
-        // TODO 上报属性（不使用AOP或者动态字节码的形式监听对象字段的额更新，而是使用主动调用或者定时上报的形式）
+    private void postProperties(String productCode, String deviceCode, ThingsProperty thingsProperty) {
+        thingsEventObserver.notifyObservers(new ThingsPropertiesUpdateEvent(this, productCode, deviceCode, thingsProperty));
     }
 }

@@ -2,7 +2,7 @@ package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.api.infrastructure.ThingsConfigurator;
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.common.events.ThingsPropertiesUpdatedEvent;
+import cn.huangdayu.things.common.events.ThingsConfigurationUpdatedEvent;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.properties.ThingsEngineProperties;
 import com.alibaba.fastjson2.JSON;
@@ -39,7 +39,7 @@ public class ThingsConfiguratorExecutor implements ThingsConfigurator {
 
     @Override
     public void updateProperties(ThingsEngineProperties properties) {
-        thingsEventObserver.notifyObservers(new ThingsPropertiesUpdatedEvent(this, this.thingsEngineProperties, properties));
+        thingsEventObserver.notifyObservers(new ThingsConfigurationUpdatedEvent(this, this.thingsEngineProperties, properties));
         this.thingsEngineProperties = properties;
         saveObjectWithBackup(new File(thingsEngineProperties.getConfigPath()), properties, null);
     }

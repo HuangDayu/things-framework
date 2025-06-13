@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ThingsPropertiesUpdatedEvent implements ThingsBaseEvent {
+public class ThingsConfigurationUpdatedEvent implements ThingsBaseEvent {
 
     private Object source;
 
