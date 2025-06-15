@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Callback代理类，避免因 PahoMqtt5Consumer 中配置了callback导致业务中配置的callback无效的问题，同一个callback类的实例只能被添加一次
+ *
  * @author huangdayu
  */
 public class ThingsProxyMqttCallback implements MqttCallback {
@@ -18,7 +20,7 @@ public class ThingsProxyMqttCallback implements MqttCallback {
     /**
      * 一个callback实现类只保留一个对象
      */
-    private final static Set<MqttCallback> MQTT_CALLBACK_SET = new HashSet<>() {
+    private final Set<MqttCallback> MQTT_CALLBACK_SET = new HashSet<>() {
         @Override
         public boolean add(MqttCallback mqttCallback) {
             if (mqttCallback == null) {
@@ -28,14 +30,6 @@ public class ThingsProxyMqttCallback implements MqttCallback {
             return super.add(mqttCallback);
         }
     };
-    private static final ThingsProxyMqttCallback INSTANCE = new ThingsProxyMqttCallback();
-
-    private ThingsProxyMqttCallback() {
-    }
-
-    public static ThingsProxyMqttCallback getInstance() {
-        return INSTANCE;
-    }
 
     public void addMqttCallback(MqttCallback mqttCallback) {
         MQTT_CALLBACK_SET.add(mqttCallback);

@@ -4,6 +4,7 @@ import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBusCallback;
 import cn.huangdayu.things.camel.CamelSofaBusConstructor;
 import cn.huangdayu.things.camel.mqtt.ThingsCamelMqttCallback;
+import cn.huangdayu.things.camel.mqtt.ThingsProxyMqttCallback;
 import cn.huangdayu.things.camel.mqtt.ThingsSofaBusMqttCallback;
 import cn.huangdayu.things.camel.mqtt.ThingsSofaBusMqttClient;
 import cn.huangdayu.things.common.enums.ThingsSofaBusType;
@@ -65,7 +66,8 @@ public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
     @Override
     public DefaultComponent buildComponent() {
         ThingsEngineProperties.ThingsSofaBusProperties properties = constructor.getProperties();
-        ThingsSofaBusMqttClient client = new ThingsSofaBusMqttClient(properties.getServer(), properties.getClientId(), new MqttDefaultFilePersistence(properties.getPersistenceDir()));
+        ThingsSofaBusMqttClient client = new ThingsSofaBusMqttClient(properties.getServer(), properties.getClientId(),
+                new MqttDefaultFilePersistence(properties.getPersistenceDir()), new ThingsProxyMqttCallback());
         MqttConnectionOptions options = new MqttConnectionOptions();
         options.setUserName(properties.getUserName());
         if (isNotBlank(properties.getPassword())) {
