@@ -17,7 +17,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 @Slf4j
 @Getter
-public abstract class ThingsContainerManager {
+abstract class ThingsContainerManager {
     /**
      * containerName vs ThingsContainer
      */
