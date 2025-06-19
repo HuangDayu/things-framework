@@ -93,6 +93,11 @@ public class ThingsEngineProperties {
     public static class ThingsSofaBizProperties {
 
         /**
+         * biz可获取ark的bean的包路径
+         */
+        private Set<String> sharedBeanPackages;
+
+        /**
          * biz获取ark的bean的类（全路径）
          */
         private Set<String> sharedBeanClasses;
