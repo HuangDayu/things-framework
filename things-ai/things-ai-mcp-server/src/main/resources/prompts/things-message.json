@@ -1,0 +1,20 @@
+{
+  "id": "消息id，随机的UUID，请求时生成，响应时使用相同的id作为恢复，必须字段",
+  "metadata": {
+    "deviceCode": "要求控制的设备标识，必须字段",
+    "productCode": "要求控制的产品的产品标识，必须字段",
+    "errorCode": "错误码，类似httpStatusCode，200成功，大于400是客户端失败，大于500是服务端失败",
+    "errorMessage": "错误消息，可用于对用户的自然语言回复",
+    "其他字段": "其他字段的值"
+  },
+  "payload": {
+    "消息体字段1，对应Things-DSL中的inputData中的identifier": "消息体字段1的值，对应对应Things-DSL中的inputData中的identifier关联的dataType，要符合dataType的要求",
+    "消息体字段2": "消息体字段2的值",
+    "其他字段...": "其他字段的值..."
+  },
+  "qos": "消息质量等级，与mqtt的qos一致，必须字段",
+  "time": "消息发送时的时间，采用时间戳，精确到毫秒，如1733935074566，必须字段",
+  "timeout": "消息执行超时时间，毫秒，如10000，必须字段",
+  "version": "消息版本，默认是1，必须字段",
+  "method": "消息请求的方法，必须字段，使用拼接的方式，things.${type}.${services.identifier}.${action},其中type就是DSL中的service/properties/event,${services.identifier}是具体请求服务时的service的identifier， ${action}是动作，service的动作有request/response，event的动作有post，properties的动作有set/get/post， 如thing.service.captureStreaming.request表示对名为captureStreaming服务发起请求"
+}

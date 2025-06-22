@@ -3,5 +3,9 @@ plugins {
 }
 
 dependencies {
-    implementation 'org.springframework.ai:spring-ai-openai'
+    api project(path: ':things-common')
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
 }

@@ -21,6 +21,8 @@ dependencies {
     api platform("org.apache.camel.springboot:camel-spring-boot-dependencies:${camelVersion}")
     api platform("com.alipay.sofa.koupleless:koupleless-runtime:${kouplelessVersion}")
     api platform("com.alipay.sofa:sofa-ark-bom:${sofaArkVersion}")
+    api platform("org.springframework.ai:spring-ai-bom:${springAIVersion}")
+    api platform("com.alibaba.cloud.ai:spring-ai-alibaba-bom:${springAIAlibabaVersion}")
 
     constraints {
         rootProject.subprojects.each {

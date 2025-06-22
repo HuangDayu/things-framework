@@ -1,0 +1,3875 @@
+{
+  "id": "9969575d2bdb41b0bf5682f74a1b769f",
+  "metadata": {
+    "deviceCode": "4b68ac0e83c647f083b77f44e0c3baaa",
+    "productCode": "system"
+  },
+  "method": "thing.system.dsl.post",
+  "payload": {
+    "domainDsl": [
+      {
+        "consumes": [],
+        "profile": {
+          "schema": "1.0"
+        },
+        "subscribes": []
+      }
+    ],
+    "thingsDsl": [
+      {
+        "events": [
+          {
+            "desc": "",
+            "identifier": "streamingStarted",
+            "name": "视频流转发开始",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "targetUrl"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "sourceUrl"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "deviceCode"
+              }
+            ],
+            "type": "info"
+          },
+          {
+            "desc": "",
+            "identifier": "recordingEnd",
+            "name": "视频流录像结束",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "bool"
+                },
+                "identifier": "enableAcc"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "sourceUrl"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "taskCode"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "manySeconds"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "videoPath"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "deviceCode"
+              }
+            ],
+            "type": "info"
+          },
+          {
+            "desc": "",
+            "identifier": "streamingEnd",
+            "name": "视频流转发结束",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "command"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "long"
+                },
+                "identifier": "startTime"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "bool"
+                },
+                "identifier": "running"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "targetUrl"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "sourceUrl"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "long"
+                },
+                "identifier": "lastHeartbeatTime"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "streamCode"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "retry"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "deviceCode"
+              }
+            ],
+            "type": "info"
+          }
+        ],
+        "profile": {
+          "product": {
+            "category": "",
+            "certification": "",
+            "code": "streaming-adapter",
+            "description": "",
+            "icon": "",
+            "manufacturer": "",
+            "model": "",
+            "name": "",
+            "type": "",
+            "version": ""
+          },
+          "schema": "1.0"
+        },
+        "properties": [
+          {
+            "accessMode": "rw",
+            "dataType": {
+              "arrayType": "",
+              "enumNames": "",
+              "required": true,
+              "specs": {
+                "max": "",
+                "min": "",
+                "size": "",
+                "step": "",
+                "unit": "",
+                "unitName": ""
+              },
+              "type": "text"
+            },
+            "description": "文件服务器地址",
+            "identifier": "fileServer",
+            "name": "文件服务器地址"
+          }
+        ],
+        "services": [
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "recordStreaming",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "bool"
+                },
+                "identifier": "enableAcc"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "sourceUrl"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "taskCode"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "manySeconds"
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "startStreaming",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "targetUrl"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "bool"
+                },
+                "identifier": "always"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "sourceUrl"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "taskCode"
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "captureStreaming",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "sourceUrl"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "taskCode"
+              }
+            ],
+            "name": "",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "filePath"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "fileServer"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "sourceUrl"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "taskCode"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "fileCode"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "desc": "开门事件",
+            "identifier": "openDoor",
+            "name": "已开门",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "userId"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "deviceCode"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "doorStatus"
+              }
+            ],
+            "type": "info"
+          },
+          {
+            "desc": "设备事件",
+            "identifier": "deviceOffline",
+            "name": "设备下线",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "deviceCode"
+              }
+            ],
+            "type": "info"
+          },
+          {
+            "desc": "通知事件",
+            "identifier": "notification",
+            "name": "通知",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "name"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "long"
+                },
+                "identifier": "time"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "status"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "deviceCode"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "channelCode"
+              }
+            ],
+            "type": "alarm"
+          },
+          {
+            "desc": "设备事件",
+            "identifier": "deviceOnline",
+            "name": "设备上线",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "deviceCode"
+              }
+            ],
+            "type": "info"
+          }
+        ],
+        "profile": {
+          "product": {
+            "category": "",
+            "certification": "",
+            "code": "hikvision-adapter",
+            "description": "",
+            "icon": "",
+            "manufacturer": "",
+            "model": "",
+            "name": "",
+            "type": "",
+            "version": ""
+          },
+          "schema": "1.0"
+        },
+        "properties": [
+          {
+            "accessMode": "rw",
+            "dataType": {
+              "arrayType": "",
+              "enumNames": "",
+              "required": true,
+              "specs": {
+                "max": "",
+                "min": "",
+                "size": "",
+                "step": "",
+                "unit": "",
+                "unitName": ""
+              },
+              "type": "bool"
+            },
+            "description": "是否启用通知，默认启用",
+            "identifier": "enableNotification",
+            "name": "是否启用通知"
+          },
+          {
+            "accessMode": "rw",
+            "dataType": {
+              "arrayType": "",
+              "enumNames": "",
+              "required": true,
+              "specs": {
+                "max": "",
+                "min": "",
+                "size": "",
+                "step": "",
+                "unit": "",
+                "unitName": ""
+              },
+              "type": "bool"
+            },
+            "description": "是否启用告警事件，默认启用",
+            "identifier": "enableAlarm",
+            "name": "是否启用告警事件"
+          }
+        ],
+        "services": [
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "removeCard",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "employeeNo",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "addFace",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "faceUrl",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "employeeNo",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "sync",
+            "desc": "",
+            "identifier": "playBack",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "startTime",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "endTime",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "channel",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wssTs"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "startTime"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "httpsHls"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "flv"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtmps"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "hls"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "ip"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wsHls"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wsFmp4"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "stream"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtc"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtmp"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "struct"
+                },
+                "identifier": "tracks"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wssFmp4"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "httpsFmp4"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "fmp4"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "endTime"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtsp"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtcs"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wsFlv"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wssHls"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "ts"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtsps"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "app"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "httpsFlv"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "httpsTs"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wsTs"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "mediaServerId"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wssFlv"
+              }
+            ]
+          },
+          {
+            "callType": "sync",
+            "desc": "",
+            "identifier": "play",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "channelId",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wssTs"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "startTime"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "httpsHls"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "flv"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtmps"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "hls"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "ip"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wsHls"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wsFmp4"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "stream"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtc"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtmp"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "struct"
+                },
+                "identifier": "tracks"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wssFmp4"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "httpsFmp4"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "fmp4"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "endTime"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtsp"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtcs"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wsFlv"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wssHls"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "ts"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtsps"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "app"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "httpsFlv"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "httpsTs"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wsTs"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "mediaServerId"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wssFlv"
+              }
+            ]
+          },
+          {
+            "callType": "sync",
+            "desc": "",
+            "identifier": "screenshot",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "channelId",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "removeUser",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "employeeNo",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "mode",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "sync",
+            "desc": "",
+            "identifier": "addUser",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "userType"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "name"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "gender"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "beginTime"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "endTime"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "cardInfo.cardType"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "employeeNo"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "cardInfo.cardNum"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "faceUrl"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "struct"
+                },
+                "identifier": "cardInfo"
+              }
+            ],
+            "name": "",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "bool"
+                },
+                "identifier": "addFaceFlag"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "bool"
+                },
+                "identifier": "addCardFlag"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "bool"
+                },
+                "identifier": "addUserFlag"
+              }
+            ]
+          },
+          {
+            "callType": "sync",
+            "desc": "",
+            "identifier": "searchCard",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "searchId",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "int"
+                },
+                "description": "",
+                "identifier": "max",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "employeeNo",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "ptzControl",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "command"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "verticalSpeed"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "bool"
+                },
+                "identifier": "action"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "deviceId"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "sn"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "channelId"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": false,
+                  "specs": {
+                    "max": "10",
+                    "min": "1",
+                    "size": "",
+                    "step": "",
+                    "unit": "int",
+                    "unitName": "个"
+                  },
+                  "type": "int"
+                },
+                "description": "",
+                "identifier": "sum",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "zoomSpeed"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "horizonSpeed"
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "addCard",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "cardType",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "cardNum",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "employeeNo",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "removeFace",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "employeeNo",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "sync",
+            "desc": "",
+            "identifier": "searchUser",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "searchId",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "int"
+                },
+                "description": "",
+                "identifier": "max",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "employeeNo",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "stopPlay",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "streamId",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "sync",
+            "desc": "",
+            "identifier": "searchFace",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "employeeNo",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "openDoor",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "cmd",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "doorID",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "desc": "消防事件",
+            "identifier": "smokingDetect",
+            "name": "烟警",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "name"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "status"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "deviceCode"
+              }
+            ],
+            "type": "alarm"
+          },
+          {
+            "desc": "设备事件",
+            "identifier": "deviceOffline",
+            "name": "设备下线",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "deviceCode"
+              }
+            ],
+            "type": "info"
+          },
+          {
+            "desc": "开门事件",
+            "identifier": "openDoor",
+            "name": "已开门",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "userId"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "openDoorType"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "deviceCode"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "doorStatus"
+              }
+            ],
+            "type": "info"
+          },
+          {
+            "desc": "消防事件",
+            "identifier": "fireWaring",
+            "name": "火警",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "name"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "status"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "deviceCode"
+              }
+            ],
+            "type": "alarm"
+          },
+          {
+            "desc": "设备事件",
+            "identifier": "deviceOnline",
+            "name": "设备上线",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "deviceCode"
+              }
+            ],
+            "type": "info"
+          }
+        ],
+        "profile": {
+          "product": {
+            "category": "",
+            "certification": "",
+            "code": "dahua-adapter",
+            "description": "",
+            "icon": "",
+            "manufacturer": "",
+            "model": "",
+            "name": "",
+            "type": "",
+            "version": ""
+          },
+          "schema": "1.0"
+        },
+        "properties": [],
+        "services": [
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "removeCard",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "cardNo",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "userId",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "removeFace",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "userId",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "updateCard",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "cardNo",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "userId",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "sync",
+            "desc": "",
+            "identifier": "play",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "channelId",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wssTs"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "startTime"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "httpsHls"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "flv"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtmps"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "hls"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "ip"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wsHls"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wsFmp4"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "stream"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtc"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtmp"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "struct"
+                },
+                "identifier": "tracks"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wssFmp4"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "httpsFmp4"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "fmp4"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "endTime"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtsp"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtcs"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wsFlv"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wssHls"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "ts"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtsps"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "app"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "httpsFlv"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "httpsTs"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wsTs"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "mediaServerId"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wssFlv"
+              }
+            ]
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "addUser",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "userId"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "userName"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "passWord"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "removeUser",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "userId",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "addFace",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "userId",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "faceUrl",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "sync",
+            "desc": "",
+            "identifier": "screenshot",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "channelId"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "snap"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "mode"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "type"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "quality"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "cmdSerial"
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "ptzControl",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "command"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "verticalSpeed"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "bool"
+                },
+                "identifier": "action"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "deviceId"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "sn"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "channelId"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "zoomSpeed"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "int"
+                },
+                "identifier": "horizonSpeed"
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "sync",
+            "desc": "",
+            "identifier": "playBack",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "startTime",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "endTime",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "channelId",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wssTs"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "startTime"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "httpsHls"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "flv"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtmps"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "hls"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "ip"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wsHls"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wsFmp4"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "stream"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtc"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtmp"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "struct"
+                },
+                "identifier": "tracks"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wssFmp4"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "httpsFmp4"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "fmp4"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "endTime"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtsp"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtcs"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wsFlv"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wssHls"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "ts"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "rtsps"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "app"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "httpsFlv"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "httpsTs"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wsTs"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "mediaServerId"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "wssFlv"
+              }
+            ]
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "openDoor",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "stopPlayBack",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "streamId",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "stopPlay",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "streamId",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "addCard",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "cardNo",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "userId",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "updateUser",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "userId"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "userName"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "type": "text"
+                },
+                "identifier": "passWord"
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          },
+          {
+            "callType": "async",
+            "desc": "",
+            "identifier": "updateFace",
+            "inputData": [
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "userId",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "faceUrl",
+                "name": ""
+              },
+              {
+                "dataType": {
+                  "arrayType": "",
+                  "enumNames": "",
+                  "required": true,
+                  "specs": {
+                    "max": "",
+                    "min": "",
+                    "size": "",
+                    "step": "",
+                    "unit": "",
+                    "unitName": ""
+                  },
+                  "type": "text"
+                },
+                "description": "",
+                "identifier": "sn",
+                "name": ""
+              }
+            ],
+            "name": "",
+            "outputData": []
+          }
+        ]
+      }
+    ]
+  },
+  "qos": 2,
+  "time": 1749660927467,
+  "timeout": 5000,
+  "version": "1"
+}

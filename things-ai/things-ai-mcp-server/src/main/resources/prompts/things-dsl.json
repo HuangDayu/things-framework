@@ -1,0 +1,107 @@
+{
+  "profile": {
+    "schema": "Things DSL schema",
+    "product": {
+      "category": "产品的类别",
+      "certification": "产品证书",
+      "code": "产品标识",
+      "description": "产品描述",
+      "icon": "产品图标",
+      "manufacturer": "产品厂商",
+      "model": "产品型号",
+      "name": "产品名称",
+      "type": "产品类型",
+      "version": "产品版本好"
+    }
+  },
+  "properties": [
+    {
+      "identifier": "属性唯一标识符",
+      "name": "属性名称，比如：开关",
+      "accessMode": "rw，属性读写类型：读（r）写（w），只读为r，读写为rw",
+      "description": "属性取值说明 1：打开 0：关闭",
+      "dataType": {
+        "type": "属性类型，基本数据类型有: int, text, bool, date, enum；复杂数据类型有：struct, array",
+        "specs": {
+          "min": "参数最小值（int、float、double类型特有）",
+          "max": "参数最大值（int、float、double类型特有）",
+          "unit": "属性单位（int、float、double类型特有，非必填）",
+          "unitName": "单位名称（int、float、double类型特有，非必填）",
+          "size": "数组元素的个数，最大512（array类型特有）",
+          "step": "步长（text、enum类型无此参数）"
+        }
+      }
+    }
+  ],
+  "events": [
+    {
+      "identifier": "事件唯一标识符",
+      "name": "事件名称",
+      "desc": "事件的注释说明",
+      "type": "事件类型 （info、alert）",
+      "level": "事件级别（critical/需立即处理（如设备离线）,high/高优先级（如数据异常波动）,medium/常规告警（如存储空间不足）,low/信息类通知（如固件更新完成））",
+      "outputData": [
+        {
+          "identifier": "参数唯一标识符",
+          "name": "参数名称",
+          "dataType": {
+            "type": "属性类型，基本数据类型有: int, text, bool, date, enum；复杂数据类型有：struct, array",
+            "specs": {
+              "min": "参数最小值（int、float、double类型特有）",
+              "max": "参数最大值（int、float、double类型特有）",
+              "unit": "属性单位（int、float、double类型特有，非必填）",
+              "unitName": "单位名称（int、float、double类型特有，非必填）",
+              "size": "数组元素的个数，最大512（array类型特有）",
+              "step": "步长（text、enum类型无此参数）"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "identifier": "服务唯一标识符",
+      "name": "服务名称",
+      "desc": "服务的注释说明",
+      "callType": "async（异步调用）或sync（同步调用）",
+      "inputData": [
+        {
+          "identifier": "入参唯一标识符。",
+          "name": "入参名称。",
+          "dataType": {
+            "type": "属性类型，基本数据类型有: int, text, bool, date, enum；复杂数据类型有：struct, array",
+            "arrayType": "数组类型，如果type是array，那么这个字段表示array的基本类型: int, text, bool, date, enum",
+            "enumNames": "枚举名称，如果type是enum，那么enum有哪些names警备列出来",
+            "required": "是否必须，boolean类型，true/false",
+            "specs": {
+              "min": "参数最小值（int、float、double类型特有）",
+              "max": "参数最大值（int、float、double类型特有）",
+              "unit": "属性单位（int、float、double类型特有，非必填）",
+              "unitName": "单位名称（int、float、double类型特有，非必填）",
+              "size": "数组元素的个数，最大512（array类型特有）",
+              "step": "步长（text、enum类型无此参数）"
+            }
+          }
+        }
+      ],
+      "outputData": [
+        {
+          "identifier": "出参唯一标识符。",
+          "name": "出参名称。",
+          "dataType": {
+            "type": "属性类型，基本数据类型有: int, text, bool, date, enum；复杂数据类型有：struct, array",
+            "specs": {
+              "min": "参数最小值（int、float、double类型特有）",
+              "max": "参数最大值（int、float、double类型特有）",
+              "unit": "属性单位（int、float、double类型特有，非必填）",
+              "unitName": "单位名称（int、float、double类型特有，非必填）",
+              "size": "数组元素的个数，最大512（array类型特有）",
+              "step": "步长（text、enum类型无此参数）"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
