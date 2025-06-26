@@ -5,6 +5,8 @@ import cn.huangdayu.things.ai.mcp.properties.ThingsAiProperties;
 import cn.huangdayu.things.common.exception.ThingsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +26,7 @@ public class ThingsAIModelFactory {
     private static final Map<String, ThingsAIModels> thingsAIModels = new ConcurrentHashMap<>();
     private final Map<String, ChatModel> chatModels;
     private final ThingsAiProperties thingsAiProperties;
+    private final ChatMemory chatMemory;
 
     public ThingsAIModels getThingsModel(String model) {
         ThingsAiProperties.Models thingsModel = findThingsModel(model);
@@ -33,7 +36,9 @@ public class ThingsAIModelFactory {
         return thingsAIModels.computeIfAbsent(model, chatModel -> {
             Optional<ThingsAIModels> first = chatModels.entrySet().stream()
                     .filter(entry -> entry.getKey().contains(thingsModel.getSupplier()))
-                    .map(entry -> new ThingsAIModels(model, entry.getValue(), ChatClient.builder(entry.getValue()).build())).findFirst();
+                    .map(entry -> new ThingsAIModels(model, entry.getValue(),
+                            ChatClient.builder(entry.getValue()).defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build()).build()))
+                    .findFirst();
             return first.orElseThrow(() -> new ThingsException(ERROR, "model not found : " + model));
         });
     }

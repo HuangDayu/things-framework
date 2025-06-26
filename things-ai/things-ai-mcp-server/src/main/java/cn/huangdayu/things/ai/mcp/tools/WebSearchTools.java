@@ -1,8 +1,10 @@
 package cn.huangdayu.things.ai.mcp.tools;
 
+import cn.huangdayu.things.common.annotation.ThingsTools;
 import com.alibaba.fastjson2.JSONObject;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -16,8 +18,8 @@ import java.nio.charset.StandardCharsets;
 /**
  * @author huangdayu
  */
-@Service
-public class WebSearchTool {
+@ThingsTools
+public class WebSearchTools {
 
     @Tool(description = "互联网在线搜索服务，比如搜索新闻，文档，事件等")
     public String searchWeb(@ToolParam String query) throws IOException, InterruptedException {

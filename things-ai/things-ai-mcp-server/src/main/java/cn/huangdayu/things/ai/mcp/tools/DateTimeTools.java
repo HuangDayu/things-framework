@@ -1,10 +1,11 @@
 package cn.huangdayu.things.ai.mcp.tools;
 
+import cn.huangdayu.things.common.annotation.ThingsTools;
 import cn.hutool.core.util.StrUtil;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.TimeZone;
@@ -12,7 +13,7 @@ import java.util.TimeZone;
 /**
  * @author huangdayu
  */
-@Service
+@ThingsTools
 public class DateTimeTools {
 
     @Tool(description = "根据时区获取时间")

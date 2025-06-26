@@ -18,10 +18,12 @@
 
 package cn.huangdayu.things.ai.mcp.tools;
 
+import cn.huangdayu.things.common.annotation.ThingsTools;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
@@ -33,15 +35,15 @@ import java.util.List;
 /**
  * 利用OpenMeteo的免费天气API提供天气服务 该API无需API密钥，可以直接使用
  */
-@Service
-public class OpenMeteoTool {
+@ThingsTools
+public class OpenMeteoTools {
 
     // OpenMeteo免费天气API基础URL
     private static final String BASE_URL = "https://api.open-meteo.com/v1";
 
     private final RestClient restClient;
 
-    public OpenMeteoTool() {
+    public OpenMeteoTools() {
         this.restClient = RestClient.builder()
                 .baseUrl(BASE_URL)
                 .defaultHeader("Accept", "application/json")
@@ -137,7 +139,7 @@ public class OpenMeteoTool {
      * @return 指定位置的天气预报
      * @throws RestClientException 如果请求失败
      */
-    @Tool(description = "获取指定经纬度的天气预报")
+    @Tool(description = "获取指定经纬度的未来7天的天气预报")
     public String getWeatherForecastByLocation(@ToolParam(description = "纬度") double latitude,
                                                @ToolParam(description = "经度") double longitude) {
         // 获取天气数据（当前和未来7天）
@@ -297,7 +299,7 @@ public class OpenMeteoTool {
     }
 
     public static void main(String[] args) {
-        OpenMeteoTool service = new OpenMeteoTool();
+        OpenMeteoTools service = new OpenMeteoTools();
         // 测试北京的天气预报
         System.out.println("北京天气预报:");
         System.out.println(service.getWeatherForecastByLocation(39.9042, 116.4074));
