@@ -1,0 +1,591 @@
+{
+  "status": {
+    "deviceName": {
+      "description": "设备名称",
+      "mandatory": true,
+      "length": "{1,50}",
+      "valueRange": "N/A",
+      "aliases": ["DeviceName"]
+    },
+    "deviceId": {
+      "description": "设备标识",
+      "mandatory": true,
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["deviceID", "DeviceID"]
+    },
+    "status": {
+      "description": "设备在线/离线状态",
+      "mandatory": true,
+      "length": "{1,50}",
+      "valueRange": "online/offline",
+      "aliases": ["Status"]
+    },
+    "time": {
+      "description": "发送通知的时间",
+      "mandatory": false,
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["Time"]
+    },
+    "utcTime": {
+      "description": "发送通知的UTC时间",
+      "mandatory": false,
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["UtcTime"]
+    },
+    "lastTime": {
+      "description": "状态变更前最后一次通信的时间",
+      "mandatory": false,
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["LastTime"]
+    },
+    "utcLastTime": {
+      "description": "状态变更前最后一次通信的UTC时间",
+      "mandatory": false,
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["UtclastTime"]
+    },
+    "clientIp": {
+      "description": "设备公网出口IP",
+      "mandatory": false,
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["ClientIp"]
+    }
+  },
+  "profile": {
+    "description": {
+      "description": "产品描述",
+      "mandatory": false,
+      "length": "{1,100}",
+      "valueRange": "支持中文、大小写字母、数字、短划线和下划线",
+      "aliases": ["Description"]
+    },
+    "deviceId": {
+      "description": "设备标识",
+      "mandatory": "有条件必选",
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["deviceUID", "DeviceUDID"]
+    },
+    "brand": {
+      "description": "设备品牌",
+      "mandatory": false,
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["Brand"]
+    },
+    "model": {
+      "description": "设备型号",
+      "mandatory": false,
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["Model", "deviceModel"]
+    },
+    "type": {
+      "description": "设备类型",
+      "mandatory": false,
+      "valueRange": "0-直接设备；1-网关设备；2-网关子设备",
+      "aliases": ["Type"]
+    },
+    "protocolType": {
+      "description": "协议类型",
+      "mandatory": false,
+      "valueRange": "0-MQTT；1-LwM2M；2-HTTP；3-其他",
+      "aliases": ["ProtocolType"]
+    },
+    "netType": {
+      "description": "网络类型",
+      "mandatory": false,
+      "valueRange": "0-WIFI；1-2G；2-3G；3-4G；4-Cat1；5-5G；6-NB-IoT；7-LoRa；8-其他",
+      "aliases": ["NetType"]
+    },
+    "deviceMac": {
+      "description": "设备MAC地址",
+      "mandatory": false,
+      "length": "{1,50}",
+      "valueRange": "N/A",
+      "aliases": ["DeviceMAC"]
+    },
+    "deviceSerialNumber": {
+      "description": "设备序列号",
+      "mandatory": false,
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["DeviceSerialNumber"]
+    },
+    "version": {
+      "description": "物模型版本号",
+      "mandatory": false,
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["Version"]
+    },
+    "firmware": {
+      "description": "设备软件版本号",
+      "mandatory": false,
+      "length": "{1,20}",
+      "valueRange": "N/A",
+      "aliases": []
+    },
+    "deviceCu": {
+      "description": "通信单元（模组）供应商识别",
+      "mandatory": false,
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["DeviceCU"]
+    },
+    "productClass": {
+      "description": "产品类别",
+      "mandatory": false,
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["ProductClass"]
+    }
+  },
+  "property": {
+    "identifier": {
+      "description": "属性唯一标识符",
+      "mandatory": "条件下必选",
+      "length": "[1,100]",
+      "valueRange": "N/A",
+      "aliases": ["id", "Identifier"]
+    },
+    "name": {
+      "description": "属性名称（英文）",
+      "mandatory": "条件下必选",
+      "length": "[1,50]",
+      "valueRange": "N/A",
+      "aliases": ["displayName", "propertyName"]
+    },
+    "cnName": {
+      "description": "属性名称（中文）",
+      "mandatory": "条件下必选",
+      "length": "[1,50]",
+      "valueRange": "N/A",
+      "aliases": []
+    },
+    "description": {
+      "description": "属性描述信息",
+      "mandatory": false,
+      "length": "[1,50]",
+      "valueRange": "N/A",
+      "aliases": ["desc"]
+    },
+    "required": {
+      "description": "是否必选属性",
+      "mandatory": false,
+      "valueRange": "True/False",
+      "aliases": ["Mandatory", "tmRequired"]
+    },
+    "dataType": {
+      "description": "属性数据类型",
+      "mandatory": false,
+      "valueRange": "Int8/UInt8/Int16/UInt16/Int32/UInt32/Int64/UInt64/Bool/Enum/String/Double/Array/Struct/Bitmap",
+      "aliases": ["Type"]
+    },
+    "min": {
+      "description": "数值型最小值",
+      "mandatory": false,
+      "valueRange": "仅数值型有效",
+      "aliases": ["Min"]
+    },
+    "max": {
+      "description": "数值型最大值",
+      "mandatory": false,
+      "valueRange": "仅数值型有效",
+      "aliases": ["Max"]
+    },
+    "precise": {
+      "description": "精度（FLOAT/Double有效）",
+      "mandatory": false,
+      "valueRange": "N/A",
+      "aliases": ["Precise"]
+    },
+    "rwMode": {
+      "description": "读写标识",
+      "mandatory": false,
+      "valueRange": "READ/WRITE/READWRITE",
+      "aliases": ["accessMode", "rwACL"]
+    },
+    "unit": {
+      "description": "数据单位描述",
+      "mandatory": false,
+      "length": "{1,50}",
+      "valueRange": "N/A",
+      "aliases": ["Unit"]
+    },
+    "schema": {
+      "description": "数据模式定义",
+      "mandatory": false,
+      "valueRange": "INT/FLOAT/DOUBLE/TEXT/DATE/ARRAY",
+      "aliases": ["Schema", "dataSchema"]
+    },
+    "custom": {
+      "description": "是否自定义功能",
+      "mandatory": false,
+      "valueRange": "True/False",
+      "aliases": ["Custom"]
+    }
+  },
+  "action": {
+    "identifier": {
+      "description": "行为标识符",
+      "mandatory": "有条件必选",
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["id", "Identifier"]
+    },
+    "name": {
+      "description": "行为名称（英文）",
+      "mandatory": "有条件必选",
+      "length": "{1,50}",
+      "valueRange": "N/A",
+      "aliases": ["ServiceName", "Servicename"]
+    },
+    "cnName": {
+      "description": "行为名称（中文）",
+      "mandatory": "有条件必选",
+      "length": "{1,50}",
+      "valueRange": "N/A",
+      "aliases": []
+    },
+    "title": {
+      "description": "用于显示的行为标题",
+      "mandatory": false,
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["Title"]
+    },
+    "description": {
+      "description": "行为描述",
+      "mandatory": false,
+      "length": "{1,50}",
+      "valueRange": "N/A",
+      "aliases": ["desc"]
+    },
+    "required": {
+      "description": "行为是否必选",
+      "mandatory": false,
+      "valueRange": "True/False",
+      "aliases": ["tmRequired"]
+    },
+    "input": {
+      "description": "行为应携带的输入参数",
+      "mandatory": true,
+      "length": "[1,100]",
+      "valueRange": "N/A",
+      "aliases": ["inputParams", "inputs"]
+    },
+    "output": {
+      "description": "行为执行结果的输出参数",
+      "mandatory": false,
+      "length": "[1,100]",
+      "valueRange": "N/A",
+      "aliases": ["outputParams", "outputs"]
+    },
+    "callType": {
+      "description": "行为调用方式",
+      "mandatory": false,
+      "valueRange": "SYNC/ASYNC",
+      "aliases": ["ActionType"]
+    },
+    "custom": {
+      "description": "是否自定义功能",
+      "mandatory": false,
+      "valueRange": "True/False",
+      "aliases": ["Custom"]
+    }
+  },
+  "event": {
+    "identifier": {
+      "description": "事件唯一标识符",
+      "mandatory": "有条件必选",
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["id", "Identifier"]
+    },
+    "name": {
+      "description": "事件名称（英文）",
+      "mandatory": "有条件必选",
+      "length": "{1,50}",
+      "valueRange": "N/A",
+      "aliases": ["eventName"]
+    },
+    "cnName": {
+      "description": "事件名称（中文）",
+      "mandatory": "有条件必选",
+      "length": "{1,50}",
+      "valueRange": "N/A",
+      "aliases": []
+    },
+    "title": {
+      "description": "用于显示的事件标题",
+      "mandatory": false,
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["Title"]
+    },
+    "description": {
+      "description": "事件描述信息",
+      "mandatory": false,
+      "length": "{1,50}",
+      "valueRange": "N/A",
+      "aliases": ["desc"]
+    },
+    "required": {
+      "description": "事件是否必选",
+      "mandatory": false,
+      "valueRange": "True/False",
+      "aliases": []
+    },
+    "output": {
+      "description": "事件输出参数",
+      "mandatory": false,
+      "length": "[1,100]",
+      "valueRange": "N/A",
+      "aliases": ["outputParams", "outputs"]
+    },
+    "eventType": {
+      "description": "事件类型",
+      "mandatory": false,
+      "valueRange": "INFO_EVENT_TYPE/ALERT_EVENT_TYPE/ERROR_EVENT_TYPE",
+      "aliases": ["EventType"]
+    },
+    "custom": {
+      "description": "是否自定义功能",
+      "mandatory": false,
+      "valueRange": "True/False",
+      "aliases": ["Custom"]
+    }
+  },
+  "component": {
+    "identifier": {
+      "description": "组件标识符",
+      "mandatory": "有条件必选",
+      "length": "{1,100}",
+      "valueRange": "N/A",
+      "aliases": ["id", "Id"]
+    },
+    "name": {
+      "description": "组件名称（英文）",
+      "mandatory": "有条件必选",
+      "length": "{1,50}",
+      "valueRange": "N/A",
+      "aliases": ["Name"]
+    },
+    "cnName": {
+      "description": "组件名称（中文）",
+      "mandatory": "有条件必选",
+      "length": "{1,50}",
+      "valueRange": "N/A",
+      "aliases": []
+    },
+    "title": {
+      "description": "组件显示标题",
+      "mandatory": false,
+      "length": "{1,50}",
+      "valueRange": "N/A",
+      "aliases": ["DisplayName"]
+    },
+    "description": {
+      "description": "组件描述",
+      "mandatory": false,
+      "length": "{1,200}",
+      "valueRange": "N/A",
+      "aliases": ["Description"]
+    },
+    "properties": {
+      "description": "组件包含的属性列表",
+      "mandatory": false,
+      "length": "0..N",
+      "valueRange": "属性复合对象",
+      "aliases": []
+    },
+    "actions": {
+      "description": "组件包含的行为列表",
+      "mandatory": false,
+      "length": "0..N",
+      "valueRange": "行为复合对象",
+      "aliases": ["ActionList"]
+    },
+    "events": {
+      "description": "组件包含的事件列表",
+      "mandatory": false,
+      "length": "0..N",
+      "valueRange": "事件复合对象",
+      "aliases": ["eventList"]
+    },
+    "subFunctionBlock": {
+      "description": "组件包含的子组件列表",
+      "mandatory": false,
+      "length": "0..N",
+      "valueRange": "组件复合对象",
+      "aliases": []
+    },
+    "schema": {
+      "description": "用于校验组件的信息描述",
+      "mandatory": false,
+      "valueRange": "复合对象",
+      "aliases": ["Schema", "dataschema"]
+    }
+  },
+  "thingTemplate": {
+    "identifier": {
+      "description": "物模板标识符",
+      "mandatory": false,
+      "length": "[1,100]",
+      "valueRange": "N/A",
+      "aliases": ["id", "Id"]
+    },
+    "name": {
+      "description": "物模板名称",
+      "mandatory": true,
+      "length": "[1,50]",
+      "valueRange": "可包含行业信息",
+      "aliases": ["Name"]
+    },
+    "title": {
+      "description": "物模板显示标题",
+      "mandatory": false,
+      "length": "[1,50]",
+      "valueRange": "N/A",
+      "aliases": ["DisplayName"]
+    },
+    "description": {
+      "description": "物模板描述",
+      "mandatory": false,
+      "length": "[1,200]",
+      "valueRange": "N/A",
+      "aliases": ["Description"]
+    },
+    "properties": {
+      "description": "物模板包含的属性列表",
+      "mandatory": false,
+      "length": "0..N",
+      "valueRange": "属性复合对象",
+      "aliases": []
+    },
+    "actions": {
+      "description": "物模板包含的行为列表",
+      "mandatory": false,
+      "length": "0..N",
+      "valueRange": "行为复合对象",
+      "aliases": ["ActionList"]
+    },
+    "events": {
+      "description": "物模板包含的事件列表",
+      "mandatory": false,
+      "length": "0..N",
+      "valueRange": "事件复合对象",
+      "aliases": ["eventList"]
+    },
+    "components": {
+      "description": "物模板包含的组件列表",
+      "mandatory": false,
+      "length": "0..N",
+      "valueRange": "组件复合对象",
+      "aliases": ["FunctionBlock"]
+    },
+    "schema": {
+      "description": "用于校验的数据模式",
+      "mandatory": false,
+      "valueRange": "复合对象",
+      "aliases": ["Schema", "dataSchema"]
+    }
+  },
+  "dataFormat": {
+    "dataType": {
+      "description": "数据类型",
+      "mandatory": true,
+      "valueRange": "int/float/double/string/bitMap/DATE/TEXT/ARRAY/ENUM/BOOL/STRUCT",
+      "aliases": ["Type"]
+    },
+    "max": {
+      "description": "最大值（数值型有效）",
+      "mandatory": false,
+      "aliases": ["maximum"]
+    },
+    "min": {
+      "description": "最小值（数值型有效）",
+      "mandatory": false,
+      "aliases": ["minimum"]
+    },
+    "step": {
+      "description": "变化幅度（数值型有效）",
+      "mandatory": false,
+      "aliases": ["scale"]
+    },
+    "unit": {
+      "description": "数据单位",
+      "mandatory": false,
+      "aliases": ["Unit"]
+    },
+    "defaultValue": {
+      "description": "默认值",
+      "mandatory": false,
+      "aliases": ["default"]
+    },
+    "precise": {
+      "description": "精度（float/double有效）",
+      "mandatory": true,
+      "aliases": ["Precise"]
+    },
+    "minLength": {
+      "description": "字符串最小长度",
+      "mandatory": false,
+      "aliases": ["min"]
+    },
+    "maxLength": {
+      "description": "字符串最大长度",
+      "mandatory": false,
+      "aliases": ["max"]
+    },
+    "length": {
+      "description": "数据长度（TEXT有效）",
+      "mandatory": false,
+      "valueRange": "≤2048字节",
+      "aliases": ["datalength"]
+    },
+    "timestamp": {
+      "description": "时间格式（DATE有效）",
+      "mandatory": false,
+      "aliases": ["Timestamp"]
+    },
+    "size": {
+      "description": "数组长度（ARRAY有效）",
+      "mandatory": false,
+      "aliases": ["Size"]
+    },
+    "childDataType": {
+      "description": "子元素数据类型（ARRAY有效）",
+      "mandatory": false,
+      "valueRange": "STRUCT/INT/FLOAT/DOUBLE/TEXT",
+      "aliases": []
+    },
+    "arrayDesc": {
+      "description": "数组项说明",
+      "mandatory": false,
+      "aliases": ["ArrayDesc"]
+    },
+    "value": {
+      "description": "枚举项说明（ENUM/BOOL有效）",
+      "mandatory": false,
+      "aliases": ["enumDesc"]
+    },
+    "structureDesc": {
+      "description": "结构体项说明（STRUCT有效）",
+      "mandatory": false,
+      "aliases": []
+    },
+    "bitmapDesc": {
+      "description": "位图项说明（BITMAP有效）",
+      "mandatory": false,
+      "aliases": []
+    }
+  }
+}

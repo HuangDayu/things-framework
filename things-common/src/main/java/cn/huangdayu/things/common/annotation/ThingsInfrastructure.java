@@ -1,6 +1,13 @@
 package cn.huangdayu.things.common.annotation;
 
+import java.lang.annotation.*;
+
 /**
  * @author huangdayu
- */public @interface ThingsInfrastructure {
+ */
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@ThingsBean
+public @interface ThingsInfrastructure {
 }

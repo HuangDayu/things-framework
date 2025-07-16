@@ -1,0 +1,491 @@
+{
+  "version": "1.0",
+  "profile": {
+    "industryId": "1",
+    "sceneId": "14",
+    "categoryId": "300",
+    "productId": "TqbMiJRCAxR"
+  },
+  "properties": [
+    {
+      "identifier": "FaceSetMD5Sign",
+      "name": "人脸库 MD5 签名",
+      "functionType": "st",
+      "accessMode": "r",
+      "desc": "",
+      "dataType": {
+        "type": "string",
+        "specs": {
+          "length": 255
+        }
+      }
+    },
+    {
+      "identifier": "OnMatchThreshold",
+      "name": "人脸比对成功阈值",
+      "functionType": "st",
+      "accessMode": "rw",
+      "desc": "",
+      "dataType": {
+        "type": "double",
+        "specs": {
+          "min": "0",
+          "max": "100",
+          "unit": "百分比 / %",
+          "step": "0.01"
+        }
+      }
+    },
+    {
+      "identifier": "FaceSetID",
+      "name": "人脸库 ID",
+      "functionType": "st",
+      "accessMode": "rw",
+      "desc": "",
+      "dataType": {
+        "type": "string",
+        "specs": {
+          "length": 255
+        }
+      }
+    },
+    {
+      "identifier": "FaceSetAlgorithmVersion",
+      "name": "人脸库算法版本",
+      "functionType": "st",
+      "accessMode": "rw",
+      "desc": "",
+      "dataType": {
+        "type": "string",
+        "specs": {
+          "length": 255
+        }
+      }
+    },
+    {
+      "identifier": "FaceSetSize",
+      "name": "当前人脸库大小",
+      "functionType": "st",
+      "accessMode": "rw",
+      "desc": "",
+      "dataType": {
+        "type": "int32",
+        "specs": {
+          "min": "0",
+          "max": "200000",
+          "unit": "",
+          "step": "1"
+        }
+      }
+    },
+    {
+      "identifier": "FaceSetPicStoreAbility",
+      "name": "人脸库图片存储能力",
+      "functionType": "st",
+      "accessMode": "rw",
+      "desc": "",
+      "dataType": {
+        "type": "int32",
+        "specs": {
+          "min": "0",
+          "max": "200000",
+          "unit": "",
+          "step": "1"
+        }
+      }
+    },
+    {
+      "identifier": "Geolocation",
+      "name": "地理位置",
+      "functionType": "st",
+      "accessMode": "rw",
+      "desc": "",
+      "dataType": {
+        "type": "struct",
+        "specs": [
+          {
+            "identifier": "Longitude",
+            "name": "经度",
+            "dataType": {
+              "type": "double",
+              "specs": {
+                "min": "-180",
+                "max": "180",
+                "unit": "度",
+                "step": "0.01"
+              }
+            }
+          },
+          {
+            "identifier": "Latitude",
+            "name": "纬度",
+            "dataType": {
+              "type": "double",
+              "specs": {
+                "min": "-90",
+                "max": "90",
+                "unit": "度",
+                "step": "0.01"
+              }
+            }
+          },
+          {
+            "identifier": "Altitude",
+            "name": "海拔",
+            "dataType": {
+              "type": "double",
+              "specs": {
+                "min": "0",
+                "max": "9999",
+                "unit": "米 / m",
+                "step": "0.01"
+              }
+            }
+          },
+          {
+            "identifier": "CoordinateSystem",
+            "name": "坐标系统",
+            "dataType": {
+              "type": "enum",
+              "specs": {
+                "1": "WGS_84",
+                "2": "GC_02"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "identifier": "NeedAuthVerifySDK",
+      "name": "人脸算法 SDK 需授权",
+      "functionType": "st",
+      "eventType": "info",
+      "desc": "",
+      "outputData": [
+        {
+          "identifier": "PackageName",
+          "name": "包名",
+          "dataType": {
+            "type": "string",
+            "specs": {
+              "length": 255
+            }
+          }
+        },
+        {
+          "identifier": "ClientID",
+          "name": "设备唯一标识",
+          "dataType": {
+            "type": "string",
+            "specs": {
+              "length": 255
+            }
+          }
+        },
+        {
+          "identifier": "PublicKey",
+          "name": "包公钥信息",
+          "dataType": {
+            "type": "string",
+            "specs": {
+              "length": 255
+            }
+          }
+        },
+        {
+          "identifier": "Token",
+          "name": "设备 Token 值",
+          "dataType": {
+            "type": "string",
+            "specs": {
+              "length": 255
+            }
+          }
+        },
+        {
+          "identifier": "DeviceEncrypt",
+          "name": "设备加密信息唯一标识",
+          "dataType": {
+            "type": "string",
+            "specs": {
+              "length": 255
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "OnDetect",
+      "name": "人脸检测事件上报",
+      "functionType": "st",
+      "eventType": "info",
+      "desc": "",
+      "outputData": [
+        {
+          "identifier": "StoreID",
+          "name": "人脸检测图 StoreID",
+          "dataType": {
+            "type": "string",
+            "specs": {
+              "length": 255
+            }
+          }
+        },
+        {
+          "identifier": "GroupID",
+          "name": "人脸组 ID",
+          "dataType": {
+            "type": "string",
+            "specs": {
+              "length": 255
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "OnMatched",
+      "name": "人脸比对事件上报",
+      "functionType": "st",
+      "eventType": "info",
+      "desc": "",
+      "outputData": [
+        {
+          "identifier": "UserPicID",
+          "name": "用户人脸图 ID",
+          "dataType": {
+            "type": "string",
+            "specs": {
+              "length": 255
+            }
+          }
+        },
+        {
+          "identifier": "FaceMatchedPicStorID",
+          "name": "人脸比对图片 StorID",
+          "dataType": {
+            "type": "string",
+            "specs": {
+              "length": 255
+            }
+          }
+        },
+        {
+          "identifier": "Similarity",
+          "name": "人脸比对相似度结果",
+          "dataType": {
+            "type": "float",
+            "specs": {
+              "min": "0",
+              "max": "100",
+              "unit": "",
+              "step": "0.1"
+            }
+          }
+        },
+        {
+          "identifier": "UserInfo",
+          "name": "人脸 ID 相关属性",
+          "dataType": {
+            "type": "string",
+            "specs": {
+              "length": 255
+            }
+          }
+        },
+        {
+          "identifier": "GroupID",
+          "name": "人脸组ID",
+          "dataType": {
+            "type": "string",
+            "specs": {
+              "length": 255
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "identifier": "AuthVerifySDK",
+      "name": "设备授权文件下发",
+      "functionType": "st",
+      "desc": "",
+      "callType": "sync",
+      "input": [
+        {
+          "identifier": "LicenseData",
+          "name": "授权文件",
+          "dataType": {
+            "type": "string",
+            "specs": {
+              "length": 255
+            }
+          }
+        },
+        {
+          "identifier": "StatusCode",
+          "name": "状态码",
+          "dataType": {
+            "type": "int32",
+            "specs": {
+              "min": "0",
+              "max": "65535",
+              "unit": "",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "StatusCodeDescription",
+          "name": "状态码描述",
+          "dataType": {
+            "type": "string",
+            "specs": {
+              "length": 255
+            }
+          }
+        }
+      ],
+      "output": [
+        {
+          "identifier": "DoAuthorized",
+          "name": "设备授权是否成功",
+          "dataType": {
+            "type": "bool",
+            "specs": {
+              "true": "授权失败",
+              "false": "授权成功"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "SyncFacePictures",
+      "name": "同步人脸库图片",
+      "functionType": "st",
+      "desc": "",
+      "callType": "sync",
+      "input": [
+        {
+          "identifier": "FacePicURL",
+          "name": "同步文件 URL 地址",
+          "dataType": {
+            "type": "string",
+            "specs": {
+              "length": 255
+            }
+          }
+        }
+      ],
+      "output": [
+        {
+          "identifier": "SyncPicStatus",
+          "name": "设备同步图片状态值",
+          "dataType": {
+            "type": "enum",
+            "specs": {
+              "0": "成功",
+              "1": "布控中",
+              "2": "下载文件失败",
+              "3": "解析文件失败"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "QuerySyncPicSchedule",
+      "name": "查询人脸布控进度",
+      "functionType": "st",
+      "desc": "",
+      "callType": "sync",
+      "input": [
+        {
+          "identifier": "GroupID",
+          "name": "人脸库组 ID",
+          "dataType": {
+            "type": "string",
+            "specs": {
+              "length": 255
+            }
+          }
+        }
+      ],
+      "output": [
+        {
+          "identifier": "Rate",
+          "name": "人脸图布控百分比",
+          "dataType": {
+            "type": "double",
+            "specs": {
+              "min": "0",
+              "max": "100",
+              "unit": "百分比 / %",
+              "step": "0.01"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "QueryAddedUserInfo",
+      "name": "查询布控成功的人脸图",
+      "functionType": "st",
+      "desc": "",
+      "callType": "sync",
+      "input": [
+        {
+          "identifier": "GroupID",
+          "name": "人脸库组ID",
+          "dataType": {
+            "type": "string",
+            "specs": {
+              "length": 255
+            }
+          }
+        }
+      ],
+      "output": [
+        {
+          "identifier": "StoreID",
+          "name": "人脸布控文件storeID",
+          "dataType": {
+            "type": "string",
+            "specs": {
+              "length": 255
+            }
+          }
+        },
+        {
+          "identifier": "Type",
+          "name": "类型",
+          "dataType": {
+            "type": "enum",
+            "specs": {
+              "0": "StoreID",
+              "1": "FileName",
+              "2": "URL"
+            }
+          }
+        },
+        {
+          "identifier": "SyncPicStatus",
+          "name": "查询添加用户信息的布控状态",
+          "dataType": {
+            "type": "enum",
+            "specs": {
+              "0": "成功",
+              "1": "布控中"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

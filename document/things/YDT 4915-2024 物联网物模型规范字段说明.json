@@ -1,0 +1,818 @@
+{
+  "Status": {
+    "deviceName": {
+      "type": "String",
+      "mandatory": true,
+      "length": "{1,50}",
+      "description": "设备名称",
+      "keywords": ["deviceName", "DeviceName"]
+    },
+    "deviceID": {
+      "type": "String",
+      "mandatory": true,
+      "length": "{1,100}",
+      "description": "设备标识",
+      "keywords": ["deviceID", "deviceID", "DeviceID", "DeviceId"]
+    },
+    "status": {
+      "type": "String",
+      "mandatory": true,
+      "length": "{1,50}",
+      "description": "设备在线/离线状态",
+      "keywords": ["status", "Status"]
+    },
+    "time": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,100}",
+      "description": "发送通知的时间",
+      "keywords": ["time", "Time"]
+    },
+    "utcTime": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,100}",
+      "description": "发送通知的UTC时间",
+      "keywords": ["utcTime", "UtcTime"]
+    },
+    "lastTime": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,100}",
+      "description": "状态变更前最后一次通信的时间",
+      "keywords": ["lastTime", "LastTime"]
+    },
+    "utclastTime": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,100}",
+      "description": "状态变更前最后一次通信的UTC时间",
+      "keywords": ["utclastTime", "UtclastTime"]
+    },
+    "clientIp": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,100}",
+      "description": "设备公网出口IP",
+      "keywords": ["clientIp", "ClientIp"]
+    }
+  },
+  "Profile": {
+    "description": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,100}",
+      "description": "产品描述",
+      "keywords": ["description", "Description"]
+    },
+    "deviceID": {
+      "type": "String",
+      "mandatory": "有条件必选",
+      "length": "{1,100}",
+      "description": "设备标识",
+      "keywords": ["deviceID", "deviceUID", "DeviceUDID", "DeviceId"]
+    },
+    "brand": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,100}",
+      "description": "设备品牌",
+      "keywords": ["brand", "Brand"]
+    },
+    "model": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,100}",
+      "description": "设备型号",
+      "keywords": ["model", "Model", "deviceModel", "DeviceModel"]
+    },
+    "type": {
+      "type": "Enum",
+      "mandatory": false,
+      "value_range": "0-直接设备；1-网关设备；2-网关子设备",
+      "description": "设备类型",
+      "keywords": ["type", "Type"]
+    },
+    "protocolType": {
+      "type": "Enum",
+      "mandatory": false,
+      "value_range": "0-MQTT；1-LwM2M；2-HTTP；3-其他",
+      "description": "协议类型",
+      "keywords": ["protocolType", "ProtocolType"]
+    },
+    "netType": {
+      "type": "Enum",
+      "mandatory": false,
+      "value_range": "0-WIFI；1-2G；2-3G；3-4G；4-Cat1；5-5G；6-NB-IoT；7-LoRa；8-其他",
+      "description": "网络类型",
+      "keywords": ["netType", "NetType"]
+    },
+    "deviceMAC": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,50}",
+      "description": "设备MAC地址",
+      "keywords": ["deviceMAC", "DeviceMAC"]
+    },
+    "deviceSerialNumber": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,100}",
+      "description": "设备序列号",
+      "keywords": ["deviceSerialNumber", "DeviceSerialNumber"]
+    },
+    "version": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,100}",
+      "description": "物模型版本号",
+      "keywords": ["version", "Version"]
+    },
+    "firmware": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,20}",
+      "description": "设备软件版本号",
+      "keywords": ["firmware"]
+    },
+    "deviceCU": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,100}",
+      "description": "通信单元（模组）供应商识别",
+      "keywords": ["deviceCU", "DeviceCU"]
+    },
+    "productClass": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,100}",
+      "description": "产品类别",
+      "keywords": ["productClass", "ProductClass"]
+    }
+  },
+  "Property": {
+    "identifier": {
+      "type": "String",
+      "mandatory": "条件下必选",
+      "length": "[1,100]",
+      "description": "属性唯一标识符",
+      "keywords": ["id", "Identifier", "identifier"]
+    },
+    "name": {
+      "type": "String",
+      "mandatory": "条件下必选",
+      "length": "[1,50]",
+      "description": "属性英文名称",
+      "keywords": ["name", "displayName", "propertyName", "Name"]
+    },
+    "cnName": {
+      "type": "String",
+      "mandatory": "条件下必选",
+      "length": "[1,50]",
+      "description": "属性中文名称",
+      "keywords": ["name", "displayName", "propertyName", "Name"]
+    },
+    "description": {
+      "type": "String",
+      "mandatory": false,
+      "length": "[1,50]",
+      "description": "属性描述",
+      "keywords": ["description", "desc", "Description"]
+    },
+    "required": {
+      "type": "Bool",
+      "mandatory": false,
+      "value_range": "True/False",
+      "description": "是否必选属性",
+      "keywords": ["required", "Mandatory", "tmRequired", "Required"]
+    },
+    "dataType": {
+      "type": "Enum",
+      "mandatory": false,
+      "value_range": "Int8/UInt8/Int16/UInt16/Int32/UInt32/Int64/UInt64/Bool/Enum/String/Double/Array/Struct/Bitmap",
+      "description": "属性数据类型",
+      "keywords": ["dataType", "Type", "DataType"]
+    },
+    "min": {
+      "type": "String",
+      "mandatory": false,
+      "description": "数值型最小值",
+      "keywords": ["min", "Min"]
+    },
+    "max": {
+      "type": "String",
+      "mandatory": false,
+      "description": "数值型最大值",
+      "keywords": ["Max", "max"]
+    },
+    "precise": {
+      "type": "String",
+      "mandatory": false,
+      "description": "精度（仅FLOAT/Double有效）",
+      "keywords": ["precise", "Precise"]
+    },
+    "rwMode": {
+      "type": "Enum",
+      "mandatory": false,
+      "value_range": "READ/WRITE/READWRITE",
+      "description": "读写标识",
+      "keywords": ["rwMode", "accessMode", "rwACL", "rwFlag", "mode", "RwMode"]
+    },
+    "unit": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,50}",
+      "description": "数据单位",
+      "keywords": ["unit", "Unit"]
+    },
+    "schema": {
+      "type": "JsonObject",
+      "mandatory": false,
+      "description": "数据模式定义",
+      "keywords": ["schema", "Schema", "dataSchema", "DataSchema", "tmData"]
+    },
+    "custom": {
+      "type": "Bool",
+      "mandatory": false,
+      "value_range": "True/False",
+      "description": "是否自定义功能",
+      "keywords": ["custom", "Custom"]
+    }
+  },
+  "Action": {
+    "identifier": {
+      "type": "String",
+      "mandatory": "有条件必选",
+      "length": "{1,100}",
+      "description": "行为标识符",
+      "keywords": ["identifier", "id", "Identifier"]
+    },
+    "name": {
+      "type": "String",
+      "mandatory": "有条件必选",
+      "length": "{1,50}",
+      "description": "行为英文名称",
+      "keywords": ["name", "ServiceName", "Servicename", "Name"]
+    },
+    "cnName": {
+      "type": "String",
+      "mandatory": "有条件必选",
+      "length": "{1,50}",
+      "description": "行为中文名称",
+      "keywords": ["name", "ServiceName", "Servicename", "Name"]
+    },
+    "title": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,100}",
+      "description": "行为显示标题",
+      "keywords": ["title", "Title"]
+    },
+    "description": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,50}",
+      "description": "行为描述",
+      "keywords": ["description", "desc", "Description"]
+    },
+    "required": {
+      "type": "Bool",
+      "mandatory": false,
+      "value_range": "True/False",
+      "description": "是否必选行为",
+      "keywords": ["required", "tmRequired", "Required"]
+    },
+    "input": {
+      "type": "Array",
+      "mandatory": true,
+      "length": "[1,100]",
+      "description": "输入参数列表",
+      "keywords": ["input", "inputParams", "inputs", "Input", "inputData"]
+    },
+    "output": {
+      "type": "Array",
+      "mandatory": false,
+      "length": "[1,100]",
+      "description": "输出参数列表",
+      "keywords": ["output", "outputParams", "outputs", "Output", "outputData"]
+    },
+    "callType": {
+      "type": "Enum",
+      "mandatory": false,
+      "value_range": "SYNC/ASYNC",
+      "description": "调用方式",
+      "keywords": ["callType", "ActionType", "CallType"]
+    },
+    "custom": {
+      "type": "Bool",
+      "mandatory": false,
+      "value_range": "True/False",
+      "description": "是否自定义功能",
+      "keywords": ["custom", "Custom"]
+    }
+  },
+  "Event": {
+    "identifier": {
+      "type": "String",
+      "mandatory": "有条件必选",
+      "length": "{1,100}",
+      "description": "事件标识符",
+      "keywords": ["identifier", "id", "Identifier"]
+    },
+    "name": {
+      "type": "String",
+      "mandatory": "有条件必选",
+      "length": "{1,50}",
+      "description": "事件英文名称",
+      "keywords": ["name", "eventName", "Name"]
+    },
+    "cnName": {
+      "type": "String",
+      "mandatory": "有条件必选",
+      "length": "{1,50}",
+      "description": "事件中文名称",
+      "keywords": ["name", "eventName", "Name"]
+    },
+    "title": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,100}",
+      "description": "事件显示标题",
+      "keywords": ["title", "Title"]
+    },
+    "description": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,50}",
+      "description": "事件描述",
+      "keywords": ["description", "desc", "Description"]
+    },
+    "required": {
+      "type": "Bool",
+      "mandatory": false,
+      "value_range": "True/False",
+      "description": "是否必选事件",
+      "keywords": ["required", "Required"]
+    },
+    "output": {
+      "type": "Array/List",
+      "mandatory": false,
+      "length": "[1,100]",
+      "description": "输出参数列表",
+      "keywords": ["output", "outputParams", "outpouts", "Output", "outputdata", "outputData"]
+    },
+    "eventType": {
+      "type": "Enum",
+      "mandatory": false,
+      "value_range": "INFO_EVENT_TYPE/ALERT_EVENT_TYPE/ERROR_EVENT_TYPE",
+      "description": "事件类型",
+      "keywords": ["eventType", "EventType"]
+    },
+    "custom": {
+      "type": "Bool",
+      "mandatory": false,
+      "value_range": "True/False",
+      "description": "是否自定义功能",
+      "keywords": ["custom", "Custom"]
+    }
+  },
+  "InputOutput": {
+    "identifier": {
+      "type": "String",
+      "mandatory": "有条件必选",
+      "length": "{1,100}",
+      "description": "参数标识符",
+      "keywords": ["id", "Identifier", "identifier"]
+    },
+    "name": {
+      "type": "String",
+      "mandatory": "有条件必选",
+      "length": "{1,50}",
+      "description": "参数名称",
+      "keywords": ["displayName", "Name", "name"]
+    },
+    "description": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,50}",
+      "description": "参数描述",
+      "keywords": ["description", "desc", "Description"]
+    },
+    "direction": {
+      "type": "String",
+      "mandatory": false,
+      "value_range": "PARAM_INPUT/PARAM_OUTPUT",
+      "description": "参数方向",
+      "keywords": ["direction", "Direction"]
+    },
+    "paraOrder": {
+      "type": "Integer",
+      "mandatory": false,
+      "length": "[1,100]",
+      "description": "参数序号",
+      "keywords": ["paraOrder", "ParaOrder"]
+    },
+    "dataType": {
+      "type": "String",
+      "mandatory": false,
+      "value_range": "ARRAY/STRUCT/INT/FLOAT/DOUBLE",
+      "description": "数据类型",
+      "keywords": ["datatype", "type", "DataType"]
+    },
+    "min": {
+      "type": "String",
+      "mandatory": false,
+      "description": "数值型最小值",
+      "keywords": ["min", "Min"]
+    },
+    "max": {
+      "type": "String",
+      "mandatory": false,
+      "description": "数值型最大值",
+      "keywords": ["Max", "max"]
+    },
+    "precise": {
+      "type": "String",
+      "mandatory": false,
+      "description": "精度",
+      "keywords": ["precise", "Precise"]
+    },
+    "unit": {
+      "type": "String",
+      "mandatory": false,
+      "description": "数据单位",
+      "keywords": ["unit", "Unit"]
+    },
+    "custom": {
+      "type": "Bool",
+      "mandatory": false,
+      "value_range": "True/False",
+      "description": "是否自定义功能",
+      "keywords": ["custom"]
+    },
+    "schema": {
+      "type": "JsonObject",
+      "mandatory": false,
+      "description": "数据模式",
+      "keywords": ["schema", "Schema", "dataSchema", "DataSchema", "table"]
+    }
+  },
+  "Component": {
+    "identifier": {
+      "type": "String",
+      "mandatory": "有条件必选",
+      "length": "{1,100}",
+      "description": "组件标识符",
+      "keywords": ["id", "Id", "identifier"]
+    },
+    "name": {
+      "type": "String",
+      "mandatory": "有条件必选",
+      "length": "{1,50}",
+      "description": "组件英文名称",
+      "keywords": ["name", "Name"]
+    },
+    "cnName": {
+      "type": "String",
+      "mandatory": "有条件必选",
+      "length": "{1,50}",
+      "description": "组件中文名称",
+      "keywords": ["name", "Name"]
+    },
+    "title": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,50}",
+      "description": "组件显示标题",
+      "keywords": ["displayName", "DisplayName"]
+    },
+    "description": {
+      "type": "String",
+      "mandatory": false,
+      "length": "{1,200}",
+      "description": "组件描述",
+      "keywords": ["description", "Description"]
+    },
+    "properties": {
+      "type": "List",
+      "mandatory": false,
+      "length": "0..N",
+      "description": "属性列表",
+      "keywords": ["properties"]
+    },
+    "actions": {
+      "type": "List",
+      "mandatory": false,
+      "length": "0..N",
+      "description": "行为列表",
+      "keywords": ["ActionList", "Actions", "actions"]
+    },
+    "events": {
+      "type": "List",
+      "mandatory": false,
+      "length": "0..N",
+      "description": "事件列表",
+      "keywords": ["eventList", "events"]
+    },
+    "subFunctionBlock": {
+      "type": "List",
+      "mandatory": false,
+      "length": "0..N",
+      "description": "子组件列表",
+      "keywords": ["subFunctionBlock"]
+    },
+    "schema": {
+      "type": "JsonObject",
+      "mandatory": false,
+      "description": "数据模式",
+      "keywords": ["schema", "Schema", "dataschema", "Dataschema", "tmData"]
+    }
+  },
+  "ThingTemplate": {
+    "identifier": {
+      "type": "String",
+      "mandatory": false,
+      "length": "[1,100]",
+      "description": "物模板标识符",
+      "keywords": ["id", "Id", "identifier"]
+    },
+    "name": {
+      "type": "String",
+      "mandatory": true,
+      "length": "[1,50]",
+      "description": "物模板名称",
+      "keywords": ["name", "Name"]
+    },
+    "title": {
+      "type": "String",
+      "mandatory": false,
+      "length": "[1,50]",
+      "description": "物模板显示标题",
+      "keywords": ["displayName", "DisplayName"]
+    },
+    "description": {
+      "type": "String",
+      "mandatory": false,
+      "length": "[1,200]",
+      "description": "物模板描述",
+      "keywords": ["description", "Description"]
+    },
+    "properties": {
+      "type": "List",
+      "mandatory": false,
+      "length": "0..N",
+      "description": "属性列表",
+      "keywords": ["properties"]
+    },
+    "actions": {
+      "type": "List",
+      "mandatory": false,
+      "length": "0..N",
+      "description": "行为列表",
+      "keywords": ["ActionList", "Actions", "actions"]
+    },
+    "events": {
+      "type": "List",
+      "mandatory": false,
+      "length": "0..N",
+      "description": "事件列表",
+      "keywords": ["eventList", "events"]
+    },
+    "components": {
+      "type": "List",
+      "mandatory": false,
+      "length": "0..N",
+      "description": "组件列表",
+      "keywords": ["FunctionBlock", "FunctionBlocks"]
+    },
+    "schema": {
+      "type": "JsonObject",
+      "mandatory": false,
+      "description": "数据模式",
+      "keywords": ["schema", "Schema", "dataSchema", "DataSchema", "tmData"]
+    }
+  },
+  "DataFormat": {
+    "Basic": {
+      "dataType": {
+        "type": "String",
+        "mandatory": true,
+        "value_range": "int/float/double/string/bitMap",
+        "keywords": ["dataType", "type", "DataType"]
+      },
+      "max": {
+        "type": "Value",
+        "mandatory": false,
+        "description": "仅int/float/double有效",
+        "keywords": ["max", "maximum", "Max"]
+      },
+      "min": {
+        "type": "Value",
+        "mandatory": false,
+        "description": "仅int/float/double有效",
+        "keywords": ["min", "minimum", "Min"]
+      },
+      "step": {
+        "type": "String",
+        "mandatory": false,
+        "description": "变化幅度",
+        "keywords": ["step", "scale", "Step"]
+      },
+      "unit": {
+        "type": "String",
+        "mandatory": false,
+        "description": "数据单位",
+        "keywords": ["unit", "Unit"]
+      },
+      "unitName": {
+        "type": "String",
+        "mandatory": false,
+        "description": "单位名称",
+        "keywords": ["unitName"]
+      },
+      "default": {
+        "type": "Accrding to Data type definition",
+        "mandatory": false,
+        "description": "默认值",
+        "keywords": ["default", "defaultValue", "Default"]
+      },
+      "precise": {
+        "type": "String",
+        "mandatory": true,
+        "description": "精度（仅float/double有效）",
+        "keywords": ["precise", "Precise"]
+      },
+      "minLength": {
+        "type": "Integer",
+        "mandatory": false,
+        "description": "字符串最小长度",
+        "keywords": ["minLength", "min", "MinLength"]
+      },
+      "maxLength": {
+        "type": "Integer",
+        "mandatory": false,
+        "description": "字符串最大长度",
+        "keywords": ["maxLength", "max", "MaxLength"]
+      },
+      "custom": {
+        "type": "Boolean",
+        "mandatory": false,
+        "value_range": "True/False",
+        "keywords": ["custom", "Custom"]
+      }
+    },
+    "DateText": {
+      "dataType": {
+        "type": "String",
+        "mandatory": true,
+        "value_range": "DATE/TEXT",
+        "keywords": ["dataType", "type", "DataType"]
+      },
+      "default": {
+        "type": "Accoding to Data type definition",
+        "mandatory": false,
+        "keywords": ["default", "defaultValue", "Default"]
+      },
+      "length": {
+        "type": "Unit64",
+        "mandatory": false,
+        "description": "数据长度（仅TEXT有效）",
+        "keywords": ["length", "datalength", "Length"]
+      },
+      "timestamp": {
+        "type": "String",
+        "mandatory": false,
+        "description": "时间格式（仅DATE有效）",
+        "keywords": ["timestamp", "Timestamp"]
+      },
+      "custom": {
+        "type": "Boolean",
+        "mandatory": false,
+        "value_range": "True/False",
+        "keywords": ["custom", "Custom"]
+      }
+    },
+    "Array": {
+      "dataType": {
+        "type": "String",
+        "mandatory": true,
+        "value_range": "ARRAY",
+        "keywords": ["dataType", "type", "DataType"]
+      },
+      "size": {
+        "type": "Unit64",
+        "mandatory": false,
+        "description": "数组长度",
+        "keywords": ["size", "Size"]
+      },
+      "childDataType": {
+        "type": "String",
+        "mandatory": false,
+        "value_range": "STRUCT/INT/FLOAT/DOUBLE/TEXT",
+        "description": "子元素数据类型",
+        "keywords": ["childDataType"]
+      },
+      "arrayDesc": {
+        "type": "Json object",
+        "mandatory": false,
+        "description": "数组项说明",
+        "keywords": ["arrayDesc", "ArrayDesc"]
+      },
+      "custom": {
+        "type": "Boolean",
+        "mandatory": false,
+        "value_range": "True/False",
+        "keywords": ["custom", "Custom"]
+      }
+    },
+    "EnumBool": {
+      "dataType": {
+        "type": "String",
+        "mandatory": true,
+        "value_range": "ENUM/BOOL",
+        "keywords": ["dataType", "type", "DataType"]
+      },
+      "value": {
+        "type": "Json object",
+        "mandatory": false,
+        "description": "枚举项说明",
+        "keywords": ["value", "enumDesc", "mapping value", "Value"]
+      },
+      "custom": {
+        "type": "Boolean",
+        "mandatory": false,
+        "value_range": "True/False",
+        "keywords": ["custom", "Custom"]
+      }
+    },
+    "Struct": {
+      "dataType": {
+        "type": "String",
+        "mandatory": true,
+        "value_range": "STRUCT",
+        "keywords": ["dataType", "type", "DataType"]
+      },
+      "identifier": {
+        "type": "String",
+        "mandatory": false,
+        "description": "子参数标识符",
+        "keywords": ["identifier"]
+      },
+      "name": {
+        "type": "String",
+        "mandatory": false,
+        "description": "子参数名称",
+        "keywords": ["name"]
+      },
+      "structureDesc": {
+        "type": "Json object",
+        "mandatory": false,
+        "description": "结构体项说明",
+        "keywords": ["structureDesc"]
+      },
+      "custom": {
+        "type": "Boolean",
+        "mandatory": false,
+        "value_range": "True/False",
+        "keywords": ["custom", "Custom"]
+      }
+    },
+    "Bitmap": {
+      "dataType": {
+        "type": "String",
+        "mandatory": true,
+        "value_range": "BITMAP",
+        "keywords": ["dataType", "type", "DataType"]
+      },
+      "bitmapDesc": {
+        "type": "Json object",
+        "mandatory": false,
+        "description": "位图项说明",
+        "keywords": ["bitmapDesc"]
+      },
+      "custom": {
+        "type": "Boolean",
+        "mandatory": false,
+        "value_range": "True/False",
+        "keywords": ["custom", "Custom"]
+      }
+    }
+  },
+  "ListDataFormat": {
+    "dataSpecsList": {
+      "type": "List",
+      "mandatory": false,
+      "description": "列表数据格式（ENUM/BOOL/STRUCT）",
+      "keywords": ["dataSpecsList", "DataSpecsList"]
+    }
+  },
+  "NonListDataFormat": {
+    "dataSpecs": {
+      "type": "Json Object",
+      "mandatory": false,
+      "value_range": "INT/FLOAT/DOUBLE/TEXT/DATE/ARRAY",
+      "description": "非列表数据格式",
+      "keywords": ["dataSpecs", "DataSpecs"]
+    }
+  }
+}

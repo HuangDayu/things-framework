@@ -1,0 +1,11 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    api project(path: ':things-common')
+
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.ai:spring-ai-starter-mcp-server-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+}

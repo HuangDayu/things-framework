@@ -1,0 +1,40 @@
+spring:
+  ai:
+    mcp:
+      server:
+        name: things-mcp-server
+        version: 1.0.0
+        instructions: 该反应式服务器提供控制物模型规范的物联网智能设备的工具，资源和提示词
+        type: async
+        sse-message-endpoint: /things-mcp/messages
+        sse-endpoint: /things-mcp-sse
+        capabilities:
+          completion: true
+          resource: true
+          tool: true
+          prompt: true
+
+things:
+  mcp:
+    resources:
+      - name: things-dsl
+        uri: classpath:/prompts/things-dsl.json
+        title: 物模型DSL规范
+        description: 物模型DSL规范
+        mime-type: application/json
+
+logging:
+  charset:
+    console: UTF-8
+    file: UTF-8
+  level:
+    org.springframework.ai.ollama.api: INFO
+    org.springframework.http.codec: INFO
+    io.modelcontextprotocol: DEBUG
+    reactor: INFO
+
+
+server:
+  port: 34567
+
+
