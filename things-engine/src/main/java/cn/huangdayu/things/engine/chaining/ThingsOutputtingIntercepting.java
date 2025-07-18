@@ -3,11 +3,11 @@ package cn.huangdayu.things.engine.chaining;
 import cn.huangdayu.things.api.message.ThingsIntercepting;
 import cn.huangdayu.things.common.annotation.ThingsInterceptor;
 import cn.huangdayu.things.common.async.ThingsAsyncManager;
-import cn.huangdayu.things.common.exception.ThingsException;
-import cn.huangdayu.things.common.message.BaseThingsMetadata;
-import cn.huangdayu.things.common.message.JsonThingsMessage;
-import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.events.ThingsSessionUpdatedEvent;
+import cn.huangdayu.things.common.exception.ThingsException;
+import cn.huangdayu.things.common.message.ThingsMessageMethod;
+import cn.huangdayu.things.common.message.ThingsRequestMessage;
+import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.huangdayu.things.common.wrapper.ThingsSession;
@@ -32,21 +32,21 @@ public class ThingsOutputtingIntercepting implements ThingsIntercepting {
     @Override
     public void afterCompletion(ThingsRequest thingsRequest, ThingsResponse thingsResponse, Exception exception) {
         log.atLevel(exception != null ? Level.WARN : Level.DEBUG).log("Things outputting message, times: {} , SofaBus type: {} , groupId: {} clientId: {} , topic: {} , sessionCode: {} , request： {} , response: {}  , exception: {}",
-                System.currentTimeMillis() - thingsRequest.getJtm().getTime(), thingsRequest.getType(), thingsRequest.getGroupCode(), thingsRequest.getClientCode(),
-                thingsRequest.getTopic(), thingsRequest.getSessionCode(), thingsRequest.getJtm(), thingsResponse.getJtm(), exception instanceof ThingsException ? exception.getMessage() : exception);
+                System.currentTimeMillis() - thingsRequest.getTrm().getTime(), thingsRequest.getType(), thingsRequest.getGroupCode(), thingsRequest.getClientCode(),
+                thingsRequest.getTopic(), thingsRequest.getSessionCode(), thingsRequest.getTrm(), thingsResponse.getTrm(), exception instanceof ThingsException ? exception.getMessage() : exception);
         ThingsAsyncManager.asAsyncRequest(thingsRequest);
     }
 
 
     public void doFilter(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        JsonThingsMessage jtm = thingsRequest.getJtm();
-        BaseThingsMetadata baseMetadata = jtm.getBaseMetadata();
+        ThingsRequestMessage trm = thingsRequest.getTrm();
+        ThingsMessageMethod baseMetadata = trm.getMessageMethod();
         ThingsSession thingsSession = new ThingsSession();
         thingsSession.setDeviceCode(baseMetadata.getDeviceCode());
         thingsSession.setOnline(true);
-        thingsSession.setTime(jtm.getTime());
+        thingsSession.setTime(trm.getTime());
         thingsSession.setProductCode(baseMetadata.getProductCode());
-        thingsSession.setSessionCode(StrUtil.toString(ReflectUtil.getFieldValue(jtm.getPayload(), "sessionCode")));
+        thingsSession.setSessionCode(StrUtil.toString(ReflectUtil.getFieldValue(trm.getParams(), "sessionCode")));
         thingsEventObserver.notifyObservers(new ThingsSessionUpdatedEvent(this, thingsSession));
     }
 }

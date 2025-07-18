@@ -5,8 +5,8 @@ import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.enums.ThingsChainingType;
 import cn.huangdayu.things.common.enums.ThingsMethodType;
 import cn.huangdayu.things.common.exception.ThingsException;
-import cn.huangdayu.things.common.message.BaseThingsMetadata;
-import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.ThingsMessageMethod;
+import cn.huangdayu.things.common.message.ThingsRequestMessage;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.huangdayu.things.engine.wrapper.ThingsHandlers;
@@ -99,9 +99,8 @@ public class ThingsChainingExecutor implements ThingsChaining {
      * @return
      */
     private boolean responseInput(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        if (thingsResponse.getJtm() != null) {
-            thingsRequest.setJtm(thingsResponse.getJtm());
-            thingsRequest.setTarget(thingsRequest.getSource());
+        if (thingsResponse.getTrm() != null) {
+            thingsResponse.setTarget(thingsRequest.getSource());
             return output(thingsRequest, new ThingsResponse());
         }
         return true;
@@ -115,9 +114,9 @@ public class ThingsChainingExecutor implements ThingsChaining {
         ExceptionValue exceptionValue = new ExceptionValue();
         try {
             // 如果已经处理过则不再处理，0 未执行，小于 0 已成功执行，大于 0 失败次数
-            AtomicInteger atomicInteger = cache.get(thingsRequest.getJtm().getId(), () -> new AtomicInteger(0));
+            AtomicInteger atomicInteger = cache.get(thingsRequest.getTrm().getId(), () -> new AtomicInteger(0));
             if (atomicInteger.get() < 0 || atomicInteger.get() >= MAX_FAILED_SUM) {
-                throw new ThingsException(ERROR, "Things chaining repeatedly messages: " + thingsRequest.getJtm().getId());
+                throw new ThingsException(ERROR, "Things chaining repeatedly messages: " + thingsRequest.getTrm().getId());
             }
             // 遍历执行所有前置拦截器
             chainingValues.getThingsInterceptors().forEach(interceptor -> {
@@ -147,17 +146,17 @@ public class ThingsChainingExecutor implements ThingsChaining {
      * @param cache
      */
     private void cacheHandledMessage(ThingsRequest thingsRequest, ExceptionValue exceptionValue, Cache<String, AtomicInteger> cache) {
-        AtomicInteger atomicInteger = cache.get(thingsRequest.getJtm().getId());
+        AtomicInteger atomicInteger = cache.get(thingsRequest.getTrm().getId());
         if (exceptionValue.getException() == null) {
             atomicInteger.set(-1);
         } else {
             atomicInteger.addAndGet(1);
         }
-        cache.put(thingsRequest.getJtm().getId(), atomicInteger, TimeUnit.MINUTES.toMillis(5));
+        cache.put(thingsRequest.getTrm().getId(), atomicInteger, TimeUnit.MINUTES.toMillis(5));
     }
 
     private ChainingValues getChainingValues(ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsChainingType chainingType) {
-        ChainingKeys keys = getKeys(thingsRequest.getJtm(), chainingType);
+        ChainingKeys keys = getKeys(thingsRequest.getTrm(), chainingType);
         return CHAINING_VALUES_CACHE.get(keys.getKeyFlag(), () -> {
             Set<ThingsInterceptors> interceptors = getInterceptors(keys, thingsRequest, chainingType);
             Set<ThingsHandlers> handlers = getHandlers(keys, thingsRequest, thingsResponse, chainingType);
@@ -167,15 +166,15 @@ public class ThingsChainingExecutor implements ThingsChaining {
 
 
     private Set<ThingsHandlers> getHandlers(ChainingKeys chainingKeys, ThingsRequest thingsRequest, ThingsResponse thingsResponse, ThingsChainingType chainingType) {
-        return getChains(chainingKeys, thingsContainerManager.getThingsHandlersTable(), thingsRequest.getJtm(), i -> i.getThingsHandler().order(),
+        return getChains(chainingKeys, thingsContainerManager.getThingsHandlersTable(), thingsRequest.getTrm(), i -> i.getThingsHandler().order(),
                 v -> v.getChainingType().equals(chainingType) && v.getThingsHandling().canHandle(thingsRequest, thingsResponse));
     }
 
     private Set<ThingsInterceptors> getInterceptors(ChainingKeys chainingKeys, ThingsRequest thingsRequest, ThingsChainingType chainingType) {
-        return getChains(chainingKeys, thingsContainerManager.getThingsInterceptorsTable(), thingsRequest.getJtm(), i -> i.getThingsInterceptor().order(), v -> v.getChainingType().equals(chainingType));
+        return getChains(chainingKeys, thingsContainerManager.getThingsInterceptorsTable(), thingsRequest.getTrm(), i -> i.getThingsInterceptor().order(), v -> v.getChainingType().equals(chainingType));
     }
 
-    private <T> Set<T> getChains(ChainingKeys chainingKeys, Table<String, String, Set<T>> table, JsonThingsMessage jtm, Function<T, Integer> comparing, Predicate<T> filtering) {
+    private <T> Set<T> getChains(ChainingKeys chainingKeys, Table<String, String, Set<T>> table, ThingsRequestMessage trm, Function<T, Integer> comparing, Predicate<T> filtering) {
         Set<T> linkedHashSet = new LinkedHashSet<>();
         chainingKeys.getKeys().forEach(key -> {
             Set<T> values = table.get(key.identifier, key.productCode);
@@ -190,11 +189,11 @@ public class ThingsChainingExecutor implements ThingsChaining {
         return linkedHashSet.stream().filter(filtering).sorted(Comparator.comparing(comparing)).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    private ChainingKeys getKeys(JsonThingsMessage jtm, ThingsChainingType chainingType) {
+    private ChainingKeys getKeys(ThingsRequestMessage trm, ThingsChainingType chainingType) {
         Set<ChainingKey> keys = new HashSet<>();
-        BaseThingsMetadata baseMetadata = jtm.getBaseMetadata();
-        ThingsMethodType thingsMethodType = ThingsMethodType.getMethodType(extractMiddlePart(jtm.getMethod()));
-        String identifies = subIdentifies(jtm.getMethod());
+        ThingsMessageMethod baseMetadata = trm.getMessageMethod();
+        ThingsMethodType thingsMethodType = ThingsMethodType.getMethodType(extractMiddlePart(trm.getMethod()));
+        String identifies = subIdentifies(trm.getMethod());
         keys.add(new ChainingKey(thingsMethodType + THINGS_SEPARATOR + identifies, THINGS_WILDCARD));
         keys.add(new ChainingKey(thingsMethodType + THINGS_SEPARATOR + identifies, baseMetadata.getProductCode()));
         keys.add(new ChainingKey(thingsMethodType + THINGS_SEPARATOR + THINGS_WILDCARD, baseMetadata.getProductCode()));

@@ -1414,6 +1414,13 @@ public final class ThingsConstants {
      */
     public static class Methods {
         public static final String THINGS_IDENTIFIER = "identifier";
+        public static final String THINGS_SYSTEM = "system";
+        public static final String THINGS_SERVICE = "service";
+        public static final String THINGS_EVENT = "event";
+        public static final String THINGS_PROPERTIES = "properties";
+        public static final String THINGS_REQUEST = "request";
+        public static final String THINGS_RESPONSE = "response";
+        public static final String THINGS_POST = "post";
         public static final String THINGS_SERVICE_REQUEST = "thing.service.identifier.request";
         public static final String THINGS_SERVICE_RESPONSE = "thing.service.identifier.response";
         public static final String THINGS_EVENT_POST = "thing.event.identifier.post";

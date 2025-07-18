@@ -1,7 +1,7 @@
 package cn.huangdayu.things.starter.engine;
 
 import cn.huangdayu.things.common.exception.ThingsException;
-import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.ThingsRequestMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -24,9 +24,9 @@ public class ThingsExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ThingsException.class)
     public ResponseEntity<Object> handleException(ThingsException e, HttpServletRequest request, WebRequest webRequest) {
-        JsonThingsMessage jtm = e.getJtm();
-        if (jtm == null) {
-            jtm = new JsonThingsMessage();
+        ThingsRequestMessage trm = e.getTrm();
+        if (trm == null) {
+            trm = new ThingsRequestMessage();
         }
         String errorTraceCode = getUUID();
         HttpStatus httpStatus = INTERNAL_SERVER_ERROR;
@@ -35,7 +35,7 @@ public class ThingsExceptionHandler extends ResponseEntityExceptionHandler {
         } catch (Exception ignored) {
         }
         log.error("Things exception , traceId : {} , exception stack trace : ", errorTraceCode, e);
-        return ResponseEntity.status(httpStatus).body(jtm.serverError(errorTraceCode, e.getErrorMessage()));
+        return ResponseEntity.status(httpStatus).body(trm.serverError(errorTraceCode, e.getErrorMessage()));
     }
 
 

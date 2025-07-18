@@ -291,8 +291,7 @@ public class ThingsRegisterExecutor extends ThingsContainerManager implements Th
             int finalI = i;
             thingsParameters[i] = findFirst(() -> scanAnnotation(parameter, finalI, ThingsParam.class),
                     () -> scanAnnotation(parameter, finalI, ThingsMessage.class),
-                    () -> scanAnnotation(parameter, finalI, ThingsPayload.class),
-                    () -> scanAnnotation(parameter, finalI, ThingsMetadata.class),
+                    () -> scanAnnotation(parameter, finalI, ThingsParams.class),
                     () -> scanAnnotation(parameter, finalI, ThingsInject.class),
                     () -> new ThingsParameter(parameter, finalI, parameter.getType(), parameter.getName(), null));
         }

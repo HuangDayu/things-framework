@@ -1,6 +1,8 @@
 package cn.huangdayu.things.common.message;
 
 import cn.huangdayu.things.common.constants.ThingsConstants;
+import com.alibaba.fastjson2.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @SuperBuilder
 @Data
-public abstract class AbstractThingsMessage<M extends Serializable, P extends Serializable> implements Serializable {
+public abstract class AbstractThingsMessage implements Serializable {
 
     /**
      * 消息id
@@ -27,7 +29,7 @@ public abstract class AbstractThingsMessage<M extends Serializable, P extends Se
      * 消息版本
      */
     @Builder.Default
-    private String version = "1";
+    private String jsonrpc = "2.0";
     /**
      * 消息时间
      */
@@ -51,14 +53,7 @@ public abstract class AbstractThingsMessage<M extends Serializable, P extends Se
     @Builder.Default
     private long timeout = 5000;
 
-    /**
-     * 消息元数据
-     */
-    private M metadata;
-    /**
-     * 消息体
-     */
-    private P payload;
+
     /**
      * 消息方法
      *
@@ -67,11 +62,26 @@ public abstract class AbstractThingsMessage<M extends Serializable, P extends Se
     private String method;
 
 
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public void setMethod(ThingsMessageMethod tmm) {
+        this.method = tmm.toString();
+    }
+
+
+    @JsonIgnore
+    @JSONField(serialize = false, deserialize = false)
+    public ThingsMessageMethod getMessageMethod() {
+        return new ThingsMessageMethod(this.getMethod());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AbstractThingsMessage<?, ?> that = (AbstractThingsMessage<?, ?>) o;
+        AbstractThingsMessage that = (AbstractThingsMessage) o;
         return Objects.equals(id, that.id);
     }
 

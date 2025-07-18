@@ -6,7 +6,7 @@ import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.dsl.*;
 import cn.huangdayu.things.common.events.ThingsContainerCancelledEvent;
 import cn.huangdayu.things.common.events.ThingsContainerRegisteredEvent;
-import cn.huangdayu.things.common.message.BaseThingsMessage;
+import cn.huangdayu.things.common.message.AbstractThingsMessage;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.engine.wrapper.ThingsEvents;
 import cn.huangdayu.things.engine.wrapper.ThingsFunction;
@@ -177,16 +177,14 @@ public class ThingsDescriberExecutor implements ThingsDescriber {
                 if (thingsParameter == null) {
                     continue;
                 }
-                if (thingsParameter.getAnnotation() instanceof ThingsPayload) {
+                if (thingsParameter.getAnnotation() instanceof ThingsParams) {
                     params.addAll(getParams(ReflectUtil.getFields(thingsParameter.getType())));
                 } else if (thingsParameter.getAnnotation() instanceof ThingsMessage) {
-                    if (thingsParameter.getType().isAssignableFrom(BaseThingsMessage.class)) {
+                    if (thingsParameter.getType().isAssignableFrom(AbstractThingsMessage.class)) {
                         params.addAll(getParams(thingsFunction, thingsParameter.getIndex(), 1));
                     }
                 } else if (thingsParameter.getAnnotation() instanceof ThingsParam thingsParam) {
-                    if (thingsParam.bodyType().equals(ThingsParam.BodyType.PAYLOAD)) {
-                        params.add(getParam(thingsParam, thingsParameter));
-                    }
+                    params.add(getParam(thingsParam, thingsParameter));
                 }
             }
         }

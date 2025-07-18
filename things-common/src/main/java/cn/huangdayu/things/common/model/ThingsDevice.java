@@ -18,7 +18,7 @@ public abstract class ThingsDevice {
 
     public abstract <T> T getProperty(String identifier);
 
-    public abstract void invokeService(String identifier, JSONObject payload);
+    public abstract void invokeService(String identifier, JSONObject params);
 
     public abstract void updateProperty(String identifier, Object value);
 

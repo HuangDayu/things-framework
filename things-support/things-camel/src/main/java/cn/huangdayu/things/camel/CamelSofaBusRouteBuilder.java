@@ -3,7 +3,8 @@ package cn.huangdayu.things.camel;
 import cn.huangdayu.things.api.message.ThingsSubscriber;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBusCallback;
-import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.ThingsRequestMessage;
+import cn.huangdayu.things.common.message.ThingsResponseMessage;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.huangdayu.things.common.wrapper.ThingsSubscribes;
@@ -73,13 +74,23 @@ public class CamelSofaBusRouteBuilder extends RouteBuilder {
                 .process(exchange -> {
                     try {
                         String receivedMessage = exchange.getIn().getBody(String.class);
-                        JsonThingsMessage jtm = JSON.to(JsonThingsMessage.class, receivedMessage);
-                        ThingsRequest thingsRequest = ThingsRequest.builder().source(thingsSofaBus).type(thingsSofaBus.getType().name())
-                                .clientCode(constructor.getProperties().getClientId()).subscriber(thingsSubscribes.getSubscriber())
-                                .topic(exchange.getIn().getHeader(PahoMqtt5Constants.MQTT_TOPIC, String.class))
-                                .groupCode(constructor.getProperties().getGroupId()).jtm(jtm).build();
-                        log.debug("Things SofaBus Camel route message {} to {} ", jtm.getId(), thingsSubscriber);
-                        thingsSubscriber.input(thingsRequest, new ThingsResponse());
+                        ThingsResponseMessage thingsResponseMessage = JSON.to(ThingsResponseMessage.class, receivedMessage);
+                        if (thingsResponseMessage.getResult() != null || thingsResponseMessage.getError() != null) {
+                            ThingsResponse thingsResponse = ThingsResponse.builder().source(thingsSofaBus).type(thingsSofaBus.getType().name())
+                                    .clientCode(constructor.getProperties().getClientId()).subscriber(thingsSubscribes.getSubscriber())
+                                    .topic(exchange.getIn().getHeader(PahoMqtt5Constants.MQTT_TOPIC, String.class))
+                                    .groupCode(constructor.getProperties().getGroupId()).trm(thingsResponseMessage).build();
+                            log.debug("Things SofaBus Camel route response message {} to {} ", thingsResponseMessage.getId(), thingsSubscriber);
+                            thingsSubscriber.input(new ThingsRequest(), thingsResponse);
+                        } else {
+                            ThingsRequestMessage thingsRequestMessage = JSON.to(ThingsRequestMessage.class, receivedMessage);
+                            ThingsRequest thingsRequest = ThingsRequest.builder().source(thingsSofaBus).type(thingsSofaBus.getType().name())
+                                    .clientCode(constructor.getProperties().getClientId()).subscriber(thingsSubscribes.getSubscriber())
+                                    .topic(exchange.getIn().getHeader(PahoMqtt5Constants.MQTT_TOPIC, String.class))
+                                    .groupCode(constructor.getProperties().getGroupId()).trm(thingsRequestMessage).build();
+                            log.debug("Things SofaBus Camel route request message {} to {} ", thingsRequestMessage.getId(), thingsSubscriber);
+                            thingsSubscriber.input(thingsRequest, new ThingsResponse());
+                        }
                     } catch (Exception e) {
                         log.error("Things SofaBus Camel route process message error.", e);
                         exchange.setException(e);

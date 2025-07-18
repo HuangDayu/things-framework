@@ -1,6 +1,6 @@
 package cn.huangdayu.things.common.wrapper;
 
-import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.ThingsRequestMessage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,7 +26,7 @@ public class ThingsSubscribes implements Serializable {
     /**
      * 物模型消息
      */
-    private JsonThingsMessage jtm;
+    private ThingsRequestMessage trm;
     /**
      * 是否共享订阅，默认为false，如果是，则将产品标识作为共享订阅的分组标识，groupId=productCode
      */

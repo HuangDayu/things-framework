@@ -2,8 +2,9 @@ package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.exception.ThingsException;
-import cn.huangdayu.things.common.message.BaseThingsMetadata;
-import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.ThingsMessageMethod;
+import cn.huangdayu.things.common.message.ThingsRequestMessage;
+import cn.huangdayu.things.common.message.ThingsResponseMessage;
 import cn.huangdayu.things.engine.core.ThingsInvoker;
 import cn.huangdayu.things.engine.core.ThingsProperties;
 import cn.huangdayu.things.engine.wrapper.ThingsFunction;
@@ -42,19 +43,19 @@ public class ThingsInvokerExecutor implements ThingsInvoker {
     private final ThingsContainerManager thingsContainerManager;
 
     @Override
-    public boolean canInvoke(JsonThingsMessage jtm) {
-        if (jtm.isResponse()) {
+    public boolean canInvoke(ThingsRequestMessage trm) {
+        if (trm == null) {
             return false;
         }
-        BaseThingsMetadata baseMetadata = jtm.getBaseMetadata();
-        if (isEventPost(jtm)) {
+        ThingsMessageMethod baseMetadata = trm.getMessageMethod();
+        if (isEventPost(trm)) {
             return thingsContainerManager.getThingsEventsListenerTable().containsColumn(baseMetadata.getProductCode());
         }
-        if (isPropertiesSetOrGet(jtm)) {
+        if (isPropertiesSetOrGet(trm)) {
             return thingsContainerManager.getThingsPropertyMap().containsKey(baseMetadata.getProductCode()) ||
                     thingsContainerManager.getDevicePropertyMap().containsColumn(baseMetadata.getDeviceCode());
         }
-        if (isServiceRequest(jtm)) {
+        if (isServiceRequest(trm)) {
             return thingsContainerManager.getThingsFunctionTable().containsColumn(baseMetadata.getProductCode());
         }
         return false;
@@ -62,31 +63,31 @@ public class ThingsInvokerExecutor implements ThingsInvoker {
 
     @SneakyThrows
     @Override
-    public JsonThingsMessage syncInvoke(JsonThingsMessage jtm) {
-        if (isServiceRequest(jtm)) {
-            return invokeService(jtm);
-        } else if (isEventPost(jtm)) {
-            return invokeEventListener(jtm);
-        } else if (isPropertiesSetOrGet(jtm)) {
-            return invokeUpdateProperty(jtm);
+    public ThingsResponseMessage syncInvoke(ThingsRequestMessage trm) {
+        if (isServiceRequest(trm)) {
+            return invokeService(trm);
+        } else if (isEventPost(trm)) {
+            return invokeEventListener(trm);
+        } else if (isPropertiesSetOrGet(trm)) {
+            return invokeUpdateProperty(trm);
         } else {
-            throw new ThingsException(jtm, BAD_REQUEST, "Can't handler this message.");
+            throw new ThingsException(trm, BAD_REQUEST, "Can't handler this message.");
         }
     }
 
 
     @Override
-    public Mono<JsonThingsMessage> reactorInvoke(JsonThingsMessage jtm) {
-        return Mono.just(syncInvoke(jtm));
+    public Mono<ThingsResponseMessage> reactorInvoke(ThingsRequestMessage trm) {
+        return Mono.just(syncInvoke(trm));
     }
 
-    private JsonThingsMessage invokeEventListener(JsonThingsMessage jtm) {
-        String method = subIdentifies(jtm.getMethod());
-        Set<ThingsFunction> functions = findEventListenerFunction(method, jtm.getBaseMetadata().getProductCode());
+    private ThingsResponseMessage invokeEventListener(ThingsRequestMessage trm) {
+        String method = subIdentifies(trm.getMethod());
+        Set<ThingsFunction> functions = findEventListenerFunction(method, trm.getMessageMethod().getProductCode());
         if (CollUtil.isNotEmpty(functions)) {
-            return asyncInvokeFunctions(jtm, functions);
+            return asyncInvokeFunctions(trm, functions);
         }
-        throw new ThingsException(jtm, BAD_REQUEST, "Things not found this event listener.");
+        throw new ThingsException(trm, BAD_REQUEST, "Things not found this event listener.");
     }
 
 
@@ -115,68 +116,68 @@ public class ThingsInvokerExecutor implements ThingsInvoker {
     }
 
 
-    private JsonThingsMessage invokeUpdateProperty(JsonThingsMessage jtm) {
-        BaseThingsMetadata baseThingsMetadata = jtm.getBaseMetadata();
-        Object propertyBean = thingsProperties.getPropertyEntity(baseThingsMetadata.getProductCode(), baseThingsMetadata.getDeviceCode());
+    private ThingsResponseMessage invokeUpdateProperty(ThingsRequestMessage trm) {
+        ThingsMessageMethod thingsMessageMethod = trm.getMessageMethod();
+        Object propertyBean = thingsProperties.getPropertyEntity(thingsMessageMethod.getProductCode(), thingsMessageMethod.getDeviceCode());
         if (propertyBean != null) {
-            return invokeUpdateProperty(propertyBean, jtm, baseThingsMetadata);
+            return invokeUpdateProperty(propertyBean, trm, thingsMessageMethod);
         }
-        throw new ThingsException(jtm, BAD_REQUEST, "Things ont found Property entry.");
+        throw new ThingsException(trm, BAD_REQUEST, "Things ont found Property entry.");
     }
 
-    private JsonThingsMessage invokeUpdateProperty(Object propertyBean, JsonThingsMessage jtm, BaseThingsMetadata baseThingsMetadata) {
-        String method = jtm.getMethod();
-        if (method.equals(THINGS_PROPERTIES_SET)) {
-            JSONObject payload = jtm.getPayload();
-            for (Map.Entry<String, Object> entry : payload.entrySet()) {
+    private ThingsResponseMessage invokeUpdateProperty(Object propertyBean, ThingsRequestMessage thingsRequestMessage, ThingsMessageMethod thingsMessageMethod) {
+        if (thingsRequestMessage.getMethod().equals(THINGS_PROPERTIES_SET)) {
+            JSONObject params = thingsRequestMessage.getParams();
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
                 ReflectUtil.setFieldValue(propertyBean, entry.getKey(), entry.getValue());
-                asyncInvokeFunctions(jtm, thingsContainerManager.getThingsPropertyListenerTable().get(entry.getKey(), baseThingsMetadata.getProductCode()));
+                asyncInvokeFunctions(thingsRequestMessage, thingsContainerManager.getThingsPropertyListenerTable().get(entry.getKey(), thingsMessageMethod.getProductCode()));
             }
-            asyncInvokeFunctions(jtm, thingsContainerManager.getThingsPropertyListenerTable().get(THINGS_WILDCARD, baseThingsMetadata.getProductCode()));
+            asyncInvokeFunctions(thingsRequestMessage, thingsContainerManager.getThingsPropertyListenerTable().get(THINGS_WILDCARD, thingsMessageMethod.getProductCode()));
         }
-        jtm.setPayload((JSONObject) JSON.toJSON(propertyBean));
-        jtm.setMethod(THINGS_PROPERTIES_POST);
-        return jtm;
+        ThingsResponseMessage thingsResponseMessage = thingsRequestMessage.success();
+        thingsResponseMessage.setResult((JSONObject) JSON.toJSON(propertyBean));
+        thingsResponseMessage.setMethod(THINGS_PROPERTIES_POST);
+        return thingsResponseMessage;
     }
 
     @SneakyThrows
-    private JsonThingsMessage invokeService(JsonThingsMessage jtm) {
-        ThingsFunction thingsFunction = thingsContainerManager.getThingsFunctionTable().get(subIdentifies(jtm.getMethod()), jtm.getBaseMetadata().getProductCode());
+    private ThingsResponseMessage invokeService(ThingsRequestMessage trm) {
+        ThingsFunction thingsFunction = thingsContainerManager.getThingsFunctionTable().get(subIdentifies(trm.getMethod()), trm.getMessageMethod().getProductCode());
         if (thingsFunction == null) {
-            throw new ThingsException(jtm, BAD_REQUEST, "Things not found this service.");
+            throw new ThingsException(trm, BAD_REQUEST, "Things not found this service.");
         }
-        return syncInvokeFunction(jtm, thingsFunction);
+        return syncInvokeFunction(trm, thingsFunction);
     }
 
-    private JsonThingsMessage asyncInvokeFunctions(JsonThingsMessage jtm, Set<ThingsFunction> thingsFunctions) {
+    private ThingsResponseMessage asyncInvokeFunctions(ThingsRequestMessage trm, Set<ThingsFunction> thingsFunctions) {
         if (CollUtil.isNotEmpty(thingsFunctions)) {
             for (ThingsFunction function : thingsFunctions) {
-                THINGS_EXECUTOR.execute(() -> syncInvokeFunction(jtm, function));
+                THINGS_EXECUTOR.execute(() -> syncInvokeFunction(trm, function));
             }
         }
         return null;
     }
 
     @SneakyThrows
-    private JsonThingsMessage syncInvokeFunction(JsonThingsMessage jtm, ThingsFunction thingsFunction) {
-        Object result = thingsFunction.getMethod().invoke(thingsFunction.getBean(), thingsArgsConverter.args(jtm, thingsFunction));
+    private ThingsResponseMessage syncInvokeFunction(ThingsRequestMessage trm, ThingsFunction thingsFunction) {
+        Object result = thingsFunction.getMethod().invoke(thingsFunction.getBean(), thingsArgsConverter.args(trm, thingsFunction));
         if (result != null) {
-            if (result instanceof JsonThingsMessage) {
-                return (JsonThingsMessage) result;
+            if (result instanceof ThingsResponseMessage) {
+                return (ThingsResponseMessage) result;
             } else if (result instanceof Future future) {
-                return getFuture(future, jtm);
+                return getFuture(future, trm);
             } else {
-                return jtm.success(result);
+                return trm.success(result);
             }
         }
-        return jtm.success();
+        return trm.success();
     }
 
     @SneakyThrows
-    private JsonThingsMessage getFuture(Future future, JsonThingsMessage request) {
+    private ThingsResponseMessage getFuture(Future future, ThingsRequestMessage request) {
         Object result = future.get(request.getTimeout(), TimeUnit.MILLISECONDS);
-        if (result instanceof JsonThingsMessage) {
-            return (JsonThingsMessage) result;
+        if (result instanceof ThingsResponseMessage) {
+            return (ThingsResponseMessage) result;
         }
         return request.success(result);
     }

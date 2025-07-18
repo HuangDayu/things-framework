@@ -4,8 +4,6 @@ import cn.huangdayu.things.common.constants.ThingsConstants;
 
 import java.lang.annotation.*;
 
-import static cn.huangdayu.things.common.annotation.ThingsParam.BodyType.PAYLOAD;
-
 /**
  * @author huangdayu
  */
@@ -13,13 +11,6 @@ import static cn.huangdayu.things.common.annotation.ThingsParam.BodyType.PAYLOAD
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ThingsParam {
-
-    /**
-     * 哪一个消息体中的字段，默认是payload
-     *
-     * @return
-     */
-    BodyType bodyType() default PAYLOAD;
 
     /**
      * 入参名称。
@@ -111,12 +102,5 @@ public @interface ThingsParam {
      * @return
      */
     String step() default "";
-
-
-    public static enum BodyType {
-        METADATA,
-        PAYLOAD,
-        HEADER
-    }
 
 }

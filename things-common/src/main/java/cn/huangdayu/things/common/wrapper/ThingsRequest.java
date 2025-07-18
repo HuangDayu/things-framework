@@ -1,6 +1,6 @@
 package cn.huangdayu.things.common.wrapper;
 
-import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.ThingsRequestMessage;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,13 +18,11 @@ import java.util.function.Consumer;
 @Data
 public class ThingsRequest extends ThingsServlet {
 
-    public ThingsRequest(JsonThingsMessage jtm) {
-        super(jtm);
+    public ThingsRequest(ThingsRequestMessage trm) {
+        this.trm = trm;
     }
 
-    private Object source;
-    private Object target;
-    private Object subscriber;
+    private ThingsRequestMessage trm;
     private Consumer<ThingsResponse> responseConsumer;
     private CompletableFuture<ThingsResponse> responseFuture;
 }

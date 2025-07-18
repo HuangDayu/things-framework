@@ -1,12 +1,11 @@
 package cn.huangdayu.things.camel.converter;
 
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.ThingsRequestMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.support.TypeConverterSupport;
-import org.springframework.stereotype.Component;
 
 /**
  * @author huangdayu
@@ -20,7 +19,7 @@ public class ThingsTypeConverter extends AbstractTypeConverter {
 
     @Override
     public Class<?> fromType() {
-        return JsonThingsMessage.class;
+        return ThingsRequestMessage.class;
     }
 
     @Override

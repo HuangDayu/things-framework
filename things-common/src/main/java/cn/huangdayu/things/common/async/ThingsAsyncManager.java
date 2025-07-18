@@ -1,6 +1,6 @@
 package cn.huangdayu.things.common.async;
 
-import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.ThingsResponseMessage;
 import cn.huangdayu.things.common.wrapper.ThingsAsync;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
@@ -18,7 +18,7 @@ public class ThingsAsyncManager {
     static {
         THINGS_ASYNC_CACHE.setListener((key, thingsAsync) -> {
             if (!thingsAsync.isCompleted()) {
-                asAsyncResponse(new ThingsResponse(thingsAsync.getThingsRequest().getJtm().timeout()));
+                asAsyncResponse(new ThingsResponse(thingsAsync.getThingsRequest().getTrm().timeout()));
             }
         });
     }
@@ -27,17 +27,17 @@ public class ThingsAsyncManager {
         if (thingsRequest.getResponseConsumer() == null && thingsRequest.getResponseFuture() == null) {
             return;
         }
-        if (THINGS_ASYNC_CACHE.containsKey(thingsRequest.getJtm().getId())) {
+        if (THINGS_ASYNC_CACHE.containsKey(thingsRequest.getTrm().getId())) {
             return;
         }
-        ThingsAsync thingsAsync = new ThingsAsync(thingsRequest.getJtm().getId(), thingsRequest.getJtm().getTimeout(), false, thingsRequest, null);
+        ThingsAsync thingsAsync = new ThingsAsync(thingsRequest.getTrm().getId(), thingsRequest.getTrm().getTimeout(), false, thingsRequest, null);
         THINGS_ASYNC_CACHE.put(thingsAsync.getAsyncId(), thingsAsync, thingsAsync.getTimeout());
     }
 
     public static void asAsyncResponse(ThingsResponse thingsResponse) {
-        JsonThingsMessage jtm = thingsResponse.getJtm();
-        if (jtm != null && jtm.isResponse()) {
-            ThingsAsync thingsAsync = THINGS_ASYNC_CACHE.get(jtm.getId());
+        ThingsResponseMessage trm = thingsResponse.getTrm();
+        if (trm != null) {
+            ThingsAsync thingsAsync = THINGS_ASYNC_CACHE.get(trm.getId());
             if (thingsAsync != null) {
                 ThingsRequest thingsRequest = thingsAsync.getThingsRequest();
                 if (thingsRequest.getResponseConsumer() != null) {
@@ -52,8 +52,8 @@ public class ThingsAsyncManager {
         }
     }
 
-    public static boolean hasAsyncRequest(String jtmId) {
-        return THINGS_ASYNC_CACHE.containsKey(jtmId);
+    public static boolean hasAsyncRequest(String trmId) {
+        return THINGS_ASYNC_CACHE.containsKey(trmId);
     }
 
 }

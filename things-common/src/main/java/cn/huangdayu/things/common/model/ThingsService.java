@@ -7,6 +7,6 @@ import com.alibaba.fastjson2.JSONObject;
  */
 public abstract class ThingsService {
 
-    public abstract void invoke(JSONObject payload);
+    public abstract void invoke(JSONObject params);
 
 }

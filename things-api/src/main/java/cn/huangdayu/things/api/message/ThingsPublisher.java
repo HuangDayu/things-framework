@@ -1,7 +1,8 @@
 package cn.huangdayu.things.api.message;
 
-import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.ThingsRequestMessage;
 import cn.huangdayu.things.common.message.ThingsEventMessage;
+import cn.huangdayu.things.common.message.ThingsResponseMessage;
 import reactor.core.publisher.Mono;
 
 import java.util.function.Consumer;
@@ -13,34 +14,39 @@ public interface ThingsPublisher {
 
     /**
      * 发布事件
+     *
      * @param tem
      */
     void publishEvent(ThingsEventMessage tem);
 
     /**
      * 发布事件消息
-     * @param jtm
+     *
+     * @param trm
      */
-    void publishEvent(JsonThingsMessage jtm);
+    void publishEvent(ThingsRequestMessage trm);
 
     /**
      * 同步发送消息
-     * @param jtm
+     *
+     * @param trm
      * @return
      */
-    JsonThingsMessage syncSendMessage(JsonThingsMessage jtm);
+    ThingsResponseMessage syncSendMessage(ThingsRequestMessage trm);
 
     /**
      * 异步发送消息
-     * @param jtm
+     *
+     * @param trm
      * @param consumer
      */
-    void asyncSendMessage(JsonThingsMessage jtm, Consumer<JsonThingsMessage> consumer);
+    void asyncSendMessage(ThingsRequestMessage trm, Consumer<ThingsResponseMessage> consumer);
 
     /**
      * 响应式发送消息
-     * @param jtm
+     *
+     * @param trm
      * @return
      */
-    Mono<JsonThingsMessage> reactorSendMessage(JsonThingsMessage jtm);
+    Mono<ThingsResponseMessage> reactorSendMessage(ThingsRequestMessage trm);
 }

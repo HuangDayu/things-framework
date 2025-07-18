@@ -5,8 +5,9 @@ import cn.huangdayu.things.common.annotation.ThingsEventEntity;
 import cn.huangdayu.things.common.annotation.ThingsService;
 import cn.huangdayu.things.common.dsl.ThingsDslInfo;
 import cn.huangdayu.things.common.exception.ThingsException;
-import cn.huangdayu.things.common.message.JsonThingsMessage;
 import cn.huangdayu.things.common.message.ThingsEventMessage;
+import cn.huangdayu.things.common.message.ThingsMessageMethod;
+import cn.huangdayu.things.common.message.ThingsRequestMessage;
 import cn.huangdayu.things.common.wrapper.ThingsSubscribes;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.multi.RowKeyTable;
@@ -225,20 +226,16 @@ public class ThingsUtils {
     }
 
 
-    public static JsonThingsMessage covertEventMessage(ThingsEventMessage tem) {
+    public static ThingsRequestMessage covertEventMessage(ThingsEventMessage tem) {
         ThingsEventEntity thingsEventEntity = findBeanAnnotation(tem, ThingsEventEntity.class);
         if (thingsEventEntity == null) {
             throw new ThingsException(BAD_REQUEST, "Message object is not ThingsEvent entry.");
         }
-        JsonThingsMessage jtm = new JsonThingsMessage();
-        jtm.setBaseMetadata(baseThingsMetadata -> {
-            baseThingsMetadata.setProductCode(thingsEventEntity.productCode());
-            baseThingsMetadata.setDeviceCode(tem.getDeviceCode());
-        });
-        jtm.setQos(thingsEventEntity.qos());
-        jtm.setPayload((JSONObject) JSON.toJSON(tem, JSONWriter.Feature.WriteNulls));
-        jtm.setMethod(THINGS_EVENT_POST.replace(THINGS_IDENTIFIER, thingsEventEntity.identifier()));
-        return jtm;
+        ThingsRequestMessage trm = new ThingsRequestMessage();
+        trm.setQos(thingsEventEntity.qos());
+        trm.setParams((JSONObject) JSON.toJSON(tem, JSONWriter.Feature.WriteNulls));
+        trm.setMethod(new ThingsMessageMethod(thingsEventEntity.productCode(), tem.getDeviceCode(), THINGS_EVENT, thingsEventEntity.identifier(), THINGS_POST));
+        return trm;
     }
 
     /**
@@ -296,16 +293,16 @@ public class ThingsUtils {
         };
     }
 
-    public static boolean isServiceRequest(JsonThingsMessage jtm) {
-        return THINGS_SERVICE_REQUEST.equals(jtm.getMethod().replace(subIdentifies(jtm.getMethod()), THINGS_IDENTIFIER));
+    public static boolean isServiceRequest(ThingsRequestMessage trm) {
+        return THINGS_SERVICE_REQUEST.equals(trm.getMethod().replace(subIdentifies(trm.getMethod()), THINGS_IDENTIFIER));
     }
 
-    public static boolean isPropertiesSetOrGet(JsonThingsMessage jtm) {
-        return THINGS_PROPERTIES_SET.equals(jtm.getMethod()) || THINGS_PROPERTIES_GET.equals(jtm.getMethod());
+    public static boolean isPropertiesSetOrGet(ThingsRequestMessage trm) {
+        return THINGS_PROPERTIES_SET.equals(trm.getMethod()) || THINGS_PROPERTIES_GET.equals(trm.getMethod());
     }
 
-    public static boolean isEventPost(JsonThingsMessage jtm) {
-        return THINGS_EVENT_POST.equals(jtm.getMethod().replace(subIdentifies(jtm.getMethod()), THINGS_IDENTIFIER));
+    public static boolean isEventPost(ThingsRequestMessage trm) {
+        return THINGS_EVENT_POST.equals(trm.getMethod().replace(subIdentifies(trm.getMethod()), THINGS_IDENTIFIER));
     }
 
 
@@ -356,6 +353,10 @@ public class ThingsUtils {
             });
         });
         return thingsSubscribes;
+    }
+
+    public static <T> T jsonToObject(Object object, Type type) {
+        return JSON.parseObject(JSON.toJSONString(object), type);
     }
 
     public static <T> T jsonToObject(JSONObject jsonObject, Type type) {

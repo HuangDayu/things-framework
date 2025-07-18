@@ -1,6 +1,6 @@
 package cn.huangdayu.things.common.exception;
 
-import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.ThingsRequestMessage;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,18 +16,18 @@ public class ThingsException extends RuntimeException {
     private final String errorCode;
     private final String errorTraceCode;
     private final String errorMessage;
-    private final JsonThingsMessage jtm;
+    private final ThingsRequestMessage trm;
 
-    public ThingsException(JsonThingsMessage jtm, String errorCode, String errorMessage, String errorTraceCode) {
+    public ThingsException(ThingsRequestMessage trm, String errorCode, String errorMessage, String errorTraceCode) {
         super(errorMessage);
-        this.jtm = jtm;
+        this.trm = trm;
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
         this.errorTraceCode = errorTraceCode;
     }
 
-    public ThingsException(JsonThingsMessage jtm, String errorCode, String errorMessage) {
-        this(jtm, errorCode, errorMessage, getUUID());
+    public ThingsException(ThingsRequestMessage trm, String errorCode, String errorMessage) {
+        this(trm, errorCode, errorMessage, getUUID());
     }
 
     public ThingsException(String errorCode, String errorMessage) {

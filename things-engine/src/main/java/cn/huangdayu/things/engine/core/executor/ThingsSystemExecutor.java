@@ -2,7 +2,7 @@ package cn.huangdayu.things.engine.core.executor;
 
 import cn.huangdayu.things.api.container.ThingsDescriber;
 import cn.huangdayu.things.api.infrastructure.ThingsConfigurator;
-import cn.huangdayu.things.common.annotation.ThingsPayload;
+import cn.huangdayu.things.common.annotation.ThingsParams;
 import cn.huangdayu.things.common.annotation.ThingsService;
 import cn.huangdayu.things.common.annotation.ThingsSystem;
 import cn.huangdayu.things.common.dsl.ThingsDslInfo;
@@ -29,8 +29,8 @@ public class ThingsSystemExecutor {
     }
 
     @ThingsService(identifier = SYSTEM_METHOD_CONFIG_SET)
-    public void setConfig(@ThingsPayload JSONObject payload) {
-        thingsConfigurator.updateProperties(jsonToObject(payload, ThingsEngineProperties.class));
+    public void setConfig(@ThingsParams JSONObject params) {
+        thingsConfigurator.updateProperties(jsonToObject(params, ThingsEngineProperties.class));
     }
 
 

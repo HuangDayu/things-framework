@@ -1,6 +1,7 @@
 package cn.huangdayu.things.engine.core;
 
-import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.ThingsRequestMessage;
+import cn.huangdayu.things.common.message.ThingsResponseMessage;
 import reactor.core.publisher.Mono;
 
 /**
@@ -13,26 +14,26 @@ public interface ThingsInvoker {
     /**
      * 是否可以处理
      *
-     * @param jtm
+     * @param trm
      * @return
      */
-    boolean canInvoke(JsonThingsMessage jtm);
+    boolean canInvoke(ThingsRequestMessage trm);
 
     /**
      * 同步调用
      *
-     * @param jtm
+     * @param trm
      * @return
      */
-    JsonThingsMessage syncInvoke(JsonThingsMessage jtm);
+    ThingsResponseMessage syncInvoke(ThingsRequestMessage trm);
 
 
     /**
      * 异步调用
      *
-     * @param jtm
+     * @param trm
      * @return
      */
-    Mono<JsonThingsMessage> reactorInvoke(JsonThingsMessage jtm);
+    Mono<ThingsResponseMessage> reactorInvoke(ThingsRequestMessage trm);
 
 }

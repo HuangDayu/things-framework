@@ -5,8 +5,8 @@ import cn.huangdayu.things.api.sofabus.ThingsSofaBusDescriber;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBusPublisher;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.events.ThingsContainerRegisteredEvent;
-import cn.huangdayu.things.common.message.BaseThingsMetadata;
-import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.ThingsMessageMethod;
+import cn.huangdayu.things.common.message.ThingsRequestMessage;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
@@ -14,8 +14,10 @@ import com.alibaba.fastjson2.JSONObject;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
-import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.THINGS_IDENTIFIER;
-import static cn.huangdayu.things.common.constants.ThingsConstants.SystemMethod.*;
+import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.THINGS_POST;
+import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.THINGS_SYSTEM;
+import static cn.huangdayu.things.common.constants.ThingsConstants.SystemMethod.SYSTEM_METHOD_DSL;
+import static cn.huangdayu.things.common.constants.ThingsConstants.SystemMethod.SYSTEM_METHOD_TOPIC;
 
 /**
  * @author huangdayu
@@ -35,11 +37,10 @@ public class ThingsSofaBusRegister {
 
     private void registerDSL() {
         ThingsRequest thingsRequest = new ThingsRequest();
-        thingsRequest.setJtm(JsonThingsMessage.builder()
+        thingsRequest.setTrm(ThingsRequestMessage.builder()
                 .qos(2)
-                .metadata(JSONObject.from(new BaseThingsMetadata(SYSTEM_METHOD_TOPIC, thingsConfigurator.getProperties().getCode())))
-                .payload(JSONObject.from(thingsSofaBusDescriber.getDSL()))
-                .method(THINGS_SYSTEM_POST.replace(THINGS_IDENTIFIER, SYSTEM_METHOD_DSL))
+                .params(JSONObject.from(thingsSofaBusDescriber.getDSL()))
+                .method(new ThingsMessageMethod(SYSTEM_METHOD_TOPIC, thingsConfigurator.getProperties().getCode(), THINGS_SYSTEM, SYSTEM_METHOD_DSL, THINGS_POST).toString())
                 .build());
         thingsSofaBusPublisher.output(thingsRequest, new ThingsResponse());
     }

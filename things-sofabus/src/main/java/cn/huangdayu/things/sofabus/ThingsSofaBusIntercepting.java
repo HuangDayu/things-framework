@@ -2,7 +2,7 @@ package cn.huangdayu.things.sofabus;
 
 import cn.huangdayu.things.api.message.ThingsIntercepting;
 import cn.huangdayu.things.common.annotation.ThingsInterceptor;
-import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.ThingsRequestMessage;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import lombok.RequiredArgsConstructor;
@@ -34,10 +34,10 @@ public class ThingsSofaBusIntercepting implements ThingsIntercepting {
      */
     @Override
     public void afterCompletion(ThingsRequest thingsRequest, ThingsResponse thingsResponse, Exception exception) {
-        JsonThingsMessage jtm = thingsRequest.getJtm();
-        if (equalsThings(THINGS_SERVICE_REQUEST, jtm.getMethod())) {
-            String method = jtm.getMethod().replace(THINGS_DOT + THINGS_ACTION_REQUEST, THINGS_DOT + THINGS_ACTION_RESPONSE);
-            thingsSofaBusManager.subscribe(thingsRequest.getSubscriber(), false, jtm.getBaseMetadata().getProductCode(), jtm.getBaseMetadata().getDeviceCode(), method);
+        ThingsRequestMessage trm = thingsRequest.getTrm();
+        if (equalsThings(THINGS_SERVICE_REQUEST, trm.getMethod())) {
+            String method = trm.getMethod().replace(THINGS_DOT + THINGS_ACTION_REQUEST, THINGS_DOT + THINGS_ACTION_RESPONSE);
+            thingsSofaBusManager.subscribe(thingsRequest.getSubscriber(), false, trm.getMessageMethod().getProductCode(), trm.getMessageMethod().getDeviceCode(), method);
         }
     }
 }

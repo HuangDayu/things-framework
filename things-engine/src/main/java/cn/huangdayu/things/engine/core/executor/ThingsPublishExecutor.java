@@ -3,8 +3,9 @@ package cn.huangdayu.things.engine.core.executor;
 import cn.huangdayu.things.api.message.ThingsChaining;
 import cn.huangdayu.things.api.message.ThingsPublisher;
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.ThingsRequestMessage;
 import cn.huangdayu.things.common.message.ThingsEventMessage;
+import cn.huangdayu.things.common.message.ThingsResponseMessage;
 import cn.huangdayu.things.common.utils.ThingsUtils;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
@@ -30,36 +31,36 @@ public class ThingsPublishExecutor implements ThingsPublisher {
         publishEvent(ThingsUtils.covertEventMessage(tem));
     }
 
-    public void publishEvent(JsonThingsMessage jtm) {
-        thingsChaining.output(new ThingsRequest(jtm), new ThingsResponse());
+    public void publishEvent(ThingsRequestMessage trm) {
+        thingsChaining.output(new ThingsRequest(trm), new ThingsResponse());
     }
 
     @SneakyThrows
-    public JsonThingsMessage syncSendMessage(JsonThingsMessage jtm) {
-        ThingsRequest thingsRequest = new ThingsRequest(jtm);
+    public ThingsResponseMessage syncSendMessage(ThingsRequestMessage trm) {
+        ThingsRequest thingsRequest = new ThingsRequest(trm);
         CompletableFuture<ThingsResponse> future = new CompletableFuture<>();
         thingsRequest.setResponseFuture(future);
         thingsChaining.output(thingsRequest, new ThingsResponse());
         try {
-            return future.get(jtm.getTimeout(), TimeUnit.MILLISECONDS).getJtm();
+            return future.get(trm.getTimeout(), TimeUnit.MILLISECONDS).getTrm();
         } catch (Exception e) {
-            log.error("Things publish message [{}] error: {} ", jtm, e.getMessage());
-            return jtm.timeout();
+            log.error("Things publish message [{}] error: {} ", trm, e.getMessage());
+            return trm.timeout();
         }
     }
 
     @Override
-    public void asyncSendMessage(JsonThingsMessage jtm, Consumer<JsonThingsMessage> consumer) {
-        ThingsRequest thingsRequest = new ThingsRequest(jtm);
+    public void asyncSendMessage(ThingsRequestMessage trm, Consumer<ThingsResponseMessage> consumer) {
+        ThingsRequest thingsRequest = new ThingsRequest(trm);
         if (consumer != null) {
-            thingsRequest.setResponseConsumer(response -> consumer.accept(response.getJtm()));
+            thingsRequest.setResponseConsumer(response -> consumer.accept(response.getTrm()));
         }
         thingsChaining.output(thingsRequest, new ThingsResponse());
     }
 
     @SneakyThrows
-    public Mono<JsonThingsMessage> reactorSendMessage(JsonThingsMessage jtm) {
-        return Mono.just(syncSendMessage(jtm));
+    public Mono<ThingsResponseMessage> reactorSendMessage(ThingsRequestMessage trm) {
+        return Mono.just(syncSendMessage(trm));
     }
 
 }

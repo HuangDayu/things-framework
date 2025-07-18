@@ -59,18 +59,6 @@ allprojects {
         maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
     }
 
-    publishing {
-        repositories {
-            maven {
-                credentials {
-                    allowInsecureProtocol = true
-                    username project.hasProperty('username') ? project.getProperty('username') : 'admin'
-                    password project.hasProperty('password') ? project.getProperty('password') : 'admin'
-                }
-                url "http://localhost/repository/maven-${project.version.endsWith('-SNAPSHOT') ? 'snapshots' : 'releases'}/"
-            }
-        }
-    }
 }
 
 

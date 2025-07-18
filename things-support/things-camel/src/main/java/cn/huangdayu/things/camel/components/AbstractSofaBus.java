@@ -6,8 +6,8 @@ import cn.huangdayu.things.api.sofabus.ThingsSofaBusCallback;
 import cn.huangdayu.things.camel.CamelSofaBusConstructor;
 import cn.huangdayu.things.camel.CamelSofaBusRouteBuilder;
 import cn.huangdayu.things.camel.mqtt.ThingsSofaBusTopicValidator;
-import cn.huangdayu.things.common.message.BaseThingsMetadata;
-import cn.huangdayu.things.common.message.JsonThingsMessage;
+import cn.huangdayu.things.common.message.ThingsMessageMethod;
+import cn.huangdayu.things.common.message.ThingsRequestMessage;
 import cn.huangdayu.things.common.wrapper.ThingsRequest;
 import cn.huangdayu.things.common.wrapper.ThingsResponse;
 import cn.huangdayu.things.common.wrapper.ThingsSubscribes;
@@ -56,13 +56,13 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
 
     @Override
     public boolean output(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
-        JsonThingsMessage jtm = thingsRequest.getJtm();
-        BaseThingsMetadata baseMetadata = jtm.getBaseMetadata();
-        String topic = createTopic(ThingsSubscribes.builder().jtm(jtm).share(false).productCode(baseMetadata.getProductCode())
-                .deviceCode(baseMetadata.getDeviceCode()).method(jtm.getMethod()).build());
+        ThingsRequestMessage trm = thingsRequest.getTrm();
+        ThingsMessageMethod baseMetadata = trm.getMessageMethod();
+        String topic = createTopic(ThingsSubscribes.builder().trm(trm).share(false).productCode(baseMetadata.getProductCode())
+                .deviceCode(baseMetadata.getDeviceCode()).method(trm.getMethod()).build());
         String endpointUri = createEndpointUri(topic, createParameterMap(thingsRequest));
         Endpoint endpoint = camelContext.getEndpoint(endpointUri);
-        constructor.getProducerTemplate().asyncSendBody(endpoint, jtm.toString());
+        constructor.getProducerTemplate().asyncSendBody(endpoint, trm.toString());
         thingsRequest.setTarget(this);
         thingsRequest.setType(getType().name());
         thingsRequest.setTopic(endpointUri);
@@ -77,7 +77,7 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
     }
 
     protected Map<String, String> createParameterMap(ThingsRequest thingsRequest) {
-        return Map.of("qos", String.valueOf(thingsRequest.getJtm().getQos()));
+        return Map.of("qos", String.valueOf(thingsRequest.getTrm().getQos()));
     }
 
     protected String createTopic(ThingsSubscribes thingsSubscribes) {
