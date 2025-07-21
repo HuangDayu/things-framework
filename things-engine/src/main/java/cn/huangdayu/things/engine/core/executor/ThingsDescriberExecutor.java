@@ -8,10 +8,10 @@ import cn.huangdayu.things.common.events.ThingsContainerCancelledEvent;
 import cn.huangdayu.things.common.events.ThingsContainerRegisteredEvent;
 import cn.huangdayu.things.common.message.AbstractThingsMessage;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
-import cn.huangdayu.things.engine.wrapper.ThingsEvents;
+import cn.huangdayu.things.engine.wrapper.ThingsEventEntities;
 import cn.huangdayu.things.engine.wrapper.ThingsFunction;
 import cn.huangdayu.things.engine.wrapper.ThingsParameter;
-import cn.huangdayu.things.engine.wrapper.ThingsProperty;
+import cn.huangdayu.things.engine.wrapper.ThingsPropertyEntities;
 import cn.hutool.cache.Cache;
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.core.collection.CollUtil;
@@ -75,13 +75,12 @@ public class ThingsDescriberExecutor implements ThingsDescriber {
         return domainDsl;
     }
 
-    private DomainProfile getDomainProfile() {
+    private DomainProfileInfo getDomainProfile() {
         DomainProfileInfo domainProfileInfo = new DomainProfileInfo();
         domainProfileInfo.setCode(getUUID());
         domainProfileInfo.setName("ThingsDomain");
-        DomainProfile profile = new DomainProfile();
-        profile.setSchema("1.0");
-        return profile;
+        domainProfileInfo.setSchema("1.0");
+        return domainProfileInfo;
     }
 
     private Set<DomainConsumeInfo> getConsumes(ThingsContainer thingsContainer) {
@@ -96,77 +95,76 @@ public class ThingsDescriberExecutor implements ThingsDescriber {
                 .map(cell -> new DomainSubscribeInfo(cell.getColumnKey(), cell.getRowKey())).collect(Collectors.toSet());
     }
 
-    private Set<ThingsInfo> getThingsInfo(ThingsContainer thingsContainer) {
+    private Set<ThingsTemplate> getThingsInfo(ThingsContainer thingsContainer) {
         return thingsContainerManager.getThingsEntityTable().cellSet().stream()
                 .filter(v -> thingsContainer == null || v.getValue().getThingsContainer() == thingsContainer)
                 .map(m -> getThingsInfo(m.getRowKey())).collect(Collectors.toSet());
     }
 
-    private ThingsInfo getThingsInfo(String productCode) {
-        ThingsInfo thingsInfo = initThingsInfo(productCode);
-        thingsInfo.getServices().addAll(getServices(productCode));
-        thingsInfo.getEvents().addAll(getEvents(productCode));
-        thingsInfo.getProperties().addAll(getProperties(productCode));
-        return thingsInfo;
+    private ThingsTemplate getThingsInfo(String productCode) {
+        ThingsTemplate thingsTemplate = initThingsInfo(productCode);
+        thingsTemplate.getActions().addAll(getServices(productCode));
+        thingsTemplate.getEvents().addAll(getEvents(productCode));
+        thingsTemplate.getProperties().addAll(getProperties(productCode));
+        return thingsTemplate;
     }
 
-    private ThingsInfo initThingsInfo(String productCode) {
-        ThingsInfo thingsInfo = new ThingsInfo();
-        thingsInfo.setEvents(new ConcurrentHashSet<>());
-        thingsInfo.setServices(new ConcurrentHashSet<>());
-        thingsInfo.setProperties(new ConcurrentHashSet<>());
-        thingsInfo.setProfile(getThingsProfile(productCode));
-        return thingsInfo;
+    private ThingsTemplate initThingsInfo(String productCode) {
+        ThingsTemplate thingsTemplate = new ThingsTemplate();
+        thingsTemplate.setEvents(new ConcurrentHashSet<>());
+        thingsTemplate.setActions(new ConcurrentHashSet<>());
+        thingsTemplate.setProperties(new ConcurrentHashSet<>());
+        thingsTemplate.setProfile(getThingsProfile(productCode));
+        return thingsTemplate;
     }
 
-    private Things getThings(String productCode) {
-        return thingsContainerManager.getThingsEntityTable().getRow(productCode).values().stream().findFirst().orElseThrow().getThings();
+    private ThingsEntity getThings(String productCode) {
+        return thingsContainerManager.getThingsEntityTable().getRow(productCode).values().stream().findFirst().orElseThrow().getThingsEntity();
     }
 
-    private ThingsProfile getThingsProfile(String productCode) {
-        Things things = getThings(productCode);
+    private ThingsProfileInfo getThingsProfile(String productCode) {
+        ThingsEntity thingsEntity = getThings(productCode);
         ThingsProfileInfo productInfo = new ThingsProfileInfo();
-        productInfo.setCode(productCode);
-        productInfo.setName(things.name());
-        ThingsProfile profile = new ThingsProfile();
-        profile.setProduct(productInfo);
-        profile.setSchema(things.schema());
-        return profile;
+        productInfo.setProductCode(productCode);
+        productInfo.setDescription(thingsEntity.desc());
+        productInfo.setProductClass(thingsEntity.productType());
+        productInfo.setVersion(thingsEntity.version());
+        return productInfo;
     }
 
     private Set<ThingsParamInfo> getProperties(String productCode) {
         Set<ThingsParamInfo> params = new ConcurrentHashSet<>();
-        ThingsProperty thingsProperty = thingsContainerManager.getThingsPropertyMap().get(productCode);
-        if (thingsProperty != null) {
-            params.addAll(getParams(thingsProperty.getBean().getClass(), true));
+        ThingsPropertyEntities thingsPropertyEntities = thingsContainerManager.getThingsPropertyMap().get(productCode);
+        if (thingsPropertyEntities != null) {
+            params.addAll(getParams(thingsPropertyEntities.getBean().getClass(), true));
         }
         return params;
     }
 
     private Set<ThingsEventInfo> getEvents(String productCode) {
-        Map<String, ThingsEvents> map = thingsContainerManager.getThingsEventsTable().getColumn(productCode);
-        return map.values().stream().map(thingsEvents -> {
-            ThingsEventInfo events = copyAnnotationValues(thingsEvents.getThingsEventEntity(), new ThingsEventInfo());
-            events.setOutputData(getParams(thingsEvents.getBean().getClass()));
+        Map<String, ThingsEventEntities> map = thingsContainerManager.getThingsEventsTable().getColumn(productCode);
+        return map.values().stream().map(thingsEventEntities -> {
+            ThingsEventInfo events = copyAnnotationValues(thingsEventEntities.getThingsEventEntity(), new ThingsEventInfo());
+            events.setOutput(getParams(thingsEventEntities.getBean().getClass()));
             return events;
         }).collect(Collectors.toSet());
     }
 
-    private Set<ThingsServiceInfo> getServices(String productCode) {
+    private Set<ThingsActionInfo> getServices(String productCode) {
         return thingsContainerManager.getThingsFunctionTable().getColumn(productCode).entrySet().parallelStream()
                 .filter(entry -> entry.getValue().getMethodAnnotation() instanceof ThingsService)
                 .map(entry -> getServices(entry.getKey(), entry.getValue(), (ThingsService) entry.getValue().getMethodAnnotation()))
                 .collect(Collectors.toSet());
     }
 
-    private ThingsServiceInfo getServices(String identifier, ThingsFunction thingsFunction, ThingsService thingsService) {
-        ThingsServiceInfo services = new ThingsServiceInfo();
+    private ThingsActionInfo getServices(String identifier, ThingsFunction thingsFunction, ThingsService thingsService) {
+        ThingsActionInfo services = new ThingsActionInfo();
         services.setIdentifier(identifier);
         services.setName(thingsService.name());
-        services.setDesc(thingsService.desc());
+        services.setDescription(thingsService.desc());
         services.setCallType(thingsService.async() ? "async" : "sync");
-        services.setInputData(getInputParams(thingsFunction));
-        services.setOutputData(getOutputParams(thingsFunction));
+        services.setInput(getInputParams(thingsFunction));
+        services.setOutput(getOutputParams(thingsFunction));
         return services;
     }
 
@@ -237,21 +235,20 @@ public class ThingsDescriberExecutor implements ThingsDescriber {
         for (Field field : fields) {
             ThingsParamInfo param = getParam(field, setAccessMode);
             params.add(param);
-            ThingsDataType dataType = param.getDataType();
             try {
-                switch (dataType.getType()) {
+                switch (param.getDataType()) {
                     case "struct" -> params.addAll(getParams(param.getIdentifier(), field, setAccessMode));
                     case "array" -> {
                         String type = convertDataTypeName(field.getType());
-                        dataType.setArrayType(type);
+                        param.setChildDataType(type);
                         if (type.equals("struct")) {
                             params.addAll(getParams(param.getIdentifier(), field, setAccessMode));
                         }
                     }
-                    case "enum" -> dataType.setEnumNames(convertEnumToNames(field));
+                    case "enum" -> param.setEnumValue(convertEnumToNames(field));
                 }
             } catch (Exception e) {
-                log.error("Things convert param {} {} type exception", param.getIdentifier(), dataType.getType(), e);
+                log.error("Things convert param {} {} type exception", param.getIdentifier(), param, e);
             }
         }
         return params;
@@ -281,19 +278,17 @@ public class ThingsDescriberExecutor implements ThingsDescriber {
 
     private ThingsParamInfo getParam(ThingsParam thingsParam, Class<?> clazz, String name, boolean setAccessMode) {
         ThingsParamInfo param = new ThingsParamInfo();
-        ThingsDataType dataType = new ThingsDataType();
         if (thingsParam != null) {
-            dataType.setRequired(thingsParam.required());
-            dataType.setSpecs(copyAnnotationValues(thingsParam, new ThingsSpecs()));
+            param.setRequired(thingsParam.required());
+            copyAnnotationValues(thingsParam, param);
             param.setDescription(thingsParam.desc());
             param.setName(thingsParam.name());
             if (setAccessMode) {
                 param.setAccessMode(thingsParam.accessMode());
             }
         }
-        dataType.setType(convertDataTypeName(clazz));
+        param.setDataType(convertDataTypeName(clazz));
         param.setIdentifier(name);
-        param.setDataType(dataType);
         return param;
     }
 

@@ -1,7 +1,7 @@
 package cn.huangdayu.things.generate;
 
 import cn.huangdayu.things.common.annotation.ThingsBean;
-import cn.huangdayu.things.common.dsl.ThingsInfo;
+import cn.huangdayu.things.common.dsl.ThingsTemplate;
 
 /**
  * @author huangdayu
@@ -9,7 +9,7 @@ import cn.huangdayu.things.common.dsl.ThingsInfo;
 @ThingsBean
 public class ThingsGenerateExecutor implements ThingsGenerateEngine {
     @Override
-    public void generate(ThingsInfo thingsInfo) {
+    public void generate(ThingsTemplate thingsTemplate) {
 
     }
 }

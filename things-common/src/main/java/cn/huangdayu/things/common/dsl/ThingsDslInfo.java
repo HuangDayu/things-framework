@@ -20,6 +20,6 @@ public class ThingsDslInfo implements Serializable {
     }
 
     private Set<DomainInfo> domainDsl;
-    private Set<ThingsInfo> thingsDsl;
+    private Set<ThingsTemplate> thingsDsl;
 
 }

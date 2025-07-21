@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ThingsEvents {
+public class ThingsEventEntities {
 
     private ThingsContainer thingsContainer;
     private ThingsEventEntity thingsEventEntity;

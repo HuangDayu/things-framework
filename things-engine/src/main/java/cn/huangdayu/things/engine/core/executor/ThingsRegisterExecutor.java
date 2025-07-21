@@ -43,7 +43,7 @@ public class ThingsRegisterExecutor extends ThingsContainerManager implements Th
     public void register(ThingsContainer thingsContainer) {
         long start = System.currentTimeMillis();
         AtomicInteger sum = new AtomicInteger();
-        sum.addAndGet(findBeans(thingsContainer, Things.class, this::findThingsServices).get());
+        sum.addAndGet(findBeans(thingsContainer, ThingsEntity.class, this::findThingsServices).get());
         sum.addAndGet(findBeans(thingsContainer, ThingsPropertyEntity.class, this::findThingsProperties).get());
         sum.addAndGet(findBeans(thingsContainer, ThingsEventEntity.class, this::findThingsEvents).get());
         sum.addAndGet(findBeans(thingsContainer, ThingsListener.class, this::findThingsListener).get());
@@ -130,7 +130,7 @@ public class ThingsRegisterExecutor extends ThingsContainerManager implements Th
             return;
         }
         if (thingsPropertyMap.get(thingsPropertyEntity.productCode()) == null) {
-            thingsPropertyMap.put(thingsPropertyEntity.productCode(), new ThingsProperty(thingsContainer, thingsPropertyEntity, bean));
+            thingsPropertyMap.put(thingsPropertyEntity.productCode(), new ThingsPropertyEntities(thingsContainer, thingsPropertyEntity, bean));
         } else {
             log.error("Duplicate registration ThingsProperty ({}), only effective once, effective ThingsProperty {} , invalid ThingsProperty : {}",
                     thingsPropertyEntity.productCode(), thingsPropertyMap.get(thingsPropertyEntity.productCode()).getBean().getClass(), bean.getClass());
@@ -141,34 +141,34 @@ public class ThingsRegisterExecutor extends ThingsContainerManager implements Th
         if (!thingsEventEntity.enabled()) {
             return;
         }
-        thingsEventsTable.put(thingsEventEntity.identifier(), thingsEventEntity.productCode(), new ThingsEvents(thingsContainer, thingsEventEntity, bean));
+        thingsEventsTable.put(thingsEventEntity.identifier(), thingsEventEntity.productCode(), new ThingsEventEntities(thingsContainer, thingsEventEntity, bean));
     }
 
-    private void findThingsServices(ThingsContainer thingsContainer, Things things, Object bean) {
-        if (!things.enabled()) {
+    private void findThingsServices(ThingsContainer thingsContainer, ThingsEntity thingsEntity, Object bean) {
+        if (!thingsEntity.enabled()) {
             return;
         }
         Method[] methods = ReflectUtil.getMethods(bean.getClass());
         Arrays.asList(methods).parallelStream().forEach(method -> {
             try {
-                findFirst(() -> findThingsService(thingsContainer, things, bean, method),
-                        () -> findThingsEventListener(thingsContainer, things, bean, method),
-                        () -> findThingsPropertyListener(thingsContainer, things, things.productCode(), bean, method));
+                findFirst(() -> findThingsService(thingsContainer, thingsEntity, bean, method),
+                        () -> findThingsEventListener(thingsContainer, thingsEntity, bean, method),
+                        () -> findThingsPropertyListener(thingsContainer, thingsEntity, thingsEntity.productCode(), bean, method));
             } catch (Exception e) {
                 log.error("Things engine scan service {}.{} exception : {}", bean.getClass().getSimpleName(), method.getName(), e.getMessage());
             }
         });
-        thingsEntityTable.put(things.productCode(), bean.getClass(), new ThingsEntity(thingsContainer, things.productCode(), bean, things));
+        thingsEntityTable.put(thingsEntity.productCode(), bean.getClass(), new ThingsEntities(thingsContainer, thingsEntity.productCode(), bean, thingsEntity));
     }
 
 
-    private boolean findThingsService(ThingsContainer thingsContainer, Things things, Object bean, Method method) {
+    private boolean findThingsService(ThingsContainer thingsContainer, ThingsEntity thingsEntity, Object bean, Method method) {
         ThingsService thingsService = AnnotationUtil.getAnnotation(method, ThingsService.class);
         if (thingsService != null) {
             String identifier = StrUtil.isNotBlank(thingsService.identifier()) ? thingsService.identifier() : method.getName();
             method.trySetAccessible();
-            ThingsFunction thingsFunction = new ThingsFunction(thingsContainer, things, bean, method, thingsService.async(), thingsService, scanParameter(method));
-            thingsFunctionTable.put(identifier, things.productCode(), thingsFunction);
+            ThingsFunction thingsFunction = new ThingsFunction(thingsContainer, thingsEntity, bean, method, thingsService.async(), thingsService, scanParameter(method));
+            thingsFunctionTable.put(identifier, thingsEntity.productCode(), thingsFunction);
             return true;
         }
         return false;
@@ -289,10 +289,12 @@ public class ThingsRegisterExecutor extends ThingsContainerManager implements Th
         for (int i = 0; i < method.getParameters().length; i++) {
             Parameter parameter = method.getParameters()[i];
             int finalI = i;
-            thingsParameters[i] = findFirst(() -> scanAnnotation(parameter, finalI, ThingsParam.class),
+            thingsParameters[i] = findFirst(
+                    () -> scanAnnotation(parameter, finalI, ThingsParam.class),
                     () -> scanAnnotation(parameter, finalI, ThingsMessage.class),
                     () -> scanAnnotation(parameter, finalI, ThingsParams.class),
                     () -> scanAnnotation(parameter, finalI, ThingsInject.class),
+                    () -> scanAnnotation(parameter, finalI, ThingsMethod.class),
                     () -> new ThingsParameter(parameter, finalI, parameter.getType(), parameter.getName(), null));
         }
         return thingsParameters;

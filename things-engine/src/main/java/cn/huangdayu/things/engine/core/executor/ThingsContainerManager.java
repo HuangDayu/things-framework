@@ -33,7 +33,7 @@ abstract class ThingsContainerManager {
     /**
      * productCode vs ThingsBeanClass vs ThingsEntity
      */
-    protected final Table<String, Class<?>, ThingsEntity> thingsEntityTable = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
+    protected final Table<String, Class<?>, ThingsEntities> thingsEntityTable = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
 
 
     /**
@@ -44,18 +44,18 @@ abstract class ThingsContainerManager {
     /**
      * productCode vs ThingsProperties
      */
-    protected final Map<String, ThingsProperty> thingsPropertyMap = new ConcurrentHashMap<>();
+    protected final Map<String, ThingsPropertyEntities> thingsPropertyMap = new ConcurrentHashMap<>();
 
     /**
      * deviceCode vs productCode vs ThingsProperties
      */
-    protected final Table<String, String, ThingsProperty> devicePropertyMap = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
+    protected final Table<String, String, ThingsPropertyEntities> devicePropertyMap = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
 
 
     /**
      * identifier vs productCode vs ThingsEvents
      */
-    protected final Table<String, String, ThingsEvents> thingsEventsTable = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
+    protected final Table<String, String, ThingsEventEntities> thingsEventsTable = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
 
 
     /**

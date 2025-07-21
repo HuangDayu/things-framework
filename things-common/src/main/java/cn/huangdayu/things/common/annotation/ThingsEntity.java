@@ -6,13 +6,15 @@ import org.springframework.core.annotation.AliasFor;
 import java.lang.annotation.*;
 
 /**
+ * 物模型实体，支持单例/多例
+ *
  * @author huangdayu
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ThingsBean
-public @interface Things {
+public @interface ThingsEntity {
 
     /**
      * 是否启用
@@ -30,7 +32,7 @@ public @interface Things {
      *
      * @return
      */
-    String schema() default "1.0";
+    String version() default "1.0";
 
     /**
      * 产品标识

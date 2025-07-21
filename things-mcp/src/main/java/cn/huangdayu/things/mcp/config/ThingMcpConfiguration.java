@@ -43,7 +43,8 @@ public class ThingMcpConfiguration {
 
 
     static {
-        THINGS_RESOURCES.add(McpSchema.Resource.builder().uri("classpath:/prompts/things-dsl.json").name("things-dsl").title("物模型DSL规范").description("物模型DSL规范").build());
+        THINGS_RESOURCES.add(McpSchema.Resource.builder().uri("classpath:/prompts/things-dsl.json")
+                .name("things-dsl").title("物模型DSL规范").description("物模型DSL规范").build());
     }
 
     /**

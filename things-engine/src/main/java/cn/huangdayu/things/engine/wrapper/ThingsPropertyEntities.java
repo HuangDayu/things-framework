@@ -1,21 +1,20 @@
 package cn.huangdayu.things.engine.wrapper;
 
+import cn.huangdayu.things.common.annotation.ThingsPropertyEntity;
 import cn.huangdayu.things.api.container.ThingsContainer;
-import cn.huangdayu.things.common.annotation.Things;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * @author huangdayu
  */
 @AllArgsConstructor
-@NoArgsConstructor
 @Data
-public class ThingsEntity {
+public class ThingsPropertyEntities {
 
     private ThingsContainer thingsContainer;
-    private String productCode;
+
+    private ThingsPropertyEntity thingsPropertyEntity;
+
     private Object bean;
-    private Things things;
 }

@@ -11,7 +11,7 @@ import java.util.Set;
 @Data
 public class DomainInfo implements Serializable {
 
-    private DomainProfile profile;
+    private DomainProfileInfo profile;
     private Set<DomainSubscribeInfo> subscribes;
     private Set<DomainConsumeInfo> consumes;
 

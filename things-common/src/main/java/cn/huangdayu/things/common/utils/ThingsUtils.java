@@ -341,7 +341,7 @@ public class ThingsUtils {
     public static Set<ThingsSubscribes> createDslSubscribes(Object subscriber, ThingsDslInfo thingsDslInfo) {
         Set<ThingsSubscribes> thingsSubscribes = new CopyOnWriteArraySet<>();
         thingsDslInfo.getThingsDsl().forEach(thingsInfo -> {
-            String code = thingsInfo.getProfile().getProduct().getCode();
+            String code = thingsInfo.getProfile().getProductCode();
             thingsSubscribes.add(new ThingsSubscribes(subscriber, null, true, code, null, null));
         });
         thingsDslInfo.getDomainDsl().forEach(domainInfo -> {

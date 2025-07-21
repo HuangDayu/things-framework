@@ -11,6 +11,7 @@ import java.util.Objects;
 @Data
 public class DomainProfileInfo implements Serializable {
 
+    private String schema;
     private String name;
     private String code;
     private String version;
@@ -21,6 +22,8 @@ public class DomainProfileInfo implements Serializable {
     private String model;
     private String category;
     private String certification;
+    private String tenantCode;
+    private String applicationCode;
 
 
     @Override
