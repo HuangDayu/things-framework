@@ -1,0 +1,14 @@
+{
+  "id": "消息id，唯一的，String类型，建议使用UUID，请求消息id与回复消息id会是一致的",
+  "params": {
+    "字段A的identifier": "字段A的值",
+    "字段B的identifier": "字段B的值",
+    "字段C的identifier": "字段C的值",
+    "其他字段的identifier": "其他字段的值"
+  },
+  "method": "${productCode}/${deviceCode}/${type}/${identifier}/${action}，请求方法，${productCode}是产品标识，${deviceCode}是设备标识或者设备ID，${type}是类型，分别是actions/events/properties三种，${identifier}是动作，事件或者属性的标识，${action}是动作类型，如${type}是actions时是request/response，是events时是post/，是properties时是get/set/post，method由这几个字段使用‘/’拼接而成",
+  "qos": "消息质量等级，Int类型，与MQTT的QOS理念一致",
+  "time": "时间戳，消息发送时的时间戳，String类型/Long类型",
+  "timeout": "消息超时时间，毫秒，Int类型",
+  "jsonrpc": "JSONRPC版本，默认值：2.0"
+}

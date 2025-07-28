@@ -2,7 +2,7 @@ package cn.huangdayu.things.common.utils;
 
 import cn.huangdayu.things.common.annotation.ThingsClient;
 import cn.huangdayu.things.common.annotation.ThingsEventEntity;
-import cn.huangdayu.things.common.annotation.ThingsService;
+import cn.huangdayu.things.common.annotation.ThingsAction;
 import cn.huangdayu.things.common.dsl.ThingsDslInfo;
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.huangdayu.things.common.message.ThingsEventMessage;
@@ -234,7 +234,7 @@ public class ThingsUtils {
         ThingsRequestMessage trm = new ThingsRequestMessage();
         trm.setQos(thingsEventEntity.qos());
         trm.setParams((JSONObject) JSON.toJSON(tem, JSONWriter.Feature.WriteNulls));
-        trm.setMethod(new ThingsMessageMethod(thingsEventEntity.productCode(), tem.getDeviceCode(), THINGS_EVENT, thingsEventEntity.identifier(), THINGS_POST));
+        trm.setMethod(new ThingsMessageMethod(thingsEventEntity.productCode(), tem.getDeviceCode(), THINGS_EVENTS, thingsEventEntity.identifier(), THINGS_POST));
         return trm;
     }
 
@@ -294,15 +294,16 @@ public class ThingsUtils {
     }
 
     public static boolean isServiceRequest(ThingsRequestMessage trm) {
-        return THINGS_SERVICE_REQUEST.equals(trm.getMethod().replace(subIdentifies(trm.getMethod()), THINGS_IDENTIFIER));
+        return trm.getMessageMethod().getType().equals(THINGS_ACTIONS);
     }
 
     public static boolean isPropertiesSetOrGet(ThingsRequestMessage trm) {
-        return THINGS_PROPERTIES_SET.equals(trm.getMethod()) || THINGS_PROPERTIES_GET.equals(trm.getMethod());
+        return trm.getMessageMethod().getType().equals(THINGS_PROPERTIES) &&
+                (trm.getMessageMethod().getAction().equals(THINGS_GET) || trm.getMessageMethod().getAction().equals(THINGS_SET));
     }
 
     public static boolean isEventPost(ThingsRequestMessage trm) {
-        return THINGS_EVENT_POST.equals(trm.getMethod().replace(subIdentifies(trm.getMethod()), THINGS_IDENTIFIER));
+        return trm.getMessageMethod().getType().equals(THINGS_EVENTS) && trm.getMessageMethod().getAction().equals(THINGS_POST);
     }
 
 
@@ -311,10 +312,10 @@ public class ThingsUtils {
         classSet.forEach(beanClass -> {
             ThingsClient thingsClient = beanClass.getAnnotation(ThingsClient.class);
             for (Method method : beanClass.getDeclaredMethods()) {
-                ThingsService thingsService = method.getAnnotation(ThingsService.class);
-                if (thingsService != null) {
-                    String productCode = StrUtil.isNotBlank(thingsClient.productCode()) ? thingsClient.productCode() : thingsService.productCode();
-                    String identifier = StrUtil.isNotBlank(thingsService.identifier()) ? thingsService.identifier() : method.getName();
+                ThingsAction thingsAction = method.getAnnotation(ThingsAction.class);
+                if (thingsAction != null) {
+                    String productCode = StrUtil.isNotBlank(thingsClient.productCode()) ? thingsClient.productCode() : thingsAction.productCode();
+                    String identifier = StrUtil.isNotBlank(thingsAction.identifier()) ? thingsAction.identifier() : method.getName();
                     if (StrUtil.isAllNotBlank(identifier, productCode)) {
                         table.put(identifier, productCode, beanClass);
                     }
@@ -324,32 +325,18 @@ public class ThingsUtils {
         return table;
     }
 
-    public static boolean equalsThings(String thingsTemplate, String things2) {
-        String[] splitTemplate = thingsTemplate.split("\\.");
-        String[] splitThings = things2.split("\\.");
-        for (int i = 0; i < splitTemplate.length; i++) {
-            if (i == 2) {
-                continue;
-            }
-            if (!splitTemplate[i].equals(splitThings[i])) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public static Set<ThingsSubscribes> createDslSubscribes(Object subscriber, ThingsDslInfo thingsDslInfo) {
         Set<ThingsSubscribes> thingsSubscribes = new CopyOnWriteArraySet<>();
         thingsDslInfo.getThingsDsl().forEach(thingsInfo -> {
             String code = thingsInfo.getProfile().getProductCode();
-            thingsSubscribes.add(new ThingsSubscribes(subscriber, null, true, code, null, null));
+            thingsSubscribes.add(new ThingsSubscribes(subscriber, null, true, new ThingsMessageMethod(code, null, null, null, null)));
         });
-        thingsDslInfo.getDomainDsl().forEach(domainInfo -> {
+        thingsDslInfo.getUseCaseDsl().forEach(domainInfo -> {
             domainInfo.getSubscribes().forEach(info -> {
-                thingsSubscribes.add(new ThingsSubscribes(subscriber, null, false, info.getProductCode(), null, THINGS_EVENT_POST.replace(THINGS_IDENTIFIER, info.getEventIdentifier())));
+                thingsSubscribes.add(new ThingsSubscribes(subscriber, null, false, new ThingsMessageMethod(info.getProductCode(), null, THINGS_EVENTS, info.getEventIdentifier(), THINGS_POST)));
             });
             domainInfo.getConsumes().forEach(info -> {
-                thingsSubscribes.add(new ThingsSubscribes(subscriber, null, false, info.getProductCode(), null, THINGS_SERVICE_RESPONSE.replace(THINGS_IDENTIFIER, info.getServiceIdentifier())));
+                thingsSubscribes.add(new ThingsSubscribes(subscriber, null, false, new ThingsMessageMethod(info.getProductCode(), null, THINGS_ACTIONS, info.getServiceIdentifier(), THINGS_RESPONSE)));
             });
         });
         return thingsSubscribes;

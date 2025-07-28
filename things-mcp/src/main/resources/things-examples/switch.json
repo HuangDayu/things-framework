@@ -1,0 +1,175 @@
+{
+  "identifier": "switch",
+  "name": "Switch",
+  "displayName": "开关",
+  "description": "智能开关设备",
+  "profile": {
+    "description": "智能开关设备，用于控制电路通断",
+    "deviceId": "SW001",
+    "brand": "SmartHome",
+    "model": "SW-01",
+    "type": 0,
+    "protocolType": 0,
+    "netType": 0,
+    "deviceMac": "00:11:22:33:44:55",
+    "deviceSerialNumber": "SN00000001",
+    "version": "1.0.0",
+    "firmware": "1.0.0",
+    "deviceCu": "SmartHome",
+    "productClass": "开关设备",
+    "productCode": "SWITCH_PROD_001"
+  },
+  "status": {
+    "deviceName": "智能开关",
+    "deviceId": "SW001",
+    "status": "online",
+    "time": "2025-07-27 13:45:00",
+    "utcTime": "2025-07-27T13:45:00Z",
+    "lastTime": "2025-07-27 13:44:30",
+    "utcLastTime": "2025-07-27T13:44:30Z",
+    "clientIp": "192.168.1.100"
+  },
+  "properties": [
+    {
+      "identifier": "powerSwitch",
+      "name": "Power Switch",
+      "cnName": "电源开关",
+      "description": "控制开关的开启与关闭",
+      "required": true,
+      "dataType": "Bool",
+      "rwMode": "READWRITE"
+    },
+    {
+      "identifier": "voltage",
+      "name": "Voltage",
+      "cnName": "电压",
+      "description": "当前电压值",
+      "required": false,
+      "dataType": "Double",
+      "rwMode": "READ",
+      "unit": "V",
+      "min": "0",
+      "max": "250"
+    },
+    {
+      "identifier": "current",
+      "name": "Current",
+      "cnName": "电流",
+      "description": "当前电流值",
+      "required": false,
+      "dataType": "Double",
+      "rwMode": "READ",
+      "unit": "A",
+      "min": "0",
+      "max": "16"
+    },
+    {
+      "identifier": "power",
+      "name": "Power",
+      "cnName": "功率",
+      "description": "当前功率值",
+      "required": false,
+      "dataType": "Double",
+      "rwMode": "READ",
+      "unit": "W",
+      "min": "0",
+      "max": "3000"
+    }
+  ],
+  "actions": [
+    {
+      "identifier": "setPowerSwitch",
+      "name": "Set Power Switch",
+      "cnName": "设置电源开关",
+      "description": "远程控制开关的开启与关闭",
+      "required": true,
+      "input": [
+        {
+          "identifier": "powerSwitch",
+          "name": "Power Switch",
+          "cnName": "电源开关",
+          "dataType": "bool",
+          "required": true
+        }
+      ],
+      "output": [],
+      "callType": "ASYNC"
+    },
+    {
+      "identifier": "getPowerSwitchStatus",
+      "name": "Get Power Switch Status",
+      "cnName": "获取电源开关状态",
+      "description": "获取开关当前状态",
+      "required": true,
+      "input": [],
+      "output": [
+        {
+          "identifier": "powerSwitch",
+          "name": "Power Switch",
+          "cnName": "电源开关",
+          "dataType": "bool"
+        }
+      ],
+      "callType": "SYNC"
+    }
+  ],
+  "events": [
+    {
+      "identifier": "powerStateChange",
+      "name": "Power State Change",
+      "cnName": "电源状态变化",
+      "description": "当开关状态发生变化时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "powerSwitch",
+          "name": "Power Switch",
+          "cnName": "电源开关",
+          "dataType": "bool"
+        }
+      ]
+    },
+    {
+      "identifier": "deviceOnline",
+      "name": "Device Online",
+      "cnName": "设备上线",
+      "description": "设备连接到平台时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "deviceId",
+          "name": "Device ID",
+          "cnName": "设备ID",
+          "dataType": "string"
+        },
+        {
+          "identifier": "time",
+          "name": "Time",
+          "cnName": "时间",
+          "dataType": "string"
+        }
+      ]
+    },
+    {
+      "identifier": "deviceOffline",
+      "name": "Device Offline",
+      "cnName": "设备下线",
+      "description": "设备与平台断开连接时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "deviceId",
+          "name": "Device ID",
+          "cnName": "设备ID",
+          "dataType": "string"
+        },
+        {
+          "identifier": "time",
+          "name": "Time",
+          "cnName": "时间",
+          "dataType": "string"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+[
+  {
+    "productCode": "SOCKET_PROD_001",
+    "deviceCode": "SOCK001",
+    "deviceName": "智能插座",
+    "deviceLocation": "书房",
+    "deviceAlias": [
+      "电脑插座"
+    ],
+    "deviceGroups": [
+      {
+        "groupCode": "GROUP_SOCKET_001",
+        "groupType": "SOCKET",
+        "groupName": "插座设备组"
+      }
+    ],
+    "deviceStatus": "online",
+    "deviceType": "插座",
+    "deviceDescription": "智能插座设备，可远程控制电源通断并监测功耗",
+    "deviceTags": [
+      {
+        "tagCode": "TAG_HOME_001",
+        "tagType": "HOME",
+        "tagName": "家居设备"
+      },
+      {
+        "tagCode": "TAG_POWER_001",
+        "tagType": "POWER",
+        "tagName": "电源"
+      }
+    ]
+  }
+]

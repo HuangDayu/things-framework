@@ -1,0 +1,28 @@
+[
+  {
+    "productCode": "设备所属产品的标识",
+    "deviceCode": "设备标识",
+    "deviceName": "设备名称",
+    "deviceLocation": "设备位置",
+    "deviceAlias": [
+      "设备别名"
+    ],
+    "deviceGroups": [
+      {
+        "groupCode": "分组标识",
+        "groupType": "分组类型",
+        "groupName": "分组名称"
+      }
+    ],
+    "deviceStatus": "设备状态，online/offline",
+    "deviceType": "设备类型",
+    "deviceDescription": "设备描述",
+    "deviceTags": [
+      {
+        "tagCode": "标签标识",
+        "tagType": "标签类型",
+        "tagName": "标签名称"
+      }
+    ]
+  }
+]

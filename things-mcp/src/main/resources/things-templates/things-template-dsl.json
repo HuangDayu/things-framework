@@ -1,0 +1,162 @@
+{
+  "identifier": "说明：物模板标识符；类型：String；是否必选：否；长度：[1,100]；取值：唯一ID；备注：模板唯一标识；关键字：id,Id,identifier",
+  "name": "说明：物模板名称；类型：String；是否必选：是；长度：[1,50]；取值：模板名称；备注：可包含行业信息；关键字：name,Name",
+  "displayName": "说明：显示标题；类型：String；是否必选：否；长度：[1,50]；取值：显示文本；备注：用户界面显示用；关键字：displayName,DisplayName",
+  "description": "说明：模板描述；类型：String；是否必选：否；长度：[1,200]；取值：描述文本；备注：功能说明；关键字：description,Description",
+  "schema": "说明：数据模式；类型：JsonObject；是否必选：否；取值：复杂结构定义；备注：校验模板信息；关键字：schema,Schema,dataSchema,DataSchema,tmData",
+  "status": {
+    "deviceName": "说明：设备名称；类型：String；是否必选：是；长度：{1,50}；取值：任意字符；备注：设备在系统中的显示名称；关键字：deviceName,DeviceName",
+    "deviceId": "说明：设备唯一标识符；类型：String；是否必选：是；长度：{1,100}；取值：设备SN号/MAC地址等；备注：平台唯一标识设备的关键字段；关键字：deviceID,deviceID,DeviceID,DeviceId",
+    "status": "说明：设备在线状态；类型：String；是否必选：是；长度：{1,50}；取值：online/offline；备注：反映设备实时连接状态；关键字：status,Status",
+    "time": "说明：状态通知时间；类型：String；是否必选：否；长度：{1,100}；取值：YYYY-MM-DD hh:mm:ss格式；备注：平台生成的时间戳；关键字：time,Time",
+    "utcTime": "说明：UTC时间戳；类型：String；是否必选：否；长度：{1,100}；取值：ISO 8601格式；备注：国际标准时间；关键字：utcTime,UtcTime",
+    "lastTime": "说明：最后通信时间；类型：String；是否必选：否；长度：{1,100}；取值：YYYY-MM-DD hh:mm:ss；备注：设备状态变更前最后一次通信时间；关键字：lastTime,LastTime",
+    "utcLastTime": "说明：UTC最后通信时间；类型：String；是否必选：否；长度：{1,100}；取值：ISO 8601格式；备注：国际标准时间格式；关键字：utclastTime,UtclastTime",
+    "clientIp": "说明：设备公网IP；类型：String；是否必选：否；长度：{1,100}；取值：IPv4地址格式；备注：设备网络出口地址；关键字：clientIp,ClientIp"
+  },
+  "profile": {
+    "description": "说明：设备描述；类型：String；是否必选：否；长度：{1,100}；取值：支持中文/字母/数字/短划线/下划线；备注：产品详细描述；关键字：description,Description",
+    "deviceId": "说明：设备标识；类型：String；是否必选：有条件必选；长度：{1,100}；取值：设备唯一ID；备注：平台注册的设备ID；关键字：deviceID,deviceUID,DeviceUDID,DeviceId",
+    "brand": "说明：设备品牌；类型：String；是否必选：否；长度：{1,100}；取值：厂商名称；备注：如华为/小米等；关键字：brand,Brand",
+    "model": "说明：设备型号；类型：String；是否必选：否；长度：{1,100}；取值：厂家定义型号代码；备注：区分不同规格产品的标识；关键字：model,Model,deviceModel,DeviceModel",
+    "type": "说明：设备类型；类型：Enum；是否必选：否；取值：0-直接设备/1-网关设备/2-网关子设备；备注：设备在网络中的角色；关键字：type,Type",
+    "protocolType": "说明：协议类型；类型：Enum；是否必选：否；取值：0-MQTT/1-LwM2M/2-HTTP/3-其他；备注：设备通信协议；关键字：protocolType,ProtocolType",
+    "netType": "说明：网络类型；类型：Enum；是否必选：否；取值：0-WIFI/1-2G/2-3G/3-4G/4-Cat1/5-5G/6-NB-IoT/7-LoRa/8-其他；备注：设备网络接入方式；关键字：netType,NetType",
+    "deviceMac": "说明：MAC地址；类型：String；是否必选：否；长度：{1,50}；取值：标准MAC格式；备注：设备物理地址；关键字：deviceMAC,DeviceMAC",
+    "deviceSerialNumber": "说明：设备序列号；类型：String；是否必选：否；长度：{1,100}；取值：厂商序列号；备注：设备出厂唯一标识；关键字：deviceSerialNumber,DeviceSerialNumber",
+    "version": "说明：物模型版本；类型：String；是否必选：否；长度：{1,100}；取值：版本号格式；备注：物模型规范版本；关键字：version,Version",
+    "firmware": "说明：固件版本；类型：String；是否必选：否；长度：{1,20}；取值：版本号格式；备注：设备软件版本；关键字：firmware",
+    "deviceCu": "说明：通信模块供应商；类型：String；是否必选：否；长度：{1,100}；取值：供应商名称；备注：模组生产厂商；关键字：deviceCU,DeviceCU",
+    "productClass": "说明：产品类别；类型：String；是否必选：否；长度：{1,100}；取值：行业分类名称；备注：设备所属品类；关键字：productClass,ProductClass",
+    "productCode": "说明：产品标识；类型：String；是否必选：否；长度：{1,100}；取值：行业分类名称；备注：设备所属品类；关键字：productCode,ProductCode"
+  },
+  "properties": [
+    {
+      "identifier": "说明：属性标识符；类型：String；是否必选：条件下必选；长度：[1,100]；取值：唯一ID；备注：可作为属性唯一标识；关键字：id,Identifier,identifier",
+      "name": "说明：英文名称；类型：String；是否必选：条件下必选；长度：[1,50]；取值：英文字符；备注：属性英文标识；关键字：name,displayName,propertyName,Name",
+      "cnName": "说明：中文名称；类型：String；是否必选：条件下必选；长度：[1,50]；取值：中文字符；备注：属性中文标识；关键字：name,displayName,propertyName,Name",
+      "description": "说明：属性描述；类型：String；是否必选：否；长度：[1,50]；取值：描述文本；备注：功能说明；关键字：description,desc,Description",
+      "required": "说明：是否必选；类型：Bool；是否必选：否；取值：True/False；备注：是否必须实现；关键字：required,Mandatory,tmRequired,Required",
+      "dataType": "说明：数据类型；类型：Enum；是否必选：否；取值：Int8/UInt8/Int16/UInt16/Int32/UInt32/Int64/UInt64/Bool/Enum/String/Double/Array/Struct/Bitmap；备注：属性值类型；关键字：dataType,Type,DataType",
+      "min": "说明：最小值；类型：String；是否必选：否；取值：数值；备注：仅数值型有效；关键字：min,Min",
+      "max": "说明：最大值；类型：String；是否必选：否；取值：数值；备注：仅数值型有效；关键字：Max,max",
+      "precise": "说明：精度；类型：String；是否必选：否；取值：小数位数；备注：仅浮点型有效；关键字：precise,Precise",
+      "rwMode": "说明：读写权限；类型：Enum；是否必选：否；取值：READ/WRITE/READWRITE；备注：数据操作权限；关键字：rwMode,accessMode,rwACL,rwFlag,mode,RwMode",
+      "unit": "说明：数据单位；类型：String；是否必选：否；长度：{1,50}；取值：单位符号；备注：如℃/%；关键字：unit,Unit",
+      "schema": "说明：数据模式；类型：JsonObject；是否必选：否；取值：复杂结构定义；备注：嵌套数据结构；关键字：schema,Schema,dataSchema,DataSchema,tmData",
+      "custom": "说明：是否自定义；类型：Bool；是否必选：否；取值：True/False；备注：用户扩展功能；关键字：custom,Custom"
+    }
+  ],
+  "actions": [
+    {
+      "identifier": "说明：行为标识符；类型：String；是否必选：有条件必选；长度：{1,100}；取值：唯一ID；备注：行为唯一标识；关键字：identifier,id,Identifier",
+      "name": "说明：英文名称；类型：String；是否必选：有条件必选；长度：{1,50}；取值：英文字符；备注：行为英文标识；关键字：name,ServiceName,Servicename,Name",
+      "cnName": "说明：中文名称；类型：String；是否必选：有条件必选；长度：{1,50}；取值：中文字符；备注：行为中文标识；关键字：name,ServiceName,Servicename,Name",
+      "displayName": "说明：显示标题；类型：String；是否必选：否；长度：{1,100}；取值：显示文本；备注：用户界面显示用；关键字：displayName,displayName",
+      "description": "说明：行为描述；类型：String；是否必选：否；长度：{1,50}；取值：描述文本；备注：功能说明；关键字：description,desc,Description",
+      "required": "说明：是否必选；类型：Bool；是否必选：否；取值：True/False；备注：是否必须实现；关键字：required,tmRequired,Required",
+      "input": [
+        {
+          "dataType": "基本数据类型（必选），取值：int/float/double/string/bitMap，关键字：dataType,type,DataType",
+          "max": "最大值（非必选），仅数值型有效，关键字：max,maximum,Max",
+          "min": "最小值（非必选），仅数值型有效，关键字：min,minimum,Min",
+          "step": "变化幅度（非必选），仅数值型有效，关键字：step,scale,Step",
+          "unit": "数据单位（非必选），关键字：unit,Unit",
+          "unitName": "单位名称（非必选），关键字：unitName",
+          "default": "默认值（非必选），关键字：default,defaultValue,Default",
+          "precise": "精度（必选），仅float/double有效，关键字：precise,Precise",
+          "minLength": "字符串最小长度（非必选），仅string有效，关键字：minLength,min,MinLength",
+          "maxLength": "字符串最大长度（非必选），仅string有效，关键字：maxLength,max,MaxLength",
+          "custom": "是否自定义（非必选），取值：True/False，关键字：custom,Custom",
+          "length": "数据长度（非必选），仅TEXT有效（≤2048字节），关键字：length,datalength,Length",
+          "timestamp": "时间格式（非必选），仅DATE有效，关键字：timestamp,Timestamp",
+          "size": "数组长度（非必选），关键字：size,Size",
+          "childDataType": "子元素类型（非必选），取值：STRUCT/INT/FLOAT/DOUBLE/TEXT，关键字：childDataType",
+          "arrayDesc": "数组项说明（非必选），关键字：arrayDesc,ArrayDesc",
+          "value": "枚举项说明（非必选），关键字：value,enumDesc,mapping value,Value",
+          "identifier": "子参数标识符（非必选），关键字：identifier",
+          "name": "子参数名称（非必选），关键字：name",
+          "structDesc": "结构体项说明（非必选），关键字：structureDesc",
+          "bitmapDesc": "位图项说明（非必选），关键字：bitmapDesc"
+        }
+      ],
+      "output": [
+        {
+          "dataType": "基本数据类型（必选），取值：int/float/double/string/bitMap，关键字：dataType,type,DataType",
+          "max": "最大值（非必选），仅数值型有效，关键字：max,maximum,Max",
+          "min": "最小值（非必选），仅数值型有效，关键字：min,minimum,Min",
+          "step": "变化幅度（非必选），仅数值型有效，关键字：step,scale,Step",
+          "unit": "数据单位（非必选），关键字：unit,Unit",
+          "unitName": "单位名称（非必选），关键字：unitName",
+          "default": "默认值（非必选），关键字：default,defaultValue,Default",
+          "precise": "精度（必选），仅float/double有效，关键字：precise,Precise",
+          "minLength": "字符串最小长度（非必选），仅string有效，关键字：minLength,min,MinLength",
+          "maxLength": "字符串最大长度（非必选），仅string有效，关键字：maxLength,max,MaxLength",
+          "custom": "是否自定义（非必选），取值：True/False，关键字：custom,Custom",
+          "length": "数据长度（非必选），仅TEXT有效（≤2048字节），关键字：length,datalength,Length",
+          "timestamp": "时间格式（非必选），仅DATE有效，关键字：timestamp,Timestamp",
+          "size": "数组长度（非必选），关键字：size,Size",
+          "childDataType": "子元素类型（非必选），取值：STRUCT/INT/FLOAT/DOUBLE/TEXT，关键字：childDataType",
+          "arrayDesc": "数组项说明（非必选），关键字：arrayDesc,ArrayDesc",
+          "value": "枚举项说明（非必选），关键字：value,enumDesc,mapping value,Value",
+          "identifier": "子参数标识符（非必选），关键字：identifier",
+          "name": "子参数名称（非必选），关键字：name",
+          "structDesc": "结构体项说明（非必选），关键字：structureDesc",
+          "bitmapDesc": "位图项说明（非必选），关键字：bitmapDesc"
+        }
+      ],
+      "callType": "说明：调用方式；类型：Enum；是否必选：否；取值：SYNC/ASYNC；备注：同步/异步执行；关键字：callType,ActionType,CallType",
+      "custom": "说明：是否自定义；类型：Bool；是否必选：否；取值：True/False；备注：用户扩展功能；关键字：custom,Custom"
+    }
+  ],
+  "events": [
+    {
+      "identifier": "说明：事件标识符；类型：String；是否必选：有条件必选；长度：{1,100}；取值：唯一ID；备注：事件唯一标识；关键字：identifier,id,Identifier",
+      "name": "说明：英文名称；类型：String；是否必选：有条件必选；长度：{1,50}；取值：英文字符；备注：事件英文标识；关键字：name,eventName,Name",
+      "cnName": "说明：中文名称；类型：String；是否必选：有条件必选；长度：{1,50}；取值：中文字符；备注：事件中文标识；关键字：name,eventName,Name",
+      "displayName": "说明：显示标题；类型：String；是否必选：否；长度：{1,100}；取值：显示文本；备注：用户界面显示用；关键字：displayName,displayName",
+      "description": "说明：事件描述；类型：String；是否必选：否；长度：{1,50}；取值：描述文本；备注：功能说明；关键字：description,desc,Description",
+      "required": "说明：是否必选；类型：Bool；是否必选：否；取值：True/False；备注：是否必须实现；关键字：required,Required",
+      "output": [
+        {
+          "dataType": "基本数据类型（必选），取值：int/float/double/string/bitMap，关键字：dataType,type,DataType",
+          "max": "最大值（非必选），仅数值型有效，关键字：max,maximum,Max",
+          "min": "最小值（非必选），仅数值型有效，关键字：min,minimum,Min",
+          "step": "变化幅度（非必选），仅数值型有效，关键字：step,scale,Step",
+          "unit": "数据单位（非必选），关键字：unit,Unit",
+          "unitName": "单位名称（非必选），关键字：unitName",
+          "default": "默认值（非必选），关键字：default,defaultValue,Default",
+          "precise": "精度（必选），仅float/double有效，关键字：precise,Precise",
+          "minLength": "字符串最小长度（非必选），仅string有效，关键字：minLength,min,MinLength",
+          "maxLength": "字符串最大长度（非必选），仅string有效，关键字：maxLength,max,MaxLength",
+          "custom": "是否自定义（非必选），取值：True/False，关键字：custom,Custom",
+          "length": "数据长度（非必选），仅TEXT有效（≤2048字节），关键字：length,datalength,Length",
+          "timestamp": "时间格式（非必选），仅DATE有效，关键字：timestamp,Timestamp",
+          "size": "数组长度（非必选），关键字：size,Size",
+          "childDataType": "子元素类型（非必选），取值：STRUCT/INT/FLOAT/DOUBLE/TEXT，关键字：childDataType",
+          "arrayDesc": "数组项说明（非必选），关键字：arrayDesc,ArrayDesc",
+          "value": "枚举项说明（非必选），关键字：value,enumDesc,mapping value,Value",
+          "identifier": "子参数标识符（非必选），关键字：identifier",
+          "name": "子参数名称（非必选），关键字：name",
+          "structDesc": "结构体项说明（非必选），关键字：structureDesc",
+          "bitmapDesc": "位图项说明（非必选），关键字：bitmapDesc"
+        }
+      ],
+      "eventType": "说明：事件类型；类型：Enum；是否必选：否；取值：INFO_EVENT_TYPE/ALERT_EVENT_TYPE/ERROR_EVENT_TYPE；备注：信息/告警/错误；关键字：eventType,EventType",
+      "custom": "说明：是否自定义；类型：Bool；是否必选：否；取值：True/False；备注：用户扩展功能；关键字：custom,Custom"
+    }
+  ],
+  "components": [
+    {
+      "identifier": "说明：组件标识符；类型：String；是否必选：有条件必选；长度：{1,100}；取值：唯一ID；备注：组件唯一标识；关键字：id,Id,identifier",
+      "name": "说明：英文名称；类型：String；是否必选：有条件必选；长度：{1,50}；取值：英文字符；备注：组件英文标识；关键字：name,Name",
+      "cnName": "说明：中文名称；类型：String；是否必选：有条件必选；长度：{1,50}；取值：中文字符；备注：组件中文标识；关键字：name,Name",
+      "displayName": "说明：显示标题；类型：String；是否必选：否；长度：{1,50}；取值：显示文本；备注：用户界面显示用；关键字：displayName,DisplayName",
+      "description": "说明：组件描述；类型：String；是否必选：否；长度：{1,200}；取值：描述文本；备注：功能说明；关键字：description,Description",
+      "properties": "说明：属性列表；类型：List；是否必选：否；长度：0..N；取值：属性对象列表；备注：组件包含的属性；关键字：properties",
+      "actions": "说明：行为列表；类型：List；是否必选：否；长度：0..N；取值：行为对象列表；备注：组件包含的行为；关键字：ActionList,Actions,actions",
+      "events": "说明：事件列表；类型：List；是否必选：否；长度：0..N；取值：事件对象列表；备注：组件包含的事件；关键字：eventList,events",
+      "schema": "说明：数据模式；类型：JsonObject；是否必选：否；取值：复杂结构定义；备注：校验组件信息；关键字：schema,Schema,dataschema,Dataschema,tmData"
+    }
+  ]
+}

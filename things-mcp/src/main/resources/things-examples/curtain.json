@@ -1,0 +1,239 @@
+{
+  "identifier": "curtain",
+  "name": "Curtain",
+  "displayName": "窗帘",
+  "description": "智能窗帘设备",
+  "profile": {
+    "description": "智能窗帘设备，可远程控制窗帘开合度",
+    "deviceId": "CURT001",
+    "brand": "SmartHome",
+    "model": "CURT-01",
+    "type": 0,
+    "protocolType": 0,
+    "netType": 0,
+    "deviceMac": "00:11:22:33:44:57",
+    "deviceSerialNumber": "SN00000003",
+    "version": "1.0.0",
+    "firmware": "1.0.0",
+    "deviceCu": "SmartHome",
+    "productClass": "窗帘设备",
+    "productCode": "CURTAIN_PROD_001"
+  },
+  "status": {
+    "deviceName": "智能窗帘",
+    "deviceId": "CURT001",
+    "status": "online",
+    "time": "2025-07-27 13:45:00",
+    "utcTime": "2025-07-27T13:45:00Z",
+    "lastTime": "2025-07-27 13:44:30",
+    "utcLastTime": "2025-07-27T13:44:30Z",
+    "clientIp": "192.168.1.102"
+  },
+  "properties": [
+    {
+      "identifier": "curtainControl",
+      "name": "Curtain Control",
+      "cnName": "窗帘控制",
+      "description": "控制窗帘的开启与关闭",
+      "required": true,
+      "dataType": "Enum",
+      "rwMode": "READWRITE",
+      "schema": {
+        "value": [
+          {
+            "index": 0,
+            "name": "STOP",
+            "cnName": "停止"
+          },
+          {
+            "index": 1,
+            "name": "OPEN",
+            "cnName": "打开"
+          },
+          {
+            "index": 2,
+            "name": "CLOSE",
+            "cnName": "关闭"
+          }
+        ]
+      }
+    },
+    {
+      "identifier": "curtainPosition",
+      "name": "Curtain Position",
+      "cnName": "窗帘位置",
+      "description": "窗帘当前位置百分比",
+      "required": true,
+      "dataType": "UInt8",
+      "rwMode": "READWRITE",
+      "unit": "%",
+      "min": "0",
+      "max": "100"
+    },
+    {
+      "identifier": "motorStatus",
+      "name": "Motor Status",
+      "cnName": "电机状态",
+      "description": "窗帘电机当前状态",
+      "required": false,
+      "dataType": "Enum",
+      "rwMode": "READ",
+      "schema": {
+        "value": [
+          {
+            "index": 0,
+            "name": "STOPPED",
+            "cnName": "停止"
+          },
+          {
+            "index": 1,
+            "name": "OPENING",
+            "cnName": "正在打开"
+          },
+          {
+            "index": 2,
+            "name": "CLOSING",
+            "cnName": "正在关闭"
+          }
+        ]
+      }
+    }
+  ],
+  "actions": [
+    {
+      "identifier": "setCurtainPosition",
+      "name": "Set Curtain Position",
+      "cnName": "设置窗帘位置",
+      "description": "设置窗帘开合度",
+      "required": true,
+      "input": [
+        {
+          "identifier": "curtainPosition",
+          "name": "Curtain Position",
+          "cnName": "窗帘位置",
+          "dataType": "uint8",
+          "min": "0",
+          "max": "100",
+          "required": true
+        }
+      ],
+      "output": [],
+      "callType": "ASYNC"
+    },
+    {
+      "identifier": "controlCurtain",
+      "name": "Control Curtain",
+      "cnName": "控制窗帘",
+      "description": "控制窗帘开关",
+      "required": true,
+      "input": [
+        {
+          "identifier": "curtainControl",
+          "name": "Curtain Control",
+          "cnName": "窗帘控制",
+          "dataType": "enum",
+          "required": true
+        }
+      ],
+      "output": [],
+      "callType": "ASYNC"
+    },
+    {
+      "identifier": "getCurtainStatus",
+      "name": "Get Curtain Status",
+      "cnName": "获取窗帘状态",
+      "description": "获取窗帘当前状态信息",
+      "required": true,
+      "input": [],
+      "output": [
+        {
+          "identifier": "curtainPosition",
+          "name": "Curtain Position",
+          "cnName": "窗帘位置",
+          "dataType": "uint8"
+        },
+        {
+          "identifier": "motorStatus",
+          "name": "Motor Status",
+          "cnName": "电机状态",
+          "dataType": "enum"
+        }
+      ],
+      "callType": "SYNC"
+    }
+  ],
+  "events": [
+    {
+      "identifier": "positionChange",
+      "name": "Position Change",
+      "cnName": "位置变化",
+      "description": "当窗帘位置发生变化时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "curtainPosition",
+          "name": "Curtain Position",
+          "cnName": "窗帘位置",
+          "dataType": "uint8"
+        }
+      ]
+    },
+    {
+      "identifier": "motorStopped",
+      "name": "Motor Stopped",
+      "cnName": "电机停止",
+      "description": "当窗帘电机停止时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "curtainPosition",
+          "name": "Curtain Position",
+          "cnName": "窗帘位置",
+          "dataType": "uint8"
+        }
+      ]
+    },
+    {
+      "identifier": "deviceOnline",
+      "name": "Device Online",
+      "cnName": "设备上线",
+      "description": "设备连接到平台时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "deviceId",
+          "name": "Device ID",
+          "cnName": "设备ID",
+          "dataType": "string"
+        },
+        {
+          "identifier": "time",
+          "name": "Time",
+          "cnName": "时间",
+          "dataType": "string"
+        }
+      ]
+    },
+    {
+      "identifier": "deviceOffline",
+      "name": "Device Offline",
+      "cnName": "设备下线",
+      "description": "设备与平台断开连接时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "deviceId",
+          "name": "Device ID",
+          "cnName": "设备ID",
+          "dataType": "string"
+        },
+        {
+          "identifier": "time",
+          "name": "Time",
+          "cnName": "时间",
+          "dataType": "string"
+        }
+      ]
+    }
+  ]
+}

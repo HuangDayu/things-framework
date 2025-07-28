@@ -1,0 +1,305 @@
+{
+  "identifier": "fan",
+  "name": "Fan",
+  "displayName": "风扇",
+  "description": "智能风扇设备",
+  "profile": {
+    "description": "智能风扇设备，可远程控制风速、模式和定时功能",
+    "deviceId": "FAN001",
+    "brand": "SmartHome",
+    "model": "FAN-01",
+    "type": 0,
+    "protocolType": 0,
+    "netType": 0,
+    "deviceMac": "00:11:22:33:44:59",
+    "deviceSerialNumber": "SN00000005",
+    "version": "1.0.0",
+    "firmware": "1.0.0",
+    "deviceCu": "SmartHome",
+    "productClass": "风扇设备",
+    "productCode": "FAN_PROD_001"
+  },
+  "status": {
+    "deviceName": "智能风扇",
+    "deviceId": "FAN001",
+    "status": "online",
+    "time": "2025-07-27 13:45:00",
+    "utcTime": "2025-07-27T13:45:00Z",
+    "lastTime": "2025-07-27 13:44:30",
+    "utcLastTime": "2025-07-27T13:44:30Z",
+    "clientIp": "192.168.1.104"
+  },
+  "properties": [
+    {
+      "identifier": "powerSwitch",
+      "name": "Power Switch",
+      "cnName": "电源开关",
+      "description": "控制风扇的开启与关闭",
+      "required": true,
+      "dataType": "Bool",
+      "rwMode": "READWRITE"
+    },
+    {
+      "identifier": "fanSpeed",
+      "name": "Fan Speed",
+      "cnName": "风速",
+      "description": "风扇转速档位",
+      "required": true,
+      "dataType": "UInt8",
+      "rwMode": "READWRITE",
+      "min": "0",
+      "max": "5"
+    },
+    {
+      "identifier": "fanMode",
+      "name": "Fan Mode",
+      "cnName": "风扇模式",
+      "description": "风扇运行模式",
+      "required": true,
+      "dataType": "Enum",
+      "rwMode": "READWRITE",
+      "schema": {
+        "value": [
+          {
+            "index": 0,
+            "name": "NORMAL",
+            "cnName": "正常"
+          },
+          {
+            "index": 1,
+            "name": "NATURAL",
+            "cnName": "自然风"
+          },
+          {
+            "index": 2,
+            "name": "SLEEP",
+            "cnName": "睡眠"
+          }
+        ]
+      }
+    },
+    {
+      "identifier": "timer",
+      "name": "Timer",
+      "cnName": "定时器",
+      "description": "定时关机设置（分钟）",
+      "required": false,
+      "dataType": "UInt16",
+      "rwMode": "READWRITE",
+      "unit": "min",
+      "min": "0",
+      "max": "540"
+    }
+  ],
+  "actions": [
+    {
+      "identifier": "setPowerSwitch",
+      "name": "Set Power Switch",
+      "cnName": "设置电源开关",
+      "description": "远程控制风扇的开启与关闭",
+      "required": true,
+      "input": [
+        {
+          "identifier": "powerSwitch",
+          "name": "Power Switch",
+          "cnName": "电源开关",
+          "dataType": "bool",
+          "required": true
+        }
+      ],
+      "output": [],
+      "callType": "ASYNC"
+    },
+    {
+      "identifier": "setFanSpeed",
+      "name": "Set Fan Speed",
+      "cnName": "设置风速",
+      "description": "设置风扇转速档位",
+      "required": true,
+      "input": [
+        {
+          "identifier": "fanSpeed",
+          "name": "Fan Speed",
+          "cnName": "风速",
+          "dataType": "uint8",
+          "min": "0",
+          "max": "5",
+          "required": true
+        }
+      ],
+      "output": [],
+      "callType": "ASYNC"
+    },
+    {
+      "identifier": "setFanMode",
+      "name": "Set Fan Mode",
+      "cnName": "设置风扇模式",
+      "description": "设置风扇运行模式",
+      "required": true,
+      "input": [
+        {
+          "identifier": "fanMode",
+          "name": "Fan Mode",
+          "cnName": "风扇模式",
+          "dataType": "enum",
+          "required": true
+        }
+      ],
+      "output": [],
+      "callType": "ASYNC"
+    },
+    {
+      "identifier": "setTimer",
+      "name": "Set Timer",
+      "cnName": "设置定时器",
+      "description": "设置定时关机时间",
+      "required": true,
+      "input": [
+        {
+          "identifier": "timer",
+          "name": "Timer",
+          "cnName": "定时器",
+          "dataType": "uint16",
+          "min": "0",
+          "max": "540",
+          "required": true
+        }
+      ],
+      "output": [],
+      "callType": "ASYNC"
+    },
+    {
+      "identifier": "getStatus",
+      "name": "Get Status",
+      "cnName": "获取状态",
+      "description": "获取风扇当前所有状态信息",
+      "required": true,
+      "input": [],
+      "output": [
+        {
+          "identifier": "powerSwitch",
+          "name": "Power Switch",
+          "cnName": "电源开关",
+          "dataType": "bool"
+        },
+        {
+          "identifier": "fanSpeed",
+          "name": "Fan Speed",
+          "cnName": "风速",
+          "dataType": "uint8"
+        },
+        {
+          "identifier": "fanMode",
+          "name": "Fan Mode",
+          "cnName": "风扇模式",
+          "dataType": "enum"
+        }
+      ],
+      "callType": "SYNC"
+    }
+  ],
+  "events": [
+    {
+      "identifier": "powerStateChange",
+      "name": "Power State Change",
+      "cnName": "电源状态变化",
+      "description": "当风扇状态发生变化时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "powerSwitch",
+          "name": "Power Switch",
+          "cnName": "电源开关",
+          "dataType": "bool"
+        }
+      ]
+    },
+    {
+      "identifier": "speedChange",
+      "name": "Speed Change",
+      "cnName": "速度变化",
+      "description": "当风扇速度发生变化时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "fanSpeed",
+          "name": "Fan Speed",
+          "cnName": "风速",
+          "dataType": "uint8"
+        }
+      ]
+    },
+    {
+      "identifier": "modeChange",
+      "name": "Mode Change",
+      "cnName": "模式变化",
+      "description": "当风扇运行模式发生变化时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "fanMode",
+          "name": "Fan Mode",
+          "cnName": "风扇模式",
+          "dataType": "enum"
+        }
+      ]
+    },
+    {
+      "identifier": "timerEnd",
+      "name": "Timer End",
+      "cnName": "定时结束",
+      "description": "当定时时间到达时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "powerSwitch",
+          "name": "Power Switch",
+          "cnName": "电源开关",
+          "dataType": "bool"
+        }
+      ]
+    },
+    {
+      "identifier": "deviceOnline",
+      "name": "Device Online",
+      "cnName": "设备上线",
+      "description": "设备连接到平台时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "deviceId",
+          "name": "Device ID",
+          "cnName": "设备ID",
+          "dataType": "string"
+        },
+        {
+          "identifier": "time",
+          "name": "Time",
+          "cnName": "时间",
+          "dataType": "string"
+        }
+      ]
+    },
+    {
+      "identifier": "deviceOffline",
+      "name": "Device Offline",
+      "cnName": "设备下线",
+      "description": "设备与平台断开连接时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "deviceId",
+          "name": "Device ID",
+          "cnName": "设备ID",
+          "dataType": "string"
+        },
+        {
+          "identifier": "time",
+          "name": "Time",
+          "cnName": "时间",
+          "dataType": "string"
+        }
+      ]
+    }
+  ]
+}

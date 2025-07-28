@@ -10,4 +10,7 @@ import java.lang.annotation.*;
 @Documented
 @ThingsBean
 public @interface ThingsTools {
+
+    boolean enabled() default true;
+
 }

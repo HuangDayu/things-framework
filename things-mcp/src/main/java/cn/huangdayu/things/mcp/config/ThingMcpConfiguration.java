@@ -43,8 +43,10 @@ public class ThingMcpConfiguration {
 
 
     static {
-        THINGS_RESOURCES.add(McpSchema.Resource.builder().uri("classpath:/prompts/things-dsl.json")
-                .name("things-dsl").title("物模型DSL规范").description("物模型DSL规范").build());
+        THINGS_RESOURCES.add(McpSchema.Resource.builder().uri("classpath:/things-templates/things-template-dsl.json")
+                .name("things-template-dsl").title("物模型物模板DSL规范").description("物模型物模板DSL规范").build());
+        THINGS_RESOURCES.add(McpSchema.Resource.builder().uri("classpath:/things-templates/things-message-dsl.json")
+                .name("things-message-dsl").title("物模型消息DSL规范").description("物模型消息DSL规范").build());
     }
 
     /**
@@ -63,6 +65,10 @@ public class ThingMcpConfiguration {
     }
 
     private boolean hasTools(Class<?> clazz) {
+        ThingsTools annotation = clazz.getAnnotation(ThingsTools.class);
+        if (!annotation.enabled()) {
+            return false;
+        }
         List<Method> methods = new ArrayList<>();
         methods.addAll(List.of(clazz.getMethods()));
         methods.addAll(List.of(clazz.getDeclaredMethods()));
@@ -70,8 +76,8 @@ public class ThingMcpConfiguration {
     }
 
     @Bean
-    public List<McpServerFeatures.AsyncPromptSpecification> mcpPrompts(@Value("classpath:/prompts/things-prompts.md") Resource resource) {
-        return List.of(greetingPrompts(), thingsPrompts(resource));
+    public List<McpServerFeatures.AsyncPromptSpecification> mcpPrompts(@Value("classpath:/things-prompts/things-prompts.md") Resource resource) {
+        return List.of(thingsPrompts(resource));
     }
 
 

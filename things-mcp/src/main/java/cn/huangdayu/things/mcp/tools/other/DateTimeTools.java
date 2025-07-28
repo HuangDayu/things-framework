@@ -12,7 +12,7 @@ import java.util.TimeZone;
 /**
  * @author huangdayu
  */
-@ThingsTools
+@ThingsTools(enabled = false)
 public class DateTimeTools {
 
     @Tool(description = "根据时区获取时间")

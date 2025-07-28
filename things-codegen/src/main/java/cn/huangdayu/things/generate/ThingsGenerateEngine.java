@@ -1,7 +1,7 @@
 package cn.huangdayu.things.generate;
 
 
-import cn.huangdayu.things.common.dsl.ThingsTemplate;
+import cn.huangdayu.things.common.dsl.template.ThingsInfo;
 
 /**
  * 物模型代码模板生成引擎
@@ -11,6 +11,6 @@ import cn.huangdayu.things.common.dsl.ThingsTemplate;
 public interface ThingsGenerateEngine {
 
 
-    void generate(ThingsTemplate thingsTemplate);
+    void generate(ThingsInfo thingsInfo);
 
 }

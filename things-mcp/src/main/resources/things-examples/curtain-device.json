@@ -1,0 +1,31 @@
+{
+  "productCode": "CURTAIN_PROD_001",
+  "deviceCode": "CURT001",
+  "deviceName": "智能窗帘",
+  "deviceLocation": "主卧",
+  "deviceAlias": [
+    "主卧窗帘"
+  ],
+  "deviceGroups": [
+    {
+      "groupCode": "GROUP_CURTAIN_001",
+      "groupType": "CURTAIN",
+      "groupName": "窗帘设备组"
+    }
+  ],
+  "deviceStatus": "online",
+  "deviceType": "窗帘",
+  "deviceDescription": "智能窗帘设备，可远程控制窗帘开合度",
+  "deviceTags": [
+    {
+      "tagCode": "TAG_HOME_001",
+      "tagType": "HOME",
+      "tagName": "家居设备"
+    },
+    {
+      "tagCode": "TAG_WINDOW_001",
+      "tagType": "WINDOW",
+      "tagName": "窗户"
+    }
+  ]
+}

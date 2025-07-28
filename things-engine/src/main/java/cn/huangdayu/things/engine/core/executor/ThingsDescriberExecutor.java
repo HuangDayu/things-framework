@@ -4,6 +4,11 @@ import cn.huangdayu.things.api.container.ThingsContainer;
 import cn.huangdayu.things.api.container.ThingsDescriber;
 import cn.huangdayu.things.common.annotation.*;
 import cn.huangdayu.things.common.dsl.*;
+import cn.huangdayu.things.common.dsl.template.*;
+import cn.huangdayu.things.common.dsl.usecase.ThingsConsumeInfo;
+import cn.huangdayu.things.common.dsl.usecase.ThingsSubscribeInfo;
+import cn.huangdayu.things.common.dsl.usecase.ThingsUseCase;
+import cn.huangdayu.things.common.dsl.usecase.ThingsUseCaseInfo;
 import cn.huangdayu.things.common.events.ThingsContainerCancelledEvent;
 import cn.huangdayu.things.common.events.ThingsContainerRegisteredEvent;
 import cn.huangdayu.things.common.message.AbstractThingsMessage;
@@ -65,57 +70,57 @@ public class ThingsDescriberExecutor implements ThingsDescriber {
         return new ThingsDslInfo(getDomainInfo(thingsContainer), getThingsInfo(thingsContainer));
     }
 
-    private Set<DomainInfo> getDomainInfo(ThingsContainer thingsContainer) {
-        Set<DomainInfo> domainDsl = new HashSet<>();
-        DomainInfo domainInfo = new DomainInfo();
-        domainInfo.setSubscribes(getSubscribes(thingsContainer));
-        domainInfo.setConsumes(getConsumes(thingsContainer));
-        domainInfo.setProfile(getDomainProfile());
-        domainDsl.add(domainInfo);
+    private Set<ThingsUseCase> getDomainInfo(ThingsContainer thingsContainer) {
+        Set<ThingsUseCase> domainDsl = new HashSet<>();
+        ThingsUseCase thingsUsecase = new ThingsUseCase();
+        thingsUsecase.setSubscribes(getSubscribes(thingsContainer));
+        thingsUsecase.setConsumes(getConsumes(thingsContainer));
+        thingsUsecase.setUseCaseInfo(getUseCaseInfo());
+        domainDsl.add(thingsUsecase);
         return domainDsl;
     }
 
-    private DomainProfileInfo getDomainProfile() {
-        DomainProfileInfo domainProfileInfo = new DomainProfileInfo();
-        domainProfileInfo.setCode(getUUID());
-        domainProfileInfo.setName("ThingsDomain");
-        domainProfileInfo.setSchema("1.0");
-        return domainProfileInfo;
+    private ThingsUseCaseInfo getUseCaseInfo() {
+        ThingsUseCaseInfo thingsUseCaseInfo = new ThingsUseCaseInfo();
+        thingsUseCaseInfo.setCode(getUUID());
+        thingsUseCaseInfo.setName("ThingsDomain");
+        thingsUseCaseInfo.setSchema("1.0");
+        return thingsUseCaseInfo;
     }
 
-    private Set<DomainConsumeInfo> getConsumes(ThingsContainer thingsContainer) {
+    private Set<ThingsConsumeInfo> getConsumes(ThingsContainer thingsContainer) {
         return thingsContainerManager.getThingsClientTable().cellSet().stream()
                 .filter(v -> thingsContainer == null || v.getValue().getThingsContainer() == thingsContainer)
-                .map(cell -> new DomainConsumeInfo(cell.getColumnKey(), cell.getRowKey())).collect(Collectors.toSet());
+                .map(cell -> new ThingsConsumeInfo(cell.getColumnKey(), cell.getRowKey())).collect(Collectors.toSet());
     }
 
-    private Set<DomainSubscribeInfo> getSubscribes(ThingsContainer thingsContainer) {
+    private Set<ThingsSubscribeInfo> getSubscribes(ThingsContainer thingsContainer) {
         return thingsContainerManager.getThingsEventsListenerTable().cellSet().stream()
                 .filter(v -> v.getValue().stream().anyMatch(w -> thingsContainer == null || w.getThingsContainer() == thingsContainer))
-                .map(cell -> new DomainSubscribeInfo(cell.getColumnKey(), cell.getRowKey())).collect(Collectors.toSet());
+                .map(cell -> new ThingsSubscribeInfo(cell.getColumnKey(), cell.getRowKey())).collect(Collectors.toSet());
     }
 
-    private Set<ThingsTemplate> getThingsInfo(ThingsContainer thingsContainer) {
+    private Set<ThingsInfo> getThingsInfo(ThingsContainer thingsContainer) {
         return thingsContainerManager.getThingsEntityTable().cellSet().stream()
                 .filter(v -> thingsContainer == null || v.getValue().getThingsContainer() == thingsContainer)
                 .map(m -> getThingsInfo(m.getRowKey())).collect(Collectors.toSet());
     }
 
-    private ThingsTemplate getThingsInfo(String productCode) {
-        ThingsTemplate thingsTemplate = initThingsInfo(productCode);
-        thingsTemplate.getActions().addAll(getServices(productCode));
-        thingsTemplate.getEvents().addAll(getEvents(productCode));
-        thingsTemplate.getProperties().addAll(getProperties(productCode));
-        return thingsTemplate;
+    private ThingsInfo getThingsInfo(String productCode) {
+        ThingsInfo thingsInfo = initThingsInfo(productCode);
+        thingsInfo.getActions().addAll(getServices(productCode));
+        thingsInfo.getEvents().addAll(getEvents(productCode));
+        thingsInfo.getProperties().addAll(getProperties(productCode));
+        return thingsInfo;
     }
 
-    private ThingsTemplate initThingsInfo(String productCode) {
-        ThingsTemplate thingsTemplate = new ThingsTemplate();
-        thingsTemplate.setEvents(new ConcurrentHashSet<>());
-        thingsTemplate.setActions(new ConcurrentHashSet<>());
-        thingsTemplate.setProperties(new ConcurrentHashSet<>());
-        thingsTemplate.setProfile(getThingsProfile(productCode));
-        return thingsTemplate;
+    private ThingsInfo initThingsInfo(String productCode) {
+        ThingsInfo thingsInfo = new ThingsInfo();
+        thingsInfo.setEvents(new ConcurrentHashSet<>());
+        thingsInfo.setActions(new ConcurrentHashSet<>());
+        thingsInfo.setProperties(new ConcurrentHashSet<>());
+        thingsInfo.setProfile(getThingsProfile(productCode));
+        return thingsInfo;
     }
 
     private ThingsEntity getThings(String productCode) {
@@ -152,17 +157,17 @@ public class ThingsDescriberExecutor implements ThingsDescriber {
 
     private Set<ThingsActionInfo> getServices(String productCode) {
         return thingsContainerManager.getThingsFunctionTable().getColumn(productCode).entrySet().parallelStream()
-                .filter(entry -> entry.getValue().getMethodAnnotation() instanceof ThingsService)
-                .map(entry -> getServices(entry.getKey(), entry.getValue(), (ThingsService) entry.getValue().getMethodAnnotation()))
+                .filter(entry -> entry.getValue().getMethodAnnotation() instanceof ThingsAction)
+                .map(entry -> getServices(entry.getKey(), entry.getValue(), (ThingsAction) entry.getValue().getMethodAnnotation()))
                 .collect(Collectors.toSet());
     }
 
-    private ThingsActionInfo getServices(String identifier, ThingsFunction thingsFunction, ThingsService thingsService) {
+    private ThingsActionInfo getServices(String identifier, ThingsFunction thingsFunction, ThingsAction thingsAction) {
         ThingsActionInfo services = new ThingsActionInfo();
         services.setIdentifier(identifier);
-        services.setName(thingsService.name());
-        services.setDescription(thingsService.desc());
-        services.setCallType(thingsService.async() ? "async" : "sync");
+        services.setName(thingsAction.name());
+        services.setDescription(thingsAction.desc());
+        services.setCallType(thingsAction.async() ? "async" : "sync");
         services.setInput(getInputParams(thingsFunction));
         services.setOutput(getOutputParams(thingsFunction));
         return services;
@@ -273,7 +278,9 @@ public class ThingsDescriberExecutor implements ThingsDescriber {
     }
 
     private ThingsParamInfo getParam(ThingsParam thingsParam, ThingsParameter thingsParameter) {
-        return getParam(thingsParam, thingsParameter.getType(), thingsParameter.getName(), false);
+        ThingsParamInfo thingsParamInfo = getParam(thingsParam, thingsParameter.getType(), thingsParameter.getName(), false);
+        thingsParamInfo.setParaOrder(thingsParameter.getIndex());
+        return thingsParamInfo;
     }
 
     private ThingsParamInfo getParam(ThingsParam thingsParam, Class<?> clazz, String name, boolean setAccessMode) {

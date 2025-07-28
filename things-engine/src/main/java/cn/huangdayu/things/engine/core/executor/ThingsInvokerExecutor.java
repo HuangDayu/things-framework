@@ -24,8 +24,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.BAD_REQUEST;
-import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.THINGS_PROPERTIES_POST;
-import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.THINGS_PROPERTIES_SET;
+import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.THINGS_POST;
 import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_WILDCARD;
 import static cn.huangdayu.things.common.factory.ThreadPoolFactory.THINGS_EXECUTOR;
 import static cn.huangdayu.things.common.utils.ThingsUtils.*;
@@ -47,16 +46,16 @@ public class ThingsInvokerExecutor implements ThingsInvoker {
         if (trm == null) {
             return false;
         }
-        ThingsMessageMethod baseMetadata = trm.getMessageMethod();
+        ThingsMessageMethod messageMethod = trm.getMessageMethod();
         if (isEventPost(trm)) {
-            return thingsContainerManager.getThingsEventsListenerTable().containsColumn(baseMetadata.getProductCode());
+            return thingsContainerManager.getThingsEventsListenerTable().containsColumn(messageMethod.getProductCode());
         }
         if (isPropertiesSetOrGet(trm)) {
-            return thingsContainerManager.getThingsPropertyMap().containsKey(baseMetadata.getProductCode()) ||
-                    thingsContainerManager.getDevicePropertyMap().containsColumn(baseMetadata.getDeviceCode());
+            return thingsContainerManager.getThingsPropertyMap().containsKey(messageMethod.getProductCode()) ||
+                    thingsContainerManager.getDevicePropertyMap().containsColumn(messageMethod.getDeviceCode());
         }
         if (isServiceRequest(trm)) {
-            return thingsContainerManager.getThingsFunctionTable().containsColumn(baseMetadata.getProductCode());
+            return thingsContainerManager.getThingsFunctionTable().containsColumn(messageMethod.getProductCode());
         }
         return false;
     }
@@ -126,7 +125,7 @@ public class ThingsInvokerExecutor implements ThingsInvoker {
     }
 
     private ThingsResponseMessage invokeUpdateProperty(Object propertyBean, ThingsRequestMessage thingsRequestMessage, ThingsMessageMethod thingsMessageMethod) {
-        if (thingsRequestMessage.getMethod().equals(THINGS_PROPERTIES_SET)) {
+        if (isPropertiesSetOrGet(thingsRequestMessage)) {
             JSONObject params = thingsRequestMessage.getParams();
             for (Map.Entry<String, Object> entry : params.entrySet()) {
                 ReflectUtil.setFieldValue(propertyBean, entry.getKey(), entry.getValue());
@@ -136,7 +135,9 @@ public class ThingsInvokerExecutor implements ThingsInvoker {
         }
         ThingsResponseMessage thingsResponseMessage = thingsRequestMessage.success();
         thingsResponseMessage.setResult((JSONObject) JSON.toJSON(propertyBean));
-        thingsResponseMessage.setMethod(THINGS_PROPERTIES_POST);
+        ThingsMessageMethod messageMethod = thingsResponseMessage.getMessageMethod();
+        messageMethod.setAction(THINGS_POST);
+        thingsResponseMessage.setMethod(messageMethod);
         return thingsResponseMessage;
     }
 

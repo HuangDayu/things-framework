@@ -191,14 +191,14 @@ public class ThingsChainingExecutor implements ThingsChaining {
 
     private ChainingKeys getKeys(ThingsRequestMessage trm, ThingsChainingType chainingType) {
         Set<ChainingKey> keys = new HashSet<>();
-        ThingsMessageMethod baseMetadata = trm.getMessageMethod();
+        ThingsMessageMethod messageMethod = trm.getMessageMethod();
         ThingsMethodType thingsMethodType = ThingsMethodType.getMethodType(extractMiddlePart(trm.getMethod()));
         String identifies = subIdentifies(trm.getMethod());
         keys.add(new ChainingKey(thingsMethodType + THINGS_SEPARATOR + identifies, THINGS_WILDCARD));
-        keys.add(new ChainingKey(thingsMethodType + THINGS_SEPARATOR + identifies, baseMetadata.getProductCode()));
-        keys.add(new ChainingKey(thingsMethodType + THINGS_SEPARATOR + THINGS_WILDCARD, baseMetadata.getProductCode()));
+        keys.add(new ChainingKey(thingsMethodType + THINGS_SEPARATOR + identifies, messageMethod.getProductCode()));
+        keys.add(new ChainingKey(thingsMethodType + THINGS_SEPARATOR + THINGS_WILDCARD, messageMethod.getProductCode()));
         keys.add(new ChainingKey(thingsMethodType + THINGS_SEPARATOR + THINGS_WILDCARD, THINGS_WILDCARD));
-        return new ChainingKeys(keys, chainingType + THINGS_SEPARATOR + thingsMethodType + THINGS_SEPARATOR + identifies + THINGS_SEPARATOR + baseMetadata.getProductCode());
+        return new ChainingKeys(keys, chainingType + THINGS_SEPARATOR + thingsMethodType + THINGS_SEPARATOR + identifies + THINGS_SEPARATOR + messageMethod.getProductCode());
     }
 
     private static String extractMiddlePart(String input) {

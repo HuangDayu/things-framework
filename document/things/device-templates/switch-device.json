@@ -1,0 +1,33 @@
+[
+  {
+    "productCode": "SWITCH_PROD_001",
+    "deviceCode": "SW001",
+    "deviceName": "智能开关",
+    "deviceLocation": "客厅",
+    "deviceAlias": [
+      "客厅主灯开关"
+    ],
+    "deviceGroups": [
+      {
+        "groupCode": "GROUP_LIGHT_001",
+        "groupType": "LIGHTING",
+        "groupName": "照明设备组"
+      }
+    ],
+    "deviceStatus": "online",
+    "deviceType": "开关",
+    "deviceDescription": "智能开关设备，用于控制电路通断",
+    "deviceTags": [
+      {
+        "tagCode": "TAG_HOME_001",
+        "tagType": "HOME",
+        "tagName": "家居设备"
+      },
+      {
+        "tagCode": "TAG_LIGHT_001",
+        "tagType": "LIGHT",
+        "tagName": "照明"
+      }
+    ]
+  }
+]

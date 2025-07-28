@@ -30,8 +30,8 @@ public class ThingsSofaBizDescriber implements ThingsSofaBusDescriber {
         Map<String, ThingsContainer> beansOfType = applicationContext.getBeansOfType(ThingsContainer.class);
         beansOfType.forEach((s, thingsContainer) -> {
             ThingsDslInfo dsl = thingsDescriber.getDSL(thingsContainer);
-            if (CollUtil.isNotEmpty(dsl.getDomainDsl())) {
-                thingsDslInfo.getDomainDsl().addAll(dsl.getDomainDsl());
+            if (CollUtil.isNotEmpty(dsl.getUseCaseDsl())) {
+                thingsDslInfo.getUseCaseDsl().addAll(dsl.getUseCaseDsl());
             }
             if (CollUtil.isNotEmpty(dsl.getThingsDsl())) {
                 thingsDslInfo.getThingsDsl().addAll(dsl.getThingsDsl());

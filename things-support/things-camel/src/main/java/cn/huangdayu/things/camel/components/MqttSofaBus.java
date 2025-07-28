@@ -8,6 +8,7 @@ import cn.huangdayu.things.camel.mqtt.ThingsProxyMqttCallback;
 import cn.huangdayu.things.camel.mqtt.ThingsSofaBusMqttCallback;
 import cn.huangdayu.things.camel.mqtt.ThingsSofaBusMqttClient;
 import cn.huangdayu.things.common.enums.ThingsSofaBusType;
+import cn.huangdayu.things.common.message.ThingsMessageMethod;
 import cn.huangdayu.things.common.properties.ThingsEngineProperties;
 import cn.huangdayu.things.common.wrapper.ThingsSubscribes;
 import lombok.Getter;
@@ -49,15 +50,9 @@ public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
     @Override
     protected String createTopic(ThingsSubscribes thingsSubscribes) {
         String groupId = constructor.getProperties().getGroupId();
-        String baseTopic = thingsSubscribes.isShare() ? "$share/" + (isNotBlank(groupId) ? groupId : thingsSubscribes.getProductCode()) + "/" : "";
-        String method = thingsSubscribes.getMethod();
-        if (isNotBlank(method) && method.split("\\.").length == 4) {
-            String[] split = method.split("\\.");
-            method = split[1].concat("/").concat(split[2]).concat("/").concat(split[3]);
-        } else {
-            method = MULTI_LEVEL_TOPIC_WILDCARD;
-        }
-        return baseTopic + String.format("things/%s/%s/%s", thingsSubscribes.getProductCode(), thingsSubscribes.getDeviceCode(), method)
+        ThingsMessageMethod method = thingsSubscribes.getMethod();
+        String baseTopic = thingsSubscribes.isShare() ? "$share/" + (isNotBlank(groupId) ? groupId : method.getProductCode()) + "/" : "";
+        return baseTopic + String.format("things/%s", method.toString())
                 .replaceAll(NULL_VALUE, ONE_LEVEL_TOPIC_WILDCARD)
                 .replaceAll(THINGS_WILDCARD, ONE_LEVEL_TOPIC_WILDCARD);
     }

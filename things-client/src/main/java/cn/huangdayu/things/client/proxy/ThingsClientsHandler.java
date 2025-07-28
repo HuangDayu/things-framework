@@ -1,7 +1,7 @@
 package cn.huangdayu.things.client.proxy;
 
 import cn.huangdayu.things.common.annotation.ThingsClient;
-import cn.huangdayu.things.common.annotation.ThingsService;
+import cn.huangdayu.things.common.annotation.ThingsAction;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,9 +38,9 @@ public class ThingsClientsHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        ThingsService thingsService = method.getAnnotation(ThingsService.class);
-        if (thingsService != null) {
-            return getThingsClientsProxy().invokeService(thingsClient, thingsService, method, args);
+        ThingsAction thingsAction = method.getAnnotation(ThingsAction.class);
+        if (thingsAction != null) {
+            return getThingsClientsProxy().invokeService(thingsClient, thingsAction, method, args);
         }
         throw new UnsupportedOperationException("Things client invoke unsupported operation");
     }

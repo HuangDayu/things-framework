@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    api project(path: ':things-api')
     api project(path: ':things-common')
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'

@@ -10,6 +10,7 @@ import cn.huangdayu.things.common.events.ThingsContainerCancelledEvent;
 import cn.huangdayu.things.common.events.ThingsContainerRegisteredEvent;
 import cn.huangdayu.things.common.events.ThingsSessionUpdatedEvent;
 import cn.huangdayu.things.common.exception.ThingsException;
+import cn.huangdayu.things.common.message.ThingsMessageMethod;
 import cn.huangdayu.things.common.observer.ThingsEventObserver;
 import cn.huangdayu.things.common.properties.ThingsEngineProperties;
 import cn.huangdayu.things.common.wrapper.ThingsSession;
@@ -28,7 +29,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.ERROR;
 import static cn.huangdayu.things.common.constants.ThingsConstants.SystemMethod.SYSTEM_METHOD_TOPIC;
-import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_WILDCARD;
 
 /**
  * topic分级包括【系统级，租户级，应用级，产品级，设备级，指令级，分组级，任务级】
@@ -129,12 +129,12 @@ public class ThingsSofaBusManager {
     }
 
 
-    public void subscribe(Object subscriber, boolean share, String productCode, String deviceCode, String method, ThingsSubscriber thingsSubscriber) {
-        subscribe(new ThingsSubscribes(subscriber, null, share, productCode, deviceCode, method), thingsSubscriber);
+    public void subscribe(Object subscriber, boolean share, ThingsMessageMethod method, ThingsSubscriber thingsSubscriber) {
+        subscribe(new ThingsSubscribes(subscriber, null, share, method), thingsSubscriber);
     }
 
-    public void subscribe(Object subscriber, boolean share, String productCode, String deviceCode, String method) {
-        subscribe(new ThingsSubscribes(subscriber, null, share, productCode, deviceCode, method));
+    public void subscribe(Object subscriber, boolean share, ThingsMessageMethod method) {
+        subscribe(new ThingsSubscribes(subscriber, null, share, method));
     }
 
     public void subscribe(ThingsSubscribes thingsSubscribes) {
@@ -148,11 +148,9 @@ public class ThingsSofaBusManager {
         }
     }
 
-    public void unsubscribe(boolean share, String productCode, String deviceCode, String method) {
+    public void unsubscribe(boolean share, ThingsMessageMethod method) {
         ThingsSubscribes thingsSubscribes = new ThingsSubscribes();
         thingsSubscribes.setShare(share);
-        thingsSubscribes.setProductCode(productCode);
-        thingsSubscribes.setDeviceCode(deviceCode);
         thingsSubscribes.setMethod(method);
         unsubscribe(thingsSubscribes);
     }
@@ -167,9 +165,9 @@ public class ThingsSofaBusManager {
     private void handleSessionSubscribe(ThingsSession session) {
         if (session != null) {
             if (session.isOnline()) {
-                subscribe(session, false, session.getProductCode(), session.getDeviceCode(), null);
+                subscribe(session, false, new ThingsMessageMethod(session.getProductCode(), session.getDeviceCode(), null, null, null));
             } else {
-                unsubscribe(false, session.getProductCode(), session.getDeviceCode(), null);
+                unsubscribe(false, new ThingsMessageMethod(session.getProductCode(), session.getDeviceCode(), null, null, null));
             }
         }
     }
@@ -190,7 +188,7 @@ public class ThingsSofaBusManager {
     }
 
     private void handleSystemSubscribe() {
-        subscribe(this, false, SYSTEM_METHOD_TOPIC, thingsConfigurator.getProperties().getCode(), THINGS_WILDCARD);
+        subscribe(this, false, new ThingsMessageMethod(SYSTEM_METHOD_TOPIC, thingsConfigurator.getProperties().getCode(), null, null, null));
     }
 
 }

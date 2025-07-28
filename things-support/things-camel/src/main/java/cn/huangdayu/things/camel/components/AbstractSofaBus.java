@@ -57,9 +57,7 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
     @Override
     public boolean output(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
         ThingsRequestMessage trm = thingsRequest.getTrm();
-        ThingsMessageMethod baseMetadata = trm.getMessageMethod();
-        String topic = createTopic(ThingsSubscribes.builder().trm(trm).share(false).productCode(baseMetadata.getProductCode())
-                .deviceCode(baseMetadata.getDeviceCode()).method(trm.getMethod()).build());
+        String topic = createTopic(ThingsSubscribes.builder().trm(trm).share(false).method(trm.getMessageMethod()).build());
         String endpointUri = createEndpointUri(topic, createParameterMap(thingsRequest));
         Endpoint endpoint = camelContext.getEndpoint(endpointUri);
         constructor.getProducerTemplate().asyncSendBody(endpoint, trm.toString());
@@ -81,7 +79,7 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
     }
 
     protected String createTopic(ThingsSubscribes thingsSubscribes) {
-        return String.format("things-%s-%s", thingsSubscribes.getProductCode(), thingsSubscribes.getDeviceCode());
+        return String.format("things-%s-%s", thingsSubscribes.getMethod().getProductCode(), thingsSubscribes.getMethod().getDeviceCode());
     }
 
     /**

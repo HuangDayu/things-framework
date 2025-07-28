@@ -1,0 +1,371 @@
+{
+  "identifier": "air_conditioner",
+  "name": "Air Conditioner",
+  "displayName": "空调",
+  "description": "智能空调设备",
+  "profile": {
+    "description": "智能空调设备，可远程控制温度、模式和风速",
+    "deviceId": "AC001",
+    "brand": "SmartHome",
+    "model": "AC-01",
+    "type": 0,
+    "protocolType": 0,
+    "netType": 0,
+    "deviceMac": "00:11:22:33:44:58",
+    "deviceSerialNumber": "SN00000004",
+    "version": "1.0.0",
+    "firmware": "1.0.0",
+    "deviceCu": "SmartHome",
+    "productClass": "空调设备",
+    "productCode": "AC_PROD_001"
+  },
+  "status": {
+    "deviceName": "智能空调",
+    "deviceId": "AC001",
+    "status": "online",
+    "time": "2025-07-27 13:45:00",
+    "utcTime": "2025-07-27T13:45:00Z",
+    "lastTime": "2025-07-27 13:44:30",
+    "utcLastTime": "2025-07-27T13:44:30Z",
+    "clientIp": "192.168.1.103"
+  },
+  "properties": [
+    {
+      "identifier": "powerSwitch",
+      "name": "Power Switch",
+      "cnName": "电源开关",
+      "description": "控制空调的开启与关闭",
+      "required": true,
+      "dataType": "Bool",
+      "rwMode": "READWRITE"
+    },
+    {
+      "identifier": "temperature",
+      "name": "Temperature",
+      "cnName": "温度",
+      "description": "当前室内温度",
+      "required": true,
+      "dataType": "Double",
+      "rwMode": "READ",
+      "unit": "℃",
+      "min": "-50",
+      "max": "100"
+    },
+    {
+      "identifier": "targetTemperature",
+      "name": "Target Temperature",
+      "cnName": "目标温度",
+      "description": "设定的目标温度",
+      "required": true,
+      "dataType": "Double",
+      "rwMode": "READWRITE",
+      "unit": "℃",
+      "min": "16",
+      "max": "32"
+    },
+    {
+      "identifier": "mode",
+      "name": "Mode",
+      "cnName": "模式",
+      "description": "空调运行模式",
+      "required": true,
+      "dataType": "Enum",
+      "rwMode": "READWRITE",
+      "schema": {
+        "value": [
+          {
+            "index": 0,
+            "name": "AUTO",
+            "cnName": "自动"
+          },
+          {
+            "index": 1,
+            "name": "COOL",
+            "cnName": "制冷"
+          },
+          {
+            "index": 2,
+            "name": "HEAT",
+            "cnName": "制热"
+          },
+          {
+            "index": 3,
+            "name": "FAN",
+            "cnName": "送风"
+          },
+          {
+            "index": 4,
+            "name": "DRY",
+            "cnName": "除湿"
+          }
+        ]
+      }
+    },
+    {
+      "identifier": "fanSpeed",
+      "name": "Fan Speed",
+      "cnName": "风速",
+      "description": "风扇转速",
+      "required": true,
+      "dataType": "Enum",
+      "rwMode": "READWRITE",
+      "schema": {
+        "value": [
+          {
+            "index": 0,
+            "name": "AUTO",
+            "cnName": "自动"
+          },
+          {
+            "index": 1,
+            "name": "LOW",
+            "cnName": "低速"
+          },
+          {
+            "index": 2,
+            "name": "MEDIUM",
+            "cnName": "中速"
+          },
+          {
+            "index": 3,
+            "name": "HIGH",
+            "cnName": "高速"
+          }
+        ]
+      }
+    },
+    {
+      "identifier": "humidity",
+      "name": "Humidity",
+      "cnName": "湿度",
+      "description": "当前室内湿度",
+      "required": false,
+      "dataType": "Double",
+      "rwMode": "READ",
+      "unit": "%",
+      "min": "0",
+      "max": "100"
+    }
+  ],
+  "actions": [
+    {
+      "identifier": "setTargetTemperature",
+      "name": "Set Target Temperature",
+      "cnName": "设置目标温度",
+      "description": "设置空调目标温度",
+      "required": true,
+      "input": [
+        {
+          "identifier": "targetTemperature",
+          "name": "Target Temperature",
+          "cnName": "目标温度",
+          "dataType": "double",
+          "min": "16",
+          "max": "32",
+          "required": true
+        }
+      ],
+      "output": [],
+      "callType": "ASYNC"
+    },
+    {
+      "identifier": "setMode",
+      "name": "Set Mode",
+      "cnName": "设置模式",
+      "description": "设置空调运行模式",
+      "required": true,
+      "input": [
+        {
+          "identifier": "mode",
+          "name": "Mode",
+          "cnName": "模式",
+          "dataType": "enum",
+          "required": true
+        }
+      ],
+      "output": [],
+      "callType": "ASYNC"
+    },
+    {
+      "identifier": "setFanSpeed",
+      "name": "Set Fan Speed",
+      "cnName": "设置风速",
+      "description": "设置空调风速",
+      "required": true,
+      "input": [
+        {
+          "identifier": "fanSpeed",
+          "name": "Fan Speed",
+          "cnName": "风速",
+          "dataType": "enum",
+          "required": true
+        }
+      ],
+      "output": [],
+      "callType": "ASYNC"
+    },
+    {
+      "identifier": "setPowerSwitch",
+      "name": "Set Power Switch",
+      "cnName": "设置电源开关",
+      "description": "设置空调电源开关",
+      "required": true,
+      "input": [
+        {
+          "identifier": "powerSwitch",
+          "name": "Power Switch",
+          "cnName": "电源开关",
+          "dataType": "bool",
+          "required": true
+        }
+      ],
+      "output": [],
+      "callType": "ASYNC"
+    },
+    {
+      "identifier": "getStatus",
+      "name": "Get Status",
+      "cnName": "获取状态",
+      "description": "获取空调当前所有状态信息",
+      "required": true,
+      "input": [],
+      "output": [
+        {
+          "identifier": "powerSwitch",
+          "name": "Power Switch",
+          "cnName": "电源开关",
+          "dataType": "bool"
+        },
+        {
+          "identifier": "temperature",
+          "name": "Temperature",
+          "cnName": "温度",
+          "dataType": "double"
+        },
+        {
+          "identifier": "targetTemperature",
+          "name": "Target Temperature",
+          "cnName": "目标温度",
+          "dataType": "double"
+        },
+        {
+          "identifier": "mode",
+          "name": "Mode",
+          "cnName": "模式",
+          "dataType": "enum"
+        },
+        {
+          "identifier": "fanSpeed",
+          "name": "Fan Speed",
+          "cnName": "风速",
+          "dataType": "enum"
+        }
+      ],
+      "callType": "SYNC"
+    }
+  ],
+  "events": [
+    {
+      "identifier": "temperatureChange",
+      "name": "Temperature Change",
+      "cnName": "温度变化",
+      "description": "当室内温度发生变化时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "temperature",
+          "name": "Temperature",
+          "cnName": "温度",
+          "dataType": "double"
+        }
+      ]
+    },
+    {
+      "identifier": "targetTemperatureChange",
+      "name": "Target Temperature Change",
+      "cnName": "目标温度变化",
+      "description": "当目标温度发生变化时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "targetTemperature",
+          "name": "Target Temperature",
+          "cnName": "目标温度",
+          "dataType": "double"
+        }
+      ]
+    },
+    {
+      "identifier": "modeChange",
+      "name": "Mode Change",
+      "cnName": "模式变化",
+      "description": "当空调运行模式发生变化时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "mode",
+          "name": "Mode",
+          "cnName": "模式",
+          "dataType": "enum"
+        }
+      ]
+    },
+    {
+      "identifier": "fanSpeedChange",
+      "name": "Fan Speed Change",
+      "cnName": "风速变化",
+      "description": "当风扇转速发生变化时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "fanSpeed",
+          "name": "Fan Speed",
+          "cnName": "风速",
+          "dataType": "enum"
+        }
+      ]
+    },
+    {
+      "identifier": "deviceOnline",
+      "name": "Device Online",
+      "cnName": "设备上线",
+      "description": "设备连接到平台时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "deviceId",
+          "name": "Device ID",
+          "cnName": "设备ID",
+          "dataType": "string"
+        },
+        {
+          "identifier": "time",
+          "name": "Time",
+          "cnName": "时间",
+          "dataType": "string"
+        }
+      ]
+    },
+    {
+      "identifier": "deviceOffline",
+      "name": "Device Offline",
+      "cnName": "设备下线",
+      "description": "设备与平台断开连接时触发",
+      "eventType": "INFO_EVENT_TYPE",
+      "output": [
+        {
+          "identifier": "deviceId",
+          "name": "Device ID",
+          "cnName": "设备ID",
+          "dataType": "string"
+        },
+        {
+          "identifier": "time",
+          "name": "Time",
+          "cnName": "时间",
+          "dataType": "string"
+        }
+      ]
+    }
+  ]
+}

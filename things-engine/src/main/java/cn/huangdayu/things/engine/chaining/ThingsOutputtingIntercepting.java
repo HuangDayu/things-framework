@@ -40,12 +40,12 @@ public class ThingsOutputtingIntercepting implements ThingsIntercepting {
 
     public void doFilter(ThingsRequest thingsRequest, ThingsResponse thingsResponse) {
         ThingsRequestMessage trm = thingsRequest.getTrm();
-        ThingsMessageMethod baseMetadata = trm.getMessageMethod();
+        ThingsMessageMethod messageMethod = trm.getMessageMethod();
         ThingsSession thingsSession = new ThingsSession();
-        thingsSession.setDeviceCode(baseMetadata.getDeviceCode());
+        thingsSession.setDeviceCode(messageMethod.getDeviceCode());
         thingsSession.setOnline(true);
         thingsSession.setTime(trm.getTime());
-        thingsSession.setProductCode(baseMetadata.getProductCode());
+        thingsSession.setProductCode(messageMethod.getProductCode());
         thingsSession.setSessionCode(StrUtil.toString(ReflectUtil.getFieldValue(trm.getParams(), "sessionCode")));
         thingsEventObserver.notifyObservers(new ThingsSessionUpdatedEvent(this, thingsSession));
     }

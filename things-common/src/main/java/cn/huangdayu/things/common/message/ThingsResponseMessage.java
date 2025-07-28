@@ -18,6 +18,13 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class ThingsResponseMessage extends AbstractThingsMessage {
 
+    public ThingsResponseMessage(Object result) {
+        this.result = result;
+    }
+
+    public ThingsResponseMessage(ThingsErrorMessage error) {
+        this.error = error;
+    }
 
     /**
      * 结果，成功时必须包含。

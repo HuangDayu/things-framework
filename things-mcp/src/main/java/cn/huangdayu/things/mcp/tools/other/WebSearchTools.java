@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * @author huangdayu
  */
-@ThingsTools
+@ThingsTools(enabled = false)
 public class WebSearchTools {
 
     @Tool(description = "互联网在线搜索服务，比如搜索新闻，文档，事件等")

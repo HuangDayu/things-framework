@@ -10,9 +10,9 @@ import java.util.Set;
  */
 public abstract class ThingsDevice {
 
-    public abstract ThingsService getService(String identifier);
+    public abstract ThingsAction getService(String identifier);
 
-    public abstract Set<ThingsService> getServices();
+    public abstract Set<ThingsAction> getServices();
 
     public abstract <T> T getPropertyEntity();
 

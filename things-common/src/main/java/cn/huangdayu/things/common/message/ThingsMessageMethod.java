@@ -6,8 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.BAD_REQUEST;
+import static cn.huangdayu.things.common.constants.ThingsConstants.THINGS_SEPARATOR;
 
 /**
  * @author huangdayu
@@ -17,11 +19,9 @@ import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.BA
 @Data
 public class ThingsMessageMethod implements Serializable {
 
-    public static final String METHOD_SEPARATOR = "/";
-
 
     public ThingsMessageMethod(String method) {
-        String[] split = method.split(METHOD_SEPARATOR);
+        String[] split = method.split(THINGS_SEPARATOR);
         if (split.length != 5) {
             throw new ThingsException(BAD_REQUEST, "method is error");
         }
@@ -57,9 +57,20 @@ public class ThingsMessageMethod implements Serializable {
      */
     private String action;
 
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        ThingsMessageMethod that = (ThingsMessageMethod) object;
+        return Objects.equals(toString(), that.toString());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(toString());
+    }
 
     @Override
     public String toString() {
-        return productCode + METHOD_SEPARATOR + deviceCode + METHOD_SEPARATOR + type + METHOD_SEPARATOR + identifier + METHOD_SEPARATOR + action;
+        return productCode + THINGS_SEPARATOR + deviceCode + THINGS_SEPARATOR + type + THINGS_SEPARATOR + identifier + THINGS_SEPARATOR + action;
     }
 }

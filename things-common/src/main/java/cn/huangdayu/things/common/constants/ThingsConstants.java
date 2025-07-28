@@ -8,14 +8,12 @@ public final class ThingsConstants {
     /**
      * 物模型引擎通配符
      */
-    public static final String THINGS_WILDCARD = "_THINGS_WILDCARD_";
+    public static final String THINGS_WILDCARD = "_THINGS_";
 
     /**
      * 物模型分隔符
      */
-    public static final String THINGS_SEPARATOR = "#";
-
-    public static final String THINGS_DOT = ".";
+    public static final String THINGS_SEPARATOR = "/";
 
     /**
      * 物联网设备事件标识
@@ -1403,38 +1401,18 @@ public final class ThingsConstants {
 
     /**
      * method常量
-     * <p>
-     * things.${methodType}.${identifier}.${methodAction}
-     * thing.service.identifier.request
-     * thing.service.identifier.response
-     * thing.event.identifier.post
-     * thing.properties.all.set
-     * thing.properties.all.get
-     * thing.properties.all.post
+     * ${productCode}/${deviceCode}/${type}/${identifier}/${action}
      */
     public static class Methods {
-        public static final String THINGS_IDENTIFIER = "identifier";
         public static final String THINGS_SYSTEM = "system";
-        public static final String THINGS_SERVICE = "service";
-        public static final String THINGS_EVENT = "event";
+        public static final String THINGS_ACTIONS = "actions";
+        public static final String THINGS_EVENTS = "events";
         public static final String THINGS_PROPERTIES = "properties";
         public static final String THINGS_REQUEST = "request";
         public static final String THINGS_RESPONSE = "response";
         public static final String THINGS_POST = "post";
-        public static final String THINGS_SERVICE_REQUEST = "thing.service.identifier.request";
-        public static final String THINGS_SERVICE_RESPONSE = "thing.service.identifier.response";
-        public static final String THINGS_EVENT_POST = "thing.event.identifier.post";
-        public static final String THINGS_PROPERTIES_SET = "thing.properties.all.set";
-        public static final String THINGS_PROPERTIES_GET = "thing.properties.all.get";
-        public static final String THINGS_PROPERTIES_POST = "thing.properties.all.post";
-    }
-
-    public static class MethodActions {
-        public static final String THINGS_ACTION_SET = "set";
-        public static final String THINGS_ACTION_GET = "get";
-        public static final String THINGS_ACTION_POST = "post";
-        public static final String THINGS_ACTION_REQUEST = "request";
-        public static final String THINGS_ACTION_RESPONSE = "response";
+        public static final String THINGS_GET = "get";
+        public static final String THINGS_SET = "set";
     }
 
     /**

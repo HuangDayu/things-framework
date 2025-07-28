@@ -23,7 +23,7 @@ import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 
 import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.THINGS_REQUEST;
-import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.THINGS_SERVICE;
+import static cn.huangdayu.things.common.constants.ThingsConstants.Methods.THINGS_ACTIONS;
 import static cn.huangdayu.things.common.utils.ThingsUtils.getReturnType;
 import static cn.huangdayu.things.common.utils.ThingsUtils.jsonToObject;
 
@@ -37,8 +37,8 @@ public class ThingsClientsProxy {
 
     private final ThingsPublisher thingsPublisher;
 
-    public Object invokeService(ThingsClient thingsClient, ThingsService thingsService, Method method, Object[] args) {
-        ThingsRequestMessage trm = buildThingsMessage(thingsClient, thingsService, method, args);
+    public Object invokeService(ThingsClient thingsClient, ThingsAction thingsAction, Method method, Object[] args) {
+        ThingsRequestMessage trm = buildThingsMessage(thingsClient, thingsAction, method, args);
         if (method.getReturnType().isAssignableFrom(Publisher.class)) {
             return reactorInvoke(method, trm);
         }
@@ -86,14 +86,14 @@ public class ThingsClientsProxy {
     }
 
 
-    public ThingsRequestMessage buildThingsMessage(ThingsClient thingsClient, ThingsService thingsService, Method method, Object[] args) {
-        String productCode = StrUtil.isNotBlank(thingsClient.productCode()) ? thingsClient.productCode() : thingsService.productCode();
-        String identifier = StrUtil.isNotBlank(thingsService.identifier()) ? thingsService.identifier() : method.getName();
+    public ThingsRequestMessage buildThingsMessage(ThingsClient thingsClient, ThingsAction thingsAction, Method method, Object[] args) {
+        String productCode = StrUtil.isNotBlank(thingsClient.productCode()) ? thingsClient.productCode() : thingsAction.productCode();
+        String identifier = StrUtil.isNotBlank(thingsAction.identifier()) ? thingsAction.identifier() : method.getName();
         return buildThingsMessage(productCode, identifier, method, args);
     }
 
     public ThingsRequestMessage buildThingsMessage(String productCode, String identifier, Method method, Object[] args) {
-        ThingsProxyMessage tpm = new ThingsProxyMessage(new ThingsRequestMessage(), new ThingsMessageMethod(productCode, null, THINGS_SERVICE, identifier, THINGS_REQUEST));
+        ThingsProxyMessage tpm = new ThingsProxyMessage(new ThingsRequestMessage(), new ThingsMessageMethod(productCode, null, THINGS_ACTIONS, identifier, THINGS_REQUEST));
         for (int i = 0; i < method.getParameters().length; i++) {
             Parameter parameter = method.getParameters()[i];
             Object argValue = args[i];

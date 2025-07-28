@@ -1,0 +1,31 @@
+{
+  "productCode": "FAN_PROD_001",
+  "deviceCode": "FAN001",
+  "deviceName": "智能风扇",
+  "deviceLocation": "卧室",
+  "deviceAlias": [
+    "卧室风扇"
+  ],
+  "deviceGroups": [
+    {
+      "groupCode": "GROUP_FAN_001",
+      "groupType": "FAN",
+      "groupName": "风扇设备组"
+    }
+  ],
+  "deviceStatus": "online",
+  "deviceType": "风扇",
+  "deviceDescription": "智能风扇设备，可远程控制风速、模式和定时功能",
+  "deviceTags": [
+    {
+      "tagCode": "TAG_HOME_001",
+      "tagType": "HOME",
+      "tagName": "家居设备"
+    },
+    {
+      "tagCode": "TAG_CLIMATE_001",
+      "tagType": "CLIMATE",
+      "tagName": "温控"
+    }
+  ]
+}

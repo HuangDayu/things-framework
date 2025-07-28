@@ -43,7 +43,7 @@ public class ThingsRegisterExecutor extends ThingsContainerManager implements Th
     public void register(ThingsContainer thingsContainer) {
         long start = System.currentTimeMillis();
         AtomicInteger sum = new AtomicInteger();
-        sum.addAndGet(findBeans(thingsContainer, ThingsEntity.class, this::findThingsServices).get());
+        sum.addAndGet(findBeans(thingsContainer, ThingsEntity.class, this::findThingsFunctions).get());
         sum.addAndGet(findBeans(thingsContainer, ThingsPropertyEntity.class, this::findThingsProperties).get());
         sum.addAndGet(findBeans(thingsContainer, ThingsEventEntity.class, this::findThingsEvents).get());
         sum.addAndGet(findBeans(thingsContainer, ThingsListener.class, this::findThingsListener).get());
@@ -144,14 +144,14 @@ public class ThingsRegisterExecutor extends ThingsContainerManager implements Th
         thingsEventsTable.put(thingsEventEntity.identifier(), thingsEventEntity.productCode(), new ThingsEventEntities(thingsContainer, thingsEventEntity, bean));
     }
 
-    private void findThingsServices(ThingsContainer thingsContainer, ThingsEntity thingsEntity, Object bean) {
+    private void findThingsFunctions(ThingsContainer thingsContainer, ThingsEntity thingsEntity, Object bean) {
         if (!thingsEntity.enabled()) {
             return;
         }
         Method[] methods = ReflectUtil.getMethods(bean.getClass());
         Arrays.asList(methods).parallelStream().forEach(method -> {
             try {
-                findFirst(() -> findThingsService(thingsContainer, thingsEntity, bean, method),
+                findFirst(() -> findThingsActions(thingsContainer, thingsEntity, bean, method),
                         () -> findThingsEventListener(thingsContainer, thingsEntity, bean, method),
                         () -> findThingsPropertyListener(thingsContainer, thingsEntity, thingsEntity.productCode(), bean, method));
             } catch (Exception e) {
@@ -162,12 +162,12 @@ public class ThingsRegisterExecutor extends ThingsContainerManager implements Th
     }
 
 
-    private boolean findThingsService(ThingsContainer thingsContainer, ThingsEntity thingsEntity, Object bean, Method method) {
-        ThingsService thingsService = AnnotationUtil.getAnnotation(method, ThingsService.class);
-        if (thingsService != null) {
-            String identifier = StrUtil.isNotBlank(thingsService.identifier()) ? thingsService.identifier() : method.getName();
+    private boolean findThingsActions(ThingsContainer thingsContainer, ThingsEntity thingsEntity, Object bean, Method method) {
+        ThingsAction thingsAction = AnnotationUtil.getAnnotation(method, ThingsAction.class);
+        if (thingsAction != null) {
+            String identifier = StrUtil.isNotBlank(thingsAction.identifier()) ? thingsAction.identifier() : method.getName();
             method.trySetAccessible();
-            ThingsFunction thingsFunction = new ThingsFunction(thingsContainer, thingsEntity, bean, method, thingsService.async(), thingsService, scanParameter(method));
+            ThingsFunction thingsFunction = new ThingsFunction(thingsContainer, thingsEntity, bean, method, thingsAction.async(), thingsAction, scanParameter(method));
             thingsFunctionTable.put(identifier, thingsEntity.productCode(), thingsFunction);
             return true;
         }
@@ -194,12 +194,12 @@ public class ThingsRegisterExecutor extends ThingsContainerManager implements Th
         ThingsEventListener thingsEventListener = AnnotationUtil.getAnnotation(method, ThingsEventListener.class);
         if (thingsEventListener != null) {
             method.trySetAccessible();
-            ThingsFunction thingsServices = new ThingsFunction(thingsContainer, beanAnnotation, bean, method, true, thingsEventListener, scanParameter(method));
+            ThingsFunction thingsFunction = new ThingsFunction(thingsContainer, beanAnnotation, bean, method, true, thingsEventListener, scanParameter(method));
             Set<ThingsFunction> thingsFunctions = thingsEventsListenerTable.get(thingsEventListener.identifier(), thingsEventListener.productCode());
             if (thingsFunctions == null) {
                 thingsFunctions = new ConcurrentHashSet<>();
             }
-            thingsFunctions.add(thingsServices);
+            thingsFunctions.add(thingsFunction);
             thingsEventsListenerTable.put(thingsEventListener.identifier(), thingsEventListener.productCode(), thingsFunctions);
             return true;
         }
@@ -215,12 +215,12 @@ public class ThingsRegisterExecutor extends ThingsContainerManager implements Th
                 return false;
             }
             method.trySetAccessible();
-            ThingsFunction thingsServices = new ThingsFunction(thingsContainer, things, bean, method, true, thingsPropertyListener, scanParameter(method));
+            ThingsFunction thingsFunction = new ThingsFunction(thingsContainer, things, bean, method, true, thingsPropertyListener, scanParameter(method));
             Set<ThingsFunction> thingsFunctions = thingsPropertyListenerTable.get(identifier, productCode);
             if (thingsFunctions == null) {
                 thingsFunctions = new ConcurrentHashSet<>();
             }
-            thingsFunctions.add(thingsServices);
+            thingsFunctions.add(thingsFunction);
             thingsPropertyListenerTable.put(identifier, productCode, thingsFunctions);
             return true;
         }
@@ -271,12 +271,12 @@ public class ThingsRegisterExecutor extends ThingsContainerManager implements Th
         for (Class<?> aClass : ClassUtils.getAllInterfaces(bean)) {
             Method[] methods = ReflectUtil.getMethods(aClass);
             for (Method method : methods) {
-                ThingsService thingsService = method.getAnnotation(ThingsService.class);
-                if (thingsService != null) {
-                    String productCode = StrUtil.isNotBlank(thingsClient.productCode()) ? thingsClient.productCode() : thingsService.productCode();
-                    String identifier = StrUtil.isNotBlank(thingsService.identifier()) ? thingsService.identifier() : method.getName();
+                ThingsAction thingsAction = method.getAnnotation(ThingsAction.class);
+                if (thingsAction != null) {
+                    String productCode = StrUtil.isNotBlank(thingsClient.productCode()) ? thingsClient.productCode() : thingsAction.productCode();
+                    String identifier = StrUtil.isNotBlank(thingsAction.identifier()) ? thingsAction.identifier() : method.getName();
                     if (StrUtil.isAllNotBlank(identifier, productCode)) {
-                        ThingsFunction thingsFunction = new ThingsFunction(thingsContainer, thingsClient, bean, method, thingsService.async(), thingsService, scanParameter(method));
+                        ThingsFunction thingsFunction = new ThingsFunction(thingsContainer, thingsClient, bean, method, thingsAction.async(), thingsAction, scanParameter(method));
                         thingsClientTable.put(identifier, productCode, thingsFunction);
                     }
                 }

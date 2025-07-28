@@ -1,0 +1,33 @@
+[
+  {
+    "productCode": "AC_PROD_001",
+    "deviceCode": "AC001",
+    "deviceName": "智能空调",
+    "deviceLocation": "客厅",
+    "deviceAlias": [
+      "客厅空调"
+    ],
+    "deviceGroups": [
+      {
+        "groupCode": "GROUP_AC_001",
+        "groupType": "AIR_CONDITIONER",
+        "groupName": "空调设备组"
+      }
+    ],
+    "deviceStatus": "online",
+    "deviceType": "空调",
+    "deviceDescription": "智能空调设备，可远程控制温度、模式和风速",
+    "deviceTags": [
+      {
+        "tagCode": "TAG_HOME_001",
+        "tagType": "HOME",
+        "tagName": "家居设备"
+      },
+      {
+        "tagCode": "TAG_CLIMATE_001",
+        "tagType": "CLIMATE",
+        "tagName": "温控"
+      }
+    ]
+  }
+]

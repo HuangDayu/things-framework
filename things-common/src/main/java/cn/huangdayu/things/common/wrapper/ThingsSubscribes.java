@@ -1,5 +1,6 @@
 package cn.huangdayu.things.common.wrapper;
 
+import cn.huangdayu.things.common.message.ThingsMessageMethod;
 import cn.huangdayu.things.common.message.ThingsRequestMessage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,28 +32,21 @@ public class ThingsSubscribes implements Serializable {
      * 是否共享订阅，默认为false，如果是，则将产品标识作为共享订阅的分组标识，groupId=productCode
      */
     private boolean share;
+
     /**
-     * 产品标识
+     * method 对象
      */
-    private String productCode;
-    /**
-     * 设备标识
-     */
-    private String deviceCode;
-    /**
-     * 方法： thing.service.recordStreaming.request
-     */
-    private String method;
+    private ThingsMessageMethod method;
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         ThingsSubscribes that = (ThingsSubscribes) o;
-        return share == that.share && Objects.equals(productCode, that.productCode) && Objects.equals(deviceCode, that.deviceCode) && Objects.equals(method, that.method);
+        return share == that.share && Objects.equals(method, that.method);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(share, productCode, deviceCode, method);
+        return Objects.hash(share, method);
     }
 }

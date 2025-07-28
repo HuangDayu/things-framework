@@ -14,14 +14,14 @@ spring:
           tool: true
           prompt: true
 
-things:
-  mcp:
-    resources:
-      - name: things-dsl
-        uri: classpath:/prompts/things-dsl.json
-        title: 物模型DSL规范
-        description: 物模型DSL规范
-        mime-type: application/json
+#things:
+#  mcp:
+#    resources:
+#      - name: things-dsl
+#        uri: classpath:/prompts/things-dsl.json
+#        title: 物模型DSL规范
+#        description: 物模型DSL规范
+#        mime-type: application/json
 
 logging:
   charset:
@@ -31,6 +31,7 @@ logging:
     org.springframework.ai.ollama.api: INFO
     org.springframework.http.codec: INFO
     io.modelcontextprotocol: DEBUG
+    cn.huangdayu.things.mcp: DEBUG
     reactor: INFO
 
 

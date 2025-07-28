@@ -1,0 +1,23 @@
+{
+  "dataType": "基本数据类型（必选），取值：int/float/double/string/bitMap，关键字：dataType,type,DataType",
+  "max": "最大值（非必选），仅数值型有效，关键字：max,maximum,Max",
+  "min": "最小值（非必选），仅数值型有效，关键字：min,minimum,Min",
+  "step": "变化幅度（非必选），仅数值型有效，关键字：step,scale,Step",
+  "unit": "数据单位（非必选），关键字：unit,Unit",
+  "unitName": "单位名称（非必选），关键字：unitName",
+  "default": "默认值（非必选），关键字：default,defaultValue,Default",
+  "precise": "精度（必选），仅float/double有效，关键字：precise,Precise",
+  "minLength": "字符串最小长度（非必选），仅string有效，关键字：minLength,min,MinLength",
+  "maxLength": "字符串最大长度（非必选），仅string有效，关键字：maxLength,max,MaxLength",
+  "custom": "是否自定义（非必选），取值：True/False，关键字：custom,Custom",
+  "length": "数据长度（非必选），仅TEXT有效（≤2048字节），关键字：length,datalength,Length",
+  "timestamp": "时间格式（非必选），仅DATE有效，关键字：timestamp,Timestamp",
+  "size": "数组长度（非必选），关键字：size,Size",
+  "childDataType": "子元素类型（非必选），取值：STRUCT/INT/FLOAT/DOUBLE/TEXT，关键字：childDataType",
+  "arrayDesc": "数组项说明（非必选），关键字：arrayDesc,ArrayDesc",
+  "value": "枚举项说明（非必选），关键字：value,enumDesc,mapping value,Value",
+  "identifier": "子参数标识符（非必选），关键字：identifier",
+  "name": "子参数名称（非必选），关键字：name",
+  "structDesc": "结构体项说明（非必选），关键字：structureDesc",
+  "bitmapDesc": "位图项说明（非必选），关键字：bitmapDesc"
+}

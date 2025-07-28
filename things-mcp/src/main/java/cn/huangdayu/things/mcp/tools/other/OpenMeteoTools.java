@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * 利用OpenMeteo的免费天气API提供天气服务 该API无需API密钥，可以直接使用
  */
-@ThingsTools
+@ThingsTools(enabled = false)
 public class OpenMeteoTools {
 
     // OpenMeteo免费天气API基础URL

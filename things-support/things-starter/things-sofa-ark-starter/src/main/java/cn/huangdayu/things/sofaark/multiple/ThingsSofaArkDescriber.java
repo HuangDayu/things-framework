@@ -29,7 +29,7 @@ public class ThingsSofaArkDescriber implements ThingsSofaBusDescriber {
                 ThingsSofaBusDescriber thingsSofaBusDescriber = getBizService(biz.getBizName(), biz.getBizVersion(), ThingsSofaBusDescriber.class);
                 if (thingsSofaBusDescriber != null) {
                     ThingsDslInfo dslInfo = thingsSofaBusDescriber.getDSL();
-                    thingsDslInfo.getDomainDsl().addAll(dslInfo.getDomainDsl());
+                    thingsDslInfo.getUseCaseDsl().addAll(dslInfo.getUseCaseDsl());
                     thingsDslInfo.getThingsDsl().addAll(dslInfo.getThingsDsl());
                 }
             }
