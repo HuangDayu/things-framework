@@ -1,0 +1,157 @@
+{
+  "identifier": "energy_saving_linkage",
+  "name": "节能模式联动",
+  "displayName": "节能模式联动",
+  "description": "夜间自动进入节能模式，调整设备运行状态",
+  "schema": {},
+  "status": {
+    "ruleEngineName": "节能模式联动规则",
+    "ruleEngineId": "RULE_ENERGY_SAVING_001",
+    "status": "active",
+    "time": "2025-07-29 10:00:00",
+    "utcTime": "2025-07-29T10:00:00Z",
+    "lastTime": "2025-07-29 10:00:00"
+  },
+  "profile": {
+    "description": "节能模式联动规则，夜间自动调整设备状态",
+    "ruleEngineId": "RULE_ENERGY_SAVING_001",
+    "type": 0,
+    "version": "1.0.0",
+    "productClass": "智能家居节能规则",
+    "productCode": "HOME_ENERGY_001"
+  },
+  "rules": [
+    {
+      "id": "rule_night_mode_001",
+      "name": "夜间节能模式",
+      "description": "晚上10点后进入节能模式，调整空调、风扇等设备",
+      "status": "enabled",
+      "triggers": [
+        {
+          "type": "timer",
+          "condition": {
+            "cron": "0 0 22 * * ?"
+          }
+        }
+      ],
+      "actions": [
+        {
+          "type": "device_control",
+          "params": {
+            "deviceControl": {
+              "targetDevice": {
+                "productCode": "AC_PROD_001",
+                "deviceCode": "AC001",
+                "messageType": "actions",
+                "identifier": "setTargetTemperature",
+                "action": "request"
+              },
+              "service": "setTargetTemperature"
+            }
+          }
+        },
+        {
+          "type": "device_control",
+          "params": {
+            "deviceControl": {
+              "targetDevice": {
+                "productCode": "FAN_PROD_001",
+                "deviceCode": "FAN001",
+                "messageType": "actions",
+                "identifier": "setFanSpeed",
+                "action": "request"
+              },
+              "service": "setFanSpeed"
+            }
+          }
+        },
+        {
+          "type": "notification",
+          "params": {
+            "notification": {
+              "method": "app",
+              "target": "user001",
+              "content": "家中设备已进入夜间节能模式"
+            }
+          }
+        }
+      ],
+      "executionCondition": {
+        "timeRange": {
+          "start": "22:00:00",
+          "end": "06:00:00"
+        },
+        "daysOfWeek": [1, 2, 3, 4, 5, 6, 7]
+      }
+    },
+    {
+      "id": "rule_idle_power_off_001",
+      "name": "空闲设备自动断电",
+      "description": "插座设备功率持续低于阈值时自动断电",
+      "status": "enabled",
+      "triggers": [
+        {
+          "type": "device",
+          "condition": {
+            "deviceInfo": {
+              "productCode": "SOCKET_PROD_001",
+              "deviceCode": "SOCK001",
+              "messageType": "properties",
+              "identifier": "power",
+              "action": "post"
+            },
+            "property": "power",
+            "operator": "<",
+            "value": 5
+          }
+        }
+      ],
+      "actions": [
+        {
+          "type": "delay",
+          "params": {
+            "delay": {
+              "duration": 600
+            }
+          }
+        },
+        {
+          "type": "device_control",
+          "params": {
+            "deviceControl": {
+              "targetDevice": {
+                "productCode": "SOCKET_PROD_001",
+                "deviceCode": "SOCK001",
+                "messageType": "actions",
+                "identifier": "setPowerSwitch",
+                "action": "request"
+              },
+              "service": "setPowerSwitch"
+            }
+          }
+        },
+        {
+          "type": "notification",
+          "params": {
+            "notification": {
+              "method": "app",
+              "target": "user001",
+              "content": "检测到插座设备空闲，已自动断电"
+            }
+          }
+        }
+      ],
+      "executionCondition": {
+        "timeRange": {
+          "start": "00:00:00",
+          "end": "06:00:00"
+        },
+        "daysOfWeek": [1, 2, 3, 4, 5, 6, 7],
+        "executionLimit": {
+          "count": 5,
+          "period": "day"
+        }
+      }
+    }
+  ]
+}

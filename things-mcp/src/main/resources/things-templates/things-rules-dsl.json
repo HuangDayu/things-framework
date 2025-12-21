@@ -1,0 +1,131 @@
+{
+  "identifier": "说明：规则引擎标识符；类型：String；是否必选：否；长度：[1,100]；取值：唯一ID；备注：规则引擎唯一标识；关键字：id,Id,identifier",
+  "name": "说明：规则引擎名称；类型：String；是否必选：是；长度：[1,50]；取值：规则引擎名称；备注：可包含业务信息；关键字：name,Name",
+  "displayName": "说明：显示标题；类型：String；是否必选：否；长度：[1,50]；取值：显示文本；备注：用户界面显示用；关键字：displayName,DisplayName",
+  "description": "说明：规则引擎描述；类型：String；是否必选：否；长度：[1,200]；取值：描述文本；备注：功能说明；关键字：description,Description",
+  "schema": "说明：数据模式；类型：JsonObject；是否必选：否；取值：复杂结构定义；备注：校验规则引擎信息；关键字：schema,Schema,dataSchema,DataSchema,tmData",
+  "status": {
+    "ruleEngineName": "说明：规则引擎名称；类型：String；是否必选：是；长度：{1,50}；取值：任意字符；备注：规则引擎在系统中的显示名称；关键字：ruleEngineName,RuleEngineName",
+    "ruleEngineId": "说明：规则引擎唯一标识符；类型：String；是否必选：是；长度：{1,100}；取值：规则引擎ID；备注：平台唯一标识规则引擎的关键字段；关键字：ruleEngineID,ruleEngineID,RuleEngineID,RuleEngineId",
+    "status": "说明：规则引擎状态；类型：String；是否必选：是；长度：{1,50}；取值：active/inactive；备注：反映规则引擎启用状态；关键字：status,Status",
+    "time": "说明：状态通知时间；类型：String；是否必选：否；长度：{1,100}；取值：YYYY-MM-DD hh:mm:ss格式；备注：平台生成的时间戳；关键字：time,Time",
+    "utcTime": "说明：UTC时间戳；类型：String；是否必选：否；长度：{1,100}；取值：ISO 8601格式；备注：国际标准时间；关键字：utcTime,UtcTime",
+    "lastTime": "说明：最后更新时间；类型：String；是否必选：否；长度：{1,100}；取值：YYYY-MM-DD hh:mm:ss；备注：规则引擎状态变更前最后一次更新时间；关键字：lastTime,LastTime"
+  },
+  "profile": {
+    "description": "说明：规则引擎描述；类型：String；是否必选：否；长度：{1,100}；取值：支持中文/字母/数字/短划线/下划线；备注：规则引擎详细描述；关键字：description,Description",
+    "ruleEngineId": "说明：规则引擎标识；类型：String；是否必选：有条件必选；长度：{1,100}；取值：规则引擎唯一ID；备注：平台注册的规则引擎ID；关键字：ruleEngineID,ruleEngineUID,RuleEngineUDID,RuleEngineId",
+    "type": "说明：规则引擎类型；类型：Enum；是否必选：否；取值：0-设备联动规则/1-数据处理规则/2-告警规则；备注：规则引擎的用途分类；关键字：type,Type",
+    "version": "说明：规则引擎版本；类型：String；是否必选：否；长度：{1,100}；取值：版本号格式；备注：规则引擎规范版本；关键字：version,Version",
+    "productClass": "说明：产品类别；类型：String；是否必选：否；长度：{1,100}；取值：行业分类名称；备注：规则引擎所属品类；关键字：productClass,ProductClass",
+    "productCode": "说明：产品标识；类型：String；是否必选：否；长度：{1,100}；取值：行业分类名称；备注：规则引擎所属品类；关键字：productCode,ProductCode"
+  },
+  "rules": [
+    {
+      "id": "说明：规则ID；类型：String；是否必选：是；长度：[1,100]；取值：唯一ID；备注：唯一标识一个规则；关键字：id,ruleId",
+      "name": "说明：规则名称；类型：String；是否必选：是；长度：[1,50]；取值：规则名称；备注：规则的显示名称；关键字：name,ruleName",
+      "description": "说明：规则描述；类型：String；是否必选：否；长度：[1,200]；取值：描述文本；备注：规则功能说明；关键字：description,desc",
+      "status": "说明：规则状态；类型：String；是否必选：是；取值：enabled/disabled；备注：规则是否启用；关键字：status,ruleStatus",
+      "triggers": [
+        {
+          "type": "说明：触发器类型；类型：String；是否必选：是；取值：device/timer/event/device_status/geo/composite；备注：规则触发条件类型；关键字：type,triggerType",
+          "condition": {
+            "deviceInfo": {
+              "deviceId": "说明：设备ID；类型：String；是否必选：否（当type为device/event/device_status/geo时必需）；取值：设备唯一标识；备注：触发规则的设备标识；关键字：deviceId",
+              "productCode": "说明：产品标识；类型：String；是否必选：否；取值：产品唯一标识；备注：触发规则的设备产品标识；关键字：productCode",
+              "deviceCode": "说明：设备标识；类型：String；是否必选：否；取值：设备唯一标识；备注：触发规则的设备标识；关键字：deviceCode",
+              "messageType": "说明：消息类型；类型：String；是否必选：否；取值：properties/actions/events；备注：触发规则的消息类型；关键字：messageType",
+              "identifier": "说明：标识符；类型：String；是否必选：否；取值：属性/行为/事件的标识符；备注：触发规则的具体标识符；关键字：identifier",
+              "action": "说明：动作类型；类型：String；是否必选：否；取值：post/get/set/request/response；备注：触发规则的动作类型；关键字：action"
+            },
+            "property": "说明：属性名称；类型：String；是否必选：否（当type为device时必需）；取值：属性标识符；备注：用于比较的属性；关键字：property",
+            "operator": "说明：比较操作符；类型：String；是否必选：否（当type为device时必需）；取值：>/>=/</<=/==/!=/change/in/not_in；备注：条件比较操作符；关键字：operator",
+            "value": "说明：比较值；类型：Any；是否必选：否（当type为device时必需）；取值：任意值；备注：用于比较的目标值；关键字：value",
+            "cron": "说明：Cron表达式；类型：String；是否必选：否（当type为timer时必需）；取值：cron表达式；备注：定时触发表达式；关键字：cron",
+            "event": "说明：事件名称；类型：String；是否必选：否（当type为event时必需）；取值：事件标识符；备注：触发规则的事件；关键字：event",
+            "deviceStatus": "说明：设备状态；类型：String；是否必选：否（当type为device_status时必需）；取值：online/offline/inactive/disabled；备注：设备状态类型；关键字：deviceStatus",
+            "geoType": "说明：地理位置触发类型；类型：String；是否必选：否（当type为geo时必需）；取值：enter/exit/inside/outside；备注：地理围栏触发类型；关键字：geoType",
+            "geoFence": {
+              "type": "说明：地理围栏类型；类型：String；是否必选：否；取值：circle/polygon；备注：围栏形状类型；关键字：type,fenceType",
+              "center": {
+                "latitude": "说明：纬度；类型：Double；是否必选：否；取值：-90~90；备注：圆形围栏中心点纬度；关键字：latitude",
+                "longitude": "说明：经度；类型：Double；是否必选：否；取值：-180~180；备注：圆形围栏中心点经度；关键字：longitude"
+              },
+              "radius": "说明：半径；类型：Double；是否必选：否；取值：正数；备注：圆形围栏半径（米）；关键字：radius",
+              "points": [
+                {
+                  "latitude": "说明：纬度；类型：Double；是否必选：否；取值：-90~90；备注：多边形顶点纬度；关键字：latitude",
+                  "longitude": "说明：经度；类型：Double；是否必选：否；取值：-180~180；备注：多边形顶点经度；关键字：longitude"
+                }
+              ]
+            },
+            "logicOperator": "说明：组合操作符；类型：String；是否必选：否（当type为composite时必需）；取值：and/or；备注：多个条件间的逻辑关系；关键字：logicOperator",
+            "conditions": "说明：子条件列表；类型：Array；是否必选：否（当type为composite时必需）；取值：触发条件对象数组；备注：复合条件列表；关键字：conditions"
+          }
+        }
+      ],
+      "actions": [
+        {
+          "type": "说明：动作类型；类型：String；是否必选：是；取值：notification/device_control/property_set/data_forward/scene_trigger/rule_status/delay/condition；备注：规则触发后执行的动作类型；关键字：type,actionType",
+          "params": {
+            "notification": {
+              "method": "说明：通知方式；类型：String；是否必选：否（当type为notification时必需）；取值：email/sms/webhook/app；备注：通知发送方式；关键字：method,notifyMethod",
+              "target": "说明：通知目标；类型：String；是否必选：否（当type为notification时必需）；取值：目标地址；备注：通知接收方；关键字：target,notifyTarget",
+              "content": "说明：通知内容；类型：String；是否必选：否（当type为notification时必需）；取值：文本内容；备注：通知正文；关键字：content,message"
+            },
+            "deviceControl": {
+              "targetDevice": {
+                "deviceId": "说明：设备ID；类型：String；是否必选：否（当type为device_control/property_set时必需）；取值：设备唯一标识；备注：目标设备标识；关键字：deviceId",
+                "productCode": "说明：目标产品标识；类型：String；是否必选：否；取值：产品唯一标识；备注：动作执行目标的产品标识；关键字：productCode",
+                "deviceCode": "说明：目标设备标识；类型：String；是否必选：否；取值：设备唯一标识；备注：动作执行目标的设备标识；关键字：deviceCode",
+                "messageType": "说明：目标消息类型；类型：String；是否必选：否；取值：properties/actions/events；备注：动作执行目标的消息类型；关键字：messageType",
+                "identifier": "说明：目标标识符；类型：String；是否必选：否；取值：属性/行为/事件的标识符；备注：动作执行目标的具体标识符；关键字：identifier",
+                "action": "说明：目标动作类型；类型：String；是否必选：否；取值：post/get/set/request/response；备注：动作执行目标的动作类型；关键字：action"
+              },
+              "service": "说明：服务名称；类型：String；是否必选：否（当type为device_control时必需）；取值：服务标识符；备注：要调用的服务；关键字：service"
+            },
+            "propertySet": {
+              "properties": "说明：属性键值对；类型：Object；是否必选：否（当type为property_set时必需）；取值：属性对象；备注：要设置的属性值；关键字：properties"
+            },
+            "dataForward": {
+              "target": "说明：转发目标地址；类型：String；是否必选：否（当type为data_forward时必需）；取值：URL地址；备注：数据转发目标；关键字：target,forwardTarget",
+              "httpMethod": "说明：HTTP方法；类型：String；是否必选：否（当type为data_forward时必需）；取值：GET/POST/PUT/DELETE；备注：HTTP请求方法；关键字：httpMethod",
+              "headers": "说明：HTTP请求头；类型：Object；是否必选：否（当type为data_forward时必需）；取值：键值对；备注：HTTP请求头信息；关键字：headers",
+              "body": "说明：请求体内容；类型：Object；是否必选：否（当type为data_forward时必需）；取值：对象；备注：HTTP请求体；关键字：body,requestBody"
+            },
+            "sceneTrigger": {
+              "sceneId": "说明：场景ID；类型：String；是否必选：否（当type为scene_trigger时必需）；取值：场景唯一标识；备注：要触发的场景；关键字：sceneId"
+            },
+            "ruleStatus": {
+              "ruleId": "说明：规则ID；类型：String；是否必选：否（当type为rule_status时必需）；取值：规则唯一标识；备注：目标规则标识；关键字：ruleId",
+              "status": "说明：规则状态；类型：String；是否必选：否（当type为rule_status时必需）；取值：enabled/disabled；备注：要设置的规则状态；关键字：status"
+            },
+            "delay": {
+              "duration": "说明：延时时长；类型：Integer；是否必选：否（当type为delay时必需）；取值：秒数；备注：延迟执行时间；关键字：duration,delaySeconds"
+            },
+            "condition": {
+              "expression": {
+                "left": "说明：左操作数；类型：Any；是否必选：否；取值：任意值；备注：条件左值；关键字：left",
+                "operator": "说明：比较操作符；类型：String；是否必选：否；取值：比较操作符；备注：条件比较操作符；关键字：operator",
+                "right": "说明：右操作数；类型：Any；是否必选：否；取值：任意值；备注：条件右值；关键字：right"
+              },
+              "trueActions": "说明：条件为真时执行的动作列表；类型：Array；是否必选：否（当type为condition时必需）；取值：动作对象数组；备注：条件满足时执行的动作；关键字：trueActions",
+              "falseActions": "说明：条件为假时执行的动作列表；类型：Array；是否必选：否（当type为condition时必需）；取值：动作对象数组；备注：条件不满足时执行的动作；关键字：falseActions"
+            }
+          }
+        }
+      ],
+      "executionCondition": {
+        "timeRange": {
+          "start": "说明：开始时间；类型：String；是否必选：否；取值：HH:mm:ss格式；备注：规则执行开始时间；关键字：start,startTime",
+          "end": "说明：结束时间；类型：String；是否必选：否；取值：HH:mm:ss格式；备注：规则执行结束时间；关键字：end,endTime"
+        },
+        "daysOfWeek": "说明：星期几列表；类型：Array；是否必选：否；取值：1-7的整数数组；备注：规则执行的星期几；关键字：daysOfWeek",
+        "executionLimit": {
+          "count": "说明：执行次数限制；类型：Integer；是否必选：否；取值：正整数；备注：周期内最大执行次数；关键字：count,limitCount",
+          "period": "说明：周期；类型：String；是否必选：否；取值：minute/hour/day/week/month；备注：执行次数统计周期；关键字：period,limitPeriod"
+        }
+      }
+    }
+  ]
+}

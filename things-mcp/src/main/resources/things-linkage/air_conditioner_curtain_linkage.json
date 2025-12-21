@@ -1,0 +1,72 @@
+{
+  "identifier": "air_conditioner_curtain_linkage",
+  "name": "空调窗帘联动",
+  "displayName": "空调窗帘联动",
+  "description": "当室内温度过高且窗帘处于打开状态时，自动关闭窗帘以降低室内温度",
+  "schema": {},
+  "status": {
+    "ruleEngineName": "空调窗帘联动规则",
+    "ruleEngineId": "RULE_AC_CURT_001",
+    "status": "active",
+    "time": "2025-07-29 10:00:00",
+    "utcTime": "2025-07-29T10:00:00Z",
+    "lastTime": "2025-07-29 10:00:00"
+  },
+  "profile": {
+    "description": "空调窗帘联动规则，根据温度和光照自动调节窗帘",
+    "ruleEngineId": "RULE_AC_CURT_001",
+    "type": 0,
+    "version": "1.0.0",
+    "productClass": "智能家居联动规则",
+    "productCode": "HOME_LINKAGE_001"
+  },
+  "rules": [
+    {
+      "id": "rule_temp_curtain_001",
+      "name": "温度过高关闭窗帘",
+      "description": "当温度超过30度且窗帘打开时，自动关闭窗帘",
+      "status": "enabled",
+      "triggers": [
+        {
+          "type": "device",
+          "condition": {
+            "deviceInfo": {
+              "productCode": "AC_PROD_001",
+              "deviceCode": "AC001",
+              "messageType": "properties",
+              "identifier": "temperature",
+              "action": "post"
+            },
+            "property": "temperature",
+            "operator": ">",
+            "value": 30
+          }
+        }
+      ],
+      "actions": [
+        {
+          "type": "device_control",
+          "params": {
+            "deviceControl": {
+              "targetDevice": {
+                "productCode": "CURTAIN_PROD_001",
+                "deviceCode": "CURT001",
+                "messageType": "actions",
+                "identifier": "controlCurtain",
+                "action": "request"
+              },
+              "service": "controlCurtain"
+            }
+          }
+        }
+      ],
+      "executionCondition": {
+        "timeRange": {
+          "start": "01:00:00",
+          "end": "23:59:59"
+        },
+        "daysOfWeek": [1, 2, 3, 4, 5, 6, 7]
+      }
+    }
+  ]
+}

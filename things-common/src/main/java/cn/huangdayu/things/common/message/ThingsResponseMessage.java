@@ -1,12 +1,12 @@
 package cn.huangdayu.things.common.message;
 
+import com.alibaba.fastjson2.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.Serializable;
 
 /**
  * @author huangdayu
@@ -37,4 +37,9 @@ public class ThingsResponseMessage extends AbstractThingsMessage {
     private ThingsErrorMessage error;
 
 
+    @JsonIgnore
+    @JSONField(serialize = false, deserialize = false)
+    public boolean isSuccess() {
+        return error == null;
+    }
 }

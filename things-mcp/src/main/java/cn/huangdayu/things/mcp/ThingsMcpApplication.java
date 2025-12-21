@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
  * @author huangdayu
  */
 @EnableConfigurationProperties(value = ThingsMcpProperties.class)
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "cn.huangdayu.things")
 public class ThingsMcpApplication {
 
     public static void main(String[] args) {

@@ -76,7 +76,7 @@ public class ThingMcpConfiguration {
     }
 
     @Bean
-    public List<McpServerFeatures.AsyncPromptSpecification> mcpPrompts(@Value("classpath:/things-prompts/things-prompts.md") Resource resource) {
+    public List<McpServerFeatures.AsyncPromptSpecification> mcpPrompts(@Value("classpath:/things-prompts/things-assistant-prompts.md") Resource resource) {
         return List.of(thingsPrompts(resource));
     }
 

@@ -52,23 +52,16 @@ public class MockThingsQueryService implements ThingsQueryService {
     }
 
     private boolean queryDeviceInfo(DeviceInfo deviceInfo, String deviceName, String deviceType, String deviceLocation) {
-        if (!isSimilar(deviceInfo.getDeviceLocation(), deviceLocation)) {
-            return false;
-        }
-        if (!isSimilar(deviceInfo.getDeviceName(), deviceName)) {
-            return false;
-        }
-        if (!isSimilar(deviceInfo.getDeviceType(), deviceType)) {
-            return false;
-        }
-        return true;
+        return isSimilar(deviceInfo.getDeviceLocation(), deviceLocation) &&
+                isSimilar(deviceInfo.getDeviceName(), deviceName) &&
+                isSimilar(deviceInfo.getDeviceType(), deviceType);
     }
 
     private boolean isSimilar(String field1, String field2) {
-        if (StrUtil.isBlank(field2)) {
+        if (StrUtil.isBlank(field1) || StrUtil.isBlank(field2)) {
             return true;
         }
-        return field1 != null && (field1.contains(field2) || field2.contains(field1));
+        return field1.contains(field2) || field2.contains(field1);
     }
 
 

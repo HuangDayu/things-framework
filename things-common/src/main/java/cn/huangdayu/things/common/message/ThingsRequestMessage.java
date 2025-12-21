@@ -45,20 +45,20 @@ public class ThingsRequestMessage extends AbstractThingsMessage implements Seria
 
     @JsonIgnore
     @JSONField(serialize = false, deserialize = false)
-    public ThingsResponseMessage clientError(String errorTraceCode) {
-        return responseError(BAD_REQUEST, "Client error", errorTraceCode);
+    public ThingsResponseMessage clientError(String errorMessage) {
+        return responseError(BAD_REQUEST, errorMessage, null);
     }
 
     @JsonIgnore
     @JSONField(serialize = false, deserialize = false)
-    public ThingsResponseMessage notFound(String errorTraceCode) {
-        return responseError(NOT_FOUND, "Not found", errorTraceCode);
+    public ThingsResponseMessage notFound(String errorMessage) {
+        return responseError(NOT_FOUND, errorMessage, null);
     }
 
     @JsonIgnore
     @JSONField(serialize = false, deserialize = false)
-    public ThingsResponseMessage serverError(String errorTraceCode) {
-        return responseError(ERROR, "Server error", errorTraceCode);
+    public ThingsResponseMessage serverError(String errorMessage) {
+        return responseError(ERROR, errorMessage, null);
     }
 
     @JsonIgnore
@@ -95,15 +95,15 @@ public class ThingsRequestMessage extends AbstractThingsMessage implements Seria
 
     @JsonIgnore
     @JSONField(serialize = false, deserialize = false)
-    private ThingsResponseMessage responseSuccess(Object params) {
+    public ThingsResponseMessage responseSuccess(Object result) {
         ThingsResponseMessage thingsResponseMessage = JSON.parseObject(JSON.toJSONString(this), ThingsResponseMessage.class);
-        thingsResponseMessage.setResult(params != null ? params : new JSONObject());
+        thingsResponseMessage.setResult(result != null ? result : new JSONObject());
         return thingsResponseMessage;
     }
 
     @JsonIgnore
     @JSONField(serialize = false, deserialize = false)
-    private ThingsResponseMessage responseError(String errorCode, String errorMessage, String errorTraceCode) {
+    public ThingsResponseMessage responseError(String errorCode, String errorMessage, String errorTraceCode) {
         ThingsResponseMessage thingsResponseMessage = JSON.parseObject(JSON.toJSONString(this), ThingsResponseMessage.class);
         ThingsErrorMessage thingsMetadata = new ThingsErrorMessage();
         thingsMetadata.setCode(errorCode);

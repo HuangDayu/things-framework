@@ -20,7 +20,7 @@ def findThingsModules(String prefix, File dir, List<String> result, List<String>
                 result.add(subPath.replace(File.separator, ":"))
             }
             dir.listFiles().each { file ->
-                if (file.isDirectory()) {
+                if (file.isDirectory() && !file.name.startsWith('src') && !file.name.startsWith('build')) {
                     findThingsModules(prefix, file, result, ignoredPaths)
                 }
             }

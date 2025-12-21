@@ -8,6 +8,7 @@ import cn.huangdayu.things.engine.core.ThingsProperties;
 import cn.huangdayu.things.engine.wrapper.ThingsFunction;
 import cn.huangdayu.things.engine.wrapper.ThingsParameter;
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.ReflectUtil;
 import com.alibaba.fastjson2.JSON;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -63,6 +64,9 @@ public class ThingsArgsConverter {
     private Object argForThingsMethod(War war) {
         String method = war.getTrm().getMethod();
         ThingsMessageMethod messageMethod = new ThingsMessageMethod(method);
+        if (war.getThingsParameter().getType().isAssignableFrom(ThingsMessageMethod.class)) {
+            return messageMethod;
+        }
         ThingsMethod annotation = (ThingsMethod) war.getThingsParameter().getAnnotation();
         if (annotation.productCode()) {
             return Convert.convert(war.getThingsParameter().getType(), messageMethod.getProductCode());
@@ -74,6 +78,8 @@ public class ThingsArgsConverter {
             return Convert.convert(war.getThingsParameter().getType(), messageMethod.getIdentifier());
         } else if (annotation.action()) {
             return Convert.convert(war.getThingsParameter().getType(), messageMethod.getAction());
+        } else if (war.getThingsParameter().getType().isAssignableFrom(String.class)) {
+            return ReflectUtil.getFieldValue(messageMethod, war.getThingsParameter().getName());
         }
         return Convert.convert(war.getThingsParameter().getType(), method);
     }

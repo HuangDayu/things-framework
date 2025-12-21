@@ -2,11 +2,21 @@ plugins {
     id 'java-library'
 }
 
+
+test {
+    useJUnitPlatform()
+}
+
 dependencies {
     api project(path: ':things-api')
     api project(path: ':things-common')
+    api project(path: ':things-rules')
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.ai:spring-ai-starter-mcp-server-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

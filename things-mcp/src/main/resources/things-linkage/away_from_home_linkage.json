@@ -1,0 +1,111 @@
+{
+  "identifier": "away_from_home_linkage",
+  "name": "离家场景联动",
+  "displayName": "离家场景联动",
+  "description": "当用户离家时，自动关闭家中所有电器设备",
+  "schema": {},
+  "status": {
+    "ruleEngineName": "离家场景联动规则",
+    "ruleEngineId": "RULE_AWAY_HOME_001",
+    "status": "active",
+    "time": "2025-07-29 10:00:00",
+    "utcTime": "2025-07-29T10:00:00Z",
+    "lastTime": "2025-07-29 10:00:00"
+  },
+  "profile": {
+    "description": "离家场景联动规则，一键关闭家中设备",
+    "ruleEngineId": "RULE_AWAY_HOME_001",
+    "type": 0,
+    "version": "1.0.0",
+    "productClass": "智能家居场景规则",
+    "productCode": "HOME_SCENE_001"
+  },
+  "rules": [
+    {
+      "id": "rule_away_home_001",
+      "name": "离家自动关闭设备",
+      "description": "当用户离家时，关闭空调、风扇、插座、开关等设备",
+      "status": "enabled",
+      "triggers": [
+        {
+          "type": "event",
+          "condition": {
+            "deviceInfo": {
+              "productCode": "GATEWAY_PROD_001",
+              "deviceCode": "GATEWAY001",
+              "messageType": "events",
+              "identifier": "userAway",
+              "action": "post"
+            },
+            "event": "userAway"
+          }
+        }
+      ],
+      "actions": [
+        {
+          "type": "device_control",
+          "params": {
+            "deviceControl": {
+              "targetDevice": {
+                "productCode": "AC_PROD_001",
+                "deviceCode": "AC001",
+                "messageType": "actions",
+                "identifier": "setPowerSwitch",
+                "action": "request"
+              },
+              "service": "setPowerSwitch"
+            }
+          }
+        },
+        {
+          "type": "device_control",
+          "params": {
+            "deviceControl": {
+              "targetDevice": {
+                "productCode": "FAN_PROD_001",
+                "deviceCode": "FAN001",
+                "messageType": "actions",
+                "identifier": "setPowerSwitch",
+                "action": "request"
+              },
+              "service": "setPowerSwitch"
+            }
+          }
+        },
+        {
+          "type": "device_control",
+          "params": {
+            "deviceControl": {
+              "targetDevice": {
+                "productCode": "SOCKET_PROD_001",
+                "deviceCode": "SOCK001",
+                "messageType": "actions",
+                "identifier": "setPowerSwitch",
+                "action": "request"
+              },
+              "service": "setPowerSwitch"
+            }
+          }
+        },
+        {
+          "type": "device_control",
+          "params": {
+            "deviceControl": {
+              "targetDevice": {
+                "productCode": "SWITCH_PROD_001",
+                "deviceCode": "SW001",
+                "messageType": "actions",
+                "identifier": "setPowerSwitch",
+                "action": "request"
+              },
+              "service": "setPowerSwitch"
+            }
+          }
+        }
+      ],
+      "executionCondition": {
+        "daysOfWeek": [1, 2, 3, 4, 5, 6, 7]
+      }
+    }
+  ]
+}

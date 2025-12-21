@@ -1,0 +1,22 @@
+{
+  "userCode": "streaming-user-one",
+  "productCode": "streaming-adapter",
+  "deviceCode": "streaming-device-one",
+  "deviceName": "streaming-device-one",
+  "deviceLocation": "客厅",
+  "deviceGroups": [
+    {
+      "groupCode": "streaming-group-one",
+      "groupName": "streaming-group-one"
+    }
+  ],
+  "deviceStatus": "online",
+  "deviceType": "streaming-device-one",
+  "deviceDescription": "streaming-device-one",
+  "deviceTags": [
+    {
+      "tagCode": "streaming-tag-one",
+      "tagName": "streaming-tag-one"
+    }
+  ]
+}

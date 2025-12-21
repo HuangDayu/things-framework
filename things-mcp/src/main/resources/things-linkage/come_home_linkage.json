@@ -1,0 +1,96 @@
+{
+  "identifier": "come_home_linkage",
+  "name": "回家场景联动",
+  "displayName": "回家场景联动",
+  "description": "当用户回家时，自动开启家中必要设备",
+  "schema": {},
+  "status": {
+    "ruleEngineName": "回家场景联动规则",
+    "ruleEngineId": "RULE_COME_HOME_001",
+    "status": "active",
+    "time": "2025-07-29 10:00:00",
+    "utcTime": "2025-07-29T10:00:00Z",
+    "lastTime": "2025-07-29 10:00:00"
+  },
+  "profile": {
+    "description": "回家场景联动规则，自动开启家中设备",
+    "ruleEngineId": "RULE_COME_HOME_001",
+    "type": 0,
+    "version": "1.0.0",
+    "productClass": "智能家居场景规则",
+    "productCode": "HOME_SCENE_002"
+  },
+  "rules": [
+    {
+      "id": "rule_come_home_001",
+      "name": "回家自动开启设备",
+      "description": "当用户回家时，开启必要设备提升舒适度",
+      "status": "enabled",
+      "triggers": [
+        {
+          "type": "event",
+          "condition": {
+            "deviceInfo": {
+              "productCode": "GATEWAY_PROD_001",
+              "deviceCode": "GATEWAY001",
+              "messageType": "events",
+              "identifier": "userComeHome",
+              "action": "post"
+            },
+            "event": "userComeHome"
+          }
+        }
+      ],
+      "actions": [
+        {
+          "type": "condition",
+          "params": {
+            "condition": {
+              "expression": {
+                "left": "${time.hour}",
+                "operator": ">",
+                "right": 18
+              }
+            },
+            "trueActions": [
+              {
+                "type": "device_control",
+                "params": {
+                  "deviceControl": {
+                    "targetDevice": {
+                      "productCode": "SWITCH_PROD_001",
+                      "deviceCode": "SW001",
+                      "messageType": "actions",
+                      "identifier": "setPowerSwitch",
+                      "action": "request"
+                    },
+                    "service": "setPowerSwitch"
+                  }
+                }
+              }
+            ],
+            "falseActions": []
+          }
+        },
+        {
+          "type": "device_control",
+          "params": {
+            "deviceControl": {
+              "targetDevice": {
+                "productCode": "AC_PROD_001",
+                "deviceCode": "AC001",
+                "messageType": "properties",
+                "identifier": "targetTemperature",
+                "action": "set"
+              },
+              "service": "setTargetTemperature"
+            }
+          }
+        }
+      ],
+      "executionCondition": {
+        "daysOfWeek": [1, 2, 3, 4, 5, 6, 7]
+      }
+    }
+  ]
+}

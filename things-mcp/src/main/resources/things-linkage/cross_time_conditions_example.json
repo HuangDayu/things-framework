@@ -1,0 +1,116 @@
+{
+  "identifier": "cross_time_conditions_example",
+  "name": "跨时间条件示例",
+  "displayName": "跨时间条件示例",
+  "description": "演示如何处理在不同时间点满足的条件",
+  "schema": {},
+  "status": {
+    "ruleEngineName": "跨时间条件规则示例",
+    "ruleEngineId": "RULE_CROSS_TIME_001",
+    "status": "active",
+    "time": "2025-07-29 10:00:00",
+    "utcTime": "2025-07-29T10:00:00Z",
+    "lastTime": "2025-07-29 10:00:00"
+  },
+  "profile": {
+    "description": "跨时间条件规则示例，演示分布式条件满足",
+    "ruleEngineId": "RULE_CROSS_TIME_001",
+    "type": 0,
+    "version": "1.0.0",
+    "productClass": "智能家居联动规则",
+    "productCode": "HOME_LINKAGE_003"
+  },
+  "rules": [
+    {
+      "id": "rule_cross_time_001",
+      "name": "离家节能模式",
+      "description": "当用户离家且室内温度高于阈值时，自动关闭所有电器",
+      "status": "enabled",
+      "triggers": [
+        {
+          "type": "event",
+          "condition": {
+            "deviceInfo": {
+              "productCode": "GATEWAY_PROD_001",
+              "deviceCode": "GATEWAY001",
+              "messageType": "events",
+              "identifier": "userAway",
+              "action": "post"
+            },
+            "event": "userAway"
+          }
+        },
+        {
+          "type": "device",
+          "condition": {
+            "deviceInfo": {
+              "productCode": "AC_PROD_001",
+              "deviceCode": "AC001",
+              "messageType": "properties",
+              "identifier": "temperature",
+              "action": "post"
+            },
+            "property": "temperature",
+            "operator": ">",
+            "value": 25
+          }
+        }
+      ],
+      "actions": [
+        {
+          "type": "device_control",
+          "params": {
+            "deviceControl": {
+              "targetDevice": {
+                "productCode": "SWITCH_PROD_001",
+                "deviceCode": "SW001",
+                "messageType": "actions",
+                "identifier": "setPowerSwitch",
+                "action": "request"
+              },
+              "service": "setPowerSwitch",
+              "params": {
+                "powerSwitch": false
+              }
+            }
+          }
+        },
+        {
+          "type": "device_control",
+          "params": {
+            "deviceControl": {
+              "targetDevice": {
+                "productCode": "AC_PROD_001",
+                "deviceCode": "AC001",
+                "messageType": "actions",
+                "identifier": "setPowerSwitch",
+                "action": "request"
+              },
+              "service": "setPowerSwitch",
+              "params": {
+                "powerSwitch": false
+              }
+            }
+          }
+        },
+        {
+          "type": "notification",
+          "params": {
+            "notification": {
+              "method": "app",
+              "target": "user001",
+              "content": "检测到您已离家且温度较高，已自动关闭家中电器以节约能源"
+            }
+          }
+        }
+      ],
+      "executionCondition": {
+        "timeRange": {
+          "start": "00:00:00",
+          "end": "23:59:59"
+        },
+        "daysOfWeek": [1, 2, 3, 4, 5, 6, 7]
+      }
+    }
+  ]
+}

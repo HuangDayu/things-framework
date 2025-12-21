@@ -1,0 +1,162 @@
+{
+  "identifier": "fan_air_conditioner_linkage",
+  "name": "风扇空调联动",
+  "displayName": "风扇空调联动",
+  "description": "当室内温度过高时，先开启风扇，如果温度持续过高再开启空调",
+  "schema": {},
+  "status": {
+    "ruleEngineName": "风扇空调联动规则",
+    "ruleEngineId": "RULE_FAN_AC_001",
+    "status": "active",
+    "time": "2025-07-29 10:00:00",
+    "utcTime": "2025-07-29T10:00:00Z",
+    "lastTime": "2025-07-29 10:00:00"
+  },
+  "profile": {
+    "description": "风扇空调联动规则，节能优先控制策略",
+    "ruleEngineId": "RULE_FAN_AC_001",
+    "type": 0,
+    "version": "1.0.0",
+    "productClass": "智能家居联动规则",
+    "productCode": "HOME_LINKAGE_002"
+  },
+  "rules": [
+    {
+      "id": "rule_fan_first_001",
+      "name": "温度过高先开风扇",
+      "description": "当温度超过28度时，先开启风扇",
+      "status": "enabled",
+      "triggers": [
+        {
+          "type": "device",
+          "condition": {
+            "deviceInfo": {
+              "productCode": "AC_PROD_001",
+              "deviceCode": "AC001",
+              "messageType": "properties",
+              "identifier": "temperature",
+              "action": "post"
+            },
+            "property": "temperature",
+            "operator": ">",
+            "value": 28
+          }
+        }
+      ],
+      "actions": [
+        {
+          "type": "device_control",
+          "params": {
+            "deviceControl": {
+              "targetDevice": {
+                "productCode": "FAN_PROD_001",
+                "deviceCode": "FAN001",
+                "messageType": "actions",
+                "identifier": "setPowerSwitch",
+                "action": "request"
+              },
+              "service": "setPowerSwitch"
+            }
+          }
+        }
+      ],
+      "executionCondition": {
+        "timeRange": {
+          "start": "08:00:00",
+          "end": "23:59:59"
+        },
+        "daysOfWeek": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      }
+    },
+    {
+      "id": "rule_ac_backup_001",
+      "name": "风扇开启后温度仍高开空调",
+      "description": "风扇开启5分钟后温度仍然超过30度，则开启空调",
+      "status": "enabled",
+      "triggers": [
+        {
+          "type": "composite",
+          "condition": {
+            "logicOperator": "and",
+            "conditions": [
+              {
+                "type": "device",
+                "deviceInfo": {
+                  "productCode": "AC_PROD_001",
+                  "deviceCode": "AC001",
+                  "messageType": "properties",
+                  "identifier": "temperature",
+                  "action": "post"
+                },
+                "property": "temperature",
+                "operator": ">",
+                "value": 30
+              },
+              {
+                "type": "device",
+                "deviceInfo": {
+                  "productCode": "FAN_PROD_001",
+                  "deviceCode": "FAN001",
+                  "messageType": "properties",
+                  "identifier": "powerSwitch",
+                  "action": "post"
+                },
+                "property": "powerSwitch",
+                "operator": "==",
+                "value": true
+              }
+            ]
+          }
+        }
+      ],
+      "actions": [
+        {
+          "type": "delay",
+          "params": {
+            "delay": {
+              "duration": 300
+            }
+          }
+        },
+        {
+          "type": "device_control",
+          "params": {
+            "deviceControl": {
+              "targetDevice": {
+                "productCode": "AC_PROD_001",
+                "deviceCode": "AC001",
+                "messageType": "actions",
+                "identifier": "setPowerSwitch",
+                "action": "request"
+              },
+              "service": "setPowerSwitch"
+            }
+          }
+        }
+      ],
+      "executionCondition": {
+        "timeRange": {
+          "start": "08:00:00",
+          "end": "23:59:59"
+        },
+        "daysOfWeek": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      }
+    }
+  ]
+}
