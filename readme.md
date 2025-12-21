@@ -1,7 +1,7 @@
 <blockquote class="blockquote-center">
-<p style="font-size: 30px;text-align: center;">物联网旨在万物互联协同为人们提供更好的服务。</p>
-<p style="font-size: 30px;text-align: center;">物联网物模型上下文协议（TMCP）旨在让万物用同一种语言互联协同。</p> 
-<p style="font-size: 30px;text-align: center;">Things Framework 旨在为物模型上下文协议（TMCP）的落地提供完整解决方案。</p>
+<p style="font-size: 24px;text-align: center;">物联网旨在万物互联协同为人们提供更好的服务。</p>
+<p style="font-size: 24px;text-align: center;">物联网物模型上下文协议（TMCP）旨在让万物用同一种语言互联协同。</p> 
+<p style="font-size: 24px;text-align: center;">Things Framework 旨在为物模型上下文协议（TMCP）的落地提供完整解决方案。</p>
 </blockquote>
 
 ## 为什么需要 Things-Framework
