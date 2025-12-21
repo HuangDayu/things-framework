@@ -18,7 +18,7 @@ ext {
     hutoolVersion = '5.8.31'
     camelVersion = '4.11.0'
     fastjson2Version = '2.0.52'
-    springAIVersion = '1.1.0-SNAPSHOT'
+    springAIVersion = '2.0.0-M1'
     springAIAlibabaVersion = '1.0.0.2'
 }
 

@@ -1,0 +1,13 @@
+plugins {
+    id 'java-library'
+}
+
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+    api project(path: ':things-api')
+    api project(path: ':things-common')
+}
