@@ -50,6 +50,9 @@ pic
 .fleet
 temp
 todo.txt
+.junie
+.cursor
+.continue
 
 things-ai/things-ai-mcp-server/src/main/resources/static/
 things-ai/things-ai-mcp-server/src/main/web-ui/

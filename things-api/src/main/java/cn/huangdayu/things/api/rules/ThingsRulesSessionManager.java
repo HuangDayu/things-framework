@@ -5,7 +5,7 @@ import java.util.Set;
 /**
  * @author huangdayu
  */
-public interface ThingsRulesSessionManager {
+public interface ThingsRulesSessionManager extends ThingsRulesHandler{
 
     /**
      * 获取指定路由下的所有会话

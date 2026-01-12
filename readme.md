@@ -25,9 +25,9 @@ Things-Framework基于物模型DSL设计思想和物模型上下文协议，抽�
 - things-client： 客户端对接模块，为各种客户端的接入提供便捷的API能力，降低接入的复杂度和提高接入的效率。
 - things-common： 公共模块，提供各种复用性比较高的模型对象和工具类等。
 - things-dependencies： 依赖管理模块，为框架提供统一的依赖版本管理服务，避免依赖冲突等问题。
-- things-engine： 消息执行引擎模块，实现物模型DSL管理、消息生成、发布、订阅、解析、拦截、处理、过滤、缓存等功能，实现物模型服务调用、属性读写、事件上报、事件订阅等功能。
+- things-execute-engine： 消息执行引擎模块，实现物模型DSL管理、消息生成、发布、订阅、解析、拦截、处理、过滤、缓存等功能，实现物模型服务调用、属性读写、事件上报、事件订阅等功能。
 - things-gateway： 消息网关模块，实现会话管理、实例管理、安全验证、消息转换、消息路由、消息拦截、消息过滤、消息缓存、消息持久化、消息订阅发布、组件管理、订阅管理、物影子管理、日志存储、事件溯源、设备连接适配、设备联动、场景控制等功能；
-- things-rules： 规则引擎模块，实现基于TMCP消息的物模型规则引擎服务，适用于设备联动和场景执行等场景。
+- things-rules-engine： 规则引擎模块，实现基于TMCP消息的物模型规则引擎服务，适用于设备联动和场景执行等场景。
 - things-sofabus： 消息软总线服务，支撑物联网物模型上下文协议（TMCP）的消息驱动架构的消息软总线服务。
 - things-support： 框架支持模块，封装对SpringBoot，SpringCloud，Quarkus，SofaArk，Apache Camel等框架的支持工作。
 
@@ -42,7 +42,7 @@ Things-Framework基于物模型DSL设计思想和物模型上下文协议，抽�
 引入依赖：
 
 ```groovy
-implementation 'cn.huangdayu.things:things-spring-boot-starter:2024.1.0'
+implementation 'cn.huangdayu.things:things-spring-boot-starter:2026.1.0'
 ```
 
 ## 版权声明

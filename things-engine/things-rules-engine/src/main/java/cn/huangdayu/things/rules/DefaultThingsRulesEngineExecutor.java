@@ -53,6 +53,8 @@ public class DefaultThingsRulesEngineExecutor implements ThingsRulesEngineExecut
         }
         return trm.success(re);
 
+        // FIXME: 待完善
+
 //        // 加载状态
 //        Facts sessionFacts = loadOrCreateSessionFacts(sessionId, facts);
 //

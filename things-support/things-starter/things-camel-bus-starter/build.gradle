@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies{
-    api project(path: ':things-engine')
+    api project(path: ':things-engine:things-execute-engine')
     api project(path: ':things-support:things-camel')
     implementation 'org.apache.camel.springboot:camel-spring-boot-starter'
 

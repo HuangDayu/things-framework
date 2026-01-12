@@ -10,7 +10,7 @@ test {
 dependencies {
     api project(path: ':things-api')
     api project(path: ':things-common')
-    api project(path: ':things-rules')
+    api project(path: ':things-engine:things-rules-engine')
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.ai:spring-ai-starter-mcp-server-webflux'
