@@ -3,7 +3,6 @@ package cn.huangdayu.things.mcp.rules;
 import cn.huangdayu.things.api.rules.ThingsRulesEngineExecutor;
 import cn.huangdayu.things.common.message.ThingsRequestMessage;
 import cn.huangdayu.things.common.message.ThingsResponseMessage;
-import cn.huangdayu.things.mcp.ThingsMcpApplication;
 import cn.huangdayu.things.common.dsl.rules.ThingsRules;
 import com.alibaba.fastjson2.JSONObject;
 import jakarta.annotation.Resource;
@@ -20,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author huangdayu
  */
-@SpringBootTest(classes = ThingsMcpApplication.class)
+@SpringBootTest(classes = ThingsMcpServerTestApplication.class)
 public class SimpleDefaultThingsRulesEngineExecutorTest {
 
 

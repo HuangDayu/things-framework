@@ -8,6 +8,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
 
 /**
@@ -84,6 +85,11 @@ public class ThingsSofaBizParentBeanFactory implements BeanFactory {
         if (sharedBean(requiredType.getRawClass())) {
             return applicationContext.getBeanProvider(requiredType);
         }
+        return null;
+    }
+
+    @Override
+    public <T> ObjectProvider<T> getBeanProvider(ParameterizedTypeReference<T> requiredType) {
         return null;
     }
 

@@ -2,7 +2,6 @@ package cn.huangdayu.things.mcp.rules;
 
 import cn.huangdayu.things.api.rules.ThingsRulesEngineExecutor;
 import cn.huangdayu.things.common.message.ThingsRequestMessage;
-import cn.huangdayu.things.mcp.ThingsMcpApplication;
 import cn.huangdayu.things.common.dsl.rules.ThingsRules;
 import com.alibaba.fastjson2.JSONObject;
 import jakarta.annotation.Resource;
@@ -19,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 跨时间条件处理测试
  * 演示如何处理在不同时间点满足的规则条件
  */
-@SpringBootTest(classes = ThingsMcpApplication.class)
+@SpringBootTest(classes = ThingsMcpServerTestApplication.class)
 public class CrossTimeConditionsTest {
 
     @Resource
