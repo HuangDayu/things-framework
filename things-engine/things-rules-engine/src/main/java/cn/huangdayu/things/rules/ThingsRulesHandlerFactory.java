@@ -88,8 +88,8 @@ public class ThingsRulesHandlerFactory {
      *
      * @return 获取所有属性比较器
      */
-    public static Map<String, ThingsRulesConditionChecker> getAllComparator() {
-        return getAllHandlers(ThingsRulesConditionChecker.class);
+    public static Map<String, ThingsRulesPropertyComparator> getAllComparator() {
+        return getAllHandlers(ThingsRulesPropertyComparator.class);
     }
 
     /**

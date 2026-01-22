@@ -5,6 +5,7 @@ import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.dsl.rules.ThingsRules;
 import cn.huangdayu.things.common.message.ThingsRequestMessage;
 import cn.huangdayu.things.common.message.ThingsResponseMessage;
+import cn.huangdayu.things.rules.state.LocalThingsRulesStateManager;
 import cn.hutool.core.collection.CollUtil;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.RequiredArgsConstructor;
@@ -90,23 +91,46 @@ public class DefaultThingsRulesEngineExecutor implements ThingsRulesEngineExecut
     @Override
     public ThingsResponseMessage executeRule(ThingsRules thingsRules, ThingsRequestMessage message) {
         try {
-            if (!isRuleEnabled(thingsRules)) {
-                log.warn("Rule is disabled: {}", thingsRules.getId());
-                return message.clientError("Rule is disabled");
-            }
-            if (!validateExecutionCondition(thingsRules)) {
-                log.warn("Execution condition not met for rule: {}", thingsRules.getId());
-                return message.clientError("Execution condition not met");
-            }
-            if (!matchTriggers(thingsRules, message)) {
-                log.warn("Triggers not matched for rule: {}", thingsRules.getId());
-                return message.clientError("Rule processed failed");
-            }
-
-            return executeActions(thingsRules, message);
+            return executeRuleWithValidation(thingsRules, message);
         } catch (Exception e) {
             return handleExecutionError(message, thingsRules, e);
         }
+    }
+
+    private ThingsResponseMessage executeRuleWithValidation(ThingsRules thingsRules, ThingsRequestMessage message) {
+        ThingsResponseMessage validationResult = validateRuleExecution(thingsRules, message);
+        if (validationResult != null) {
+            return validationResult;
+        }
+        return executeActions(thingsRules, message);
+    }
+
+    private ThingsResponseMessage validateRuleExecution(ThingsRules thingsRules, ThingsRequestMessage message) {
+        if (!isRuleEnabled(thingsRules)) {
+            return createDisabledRuleError(thingsRules, message);
+        }
+        if (!validateExecutionCondition(thingsRules)) {
+            return createConditionNotMetError(thingsRules, message);
+        }
+        if (!matchTriggers(thingsRules, message)) {
+            return createTriggerNotMatchedError(thingsRules, message);
+        }
+        return null;
+    }
+
+    private ThingsResponseMessage createDisabledRuleError(ThingsRules thingsRules, ThingsRequestMessage message) {
+        log.warn("Rule is disabled: {}", thingsRules.getId());
+        return message.clientError("Rule is disabled");
+    }
+
+    private ThingsResponseMessage createConditionNotMetError(ThingsRules thingsRules, ThingsRequestMessage message) {
+        log.warn("Execution condition not met for rule: {}", thingsRules.getId());
+        return message.clientError("Execution condition not met");
+    }
+
+    private ThingsResponseMessage createTriggerNotMatchedError(ThingsRules thingsRules, ThingsRequestMessage message) {
+        log.warn("Triggers not matched for rule: {}", thingsRules.getId());
+        return message.clientError("Rule processed failed");
     }
 
     /**
@@ -170,12 +194,19 @@ public class DefaultThingsRulesEngineExecutor implements ThingsRulesEngineExecut
 
     /**
      * 处理规则的所有触发器
+     * 支持跨时间条件：触发器可以在不同时间点被满足
      *
      * @param thingsRules 规则对象
      * @param message     消息对象
      * @return 处理结果
      */
     private boolean processTriggers(ThingsRules thingsRules, ThingsRequestMessage message) {
+        // 检查是否需要跨时间条件处理
+        if (hasCrossTimeTriggers(thingsRules)) {
+            return processCrossTimeTriggers(thingsRules, message);
+        }
+
+        // 正常处理：当前消息必须满足所有触发器
         for (ThingsRules.Trigger trigger : thingsRules.getTriggers()) {
             boolean result = processTrigger(thingsRules, message, trigger);
             log.info("Trigger process [{}:{}] result : {}", thingsRules.getId(), trigger.getType(), result);
@@ -185,6 +216,161 @@ public class DefaultThingsRulesEngineExecutor implements ThingsRulesEngineExecut
         }
         return true;
     }
+
+    /**
+     * 检查规则是否包含跨时间条件触发器
+     * 如果规则有多个触发器，则认为是跨时间条件
+     */
+    private boolean hasCrossTimeTriggers(ThingsRules thingsRules) {
+        return thingsRules.getTriggers() != null && thingsRules.getTriggers().size() > 1;
+    }
+
+    /**
+     * 处理跨时间条件的触发器
+     */
+    private boolean processCrossTimeTriggers(ThingsRules thingsRules, ThingsRequestMessage message) {
+        String sessionId = generateCrossTimeSessionId(thingsRules);
+        String previousState = loadCrossTimeState(sessionId);
+        boolean[] currentSatisfaction = evaluateTriggersForCurrentMessage(thingsRules, message);
+        boolean[] accumulatedSatisfaction = accumulateTriggerSatisfaction(previousState, currentSatisfaction, thingsRules);
+        return handleCrossTimeCompletion(sessionId, accumulatedSatisfaction);
+    }
+
+    private boolean handleCrossTimeCompletion(String sessionId, boolean[] accumulatedSatisfaction) {
+        if (areAllTriggersSatisfied(accumulatedSatisfaction)) {
+            clearCrossTimeState(sessionId);
+            return true;
+        } else {
+            saveCrossTimeState(sessionId, accumulatedSatisfaction);
+            return false;
+        }
+    }
+
+    /**
+     * 生成跨时间条件的会话ID
+     */
+    private String generateCrossTimeSessionId(ThingsRules thingsRules) {
+        return thingsRules.getId() + "_cross_time";
+    }
+
+    /**
+     * 加载跨时间条件状态
+     */
+    private String loadCrossTimeState(String sessionId) {
+        LocalThingsRulesStateManager localManager = (LocalThingsRulesStateManager) thingsRulesStateManager;
+        return localManager.loadStringState(sessionId);
+    }
+
+    /**
+     * 检查当前消息满足哪些触发器
+     */
+    private boolean[] evaluateTriggersForCurrentMessage(ThingsRules thingsRules, ThingsRequestMessage message) {
+        int triggerCount = thingsRules.getTriggers().size();
+        boolean[] satisfaction = initializeSatisfactionArray(triggerCount);
+        evaluateEachTrigger(thingsRules, message, satisfaction);
+        return satisfaction;
+    }
+
+    private boolean[] initializeSatisfactionArray(int triggerCount) {
+        return new boolean[triggerCount];
+    }
+
+    private void evaluateEachTrigger(ThingsRules thingsRules, ThingsRequestMessage message, boolean[] satisfaction) {
+        for (int i = 0; i < satisfaction.length; i++) {
+            evaluateSingleTrigger(thingsRules, message, satisfaction, i);
+        }
+    }
+
+    private void evaluateSingleTrigger(ThingsRules thingsRules, ThingsRequestMessage message, boolean[] satisfaction, int index) {
+        ThingsRules.Trigger trigger = thingsRules.getTriggers().get(index);
+        boolean result = processTrigger(thingsRules, message, trigger);
+        satisfaction[index] = result;
+        log.info("Trigger process [{}:{}] result : {}", thingsRules.getId(), trigger.getType(), result);
+    }
+
+    /**
+     * 累积触发器满足状态
+     */
+    private boolean[] accumulateTriggerSatisfaction(String previousState, boolean[] currentSatisfaction, ThingsRules thingsRules) {
+        int triggerCount = getTriggerCount(thingsRules);
+        boolean[] accumulated = createAccumulatedArray(triggerCount);
+        accumulateEachTriggerSatisfaction(previousState, currentSatisfaction, accumulated);
+        return accumulated;
+    }
+
+    private int getTriggerCount(ThingsRules thingsRules) {
+        return thingsRules.getTriggers().size();
+    }
+
+    private boolean[] createAccumulatedArray(int triggerCount) {
+        return new boolean[triggerCount];
+    }
+
+    private void accumulateEachTriggerSatisfaction(String previousState, boolean[] currentSatisfaction, boolean[] accumulated) {
+        for (int i = 0; i < accumulated.length; i++) {
+            accumulateSingleTriggerSatisfaction(previousState, currentSatisfaction, accumulated, i);
+        }
+    }
+
+    private void accumulateSingleTriggerSatisfaction(String previousState, boolean[] currentSatisfaction, boolean[] accumulated, int index) {
+        boolean previouslySatisfied = isTriggerPreviouslySatisfied(previousState, index);
+        accumulated[index] = previouslySatisfied || currentSatisfaction[index];
+    }
+
+    /**
+     * 检查触发器是否之前已经满足
+     */
+    private boolean isTriggerPreviouslySatisfied(String previousState, int triggerIndex) {
+        if (previousState == null || previousState.isEmpty()) {
+            return false;
+        }
+        return previousState.contains("trigger_" + triggerIndex + ":");
+    }
+
+    /**
+     * 检查是否所有触发器都已满足
+     */
+    private boolean areAllTriggersSatisfied(boolean[] satisfaction) {
+        for (boolean satisfied : satisfaction) {
+            if (!satisfied) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 保存跨时间条件状态
+     */
+    private void saveCrossTimeState(String sessionId, boolean[] satisfaction) {
+        String stateString = buildStateString(satisfaction);
+        if (!stateString.isEmpty()) {
+            LocalThingsRulesStateManager localManager = (LocalThingsRulesStateManager) thingsRulesStateManager;
+            localManager.saveStringState(sessionId, stateString);
+        }
+    }
+
+    /**
+     * 构建状态字符串
+     */
+    private String buildStateString(boolean[] satisfaction) {
+        StringBuilder state = new StringBuilder();
+        for (int i = 0; i < satisfaction.length; i++) {
+            if (satisfaction[i]) {
+                state.append("trigger_").append(i).append(":");
+            }
+        }
+        return state.toString();
+    }
+
+    /**
+     * 清除跨时间条件状态
+     */
+    private void clearCrossTimeState(String sessionId) {
+        thingsRulesStateManager.clearState(sessionId);
+    }
+
+
 
     /**
      * 处理单个触发器
@@ -203,6 +389,8 @@ public class DefaultThingsRulesEngineExecutor implements ThingsRulesEngineExecut
         return matcher.match(trigger.getCondition(), message);
     }
 
+
+
     /**
      * 执行规则动作
      * 按顺序执行规则定义的所有动作
@@ -219,20 +407,30 @@ public class DefaultThingsRulesEngineExecutor implements ThingsRulesEngineExecut
 
     /**
      * 处理动作列表
-     *
-     * @param thingsRules 规则对象
      */
     private ThingsResponseMessage processActions(ThingsRules thingsRules, ThingsRequestMessage message) {
-        Map<String, AtomicInteger> params = new ConcurrentHashMap<>();
-        for (ThingsRules.Action action : thingsRules.getActions()) {
-            boolean result = executeAction(action);
-            String key = result ? "success" : "failure";
-            AtomicInteger atomicInteger = params.getOrDefault(key, new AtomicInteger(0));
-            atomicInteger.incrementAndGet();
-            params.put(key, atomicInteger);
-            log.info("Executed rule [{}] action : {}", thingsRules.getId(), action.getType());
-        }
+        Map<String, AtomicInteger> params = initializeActionResultMap();
+        executeAllActions(thingsRules, params);
         return message.success(params);
+    }
+
+    private Map<String, AtomicInteger> initializeActionResultMap() {
+        return new ConcurrentHashMap<>();
+    }
+
+    private void executeAllActions(ThingsRules thingsRules, Map<String, AtomicInteger> params) {
+        for (ThingsRules.Action action : thingsRules.getActions()) {
+            executeAndRecordAction(thingsRules, action, params);
+        }
+    }
+
+    private void executeAndRecordAction(ThingsRules thingsRules, ThingsRules.Action action, Map<String, AtomicInteger> params) {
+        boolean result = executeAction(action);
+        String key = result ? "success" : "failure";
+        AtomicInteger counter = params.getOrDefault(key, new AtomicInteger(0));
+        counter.incrementAndGet();
+        params.put(key, counter);
+        log.info("Executed rule [{}] action : {}", thingsRules.getId(), action.getType());
     }
 
     /**

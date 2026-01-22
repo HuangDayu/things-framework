@@ -1,4 +1,4 @@
-package cn.huangdayu.things.mcp.rules;
+package cn.huangdayu.things.rules.test;
 
 import cn.huangdayu.things.api.rules.ThingsRulesEngineExecutor;
 import cn.huangdayu.things.common.message.ThingsRequestMessage;
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author huangdayu
  */
-@SpringBootTest(classes = ThingsMcpServerTestApplication.class)
+@SpringBootTest(classes = ThingsRulesTestApplication.class)
 public class SimpleDefaultThingsRulesEngineExecutorTest {
 
 

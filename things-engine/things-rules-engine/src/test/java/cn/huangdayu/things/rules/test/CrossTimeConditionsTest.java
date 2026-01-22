@@ -1,8 +1,9 @@
-package cn.huangdayu.things.mcp.rules;
+package cn.huangdayu.things.rules.test;
 
 import cn.huangdayu.things.api.rules.ThingsRulesEngineExecutor;
-import cn.huangdayu.things.common.message.ThingsRequestMessage;
 import cn.huangdayu.things.common.dsl.rules.ThingsRules;
+import cn.huangdayu.things.common.message.ThingsRequestMessage;
+import cn.huangdayu.things.common.message.ThingsResponseMessage;
 import com.alibaba.fastjson2.JSONObject;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
@@ -11,14 +12,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 import java.util.UUID;
 
-import static cn.huangdayu.things.mcp.rules.LinkageDefaultThingsRulesEngineExecutorTest.loadRulesFromJsonFile;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * 跨时间条件处理测试
  * 演示如何处理在不同时间点满足的规则条件
  */
-@SpringBootTest(classes = ThingsMcpServerTestApplication.class)
+@SpringBootTest(classes = ThingsRulesTestApplication.class)
 public class CrossTimeConditionsTest {
 
     @Resource
@@ -26,21 +27,26 @@ public class CrossTimeConditionsTest {
 
     @Test
     public void testCrossTimeConditions() throws Exception {
-        List<ThingsRules> thingsRules = loadRulesFromJsonFile("/things-linkage/cross_time_conditions_example.json");
+        List<ThingsRules> thingsRules = LinkageDefaultThingsRulesEngineExecutorTest.loadRulesFromJsonFile("/things-linkage/cross_time_conditions_example.json");
         ThingsRules thingsRule = thingsRules.get(0);
-        processFirstCondition(thingsRule);
-        processSecondCondition(thingsRule);
-        assertTrue(thingsRulesEngineExecutor.executeRule(thingsRule, createDummyMessage()).isSuccess());
+
+        // 第一步：发送userAway事件，应该不触发规则（因为只满足了一个条件）
+        ThingsResponseMessage response1 = processFirstCondition(thingsRule);
+        assertFalse(response1.isSuccess()); // 第一个条件满足，但不是所有条件
+
+        // 第二步：发送temperature消息，应该触发规则（因为现在两个条件都满足了）
+        ThingsResponseMessage response2 = processSecondCondition(thingsRule);
+        assertTrue(response2.isSuccess()); // 所有条件都满足，规则执行
     }
 
-    private void processFirstCondition(ThingsRules thingsRules) {
+    private ThingsResponseMessage processFirstCondition(ThingsRules thingsRules) throws Exception {
         ThingsRequestMessage message = createUserAwayMessage();
-        thingsRulesEngineExecutor.executeRule(thingsRules, message);
+        return thingsRulesEngineExecutor.executeRule(thingsRules, message);
     }
 
-    private void processSecondCondition(ThingsRules thingsRules) {
+    private ThingsResponseMessage processSecondCondition(ThingsRules thingsRules) throws Exception {
         ThingsRequestMessage message = createTemperatureMessage();
-        thingsRulesEngineExecutor.executeRule(thingsRules, message);
+        return thingsRulesEngineExecutor.executeRule(thingsRules, message);
     }
 
     private ThingsRequestMessage createDummyMessage() {
