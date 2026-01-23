@@ -26,19 +26,20 @@ public class ConditionThingsRulesActionExecutor implements ThingsRulesActionExec
      */
     @Override
     public JSONObject execute(ThingsRules.ActionParams params) {
-        // 检查参数是否有效
         if (isInvalidParams(params)) {
             return null;
         }
-
-        // 获取条件参数
         ThingsRules.ConditionParams condition = params.getCondition();
-
-        // 记录条件动作日志
         logCondition(condition);
+        return createConditionResult(condition);
+    }
 
-        // 返回执行结果
-        return getResult(condition);
+    private JSONObject createConditionResult(ThingsRules.ConditionParams condition) {
+        JSONObject result = new JSONObject();
+        result.put("success", true);
+        result.put("message", "Condition action executed");
+        result.put("expression", condition.getExpression());
+        return result;
     }
 
     /**

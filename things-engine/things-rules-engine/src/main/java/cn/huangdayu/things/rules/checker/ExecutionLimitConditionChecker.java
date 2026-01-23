@@ -76,61 +76,42 @@ public class ExecutionLimitConditionChecker implements ThingsRulesConditionCheck
     /**
      * 检查执行次数是否未超限
      * 根据执行限制条件检查当前执行次数是否超过限制
-     * <p>
-     * 主要处理步骤：
-     * 1. 获取规则的执行限制参数
-     * 2. 解析时间周期为统一的秒单位
-     * 3. 获取或创建规则的执行记录
-     * 4. 清理时间窗口外的过期记录
-     * 5. 检查当前执行次数是否超过限制
-     * 6. 如果未超过则记录本次执行
      *
      * @param executionLimit 执行次数限制对象
      * @return 如果执行次数未超限返回true，否则返回false
      */
     private boolean isExecutionLimitNotExceeded(ThingsRules.ExecutionLimit executionLimit) {
         try {
-            // 获取最大执行次数限制
             int maxExecutions = executionLimit.getCount();
-            // 获取时间周期限制（如"1H"表示1小时）
-            String period = executionLimit.getPeriod();
-            // 将时间周期转换为秒
-            int timeWindow = parsePeriodToSeconds(period);
-
-            // 使用执行限制对象的hashcode作为规则标识符
-            // 在实际生产环境中，应使用规则的唯一业务ID
+            int timeWindow = parsePeriodToSeconds(executionLimit.getPeriod());
             String ruleId = String.valueOf(executionLimit.hashCode());
-
-            // 获取或创建该规则的执行记录
-            ExecutionRecord record = EXECUTION_RECORDS.computeIfAbsent(
-                    ruleId,
-                    k -> new ExecutionRecord()
-            );
-
-            // 获取当前时间
-            LocalDateTime now = LocalDateTime.now();
-
-            // 清除时间窗口外的执行记录
-            // 这确保我们只统计最近一个时间窗口内的执行次数
-            record.executions.removeIf(executionTime ->
-                    executionTime.isBefore(now.minusSeconds(timeWindow))
-            );
-
-            // 检查是否超过执行次数限制
-            if (record.executions.size() >= maxExecutions) {
-                log.info("Execution limit exceeded for rule: {}, max: {}, current: {}",
-                        ruleId, maxExecutions, record.executions.size());
-                return false;
-            }
-
-            // 记录本次执行时间
-            record.executions.add(now);
-            return true;
+            ExecutionRecord record = getOrCreateExecutionRecord(ruleId);
+            return checkAndRecordExecution(record, maxExecutions, timeWindow, ruleId);
         } catch (Exception e) {
-            // 记录警告日志并返回true，确保异常情况下不阻止正常功能
             log.warn("Failed to check execution limit condition: {}", executionLimit, e);
             return true;
         }
+    }
+
+    private ExecutionRecord getOrCreateExecutionRecord(String ruleId) {
+        return EXECUTION_RECORDS.computeIfAbsent(ruleId, k -> new ExecutionRecord());
+    }
+
+    private boolean checkAndRecordExecution(ExecutionRecord record, int maxExecutions, int timeWindow, String ruleId) {
+        LocalDateTime now = LocalDateTime.now();
+        cleanExpiredExecutions(record, now, timeWindow);
+        if (record.executions.size() >= maxExecutions) {
+            log.info("Execution limit exceeded for rule: {}, max: {}, current: {}",
+                    ruleId, maxExecutions, record.executions.size());
+            return false;
+        }
+        record.executions.add(now);
+        return true;
+    }
+
+    private void cleanExpiredExecutions(ExecutionRecord record, LocalDateTime now, int timeWindow) {
+        record.executions.removeIf(executionTime ->
+                executionTime.isBefore(now.minusSeconds(timeWindow)));
     }
 
     /**

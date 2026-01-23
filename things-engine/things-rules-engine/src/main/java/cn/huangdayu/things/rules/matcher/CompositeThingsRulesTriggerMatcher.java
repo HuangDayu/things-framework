@@ -70,24 +70,25 @@ public class CompositeThingsRulesTriggerMatcher implements ThingsRulesTriggerMat
      * @return 如果匹配成功返回true，否则返回false
      */
     private boolean doMatchCompositeTrigger(ThingsRules.TriggerCondition condition, ThingsRequestMessage message) {
-        String logicOperator = condition.getLogicOperator();
-        List<ThingsRules.TriggerCondition> conditions = condition.getConditions();
-
-        // 过滤掉无效的条件
-        conditions.removeIf(this::isInvalidCondition);
-
-        // 如果没有有效条件，返回false
-        if (conditions.isEmpty()) {
+        List<ThingsRules.TriggerCondition> validConditions = getValidConditions(condition);
+        if (validConditions.isEmpty()) {
             return false;
         }
+        return matchByLogicOperator(condition.getLogicOperator(), validConditions, message);
+    }
 
-        // 根据逻辑操作符进行匹配
+    private List<ThingsRules.TriggerCondition> getValidConditions(ThingsRules.TriggerCondition condition) {
+        List<ThingsRules.TriggerCondition> conditions = condition.getConditions();
+        conditions.removeIf(this::isInvalidCondition);
+        return conditions;
+    }
+
+    private boolean matchByLogicOperator(String logicOperator, List<ThingsRules.TriggerCondition> conditions, ThingsRequestMessage message) {
         if ("AND".equalsIgnoreCase(logicOperator)) {
             return matchAllConditions(conditions, message);
         } else if ("OR".equalsIgnoreCase(logicOperator)) {
             return matchAnyCondition(conditions, message);
         } else {
-            // 默认使用AND逻辑
             return matchAllConditions(conditions, message);
         }
     }

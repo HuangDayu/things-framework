@@ -27,18 +27,9 @@ public class EventThingsRulesTriggerMatcher implements ThingsRulesTriggerMatcher
      */
     @Override
     public boolean match(ThingsRules.TriggerCondition condition, ThingsRequestMessage message) {
-        // 检查事件触发器是否有效
-        if (isInvalidEventTrigger(condition)) {
-            return false;
-        }
-
-        // 检查方法是否匹配
-        if (!isMethodMatched(condition, message)) {
-            return false;
-        }
-
-        // 检查事件是否匹配
-        return isEventMatched(condition, message);
+        return !isInvalidEventTrigger(condition) &&
+               isMethodMatched(condition, message) &&
+               isEventMatched(condition, message);
     }
 
     /**

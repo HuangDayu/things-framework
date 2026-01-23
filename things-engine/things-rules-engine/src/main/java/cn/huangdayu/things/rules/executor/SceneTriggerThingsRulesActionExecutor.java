@@ -26,19 +26,20 @@ public class SceneTriggerThingsRulesActionExecutor implements ThingsRulesActionE
      */
     @Override
     public JSONObject execute(ThingsRules.ActionParams params) {
-        // 检查参数是否有效
         if (isInvalidParams(params)) {
             return null;
         }
-
-        // 获取场景触发参数
         ThingsRules.SceneTriggerParams sceneTrigger = params.getSceneTrigger();
-
-        // 记录场景触发日志
         logSceneTrigger(sceneTrigger);
+        return createSceneTriggerResult(sceneTrigger);
+    }
 
-        // 返回执行结果
-        return getResult(sceneTrigger);
+    private JSONObject createSceneTriggerResult(ThingsRules.SceneTriggerParams sceneTrigger) {
+        JSONObject result = new JSONObject();
+        result.put("success", true);
+        result.put("message", "Scene trigger action executed");
+        result.put("sceneId", sceneTrigger.getSceneId());
+        return result;
     }
 
     /**

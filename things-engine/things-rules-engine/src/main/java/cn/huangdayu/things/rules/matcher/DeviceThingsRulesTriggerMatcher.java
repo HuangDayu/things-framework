@@ -31,18 +31,9 @@ public class DeviceThingsRulesTriggerMatcher implements ThingsRulesTriggerMatche
      */
     @Override
     public boolean match(ThingsRules.TriggerCondition condition, ThingsRequestMessage message) {
-        // 检查设备触发器是否有效
-        if (isInvalidDeviceTrigger(condition)) {
-            return false;
-        }
-
-        // 检查方法是否匹配
-        if (!isMethodMatched(condition, message)) {
-            return false;
-        }
-
-        // 检查属性是否匹配
-        return isPropertyMatched(condition, message);
+        return !isInvalidDeviceTrigger(condition) &&
+               isMethodMatched(condition, message) &&
+               isPropertyMatched(condition, message);
     }
 
     /**

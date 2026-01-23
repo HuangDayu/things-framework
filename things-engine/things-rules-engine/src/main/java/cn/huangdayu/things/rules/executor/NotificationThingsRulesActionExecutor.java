@@ -68,29 +68,35 @@ public class NotificationThingsRulesActionExecutor implements ThingsRulesActionE
     private JSONObject executeNotification(ThingsRules.NotificationParams notification) {
         try {
             log.info("Sending notification: {}", notification);
-
-            // 在实际项目中，这里会发送通知消息到用户
-            // 模拟通知发送结果
-            JSONObject result = new JSONObject();
-            result.put("success", true);
-            result.put("message", "Notification sent successfully");
-            result.put("type", notification.getType());
-            result.put("title", notification.getTitle());
-            result.put("content", notification.getContent());
-            result.put("recipients", notification.getRecipients());
-
-            // 模拟通知发送耗时
-            Thread.sleep(50);
-
-            log.info("Notification sent successfully: {}", notification);
-            return result;
+            simulateNotificationSend();
+            return createSuccessResult(notification);
         } catch (Exception e) {
-            log.error("Error sending notification: {}", notification, e);
-            JSONObject errorResult = new JSONObject();
-            errorResult.put("success", false);
-            errorResult.put("message", "Error sending notification: " + e.getMessage());
-            errorResult.put("notification", notification);
-            return errorResult;
+            return handleNotificationError(notification, e);
         }
+    }
+
+    private void simulateNotificationSend() throws InterruptedException {
+        Thread.sleep(50);
+    }
+
+    private JSONObject createSuccessResult(ThingsRules.NotificationParams notification) {
+        JSONObject result = new JSONObject();
+        result.put("success", true);
+        result.put("message", "Notification sent successfully");
+        result.put("type", notification.getType());
+        result.put("title", notification.getTitle());
+        result.put("content", notification.getContent());
+        result.put("recipients", notification.getRecipients());
+        log.info("Notification sent successfully: {}", notification);
+        return result;
+    }
+
+    private JSONObject handleNotificationError(ThingsRules.NotificationParams notification, Exception e) {
+        log.error("Error sending notification: {}", notification, e);
+        JSONObject errorResult = new JSONObject();
+        errorResult.put("success", false);
+        errorResult.put("message", "Error sending notification: " + e.getMessage());
+        errorResult.put("notification", notification);
+        return errorResult;
     }
 }

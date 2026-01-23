@@ -40,44 +40,29 @@ public class DefaultThingsRulesEngineExecutor implements ThingsRulesEngineExecut
 
     @Override
     public ThingsResponseMessage execute(ThingsRequestMessage trm) {
-        Set<ThingsRules> loader = thingsRulesTemplateLoader.loader(trm);
-        if (CollUtil.isEmpty(loader)) {
+        Set<ThingsRules> rules = thingsRulesTemplateLoader.loader(trm);
+        if (CollUtil.isEmpty(rules)) {
             return trm.notFound("Not catch Things Rules");
         }
-        List<JSONObject> re = new LinkedList<>();
-        for (ThingsRules thingsRules : loader) {
-            ThingsResponseMessage trm1 = executeRule(thingsRules, trm);
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("ruleId", thingsRules.getId());
-            jsonObject.put(trm1.isSuccess() ? "result" : "error", trm1.isSuccess() ? trm1.getResult() : trm1.getError());
-            re.add(jsonObject);
+        List<JSONObject> results = new LinkedList<>();
+        executeAllRules(rules, trm, results);
+        return trm.success(results);
+    }
+
+    private void executeAllRules(Set<ThingsRules> rules, ThingsRequestMessage trm, List<JSONObject> results) {
+        for (ThingsRules thingsRules : rules) {
+            JSONObject result = executeRuleAndBuildResult(thingsRules, trm);
+            results.add(result);
         }
-        return trm.success(re);
+    }
 
-        // FIXME: 待完善
-
-//        // 加载状态
-//        Facts sessionFacts = loadOrCreateSessionFacts(sessionId, facts);
-//
-//        // 加载规则
-//        List<Rule> rules = ruleLoader.loadRules();
-//        metrics.setLoadedRulesCount(rules.size());
-//
-//        // 评估规则
-//        List<Rule> triggeredRules = evaluateRules(rules, sessionFacts);
-//
-//        // 解决冲突
-//        List<Rule> resolvedRules = conflictResolver.resolve(triggeredRules);
-//
-//        // 执行动作
-//        executeActions(resolvedRules, sessionFacts);
-//
-//        // 保存状态
-//        stateManager.saveState(sessionId, sessionFacts);
-//
-//        // 返回结果
-//        return ExecutionResult.success(resolvedRules);
-
+    private JSONObject executeRuleAndBuildResult(ThingsRules thingsRules, ThingsRequestMessage trm) {
+        ThingsResponseMessage trm1 = executeRule(thingsRules, trm);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("ruleId", thingsRules.getId());
+        jsonObject.put(trm1.isSuccess() ? "result" : "error",
+                      trm1.isSuccess() ? trm1.getResult() : trm1.getError());
+        return jsonObject;
     }
 
     /**
@@ -112,10 +97,7 @@ public class DefaultThingsRulesEngineExecutor implements ThingsRulesEngineExecut
         if (!validateExecutionCondition(thingsRules)) {
             return createConditionNotMetError(thingsRules, message);
         }
-        if (!matchTriggers(thingsRules, message)) {
-            return createTriggerNotMatchedError(thingsRules, message);
-        }
-        return null;
+        return matchTriggers(thingsRules, message) ? null : createTriggerNotMatchedError(thingsRules, message);
     }
 
     private ThingsResponseMessage createDisabledRuleError(ThingsRules thingsRules, ThingsRequestMessage message) {
@@ -201,20 +183,25 @@ public class DefaultThingsRulesEngineExecutor implements ThingsRulesEngineExecut
      * @return 处理结果
      */
     private boolean processTriggers(ThingsRules thingsRules, ThingsRequestMessage message) {
-        // 检查是否需要跨时间条件处理
         if (hasCrossTimeTriggers(thingsRules)) {
             return processCrossTimeTriggers(thingsRules, message);
         }
+        return processNormalTriggers(thingsRules, message);
+    }
 
-        // 正常处理：当前消息必须满足所有触发器
+    private boolean processNormalTriggers(ThingsRules thingsRules, ThingsRequestMessage message) {
         for (ThingsRules.Trigger trigger : thingsRules.getTriggers()) {
-            boolean result = processTrigger(thingsRules, message, trigger);
-            log.info("Trigger process [{}:{}] result : {}", thingsRules.getId(), trigger.getType(), result);
-            if (!result) {
+            if (!processAndLogTrigger(thingsRules, message, trigger)) {
                 return false;
             }
         }
         return true;
+    }
+
+    private boolean processAndLogTrigger(ThingsRules thingsRules, ThingsRequestMessage message, ThingsRules.Trigger trigger) {
+        boolean result = processTrigger(thingsRules, message, trigger);
+        log.info("Trigger process [{}:{}] result : {}", thingsRules.getId(), trigger.getType(), result);
+        return result;
     }
 
     /**
@@ -444,14 +431,17 @@ public class DefaultThingsRulesEngineExecutor implements ThingsRulesEngineExecut
             log.warn("No executor found for action type: {}", action.getType());
             return false;
         }
+        return executeActionSafely(action, executor);
+    }
 
+    private boolean executeActionSafely(ThingsRules.Action action, ThingsRulesActionExecutor executor) {
         try {
             executor.execute(action.getParams());
+            return true;
         } catch (Exception e) {
             log.error("Error executing action: {}", action.getType(), e);
             return false;
         }
-        return true;
     }
 
 

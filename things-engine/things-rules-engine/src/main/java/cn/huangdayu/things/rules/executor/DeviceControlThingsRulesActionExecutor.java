@@ -68,23 +68,27 @@ public class DeviceControlThingsRulesActionExecutor implements ThingsRulesAction
     private JSONObject executeDeviceControl(ThingsRules.DeviceControlParams deviceControl) {
         try {
             log.info("Executing device control action: {}", deviceControl);
-
-            // 在实际项目中，这里会发送设备控制消息
-            // 模拟设备控制执行结果
-            JSONObject result = new JSONObject();
-            result.put("success", true);
-            result.put("message", "Device control executed successfully");
-            result.put("targetDevice", deviceControl.getTargetDevice());
-            result.put("service", deviceControl.getService());
-            result.put("params", deviceControl.getParams());
-
-            return result;
+            return createDeviceControlSuccessResult(deviceControl);
         } catch (Exception e) {
-            log.error("Error executing device control action: {}", deviceControl, e);
-            JSONObject errorResult = new JSONObject();
-            errorResult.put("success", false);
-            errorResult.put("message", "Error executing device control action: " + e.getMessage());
-            return errorResult;
+            return handleDeviceControlError(deviceControl, e);
         }
+    }
+
+    private JSONObject createDeviceControlSuccessResult(ThingsRules.DeviceControlParams deviceControl) {
+        JSONObject result = new JSONObject();
+        result.put("success", true);
+        result.put("message", "Device control executed successfully");
+        result.put("targetDevice", deviceControl.getTargetDevice());
+        result.put("service", deviceControl.getService());
+        result.put("params", deviceControl.getParams());
+        return result;
+    }
+
+    private JSONObject handleDeviceControlError(ThingsRules.DeviceControlParams deviceControl, Exception e) {
+        log.error("Error executing device control action: {}", deviceControl, e);
+        JSONObject errorResult = new JSONObject();
+        errorResult.put("success", false);
+        errorResult.put("message", "Error executing device control action: " + e.getMessage());
+        return errorResult;
     }
 }

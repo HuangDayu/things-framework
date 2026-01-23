@@ -52,6 +52,11 @@ public class ConditionIdGenerator {
     }
 
     private static void joinCondition(StringJoiner joiner, ThingsRules.TriggerCondition condition) {
+        joinDeviceInfo(joiner, condition);
+        joinBasicConditionFields(joiner, condition);
+    }
+
+    private static void joinDeviceInfo(StringJoiner joiner, ThingsRules.TriggerCondition condition) {
         if (condition.getDeviceInfo() != null) {
             ThingsRules.DeviceInfo deviceInfo = condition.getDeviceInfo();
             joiner.add(deviceInfo.getProductCode() != null ? deviceInfo.getProductCode() : "");
@@ -60,6 +65,9 @@ public class ConditionIdGenerator {
             joiner.add(deviceInfo.getIdentifier() != null ? deviceInfo.getIdentifier() : "");
             joiner.add(deviceInfo.getAction() != null ? deviceInfo.getAction() : "");
         }
+    }
+
+    private static void joinBasicConditionFields(StringJoiner joiner, ThingsRules.TriggerCondition condition) {
         joiner.add(condition.getProperty() != null ? condition.getProperty() : "");
         joiner.add(condition.getOperator() != null ? condition.getOperator() : "");
         joiner.add(condition.getValue() != null ? condition.getValue().toString() : "");
@@ -77,19 +85,22 @@ public class ConditionIdGenerator {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = digest.digest(input.getBytes());
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : hashBytes) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) {
-                    hexString.append('0');
-                }
-                hexString.append(hex);
-            }
-            return hexString.toString();
+            return bytesToHex(hashBytes);
         } catch (NoSuchAlgorithmException e) {
-            // 如果SHA-256不可用，使用简单替代方案
             return Integer.toString(input.hashCode());
         }
+    }
+
+    private static String bytesToHex(byte[] hashBytes) {
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : hashBytes) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 
     /**
@@ -100,28 +111,38 @@ public class ConditionIdGenerator {
      * @return 触发器类型字符串
      */
     public static String determineTriggerType(ThingsRules.TriggerCondition condition) {
-        // 检查是否显式指定了类型（在复合触发器的子条件中）
-        if (condition.getType() != null && !condition.getType().isEmpty()) {
+        if (hasExplicitType(condition)) {
             return condition.getType();
         }
+        return inferTypeFromCondition(condition);
+    }
 
-        // 根据条件内容推断类型
-        if (condition.getConditions() != null && !condition.getConditions().isEmpty()) {
+    private static boolean hasExplicitType(ThingsRules.TriggerCondition condition) {
+        return condition.getType() != null && !condition.getType().isEmpty();
+    }
+
+    private static String inferTypeFromCondition(ThingsRules.TriggerCondition condition) {
+        if (isCompositeCondition(condition)) {
             return "composite";
         }
-
-        if (condition.getCron() != null) {
+        if (isTimerCondition(condition)) {
             return "timer";
         }
-
-        if (condition.getEvent() != null) {
+        if (isEventCondition(condition)) {
             return "event";
         }
-
-        if (condition.getProperty() != null) {
-            return "device";
-        }
-
         return "device"; // 默认类型
+    }
+
+    private static boolean isCompositeCondition(ThingsRules.TriggerCondition condition) {
+        return condition.getConditions() != null && !condition.getConditions().isEmpty();
+    }
+
+    private static boolean isTimerCondition(ThingsRules.TriggerCondition condition) {
+        return condition.getCron() != null;
+    }
+
+    private static boolean isEventCondition(ThingsRules.TriggerCondition condition) {
+        return condition.getEvent() != null;
     }
 }

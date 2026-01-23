@@ -26,19 +26,21 @@ public class DataForwardThingsRulesActionExecutor implements ThingsRulesActionEx
      */
     @Override
     public JSONObject execute(ThingsRules.ActionParams params) {
-        // 检查参数是否有效
         if (isInvalidParams(params)) {
             return null;
         }
-
-        // 获取数据转发参数
         ThingsRules.DataForwardParams dataForward = params.getDataForward();
-
-        // 记录数据转发日志
         logDataForward(dataForward);
+        return createDataForwardResult(dataForward);
+    }
 
-        // 返回执行结果
-        return getResult(dataForward);
+    private JSONObject createDataForwardResult(ThingsRules.DataForwardParams dataForward) {
+        JSONObject result = new JSONObject();
+        result.put("success", true);
+        result.put("message", "Data forward action executed");
+        result.put("targetUrl", dataForward.getTargetUrl());
+        result.put("data", dataForward.getData());
+        return result;
     }
 
     /**

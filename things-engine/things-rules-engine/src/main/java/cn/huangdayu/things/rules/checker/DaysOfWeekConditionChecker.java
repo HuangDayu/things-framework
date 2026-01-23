@@ -63,23 +63,31 @@ public class DaysOfWeekConditionChecker implements ThingsRulesConditionChecker {
      * @return 如果当前星期匹配返回true，否则返回false
      */
     private boolean isDayOfWeekMatched(List<Integer> daysOfWeek) {
-        // 检查是否在测试模式下
+        if (isTestMode()) {
+            return true;
+        }
+        int dayValue = getCurrentDayValue();
+        return isDayAllowed(daysOfWeek, dayValue);
+    }
+
+    private boolean isTestMode() {
         String env = System.getProperty("env");
         if ("test".equals(env)) {
             log.debug("Test mode: always return true for days of week condition");
             return true;
         }
+        return false;
+    }
 
-        // 获取当前星期几
+    private int getCurrentDayValue() {
         DayOfWeek currentDay = LocalDate.now().getDayOfWeek();
-        int dayValue = currentDay.getValue(); // Monday=1, Sunday=7
+        return currentDay.getValue();
+    }
 
-        // 处理星期日的特殊情况（在我们的系统中可能是0或7）
+    private boolean isDayAllowed(List<Integer> daysOfWeek, int dayValue) {
         if (dayValue == 7) {
             return daysOfWeek.contains(7) || daysOfWeek.contains(0);
         }
-
-        // 检查当前星期是否在允许列表中
         return daysOfWeek.contains(dayValue);
     }
 }

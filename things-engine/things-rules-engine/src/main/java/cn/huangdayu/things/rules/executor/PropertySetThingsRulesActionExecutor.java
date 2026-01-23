@@ -26,19 +26,21 @@ public class PropertySetThingsRulesActionExecutor implements ThingsRulesActionEx
      */
     @Override
     public JSONObject execute(ThingsRules.ActionParams params) {
-        // 检查参数是否有效
         if (isInvalidParams(params)) {
             return null;
         }
-
-        // 获取属性设置参数
         ThingsRules.PropertySetParams propertySet = params.getPropertySet();
-
-        // 记录属性设置日志
         logPropertySet(propertySet);
+        return createPropertySetResult(propertySet);
+    }
 
-        // 返回执行结果
-        return getResult(propertySet);
+    private JSONObject createPropertySetResult(ThingsRules.PropertySetParams propertySet) {
+        JSONObject result = new JSONObject();
+        result.put("success", true);
+        result.put("message", "Property set action executed");
+        result.put("targetDevice", propertySet.getTargetDevice());
+        result.put("properties", propertySet.getProperties());
+        return result;
     }
 
     /**

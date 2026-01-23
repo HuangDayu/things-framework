@@ -71,19 +71,24 @@ public class LocalThingsRulesTemplateLoader implements ThingsRulesTemplateLoader
         if (rule.getTriggers() == null || rule.getTriggers().isEmpty()) {
             return false;
         }
+        return rule.getTriggers().stream().anyMatch(trigger -> matchesMethod(trigger, method));
+    }
 
-        return rule.getTriggers().stream().anyMatch(trigger -> {
-            if (trigger.getCondition() != null && trigger.getCondition().getDeviceInfo() != null) {
-                ThingsRules.DeviceInfo deviceInfo = trigger.getCondition().getDeviceInfo();
-                String expectedMethod = String.format("%s/%s/%s/%s/%s",
-                        deviceInfo.getProductCode(),
-                        deviceInfo.getDeviceCode(),
-                        deviceInfo.getMessageType(),
-                        deviceInfo.getIdentifier(),
-                        deviceInfo.getAction());
-                return expectedMethod.equals(method);
-            }
+    private boolean matchesMethod(ThingsRules.Trigger trigger, String method) {
+        if (trigger.getCondition() == null || trigger.getCondition().getDeviceInfo() == null) {
             return false;
-        });
+        }
+        ThingsRules.DeviceInfo deviceInfo = trigger.getCondition().getDeviceInfo();
+        String expectedMethod = buildExpectedMethod(deviceInfo);
+        return expectedMethod.equals(method);
+    }
+
+    private String buildExpectedMethod(ThingsRules.DeviceInfo deviceInfo) {
+        return String.format("%s/%s/%s/%s/%s",
+                deviceInfo.getProductCode(),
+                deviceInfo.getDeviceCode(),
+                deviceInfo.getMessageType(),
+                deviceInfo.getIdentifier(),
+                deviceInfo.getAction());
     }
 }

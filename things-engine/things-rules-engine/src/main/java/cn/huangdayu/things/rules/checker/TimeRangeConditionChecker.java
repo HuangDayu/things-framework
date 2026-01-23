@@ -61,39 +61,43 @@ public class TimeRangeConditionChecker implements ThingsRulesConditionChecker {
      * @return 如果当前时间在范围内返回true，否则返回false
      */
     private boolean isTimeInRange(ThingsRules.TimeRange timeRange) {
-        // 修复时间字段名称问题，使用正确的字段名
         String startTimeStr = timeRange.getStart();
         String endTimeStr = timeRange.getEnd();
-
-        // 检查时间字符串是否有效
         if (startTimeStr == null || endTimeStr == null) {
             return true;
         }
+        return isTimeInRangeSafely(startTimeStr, endTimeStr);
+    }
 
+    private boolean isTimeInRangeSafely(String startTimeStr, String endTimeStr) {
         try {
-            // 解析时间字符串
             LocalTime startTime = LocalTime.parse(startTimeStr);
             LocalTime endTime = LocalTime.parse(endTimeStr);
-            LocalTime now = LocalTime.now();
-
-            // 检查是否在测试模式下
-            String env = System.getProperty("env");
-            if ("test".equals(env)) {
-                log.debug("Test mode: always return true for time range condition");
+            if (isTestMode()) {
                 return true;
             }
-
-            // 判断当前时间是否在时间范围内
-            if (endTime.isAfter(startTime)) {
-                // 正常情况：结束时间晚于开始时间
-                return !now.isBefore(startTime) && !now.isAfter(endTime);
-            } else {
-                // 跨日情况：结束时间早于开始时间（如 22:00 - 06:00）
-                return !now.isBefore(startTime) || !now.isAfter(endTime);
-            }
+            return checkTimeInRange(startTime, endTime);
         } catch (Exception e) {
             log.error("Error parsing time range: {} - {}", startTimeStr, endTimeStr, e);
-            return true; // 时间解析失败时默认允许执行
+            return true;
+        }
+    }
+
+    private boolean isTestMode() {
+        String env = System.getProperty("env");
+        if ("test".equals(env)) {
+            log.debug("Test mode: always return true for time range condition");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkTimeInRange(LocalTime startTime, LocalTime endTime) {
+        LocalTime now = LocalTime.now();
+        if (endTime.isAfter(startTime)) {
+            return !now.isBefore(startTime) && !now.isAfter(endTime);
+        } else {
+            return !now.isBefore(startTime) || !now.isAfter(endTime);
         }
     }
 }
