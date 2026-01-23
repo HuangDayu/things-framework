@@ -5,8 +5,8 @@ import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.exception.ThingsException;
 import cn.hutool.core.map.multi.RowKeyTable;
 import cn.hutool.core.map.multi.Table;
+import cn.hutool.core.util.StrUtil;
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,12 +18,19 @@ import static cn.huangdayu.things.common.constants.ThingsConstants.ErrorCodes.ER
  * @author huangdayu
  */
 @ThingsBean
-@RequiredArgsConstructor
 public class ThingsRulesHandlerFactory {
 
     private final Map<String, ThingsRulesHandler> thingsRulesHandlerMap;
+    private final ThingsRulesProperties thingsRulesProperties;
+    private static ThingsRulesProperties thingsRulesPropertiesForStatic;
     private static final Table<String, Class<? extends ThingsRulesHandler>, ThingsRulesHandler> HANDLER_TABLE = new RowKeyTable<>(new ConcurrentHashMap<>(), ConcurrentHashMap::new);
 
+
+    public ThingsRulesHandlerFactory(Map<String, ThingsRulesHandler> thingsRulesHandlerMap, ThingsRulesProperties thingsRulesProperties) {
+        this.thingsRulesHandlerMap = thingsRulesHandlerMap;
+        this.thingsRulesProperties = thingsRulesProperties;
+        ThingsRulesHandlerFactory.thingsRulesPropertiesForStatic = thingsRulesProperties;
+    }
 
     @PostConstruct
     public void init() {
@@ -43,6 +50,13 @@ public class ThingsRulesHandlerFactory {
         throw new ThingsException(ERROR, "Not found Things Rules Handler");
     }
 
+    public static <T extends ThingsRulesHandler> T getHandler(Class<T> handlerClassType) {
+        String type = ThingsRulesHandlerFactory.thingsRulesPropertiesForStatic.getThingsRulesHandler().get(handlerClassType);
+        if (StrUtil.isBlank(type)) {
+            return getDefaultHandler(handlerClassType);
+        }
+        return (T) HANDLER_TABLE.get(type, handlerClassType);
+    }
 
     public static <T extends ThingsRulesHandler> T getHandler(String type, Class<T> handlerClassType) {
         return (T) HANDLER_TABLE.get(type, handlerClassType);
@@ -53,6 +67,18 @@ public class ThingsRulesHandlerFactory {
         return column.values().stream().map(thingsRulesHandler -> (T) thingsRulesHandler).collect(Collectors.toMap(ThingsRulesHandler::getType, v -> v));
     }
 
+    public static <T extends ThingsRulesHandler> T getDefaultHandler(Class<T> handlerClassType) {
+        Map<String, ThingsRulesHandler> column = HANDLER_TABLE.getColumn(handlerClassType);
+        return column.values().stream().map(thingsRulesHandler -> (T) thingsRulesHandler).filter(ThingsRulesHandler::isDefault).findFirst().orElse(null);
+    }
+
+    public <T extends ThingsRulesHandler> T getPropertyHandler(Class<T> handlerClassType) {
+        String type = thingsRulesProperties.getThingsRulesHandler().get(handlerClassType);
+        if (StrUtil.isBlank(type)) {
+            return getDefaultHandler(handlerClassType);
+        }
+        return (T) HANDLER_TABLE.get(type, handlerClassType);
+    }
 
     /**
      * 获取执行条件检查器
@@ -102,6 +128,15 @@ public class ThingsRulesHandlerFactory {
         return getHandler(actionType, ThingsRulesActionExecutor.class);
     }
 
+    /**
+     * 获取触发器处理器
+     *
+     * @param type 处理器类型
+     * @return 触发器处理器，如果未找到返回null
+     */
+    public static ThingsRulesTriggerProcessor getTriggerProcessor(String type) {
+        return getHandler(type, ThingsRulesTriggerProcessor.class);
+    }
 
     /**
      * 获取所有动作执行器

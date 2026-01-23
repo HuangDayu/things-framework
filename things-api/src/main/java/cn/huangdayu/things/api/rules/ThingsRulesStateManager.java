@@ -1,7 +1,5 @@
 package cn.huangdayu.things.api.rules;
 
-import cn.huangdayu.things.common.dsl.rules.ThingsRules;
-
 /**
  * 状态管理
  *
@@ -10,12 +8,19 @@ import cn.huangdayu.things.common.dsl.rules.ThingsRules;
 public interface ThingsRulesStateManager extends ThingsRulesHandler {
 
     /**
+     * 清空状态
+     *
+     * @param sessionId
+     */
+    void clearState(String sessionId);
+
+    /**
      * 保存状态
      *
      * @param sessionId
-     * @param thingsRules
+     * @param state
      */
-    void saveState(String sessionId, ThingsRules thingsRules);
+    void saveStringState(String sessionId, String state);
 
     /**
      * 加载状态
@@ -23,13 +28,5 @@ public interface ThingsRulesStateManager extends ThingsRulesHandler {
      * @param sessionId
      * @return
      */
-    ThingsRules loadState(String sessionId);
-
-    /**
-     * 清空状态
-     *
-     * @param sessionId
-     */
-    void clearState(String sessionId);
-
+    String loadStringState(String sessionId);
 }

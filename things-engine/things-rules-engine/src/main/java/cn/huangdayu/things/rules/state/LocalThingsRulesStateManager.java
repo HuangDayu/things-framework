@@ -15,20 +15,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @ThingsBean
 public class LocalThingsRulesStateManager implements ThingsRulesStateManager {
 
-    private final ConcurrentHashMap<String, Object> stateMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, String> stateMap = new ConcurrentHashMap<>();
 
     @Override
-    public void saveState(String sessionId, ThingsRules thingsRules) {
-        stateMap.put(sessionId, thingsRules);
-    }
-
-    @Override
-    public ThingsRules loadState(String sessionId) {
-        Object state = stateMap.get(sessionId);
-        if (state instanceof ThingsRules) {
-            return (ThingsRules) state;
-        }
-        return null;
+    public boolean isDefault() {
+        return true;
     }
 
     @Override
@@ -44,6 +35,7 @@ public class LocalThingsRulesStateManager implements ThingsRulesStateManager {
     /**
      * 保存字符串状态（用于跨时间条件）
      */
+    @Override
     public void saveStringState(String sessionId, String state) {
         stateMap.put(sessionId, state);
     }
@@ -51,11 +43,8 @@ public class LocalThingsRulesStateManager implements ThingsRulesStateManager {
     /**
      * 加载字符串状态（用于跨时间条件）
      */
+    @Override
     public String loadStringState(String sessionId) {
-        Object state = stateMap.get(sessionId);
-        if (state instanceof String) {
-            return (String) state;
-        }
-        return null;
+        return stateMap.get(sessionId);
     }
 }
