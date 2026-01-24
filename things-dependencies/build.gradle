@@ -23,6 +23,9 @@ dependencies {
     api platform("com.alipay.sofa:sofa-ark-bom:${sofaArkVersion}")
     api platform("org.springframework.ai:spring-ai-bom:${springAIVersion}")
     api platform("com.alibaba.cloud.ai:spring-ai-alibaba-bom:${springAIAlibabaVersion}")
+    api platform("com.embabel.agent:embabel-agent-dependencies:0.3.2")
+    api platform("dev.langchain4j:langchain4j-bom:1.10.0")
+    api platform("org.bsc.langgraph4j:langgraph4j-bom:1.8.0-beta2")
 
     constraints {
         rootProject.subprojects.each {
