@@ -5,6 +5,6 @@ package cn.huangdayu.things.api.sofabus;
  */
 public interface ThingsSofaBusCallback {
 
-    void routeStoped(Object route);
+    void routeStopped(Object route);
 
 }

@@ -54,5 +54,8 @@ todo.txt
 .cursor
 .continue
 
+nul
+.*
+
 things-ai/things-ai-mcp-server/src/main/resources/static/
 things-ai/things-ai-mcp-server/src/main/web-ui/

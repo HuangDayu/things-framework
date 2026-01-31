@@ -15,7 +15,7 @@ public class ThingsSofaBusMqttCallback implements ThingsSofaBusCallback {
     private final ThingsSofaBusMqttClient client;
 
     @Override
-    public void routeStoped(Object route) {
+    public void routeStopped(Object route) {
         if (route instanceof CamelSofaBusRouteBuilder builder) {
             if (client.isConnected()) {
                 try {

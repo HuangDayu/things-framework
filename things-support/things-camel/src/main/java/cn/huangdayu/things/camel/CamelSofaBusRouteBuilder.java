@@ -60,7 +60,7 @@ public class CamelSofaBusRouteBuilder extends RouteBuilder {
                     public void onStop(Route route) {
                         super.onStop(route);
                         if (callback != null) {
-                            callback.routeStoped(CamelSofaBusRouteBuilder.this);
+                            callback.routeStopped(CamelSofaBusRouteBuilder.this);
                         }
                     }
                 })

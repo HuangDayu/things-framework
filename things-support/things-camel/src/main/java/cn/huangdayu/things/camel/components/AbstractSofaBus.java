@@ -33,25 +33,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Getter
 @Slf4j
-@RequiredArgsConstructor
 public abstract class AbstractSofaBus implements ThingsSofaBus {
     protected final CamelContext camelContext;
     protected final CamelSofaBusConstructor constructor;
-    protected DefaultComponent component;
     protected static final ThingsSofaBusTopicValidator TOPIC_VALIDATOR = new ThingsSofaBusTopicValidator();
     protected volatile Map<String, String> ROUTE_MAP = new ConcurrentHashMap<>();
-
-    protected abstract DefaultComponent buildComponent();
 
     public AbstractSofaBus(CamelSofaBusConstructor constructor) {
         this.constructor = constructor;
         this.camelContext = constructor.getCamelContext();
-        this.component = buildComponent();
-        if (CollUtil.isNotEmpty(constructor.getProperties().getProperties())) {
-            PropertyConfigurer configurer = component.getComponentPropertyConfigurer();
-            constructor.getProperties().getProperties().forEach((k, v) -> configurer.configure(camelContext, component, k, v, true));
-        }
-        camelContext.addComponent(constructor.getProperties().getName(), component);
     }
 
     @Override
@@ -125,30 +115,6 @@ public abstract class AbstractSofaBus implements ThingsSofaBus {
 
     public Set<String> getRouteIds() {
         return new HashSet<>(ROUTE_MAP.values());
-    }
-
-
-    @Override
-    public boolean start() {
-        if (component.isStarted()) {
-            return true;
-        }
-        component.start();
-        return true;
-    }
-
-    @Override
-    public boolean stop() {
-        if (component.isStopped()) {
-            return true;
-        }
-        component.stop();
-        return true;
-    }
-
-    @Override
-    public boolean isStarted() {
-        return component.isStarted();
     }
 
     private boolean isDuplicateSubscription(String topic) {

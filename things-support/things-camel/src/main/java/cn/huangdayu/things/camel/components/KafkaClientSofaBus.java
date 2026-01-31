@@ -14,9 +14,9 @@ import static cn.huangdayu.things.common.enums.ThingsSofaBusType.KAFKA;
  * @author huangdayu
  */
 @Getter
-public class KafkaSofaBus extends AbstractSofaBus implements ThingsSofaBus {
+public class KafkaClientSofaBus extends ComponentSofaBus implements ThingsSofaBus {
 
-    public KafkaSofaBus(CamelSofaBusConstructor constructor) {
+    public KafkaClientSofaBus(CamelSofaBusConstructor constructor) {
         super(constructor);
     }
 

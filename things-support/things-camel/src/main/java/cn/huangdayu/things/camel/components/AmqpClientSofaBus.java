@@ -14,10 +14,10 @@ import static cn.huangdayu.things.common.enums.ThingsSofaBusType.AMQP;
  * @author huangdayu
  */
 @Getter
-public class AmqpSofaBus extends AbstractSofaBus implements ThingsSofaBus {
+public class AmqpClientSofaBus extends ComponentSofaBus implements ThingsSofaBus {
 
 
-    public AmqpSofaBus(CamelSofaBusConstructor constructor) {
+    public AmqpClientSofaBus(CamelSofaBusConstructor constructor) {
         super(constructor);
     }
 

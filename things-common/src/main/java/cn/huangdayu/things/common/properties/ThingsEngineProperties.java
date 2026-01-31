@@ -58,7 +58,7 @@ public class ThingsEngineProperties {
 
         private String persistenceDir = "temp/sofabus/";
 
-        private Map<String, String> properties;
+        private Map<String, String> properties = new HashMap<>();
 
         @Override
         public boolean equals(Object o) {

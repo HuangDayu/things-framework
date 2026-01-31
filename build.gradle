@@ -16,7 +16,7 @@ ext {
     sofaArkVersion = "3.1.9"
     nacosVersion = '3.0.0'
     hutoolVersion = '5.8.31'
-    camelVersion = '4.11.0'
+    camelVersion = '4.17.0'
     fastjson2Version = '2.0.52'
     springAIVersion = '2.0.0-M1'
     springAIAlibabaVersion = '1.0.0.2'

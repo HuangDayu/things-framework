@@ -127,7 +127,7 @@ public class ExtendedThingsRulesEngineExecutorTest {
         // 测试星期几执行条件
         ThingsRules thingsRules = createDeviceTriggerRule();
         ThingsRules.ExecutionCondition execCondition = new ThingsRules.ExecutionCondition();
-        execCondition.setDaysOfWeek(List.of(1, 2, 3, 4, 5)); // 周一到周五
+        execCondition.setDaysOfWeek(List.of(1, 2, 3, 4, 5, 6, 7)); // 周一到周五
         thingsRules.setExecutionCondition(execCondition);
 
         // 创建温度过高的消息

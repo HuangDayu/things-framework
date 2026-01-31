@@ -27,6 +27,7 @@ dependencies {
     api platform("dev.langchain4j:langchain4j-bom:1.10.0")
     api platform("org.bsc.langgraph4j:langgraph4j-bom:1.8.0-beta2")
 
+
     constraints {
         rootProject.subprojects.each {
             if (!it.name.endsWithAny("-dependencies", "-example", "-app")) {

@@ -9,6 +9,7 @@ public enum ThingsSofaBusType {
     AMQP,
     MQTT,
     ROCKETMQ,
+    COAP,
     ;
 
 }

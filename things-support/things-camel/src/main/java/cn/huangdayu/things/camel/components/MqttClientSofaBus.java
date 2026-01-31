@@ -30,7 +30,7 @@ import static cn.hutool.core.text.CharSequenceUtil.isNotBlank;
  */
 @Slf4j
 @Getter
-public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
+public class MqttClientSofaBus extends ComponentSofaBus implements ThingsSofaBus {
 
     private static final String MULTI_LEVEL_TOPIC_WILDCARD = "#";
     private static final String ONE_LEVEL_TOPIC_WILDCARD = "+";
@@ -38,7 +38,7 @@ public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
 
     private ThingsSofaBusMqttCallback callback;
 
-    public MqttSofaBus(CamelSofaBusConstructor constructor) {
+    public MqttClientSofaBus(CamelSofaBusConstructor constructor) {
         super(constructor);
     }
 
@@ -63,6 +63,17 @@ public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
         ThingsEngineProperties.ThingsSofaBusProperties properties = constructor.getProperties();
         ThingsSofaBusMqttClient client = new ThingsSofaBusMqttClient(properties.getServer(), properties.getClientId(),
                 new MqttDefaultFilePersistence(properties.getPersistenceDir()), new ThingsProxyMqttCallback());
+        MqttConnectionOptions options = buildOptions(properties);
+        client.setCallback(new ThingsCamelMqttCallback(camelContext, client, this, options));
+        client.connect(options);
+        this.callback = new ThingsSofaBusMqttCallback(client);
+        return ComponentsBuilderFactory.pahoMqtt5()
+                .filePersistenceDirectory(properties.getPersistenceDir())
+                .client(client)
+                .build();
+    }
+
+    private MqttConnectionOptions buildOptions(ThingsEngineProperties.ThingsSofaBusProperties properties) {
         MqttConnectionOptions options = new MqttConnectionOptions();
         options.setUserName(properties.getUserName());
         if (isNotBlank(properties.getPassword())) {
@@ -74,13 +85,7 @@ public class MqttSofaBus extends AbstractSofaBus implements ThingsSofaBus {
         options.setAutomaticReconnect(true);
         options.setCleanStart(false);
         options.setSessionExpiryInterval(0L);
-        client.setCallback(new ThingsCamelMqttCallback(camelContext, client, this, options));
-        client.connect(options);
-        this.callback = new ThingsSofaBusMqttCallback(client);
-        return ComponentsBuilderFactory.pahoMqtt5()
-                .filePersistenceDirectory(properties.getPersistenceDir())
-                .client(client)
-                .build();
+        return options;
     }
 
     @Override

@@ -2,10 +2,7 @@ package cn.huangdayu.things.camel;
 
 import cn.huangdayu.things.api.sofabus.ThingsSofaBus;
 import cn.huangdayu.things.api.sofabus.ThingsSofaBusCreator;
-import cn.huangdayu.things.camel.components.AmqpSofaBus;
-import cn.huangdayu.things.camel.components.KafkaSofaBus;
-import cn.huangdayu.things.camel.components.MqttSofaBus;
-import cn.huangdayu.things.camel.components.RocketSofaBus;
+import cn.huangdayu.things.camel.components.*;
 import cn.huangdayu.things.camel.converter.AbstractTypeConverter;
 import cn.huangdayu.things.common.annotation.ThingsBean;
 import cn.huangdayu.things.common.enums.ThingsSofaBusType;
@@ -36,10 +33,11 @@ public class CamelSofaBusCreator implements ThingsSofaBusCreator {
 
     @PostConstruct
     public void init() {
-        componentsMap.put(ThingsSofaBusType.KAFKA, KafkaSofaBus::new);
-        componentsMap.put(ThingsSofaBusType.AMQP, AmqpSofaBus::new);
-        componentsMap.put(ThingsSofaBusType.MQTT, MqttSofaBus::new);
-        componentsMap.put(ThingsSofaBusType.ROCKETMQ, RocketSofaBus::new);
+        componentsMap.put(ThingsSofaBusType.KAFKA, KafkaClientSofaBus::new);
+        componentsMap.put(ThingsSofaBusType.AMQP, AmqpClientSofaBus::new);
+        componentsMap.put(ThingsSofaBusType.MQTT, MqttClientSofaBus::new);
+        componentsMap.put(ThingsSofaBusType.ROCKETMQ, RocketClientSofaBus::new);
+        componentsMap.put(ThingsSofaBusType.COAP, CoapClientSofaBus::new);
         registryConverter();
     }
 

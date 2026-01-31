@@ -7,6 +7,11 @@ jmh {
     includes = ['cn.huangdayu.things.camel.test.TopicValidatorBenchmark'] // 指定要运行的基准测试类
 }
 
+test {
+    useJUnitPlatform()
+    failOnNoDiscoveredTests = false
+}
+
 dependencies {
     api project(path: ':things-api')
     api project(path: ':things-common')
@@ -16,9 +21,14 @@ dependencies {
     compileOnly 'org.apache.camel:camel-kafka'
     compileOnly 'org.apache.camel:camel-paho-mqtt5'
     compileOnly "org.apache.camel:camel-amqp"
-    compileOnly "org.apache.camel:camel-rocketmq"
+    compileOnly("org.apache.camel:camel-rocketmq") {
+        exclude group: 'org.lz4', module: 'lz4-java'
+    }
     compileOnly "org.apache.camel:camel-netty"
+    compileOnly "org.apache.camel:camel-coap"
 
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.openjdk.jmh:jmh-core:1.37'
     testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
 }
